@@ -55,7 +55,7 @@ import {
 import { reclaimForEmergency } from './dsh/emergency.ts'
 import type { HistorianLlm } from './dsh/historian.ts'
 import { historianInFlight } from './dsh/historian.ts'
-import { publishReadyCompartments } from './dsh/management-pass.ts'
+import { publishReadyCompartments, surfaceTokens } from './dsh/management-pass.ts'
 import { defineCtxExpandTool, defineCtxReduceTool, defineCtxMemoryTool, type LocalDefineTool } from './dsh/tool-bridge.ts'
 import { ReduceNudgeTracker } from './dsh/reduce-guidance.ts'
 import { registerCtxStatusCommand } from './dsh/status-command.ts'
@@ -469,12 +469,23 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
       // dropping against a stale seq would throw into the waterfall.
       const nodes = enumerateSurfaceToolResults(session, callId =>
         stores.getTag(sessionId, { kind: 'tool-result', callId }))
-      const reclaim = reclaimForEmergency(session, nodes, policy, context.contextWindow)
+      // #731: the whole-surface estimate (measured AFTER any Tier-0 publish)
+      // lets the drop lane refuse a reclaim that cannot fit the request.
+      const reclaim = reclaimForEmergency(
+        session, nodes, policy, context.contextWindow, surfaceTokens(session))
       journal?.warn('emergency-reclaim', `provider rejected the request as too long; dropped ${String(reclaim.dropped.length)} tool output(s)`, {
         dropped: reclaim.dropped.length,
         protected: reclaim.protectedCount,
         reason: 'context-window-exceeded',
-        tier: reclaim.dropped.length > 0 ? 'drop' : publishedIds.length > 0 ? 'publish-only' : 'none',
+        tier: reclaim.skipped === 'cannot-fit'
+          ? 'skipped-cannot-fit'
+          : reclaim.dropped.length > 0 ? 'drop' : publishedIds.length > 0 ? 'publish-only' : 'none',
+        // #731: dropping everything reclaimable still leaves residualTokens
+        // against the window — the results are preserved and no retry fires
+        // (no drop ⇒ no surface progress ⇒ `next()` passes the error through).
+        ...(reclaim.skipped === 'cannot-fit'
+          ? { skipped: reclaim.skipped, residualTokens: reclaim.residualTokens, contextWindow: context.contextWindow }
+          : {}),
         publishedBeforeDrop: publishedIds,
         generationBefore: before,
         generationAfter: session.surface.replaceGeneration,

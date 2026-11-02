@@ -17,6 +17,17 @@
  *     (read/task/…) drops last, T2 edit-class drops next, T3 everything else
  *     drops first — oldest first within a tier.
  * Unknown context window → count-floor-only behavior (the pre-C1 semantics).
+ *
+ * #731 guard (upstream 7d393ae78 `preserve tool results when emergency
+ * reclaim cannot fit`, selection.rs `floor_above_ceiling`): when the
+ * whole-surface estimate MINUS every reclaimable node still exceeds the
+ * context window, dropping cannot make the request fit — the fixed floor
+ * (system prompt, user turns, protected results) alone busts it. The drop
+ * lane then refuses to fire (`skipped: 'cannot-fit'`) and preserves the
+ * results: destroying them would not prevent the overflow, only the work.
+ * The estimate is chars/4 and under-counts wire extras (tool defs), so the
+ * guard biases toward NOT skipping — the previous drop-everything behavior
+ * stays reachable whenever the fit is even plausible.
  */
 import type { Session, SessionSeq } from '@deepseek-ai/dsh-session'
 import { dropPlaceholderContent, replaceToolResultContent, type SurfaceToolNode } from './seams.ts'
@@ -29,6 +40,14 @@ export interface EmergencyReclaimResult {
   readonly protectedCount: number
   /** The token estimate of the protected window, when a window applied. */
   readonly protectedTokens?: number
+  /**
+   * #731: the drop lane refused to fire because even dropping every
+   * reclaimable node cannot fit the request into the window. Results are
+   * preserved; the caller reports the overflow instead of retrying.
+   */
+  readonly skipped?: 'cannot-fit'
+  /** With `skipped`: the surface estimate that would REMAIN after the refused drop. */
+  readonly residualTokens?: number
 }
 
 /** MC emergency-drop.ts:54-55 — T1 keeps longest, T2 medium, T3 default. */
@@ -74,6 +93,8 @@ export function reclaimForEmergency(
   nodes: readonly SurfaceToolNode[],
   policy: PressurePolicy,
   contextWindow?: number,
+  /** #731: whole-surface token estimate (all nodes); without it the guard is off. */
+  surfaceTokensEstimate?: number,
 ): EmergencyReclaimResult {
   const tagged = nodes.filter(node => node.tagNumber !== undefined && !node.isPlaceholder)
   const windowTokens = protectionWindowTokens(contextWindow)
@@ -100,6 +121,25 @@ export function reclaimForEmergency(
     .sort((left, right) =>
       resolveToolTier(right.toolName ?? null) - resolveToolTier(left.toolName ?? null)
       || left.seq - right.seq)
+
+  // #731: if everything reclaimable vanished and the request STILL would not
+  // fit, the drop cannot fix the overflow — preserve the results (upstream:
+  // `Rewriting tools cannot fix oversized fixed overhead`).
+  if (contextWindow !== undefined && surfaceTokensEstimate !== undefined) {
+    const reclaimableTokens = reclaimable.reduce(
+      (total, node) => total + tokensFor(node.textLength), 0)
+    const residualTokens = surfaceTokensEstimate - reclaimableTokens
+    if (residualTokens > contextWindow) {
+      return {
+        dropped: [],
+        protectedCount: tagged.length - reclaimable.length,
+        ...windowTokens === undefined ? {} : { protectedTokens },
+        skipped: 'cannot-fit',
+        residualTokens,
+      }
+    }
+  }
+
   const dropped: Array<{ seq: SessionSeq; tagNumber: number }> = []
   for (const node of reclaimable) {
     const tagNumber = node.tagNumber

@@ -165,8 +165,9 @@ export interface ManagementPassResult {
   readonly factsSeenAgain: number
 }
 
-/** Estimated tokens of every current surface node. */
-function surfaceTokens(session: Session): number {
+/** Estimated tokens of every current surface node (shared with the emergency
+ * lane in index.ts — the #731 fit guard needs the whole-surface estimate). */
+export function surfaceTokens(session: Session): number {
   return enumerateSurfaceNodes(session).reduce((total, node) => total + (node.hasText ? estimateTokens(node.text) : 0), 0)
 }
 
@@ -684,7 +685,10 @@ export function runManagementPass(input: ManagementPassInput): ManagementPassRes
     let forceDropped = 0
     if (input.pressure !== undefined && input.pressure >= input.policy.forceThreshold) {
       const generationBefore = input.session.surface.replaceGeneration
-      const reclaim = reclaimForEmergency(input.session, toolNodes, input.policy)
+      // #731: pass the whole-surface estimate so the drop lane can refuse a
+      // reclaim that cannot fit the request even at zero tool results.
+      const reclaim = reclaimForEmergency(
+        input.session, toolNodes, input.policy, input.contextWindow, surfaceTokens(input.session))
       forceDropped = reclaim.dropped.length
       if (forceDropped > 0) {
         input.journal?.warn(
@@ -695,6 +699,23 @@ export function runManagementPass(input: ManagementPassInput): ManagementPassRes
             protected: reclaim.protectedCount,
             reason: 'force-threshold',
             pressure: input.pressure,
+            generationBefore,
+            generationAfter: input.session.surface.replaceGeneration,
+          },
+          input.sessionId,
+        )
+      } else if (reclaim.skipped === 'cannot-fit') {
+        input.journal?.warn(
+          'emergency-reclaim',
+          `force band: reclaim skipped — dropping every reclaimable output still leaves ~${String(reclaim.residualTokens)} tokens against a ${String(input.contextWindow)}-token window (#731)`,
+          {
+            dropped: 0,
+            protected: reclaim.protectedCount,
+            reason: 'force-threshold',
+            pressure: input.pressure,
+            skipped: reclaim.skipped,
+            residualTokens: reclaim.residualTokens,
+            contextWindow: input.contextWindow,
             generationBefore,
             generationAfter: input.session.surface.replaceGeneration,
           },

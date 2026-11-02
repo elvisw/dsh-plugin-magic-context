@@ -270,9 +270,27 @@ export function calibrationAnchors(): string {
   ].join('\n')
 }
 
-/** The instruction a historian call carries: the JSON contract plus the anchors. */
-export function historianPromptText(): string {
-  return `${HISTORIAN_INSTRUCTION}\n\n${calibrationAnchors()}`
+/**
+ * v0.49 upstream (d02292d0d, compartment-prompt.ts): when nothing will ever
+ * review user observations — here, when no profile-collect sink is armed —
+ * the run is told NOT to produce them, instead of producing them and
+ * discarding them after the fact. Upstream appends this to the per-run USER
+ * prompt so its SYSTEM prompt keeps byte-stable across configurations; the
+ * adapter's contract above is already a per-call user message, so the same
+ * placement costs nothing on the replayed-prefix cache.
+ */
+export const USER_OBSERVATIONS_DISABLED_TOGGLE = [
+  '<user_observation_extraction>disabled</user_observation_extraction>',
+  'User-memory review is not running on this host: return "userObservations": [] in the JSON and spend no output tokens observing the user.',
+].join('\n')
+
+/** The instruction a historian call carries: the JSON contract plus the
+ * anchors, and — only when no review lane will consume them — the skip
+ * toggle. Default `true` keeps the historical bytes for every existing
+ * caller. */
+export function historianPromptText(userObservationsRequested = true): string {
+  const base = `${HISTORIAN_INSTRUCTION}\n\n${calibrationAnchors()}`
+  return userObservationsRequested ? base : `${base}\n\n${USER_OBSERVATIONS_DISABLED_TOGGLE}`
 }
 
 /** Consume a chunk stream into text, honoring the terminal finish reason.
@@ -506,7 +524,7 @@ export const HISTORIAN_MERGE_INSTRUCTION = [
  * wall-clock budget so the run cannot outlive `timeoutMs`.
  */
 export async function callHistorian(
-  deps: Pick<HistorianDeps, 'policy' | 'llm' | 'logger' | 'route' | 'now' | 'journal' | 'timeoutMs'>,
+  deps: Pick<HistorianDeps, 'policy' | 'llm' | 'logger' | 'route' | 'now' | 'journal' | 'timeoutMs' | 'profileCollect'>,
   input: {
     readonly sessionId: string
     readonly session: Parameters<typeof spanRequestMessages>[0]
@@ -570,9 +588,12 @@ export async function callHistorian(
       input.systemSeq === undefined ? seqs : [input.systemSeq, ...seqs],
     )
   }
+  // d02292d0d: observations are requested only when a sink is armed to
+  // consume them; otherwise the per-call instruction says so (see the toggle).
+  const userObservationsRequested = deps.profileCollect !== undefined
   const baseMessages = [
     ...replayOf(0),
-    { role: 'user', content: [{ type: 'text', text: historianPromptText() }] },
+    { role: 'user', content: [{ type: 'text', text: historianPromptText(userObservationsRequested) }] },
   ]
   const baseData = {
     trigger,
@@ -646,7 +667,7 @@ export async function callHistorian(
           ? baseMessages
           : [
             ...replayOf(call),
-            { role: 'user', content: [{ type: 'text', text: historianPromptText() }] },
+            { role: 'user', content: [{ type: 'text', text: historianPromptText(userObservationsRequested) }] },
           ]
       let callDraft: CompartmentDraft | undefined
       for (let attempt = 0; attempt < 2; attempt += 1) {
@@ -799,6 +820,58 @@ export async function callHistorian(
 }
 
 /**
+ * #802 (upstream e9075bfec): a run that published nothing must not be
+ * re-attempted over the same messages — every later pass would pay for the
+ * same failure again. The watermark lives in the store's meta kv (no schema
+ * change): `historian_no_progress:<sessionId>` → `{endSeq, at, kind}`.
+ * An automatic run waits until the surface has a node NEWER than the failed
+ * span's end; manual paths (`forcedRange`, the checkpoint/recomp lane) bypass
+ * the gate entirely, mirroring upstream's "near-full and emergency paths
+ * still get one attempt".
+ */
+const NO_PROGRESS_KEY_PREFIX = 'historian_no_progress:'
+
+interface HistorianNoProgress {
+  /** Last seq of the span the failed run covered (its `range.nodes` end). */
+  readonly endSeq: number
+  readonly at: number
+  readonly kind: string
+}
+
+/** Fail-open: an unreadable record never blocks a run, and a store double
+ * without meta access (spec fakes) degrades to "no watermark". */
+function readHistorianNoProgress(stores: AdapterStores, sessionId: string): HistorianNoProgress | undefined {
+  try {
+    const raw = stores.getMeta(`${NO_PROGRESS_KEY_PREFIX}${sessionId}`)
+    if (raw === undefined || raw === '') return undefined
+    const parsed = JSON.parse(raw) as Partial<HistorianNoProgress>
+    if (typeof parsed.endSeq !== 'number' || typeof parsed.at !== 'number' || typeof parsed.kind !== 'string') {
+      return undefined
+    }
+    return { endSeq: parsed.endSeq, at: parsed.at, kind: parsed.kind }
+  } catch {
+    return undefined
+  }
+}
+
+/** Fail-open: failing to persist the watermark must not mask the run's error. */
+function writeHistorianNoProgress(stores: AdapterStores, sessionId: string, value: HistorianNoProgress): void {
+  try {
+    stores.setMeta(`${NO_PROGRESS_KEY_PREFIX}${sessionId}`, JSON.stringify(value))
+  } catch {
+    /* the gate is advisory; a store hiccup only costs one retry */
+  }
+}
+
+function clearHistorianNoProgress(stores: AdapterStores, sessionId: string): void {
+  try {
+    stores.setMeta(`${NO_PROGRESS_KEY_PREFIX}${sessionId}`, '')
+  } catch {
+    /* same fail-open */
+  }
+}
+
+/**
  * Run one historian pass for a session. Returns the stored compartment, or
  * undefined when nothing was eligible. A run already in flight is JOINED —
  * the same eventual compartment, never a second concurrent call. Throws only
@@ -840,6 +913,28 @@ async function runHistorianExclusive(
     readonly forcedRange?: readonly SurfaceNode[]
   },
 ): Promise<Compartment | undefined> {
+  // #802: after a run that published nothing, automatic runs wait for a node
+  // newer than the failed span's end before paying for the span again.
+  // Manual paths (`forcedRange`) bypass the gate.
+  if (input.forcedRange === undefined) {
+    const noProgress = readHistorianNoProgress(deps.stores, input.sessionId)
+    const lastNode = input.nodes.length > 0 ? input.nodes[input.nodes.length - 1] : undefined
+    if (noProgress !== undefined && lastNode !== undefined && noProgress.endSeq >= lastNode.seq) {
+      deps.journal?.info(
+        'historian',
+        'historian auto-run skipped: the previous run published nothing and no newer message has arrived (#802)',
+        {
+          phase: 'no-progress-skip',
+          failedEndSeq: noProgress.endSeq,
+          lastSeq: lastNode.seq,
+          failedAt: noProgress.at,
+          kind: noProgress.kind,
+        },
+        input.sessionId,
+      )
+      return undefined
+    }
+  }
   const range = input.forcedRange !== undefined
     ? { nodes: input.forcedRange, tokens: input.forcedRange.reduce((total, node) => total + estimateTokens(node.text), 0) }
     : selectHistorianRange({
@@ -863,7 +958,9 @@ async function runHistorianExclusive(
   }
 
   const now = deps.now?.() ?? Date.now()
-  {
+  const first = range.nodes[0] as SurfaceNode
+  const last = range.nodes[range.nodes.length - 1] as SurfaceNode
+  try {
     const draft = await callHistorian(deps, {
       sessionId: input.sessionId,
       session: input.session,
@@ -879,14 +976,15 @@ async function runHistorianExclusive(
         : { systemSeq: input.nodes.find(node => node.role === 'system')?.seq as SessionSeq },
     })
     const baselineEpoch = deps.stores.baselineState(input.sessionId)?.epoch ?? 0
-    const first = range.nodes[0] as SurfaceNode
-    const last = range.nodes[range.nodes.length - 1] as SurfaceNode
     const compartment = deps.stores.allocateCompartment(input.sessionId, draft, {
       startSeq: first.seq,
       endSeq: last.seq,
       seqs: range.nodes.map(node => node.seq),
       tokens: range.tokens,
     }, baselineEpoch, now)
+    // #802: a stored compartment IS progress — release the watermark so the
+    // next automatic run is judged on its own merits.
+    clearHistorianNoProgress(deps.stores, input.sessionId)
     deps.logger.info(
       `magic-context historian: compartment §C${String(compartment.compartmentId)}§ stored `
         + `(${String(range.nodes.length)} nodes, ~${String(range.tokens)} tokens, importance ${String(draft.importance)})`,
@@ -945,6 +1043,15 @@ async function runHistorianExclusive(
       input.sessionId,
     )
     return compartment
+  } catch (error) {
+    // #802: nothing was published — the surface must grow past `last.seq`
+    // before the automatic lane pays for this span again.
+    writeHistorianNoProgress(deps.stores, input.sessionId, {
+      endSeq: last.seq,
+      at: deps.now?.() ?? Date.now(),
+      kind: classifyFailure(error),
+    })
+    throw error
   }
 }
 

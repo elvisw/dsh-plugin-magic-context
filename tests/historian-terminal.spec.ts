@@ -670,3 +670,110 @@ describe('historian terminal events (real agent loop)', () => {
     }
   })
 })
+
+/**
+ * #802 (upstream e9075bfec): a run that published nothing must not be paid for
+ * again over the same messages. The watermark is a store-meta kv entry keyed by
+ * session; an automatic run resumes only once a NEWER surface node exists, and
+ * a stored compartment releases the watermark.
+ */
+describe('#802: a run that published nothing waits for a newer message', () => {
+  // 2 × 2,000 chars ≈ 2 × 500 tokens: clears the trigger budget at a 10k
+  // window (500), with the protection/floor knobs opened so the automatic
+  // path is eligible at all.
+  const WIDE = 'z'.repeat(2_000)
+  const wideNodes = (count: number): SurfaceNode[] =>
+    Array.from({ length: count }, (_unused, index) => ({
+      seq: index + 1,
+      type: index === 0 ? 'user/message' : 'assistant/message',
+      role: index === 0 ? 'user' : 'assistant',
+      text: WIDE,
+      hasText: true,
+      isPlaceholder: false,
+      hasToolCalls: false,
+    })) as unknown as SurfaceNode[]
+
+  /** A session stub in the real event shapes, with `count` events. */
+  const stub = (count: number) => ({
+    snapshotEvents: () => Array.from({ length: count }, (_unused, index) => index === 0
+      ? { seq: 1, type: 'user/message', data: { id: 'msg-1', role: 'user', content: [{ type: 'text', text: WIDE }] } }
+      : { seq: index + 1, type: 'assistant/message', data: { message: { role: 'assistant', content: [{ type: 'text', text: WIDE }] } } }),
+  }) as unknown as Parameters<typeof runHistorian>[1]['session']
+
+  const policy = {
+    ...DEFAULT_POLICY,
+    historianProtectedNodes: 0,
+    historianMinNodes: 1,
+    historianMinBudgetTokens: 1,
+  }
+  const route = { provider: 'mock-historian', model: 'mock' }
+  const silent = { info: () => {}, warn: () => {} }
+
+  function withStore<T>(fn: (stores: ReturnType<typeof openStores>) => Promise<T>): Promise<T> {
+    const dataDir = mkdtempSync(join(tmpdir(), 'mc-historian-noprogress-'))
+    const stores = openStores(dataDir)
+    return fn(stores).finally(() => {
+      stores.close()
+      rmSync(dataDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 40 })
+    })
+  }
+
+  it('skips the same span after a failed run and resumes on a newer node', async () => {
+    await withStore(async (stores) => {
+      const calls: Call[] = []
+      const journal = recordingJournal(calls)
+
+      const failed = await runHistorian(
+        { stores, policy, llm: answerLlm('this is not the JSON contract').llm as HistorianLlm, logger: silent, journal, route },
+        { sessionId: SESSION, session: stub(2), nodes: wideNodes(2), contextWindow: 10_000 },
+      ).catch((cause: unknown) => cause)
+      expect(failed).toBeDefined()
+      expect(phases(calls)).toEqual(['start', 'failed'])
+      // Watermark: the failed span's own end (range nodes 1..2).
+      const raw = stores.getMeta(`historian_no_progress:${SESSION}`)
+      expect(raw).toBeDefined()
+      expect(JSON.parse(raw as string)).toMatchObject({ endSeq: 2 })
+
+      // Same messages → no second LLM call at all.
+      const second = answerLlm(digest())
+      const skipped = await runHistorian(
+        { stores, policy, llm: second.llm as HistorianLlm, logger: silent, journal, route },
+        { sessionId: SESSION, session: stub(2), nodes: wideNodes(2), contextWindow: 10_000 },
+      )
+      expect(skipped).toBeUndefined()
+      expect(second.calls).toHaveLength(0)
+      expect(phases(calls).at(-1)).toBe('no-progress-skip')
+
+      // A newer message arrives → the automatic lane resumes and stores.
+      const third = answerLlm(digest())
+      const compartment = await runHistorian(
+        { stores, policy, llm: third.llm as HistorianLlm, logger: silent, journal, route },
+        { sessionId: SESSION, session: stub(3), nodes: wideNodes(3), contextWindow: 10_000 },
+      )
+      expect(compartment).toBeDefined()
+      expect(third.calls.length).toBeGreaterThan(0)
+      // A stored compartment is progress: the watermark is released.
+      expect(stores.getMeta(`historian_no_progress:${SESSION}`)).toBe('')
+    })
+  })
+
+  it('manual (forcedRange) runs bypass the gate', async () => {
+    await withStore(async (stores) => {
+      const calls: Call[] = []
+      const journal = recordingJournal(calls)
+      await runHistorian(
+        { stores, policy, llm: answerLlm('nope').llm as HistorianLlm, logger: silent, journal, route },
+        { sessionId: SESSION, session: stub(2), nodes: wideNodes(2), contextWindow: 10_000 },
+      ).catch(() => undefined)
+      expect(stores.getMeta(`historian_no_progress:${SESSION}`)).toBeDefined()
+
+      const manual = answerLlm(digest())
+      const compartment = await runHistorian(
+        { stores, policy, llm: manual.llm as HistorianLlm, logger: silent, journal, route },
+        { sessionId: SESSION, session: stub(2), nodes: wideNodes(2), forcedRange: wideNodes(2) },
+      )
+      expect(compartment).toBeDefined()
+      expect(manual.calls).toHaveLength(1)
+    })
+  })
+})

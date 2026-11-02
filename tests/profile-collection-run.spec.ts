@@ -16,7 +16,12 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { openStores } from '../src/index.ts'
-import { runHistorian, type HistorianLlm } from '../src/dsh/historian.ts'
+import {
+  historianPromptText,
+  runHistorian,
+  USER_OBSERVATIONS_DISABLED_TOGGLE,
+  type HistorianLlm,
+} from '../src/dsh/historian.ts'
 import type { SurfaceNode } from '../src/dsh/seams.ts'
 import type { Journal, JournalKind, JournalLevel } from '../src/core/journal.ts'
 import { DEFAULT_POLICY } from '../src/core/policy.ts'
@@ -183,5 +188,59 @@ describe('runHistorian → the user-observation sink', () => {
       expect(called).toBe(0)
       expect(historianCalls(calls).some(call => call.data?.phase === 'profile-collect')).toBe(false)
     })
+  })
+})
+
+/**
+ * d02292d0d (v0.49 upstream): observations are requested only when a review
+ * lane will consume them. The toggle rides the per-call USER instruction, so
+ * the JSON contract bytes stay identical in every configuration.
+ */
+describe('user-observation production toggle', () => {
+  it('tells the model to skip observations when no sink is armed', async () => {
+    await withStores(async (stores) => {
+      const llm = answerLlm(digestWith([]))
+      const compartment = await runHistorian(
+        {
+          stores,
+          policy: DEFAULT_POLICY,
+          llm: llm.llm as HistorianLlm,
+          logger: { info: () => {}, warn: () => {} },
+          route: { provider: 'mock-historian', model: 'mock' },
+        },
+        { sessionId: SESSION, session: SESSION_STUB, nodes: NODES, forcedRange: NODES },
+      )
+      expect(compartment).toBeDefined()
+      expect(llm.calls).toHaveLength(1)
+      expect(llm.calls[0]!.text).toContain('<user_observation_extraction>disabled</user_observation_extraction>')
+      expect(llm.calls[0]!.text).toContain('return "userObservations": []')
+      // The JSON contract itself is untouched.
+      expect(llm.calls[0]!.text).toContain('"userObservations": ["..."]')
+    })
+  })
+
+  it('never says skip when the sink is armed', async () => {
+    await withStores(async (stores) => {
+      const llm = answerLlm(digestWith([]))
+      await runHistorian(
+        {
+          stores,
+          policy: DEFAULT_POLICY,
+          llm: llm.llm as HistorianLlm,
+          logger: { info: () => {}, warn: () => {} },
+          route: { provider: 'mock-historian', model: 'mock' },
+          profileCollect: () => ({ inserted: 0, skipped: 0 }),
+        },
+        { sessionId: SESSION, session: SESSION_STUB, nodes: NODES, forcedRange: NODES },
+      )
+      expect(llm.calls).toHaveLength(1)
+      expect(llm.calls[0]!.text).not.toContain('<user_observation_extraction>')
+    })
+  })
+
+  it('historianPromptText keeps its bytes unless explicitly toggled off', () => {
+    expect(historianPromptText()).toBe(historianPromptText(true))
+    expect(historianPromptText(true)).not.toContain('user_observation_extraction')
+    expect(historianPromptText(false)).toBe(`${historianPromptText(true)}\n\n${USER_OBSERVATIONS_DISABLED_TOGGLE}`)
   })
 })

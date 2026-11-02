@@ -190,3 +190,56 @@ describe('the token window protects the newest results', () => {
     expect(result.protectedTokens).toBeUndefined()
   })
 })
+
+/**
+ * #731 (upstream 7d393ae78, selection.rs `floor_above_ceiling`): when the
+ * fixed floor — everything that is NOT reclaimable tool output — alone busts
+ * the context window, dropping cannot make the request fit. The lane then
+ * refuses to fire and preserves the results (no fit ⇒ no drop ⇒ no retry).
+ */
+describe('#731: a reclaim that cannot fit preserves the tool results', () => {
+  // 8 × 400,000 chars ≈ 100,000 tok each. A 160k window leaves the 8k
+  // protection window no room, and the count floor is 0 — so all 8 nodes are
+  // reclaimable, 800,000 tokens in total.
+  const HUGE = 'x'.repeat(400_000)
+  function wide(): { session: never; enumerated: never[] } {
+    const specs: NodeSpec[] = Array.from({ length: 8 }, (_unused, index) => ({
+      seq: index + 1,
+      callId: `call-${String(index + 1)}`,
+      name: 'bash',
+      text: HUGE,
+    }))
+    const { session, resultSeqs } = fakeSession(specs)
+    const enumerated = enumerateSurfaceToolResults(session as never, callId => {
+      const index = Number(callId.slice('call-'.length))
+      return index
+    }).filter(node => resultSeqs.includes(node.seq))
+    return { session: session as never, enumerated: enumerated as never[] }
+  }
+  const policy = { ...POLICY, protectedToolResults: 0 }
+
+  it('skips the drop when the residual alone exceeds the window', () => {
+    const { session, enumerated } = wide()
+    // 1,000,000 − 800,000 = 200,000 residual > 160,000 window.
+    const result = reclaimForEmergency(session, enumerated, policy, 160_000, 1_000_000)
+    expect(result.skipped).toBe('cannot-fit')
+    expect(result.residualTokens).toBe(200_000)
+    expect(result.dropped).toEqual([])
+    expect(result.protectedCount).toBe(0)
+  })
+
+  it('still drops when the reclaim can make the request fit', () => {
+    const { session, enumerated } = wide()
+    // 900,000 − 800,000 = 100,000 residual ≤ 160,000 window.
+    const result = reclaimForEmergency(session, enumerated, policy, 160_000, 900_000)
+    expect(result.skipped).toBeUndefined()
+    expect(result.dropped.length).toBe(8)
+  })
+
+  it('keeps the legacy behavior without an estimate or without a window', () => {
+    const first = wide()
+    expect(reclaimForEmergency(first.session, first.enumerated, policy, 160_000).dropped.length).toBe(8)
+    const second = wide()
+    expect(reclaimForEmergency(second.session, second.enumerated, policy, undefined, 1_000_000).dropped.length).toBe(8)
+  })
+})
