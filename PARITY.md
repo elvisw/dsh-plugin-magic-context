@@ -3,12 +3,14 @@
 This document records the **effective-behavior contract** between the DSH adapter
 (`src/` in this repository) and the two upstream adapters — OpenCode 1/2
 (`packages/plugin`) and Pi (`packages/pi-plugin`). Comparison target as of
-2026-10-08 (host anchor refreshed to the 0.2.1-rc.1 desktop line on 2026-10-17):
+2026-10-30 (alignment re-verified to v0.49.30; host anchor refreshed to the
+0.2.1-rc.1 desktop line on 2026-10-17): see
+`docs/upstream-followup-2026-10-30.md` for the v0.46.0→v0.49.30 sweep.
 
 | Item | Value |
 |---|---|
-| Magic Context | **v0.46.0** (`v0.46.0-0-g651c105a9`, released 2026-10-08; the `dsh-base` ref) |
-| MC store contract | **schema v95** (`src/core/memory-bridge.ts:42`) |
+| Magic Context | **v0.49.30** (`v0.49.30-0-g47bcd71a2`, released 2026-10-29; the alignment core is unchanged since v0.46.0 — inject-compartments/storage-memory/workspaces/search/emergency-drop/agents all 0 commits) |
+| MC store contract | shape inherited at the v95 cutover, **own lineage since 2026-10-13** (`src/core/memory-bridge.ts:45`; `MEMORY_SCHEMA_MAX_VERSION = 95`) |
 | DeepSeek Harness | **Desktop 0.2.1-rc.1** (host paths below are relative to the DSH checkout) |
 | Adapter | `dsh-plugin-magic-context` 0.9.0, own store **schema v10** (`src/core/stores.ts`) |
 
@@ -49,6 +51,21 @@ with every refactor, the semantics behind them do not.
 - **Reduce guidance.** Desk section plus the dynamic reduce context, thresholds
   copied verbatim from MC (60k/25k floors, 20/40/60 % ladder, channel 2 at ≥75 %
   and ≥50k, sticky 5 turns) — upgrade guide §4, `src/dsh/reduce-guidance.ts`.
+- **Emergency fit guard (#731, upstream `selection.rs` `floor_above_ceiling`).**
+  The drop lane refuses to fire when the fixed floor alone busts the window:
+  `surfaceEstimate − reclaimableTokens > contextWindow` ⇒ `skipped:'cannot-fit'`,
+  results preserved, no retry (`src/dsh/emergency.ts`, both call sites pass the
+  whole-surface estimate).
+- **Historian no-progress gate (#802, upstream e9075bfec).** After an automatic
+  run that published nothing, the next automatic run waits until a surface node
+  NEWER than the failed span's end exists; manual/forced spans bypass. Watermark
+  is a store-meta kv entry (`historian_no_progress:<sessionId>`, own store — no
+  schema change), released by a stored compartment (`src/dsh/historian.ts`).
+- **User-observation production toggle (upstream d02292d0d).** Observations are
+  requested only when a profile-collect sink is armed; otherwise the per-call
+  USER instruction carries `<user_observation_extraction>disabled</...>` and
+  asks for `"userObservations": []`. The JSON contract bytes are unchanged
+  (`src/dsh/historian.ts`).
 
 ## B. Host-imposed mechanism differences
 

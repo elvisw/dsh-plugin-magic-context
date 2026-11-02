@@ -28,11 +28,11 @@
 
 | 项 | 值 | 变化时的影响 |
 |---|---|---|
-| MC 版本 | **v0.46.0**（tag `651c105a9`，2026-10-08 发布） | MC 升级 → 重新 clone 上游后按 §4 对齐命令 diff |
-| MC 存储契约 | **schema v95**（`MEMORY_SCHEMA_MAX_VERSION = 95`，`memory-bridge.ts`） | MC 迁移 >95 → fence 只读降级（见 §3.3） |
+| MC 版本 | **v0.49.30**（tag `47bcd71a2`，2026-10-29 发布；2026-10-30 完成 v0.46.0→v0.49.30 跟进，见 `docs/upstream-followup-2026-10-30.md`） | MC 升级 → `git -C .upstream/magic-context fetch --tags` 后按 §4 对齐命令 diff |
+| MC 存储契约 | 形状继承自 v95 停切点，**2026-10-13 起自有谱系**（`MEMORY_SCHEMA_MAX_VERSION = 95`，`memory-bridge.ts`） | 自有库新迁移 >95 → fence 只读降级（见 §3.3）；上游 schema 变化不再产生兼容义务 |
 | DSH Desktop | **0.2.1-rc.1**（packaged app，checkout `1600d8a1e`；2026-10-17 起） | DSH 升级 → 查 §3 接缝 |
-| 适配器自有库 | schema **v10**（adapter store，`stores.ts` SCHEMA_VERSION） | 适配器内部，自洽 |
-| 测试基线 | **`mc-test --quick` 全绿**（typecheck + 73 文件 / 761 测试，2026-10-17 实测）；`--full` 另含 build/acceptance/audit/records | 每次跟进的终验标准 |
+| 适配器自有库 | schema **v10**（adapter store，`stores.ts` SCHEMA_VERSION；#802 水位走 meta kv，无 schema 变更） | 适配器内部，自洽 |
+| 测试基线 | **`mc-test --quick` 全绿**（typecheck + 73 文件 / 770 测试，2026-10-30 实测）；`--full` 另含 build/acceptance/audit/records | 每次跟进的终验标准 |
 
 > **2026-10-17 复核（0.2.0-rc.2 → 0.2.1-rc.1）**：把 `@deepseek-ai/*` 映射到
 > rc.1 副本后 `tsc` **0 错**（确认真解析 169 个 rc.1 d.ts）；套件 761 例中 756 过，
@@ -205,6 +205,29 @@ git -C <上游 checkout> log v0.45.0..<NEW> --oneline -- \
 
 **下次复核的最短路径**：`dsh-track --check --fetch` → `git log --name-only v旧..v新 -- <§4 各行路径>`
 取"文件 → 提交数"表 → 只 diff 计数 > 0 的文件。
+
+## 7.2 上游跟进实战记录（v0.46.0 → v0.49.30，2026-10-30）
+
+完整分析见 **`docs/upstream-followup-2026-10-30.md`**（clone 保留在 `.upstream/magic-context`，
+下次 `git fetch --tags` 复用）。要点：
+
+- **区间**：1513 提交 / 34 tags（v0.46.1 … v0.49.30，2026-10-29）。
+- **对齐面核心 0 变动**：inject-compartments / storage-memory / workspaces / memory-search /
+  emergency-drop / agents-historian / cosine-similarity / reference-seeds 全部 0 提交且未改名；
+  **schema 仍 v95**；融合权重 0.7/0.3 未动 ⇒ fence、写契约、seeds 全部无动作。
+- **移植 3 项**（本次已实现，PARITY §A 有对应条目）：
+  1. #731 emergency fit 护栏（`emergency.ts` `skipped:'cannot-fit'`，两个调用方传全表面估算）；
+  2. #802 historian 无进展闸（`historian.ts` meta kv 水位 + `no-progress-skip`，
+     `forcedRange` 手动路径放行）；
+  3. user-observations 产出开关（profileCollect 未装备时 user prompt 注入
+     `<user_observation_extraction>disabled</...>`）。
+- **判定不移植**：#642（适配器 `planChunkSpans` 已有 tool-pairing）、#803（无 32-token 熔断）、
+  #815/#804 空白 drop-marker 剥离（依赖改写 wire 历史，DSH 表面 append-only，host-imposed）、
+  keep_reasoning_tokens / stall profiler / smart notes / OpenCode2 / Pi 宿主管线。
+- **可选特性记录**（未跟进）：ctx_search rerank、historian 模型链（#740）、
+  local-embedding-pooling 解析、auto-search worker。
+- **结论**：0.46→0.49 的功能面变化集中在宿主车道；适配器侧只做 3 个行为级补丁，全量套件
+  73 文件 / 770 用例绿。
 
 ## 8. 相关文档
 
