@@ -9,8 +9,9 @@ name: Release
 #   3. the version does not exist on the registry yet.
 #
 # Authentication: npm Trusted Publishing (OIDC), so no long-lived token lives in
-# the repository. The very first release used a one-off NPM_TOKEN secret, which
-# was removed as soon as the trusted publisher was linked on npmjs.com.
+# the repository. The very first release (0.10.0) used a one-off NPM_TOKEN
+# secret; it was deleted as soon as the trusted publisher was linked on
+# npmjs.com, and every later release publishes through OIDC.
 on:
   push:
     tags:
@@ -92,11 +93,10 @@ jobs:
       - name: Inspect the published artifact
         run: npm pack --dry-run
 
-      # Provenance is signed through the OIDC token above; OIDC Trusted
-      # Publishing is used when the npmjs.com trusted publisher is configured.
-      # TEMPORARY (first release only): token auth until the trusted publisher is
-      # linked. Remove the env block once the OIDC binding is in place.
+      # OIDC Trusted Publishing: the npmjs.com trusted publisher registered for
+      # this repository + this workflow file authorises the publish, and the
+      # id-token permission above signs the provenance attestation. No token
+      # secret is involved. Publishing through OIDC also validates the pending
+      # trusted-publisher configuration (it must complete once within 2 days).
       - name: Publish
         run: npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
