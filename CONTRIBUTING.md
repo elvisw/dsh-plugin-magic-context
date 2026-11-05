@@ -93,9 +93,10 @@ chore(deps): 升级 vitest
 4. 在 npm 页面确认新版本带 **provenance** 徽章，并用临时 DSH profile 冒烟：
    `dsh plugin --profile <tmp> add dsh-plugin-magic-context@x.y.z`。
 
-认证走 npm Trusted Publishing（OIDC），仓库里**不存长期 token**：首次发布用过一次性
-`NPM_TOKEN` secret，绑定 trusted publisher 后已删除。若仓库名或工作流文件名变化，需要在
-npmjs.com 的包设置里同步更新 Trusted Publisher 配置。
+认证走 npm Trusted Publishing（OIDC），目标是仓库里**不存长期 token**。0.10.0 首发布用了一次性
+`NPM_TOKEN` secret（npm 不支持为尚不存在的包预配置 trusted publisher，必须有包体才能绑定）；
+在 npmjs.com 的包设置里绑好 trusted publisher 并验证通过后，删除该 secret 并撤回首发布 token。
+若仓库名或工作流文件名变化，需要在 npmjs.com 的包设置里同步更新 Trusted Publisher 配置。
 
 ⚠️ tag 一旦推送就会自动发布，npm 上已发布的版本不能覆盖（24 小时内可 unpublish）。
 先让 `main` 的 CI 全绿，再打 tag。
