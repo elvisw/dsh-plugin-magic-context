@@ -10,6 +10,35 @@
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-11-05
+
+**首个 npm 制品版本。** 自 0.9.0 起的累积变更；从本版本开始，推送 `v*` tag 会由 GitHub Actions
+跑完整门禁并自动发布到 npm 注册表（带 provenance 签名，可在 npm 页面验证来源）。
+
+### Added
+
+- 上游跟进：紧急回收（emergency）的 fit 护栏——估算出的表面用量装不下时保留原结果、不再重试
+  （对齐上游 #731）
+- 上游跟进：historian 无进展闸——会话历史没有更新时自动档等待下一个更新节点，`forcedRange`
+  手动路径放行（对齐上游 #802）
+- 上游跟进：`userObservations` 产出开关——画像收集器未装备时向 prompt 注入明确的 disabled
+  说明，避免模型空转
+- 发布流水线：`.github/workflows/release.yml`（tag 推送 → 版本 / 分支 / 重复发布三道护栏 →
+  完整门禁 → `npm publish --provenance`）
+
+### Changed
+
+- **展示层命名统一**：全局域（原 machine）、工作域（原 org）的界面文案、路由选项、分类提示与
+  `ctx_memory` 工具描述统一为新名称；内部 token（kind 值、`dir:global:*` 身份、`suggested_domain`
+  列、classifier 词表）保持不变，历史记忆与 journal 零迁移
+- 依赖：`vitest` 4.1.12、`@types/node` 24.19.2 及传递依赖刷新；CI 的 actions 升到 v7，
+  dependabot 对 `@deepseek-ai/*` 宿主包与主版本升级改为人工处理
+
+### Fixed
+
+- reduce-guidance：nudge 记录的 turn 曾是硬编码 0，使同档位的粘性抑制间隔在 ≥5 轮会话里恒满足、
+  热会话会在每个 system prompt 组装时重发提醒；改为记录真实用户轮数
+
 ## [0.9.0] - 2026-10-20
 
 **首个公开发布。** 这是本适配器第一次以独立开源仓库的形式发布：此前它作为 magic-context 仓库的
@@ -48,5 +77,6 @@
 - 插件数据目录沿用上游命名空间（`~/.local/share/cortexkit/magic-context-dsh-poc/`）以保持出处
   连续，自 2026-10-13 起与上游 MC 数据库分家，插件自有 `memories.db` 无共享兼容义务。
 
-[Unreleased]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/wk544863858/dsh-plugin-magic-context/releases/tag/v0.9.0

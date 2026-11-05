@@ -83,6 +83,10 @@ dsh plugin --profile desktop add <git-url 或本仓库路径>
 安装做三件事：profile 里 `pnpm add`（本地路径用 `link:`）、把包名追加进 `dsh.profile.bundles`、
 由 loader 组合。**Desktop 带 HMR → 立即热生效**（无需重启，运行中的会话即刻开始打标签）。
 
+- **从 npm registry 安装**（无需本地构建；包内自带编译产物 `lib/` 与 `vendor/`）：
+  `dsh plugin --profile desktop add dsh-plugin-magic-context@0.10.0`。registry 版本由 tag 推送
+  自动发布（带 npm provenance 签名），发布流程见 [CONTRIBUTING](CONTRIBUTING.md) 的「发布」一节。
+
 - `peerDependencies` 里的 `@deepseek-ai/*` 全部声明为 `"*"`——兼容性预检对任何 DSH 0.2.x 放行；
   运行时真正 import 的宿主包同时列为**精确版本 dependencies**（随包解析，link: 开发安装由本仓
   自己的 node_modules 提供）。

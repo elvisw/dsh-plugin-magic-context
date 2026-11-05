@@ -34,7 +34,7 @@ npm install
 | 命令 | 作用 |
 |---|---|
 | `npm run typecheck` | `tsc --noEmit`，最便宜的一步，先跑它 |
-| `npm test` | `vitest run`，当前 73 个 spec 文件 / 761 个用例 |
+| `npm test` | `vitest run`，当前 73 个 spec 文件 / 770 个用例 |
 | `npm run test:watch` | vitest watch 模式，开发时用 |
 | `npm run build` | `tsc -p tsconfig.build.json` + `scripts/copy-client.mjs`，产出 `lib/` |
 | `npm run check:i18n` | 校验宿主 notice 文案与客户端中英文字典一致 |
@@ -80,6 +80,26 @@ chore(deps): 升级 vitest
 - journal / 日志样例必须脱敏后再贴进 issue 或测试 fixture。
 - 发现漏洞不要开公开 issue，走 [SECURITY.md](SECURITY.md) 的私密报告通道。
 
+## 发布（维护者）
+
+发布由 **tag 推送**触发，不需要也不应该手动跑 `npm publish`：`.github/workflows/release.yml`
+在 `v*` tag 上先过三道护栏（tag 名 == `package.json` 版本、tag 提交在 `main` 上、版本未发布过），
+再跑完整门禁并执行 `npm publish --provenance`。
+
+1. 在 `CHANGELOG.md` 里把 `[Unreleased]` 的内容整理成 `## [x.y.z] - YYYY-MM-DD`，并更新底部链接。
+2. 升版本并打 tag：`npm version minor -m "chore(release): %s"`（同时改 `package.json` 与
+   `package-lock.json`，生成提交与 annotated tag）。
+3. `git push --follow-tags`，等 Actions 里的 **Release** 工作流跑完。
+4. 在 npm 页面确认新版本带 **provenance** 徽章，并用临时 DSH profile 冒烟：
+   `dsh plugin --profile <tmp> add dsh-plugin-magic-context@x.y.z`。
+
+认证走 npm Trusted Publishing（OIDC），仓库里**不存长期 token**：首次发布用过一次性
+`NPM_TOKEN` secret，绑定 trusted publisher 后已删除。若仓库名或工作流文件名变化，需要在
+npmjs.com 的包设置里同步更新 Trusted Publisher 配置。
+
+⚠️ tag 一旦推送就会自动发布，npm 上已发布的版本不能覆盖（24 小时内可 unpublish）。
+先让 `main` 的 CI 全绿，再打 tag。
+
 ## PR 流程
 
 1. Fork 仓库并从 `main` 切分支（分支名说明意图，例如 `feat/historian-verify-mode`）。
@@ -100,7 +120,7 @@ Short version — the Chinese section above is authoritative.
 - **Prerequisites**: Node.js >= 22.19 (built-in `node:sqlite`; no native modules), **npm**
   (`package-lock.json` is canonical), DSH 0.2.x.
 - **Setup**: `git clone … && npm install`. Do not regenerate the lockfile with pnpm/yarn.
-- **Commands**: `npm run typecheck`, `npm test` (vitest, 73 specs / 761 tests),
+- **Commands**: `npm run typecheck`, `npm test` (vitest, 73 specs / 770 tests),
   `npm run build`, `npm run check:i18n`, and `npm run gate` for the full local gate.
   Run `gate` (or at least typecheck + test + build + check:i18n) before opening a PR.
 - **Conventions**:
@@ -111,6 +131,10 @@ Short version — the Chinese section above is authoritative.
   - Conventional Commits, English type + Chinese subject; keep diffs focused.
 - **PRs**: branch from `main`, fill the PR template, link the issue, keep CI green.
   DCO is not required; signed commits are welcome but not required.
+- **Releases** (maintainers): push a `v*` tag (`npm version minor -m "chore(release): %s"` then
+  `git push --follow-tags`). `.github/workflows/release.yml` validates the tag, runs the gate and
+  publishes with provenance through npm Trusted Publishing (OIDC). Never `npm publish` by hand;
+  keep `CHANGELOG.md` current before tagging.
 - **No secrets or personal data in commits** (keys, tokens, cookies, private conversation text,
   real memory DBs, absolute local paths). Report vulnerabilities privately — see [SECURITY.md](SECURITY.md).
 - **Contact**: GitHub Issues only (bug / feature templates). No email, Discord or Slack channel.

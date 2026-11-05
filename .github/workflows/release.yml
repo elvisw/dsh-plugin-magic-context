@@ -1,0 +1,102 @@
+name: Release
+
+# Tag-driven publish: pushing a `v*` tag runs the same gate as CI on the tagged
+# commit and then publishes the packed artifact to the npm registry.
+#
+# Guards, in order (all must pass before anything is published):
+#   1. the tag name equals the version in `package.json`,
+#   2. the tagged commit is an ancestor of `main`,
+#   3. the version does not exist on the registry yet.
+#
+# Authentication: npm Trusted Publishing (OIDC), so no long-lived token lives in
+# the repository. The very first release used a one-off NPM_TOKEN secret, which
+# was removed as soon as the trusted publisher was linked on npmjs.com.
+on:
+  push:
+    tags:
+      - "v*"
+
+# contents: read is all the checkout needs; id-token: write signs the provenance
+# attestation and authorises Trusted Publishing.
+permissions:
+  contents: read
+  id-token: write
+
+# Two publishes must never overlap; a tag push is not cancellable.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: publish to npm
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # the "tag is on main" guard needs main's history
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24.x
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      # Trusted Publishing requires npm >= 11.5.1; the runner's bundled npm may
+      # be older, so upgrade it before anything else touches the registry.
+      - name: Upgrade npm
+        run: npm install --global npm@latest && npm --version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify tag, branch and registry state
+        run: |
+          set -euo pipefail
+          name="$(node -p "require('./package.json').name")"
+          version="$(node -p "require('./package.json').version")"
+          tag="${GITHUB_REF_NAME#v}"
+          echo "package: $name@$version; tag: $GITHUB_REF_NAME"
+          if [ "$version" != "$tag" ]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match package.json version $version"
+            exit 1
+          fi
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::tagged commit $GITHUB_SHA is not on main"
+            exit 1
+          fi
+          if npm view "$name@$version" version >/dev/null 2>&1; then
+            echo "::error::$name@$version is already published"
+            exit 1
+          fi
+          echo "guards passed: $name@$version is ready to publish"
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Check i18n dictionaries
+        run: npm run check:i18n
+
+      # Show exactly what will be shipped. `lib/` is gitignored, so this also
+      # proves the build above produced the entry point the package promises.
+      - name: Inspect the published artifact
+        run: npm pack --dry-run
+
+      # Provenance is signed through the OIDC token above; OIDC Trusted
+      # Publishing is used when the npmjs.com trusted publisher is configured.
+      # TEMPORARY (first release only): token auth until the trusted publisher is
+      # linked. Remove the env block once the OIDC binding is in place.
+      - name: Publish
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
