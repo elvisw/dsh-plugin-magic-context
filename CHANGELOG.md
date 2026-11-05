@@ -10,6 +10,17 @@
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-11-05
+
+**发布链路切换。** 本版本没有运行时代码变更，内容是把 npm 发布认证从一次性 token 切换到
+npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布由 GitHub Actions 的 OIDC
+身份授权，provenance 签名保持不变（本版本即 trusted publisher 的首次验证发布）。
+
+### Changed
+
+- `.github/workflows/release.yml`：移除 `NODE_AUTH_TOKEN` 与 `NPM_TOKEN` secret 依赖，发布改由
+  OIDC 授权；npmjs.com 的 trusted publisher 绑定到本仓库的 `release.yml`
+
 ## [0.10.0] - 2026-11-05
 
 **首个 npm 制品版本。** 自 0.9.0 起的累积变更；从本版本开始，推送 `v*` tag 会由 GitHub Actions
@@ -77,6 +88,7 @@
 - 插件数据目录沿用上游命名空间（`~/.local/share/cortexkit/magic-context-dsh-poc/`）以保持出处
   连续，自 2026-10-13 起与上游 MC 数据库分家，插件自有 `memories.db` 无共享兼容义务。
 
-[Unreleased]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.10.1...HEAD
+[0.10.1]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/wk544863858/dsh-plugin-magic-context/releases/tag/v0.9.0
