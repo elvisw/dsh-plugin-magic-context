@@ -17,6 +17,7 @@
 import { describe, expect, it } from 'vitest'
 import mcDshPlugin, { Config, policyOf } from '../src/index.ts'
 import { DEFAULT_POLICY } from '../src/core/policy.ts'
+import { liveRoute } from '../src/dsh/volatile.ts'
 
 type Volatile = { get(): unknown }
 
@@ -87,5 +88,28 @@ describe('runtime Config schema', () => {
     expect(policyOf(undefined).executeThreshold).toBe(DEFAULT_POLICY.executeThreshold)
     expect(policyOf({ executeThreshold: { get: () => Number.NaN } as unknown as number }).executeThreshold)
       .toBe(DEFAULT_POLICY.executeThreshold)
+  })
+
+  it('declares the generation pin as a volatile pair, empty by default', () => {
+    const bare = Config({}) as unknown as Record<string, any>
+    // Materialised, unlike `memory`: an empty pair is inert, so declaring the
+    // block cannot switch anything on.
+    expect(bare.historian).toBeDefined()
+    expect((bare.historian.provider as Volatile).get()).toBe('')
+    expect((bare.historian.model as Volatile).get()).toBe('')
+    expect((bare.maintenance.verifyProvider as Volatile).get()).toBe('')
+    const pinned = Config({ historian: { provider: 'corp', model: 'flash' } }) as unknown as Record<string, any>
+    expect((pinned.historian.provider as Volatile).get()).toBe('corp')
+    expect((pinned.historian.model as Volatile).get()).toBe('flash')
+  })
+
+  it('liveRoute treats a half-filled pair as "no pin" and unwraps volatile refs', () => {
+    expect(liveRoute('p', 'm')).toEqual({ provider: 'p', model: 'm' })
+    expect(liveRoute({ get: () => 'p' }, { get: () => 'm' })).toEqual({ provider: 'p', model: 'm' })
+    // Nested references need recursive unwrapping (measured with verifyProvider).
+    expect(liveRoute({ get: () => ({ get: () => 'p' }) }, 'm')).toEqual({ provider: 'p', model: 'm' })
+    expect(liveRoute('p', '')).toBeUndefined()
+    expect(liveRoute('', 'm')).toBeUndefined()
+    expect(liveRoute(undefined, undefined)).toBeUndefined()
   })
 })

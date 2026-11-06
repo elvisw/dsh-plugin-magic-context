@@ -142,6 +142,43 @@ window.__ModuleLoader__.load({
      * ------------------------------------------------------------------ */
 
     /**
+     * The two route pins are PAIRS: a pin is active only when both halves are
+     * non-empty (the same rule on the host side — `maintenance-wiring.ts` for
+     * the verify lane, `liveRoute` for the generation lane), so the card stages
+     * and saves each pair as one unit.
+     */
+    const ROUTES = [
+      {
+        id: 'maintenance',
+        providerPath: ['maintenance', 'verifyProvider'],
+        modelPath: ['maintenance', 'verifyModel'],
+      },
+      {
+        id: 'historian',
+        providerPath: ['historian', 'provider'],
+        modelPath: ['historian', 'model'],
+      },
+    ]
+
+    /**
+     * The writes for one pin pair: both halves set → both written; either half
+     * empty → BOTH cleared ("Auto" = follow the session route). Pure, so the
+     * node-side spec can pin the pair semantics without React.
+     */
+    function routePairOps(providerText, modelText, providerPath, modelPath) {
+      if (providerText === '' || modelText === '') {
+        return [
+          { op: 'unset', path: providerPath.slice() },
+          { op: 'unset', path: modelPath.slice() },
+        ]
+      }
+      return [
+        { op: 'set', path: providerPath.slice(), value: providerText },
+        { op: 'set', path: modelPath.slice(), value: modelText },
+      ]
+    }
+
+    /**
      * One leaf the card edits.
      *
      * `path` is the path inside the settings namespace section (`policy` is a
@@ -210,6 +247,22 @@ window.__ModuleLoader__.load({
         hint: 'Register the adapter as the compaction engine seam. Mounts or unmounts on the next agent step — disable the host compaction row first.',
       },
       {
+        path: ROUTES[0].providerPath, kind: 'route-provider', routeId: 'maintenance', label: 'Verify provider',
+        hint: 'Provider for the maintenance verify lane. “Auto” leaves the pin off and follows the session route.',
+      },
+      {
+        path: ROUTES[0].modelPath, kind: 'route-model', routeId: 'maintenance', label: 'Verify model',
+        hint: 'Model for the maintenance verify lane. Set both provider and model to pin; “Auto” follows the session route.',
+      },
+      {
+        path: ROUTES[1].providerPath, kind: 'route-provider', routeId: 'historian', label: 'Historian provider',
+        hint: 'Provider for the historian and /compact summaries. “Auto” follows the session route (recommended).',
+      },
+      {
+        path: ROUTES[1].modelPath, kind: 'route-model', routeId: 'historian', label: 'Historian model',
+        hint: 'Model for the historian and /compact summaries. Set both halves to pin; “Auto” follows the session route.',
+      },
+      {
         path: ['journal', 'enabled'], kind: 'boolean', label: 'Journal enabled',
         hint: 'Record adapter activity. Turning off applies immediately; turning on from an off start needs an app restart.',
       },
@@ -254,6 +307,11 @@ window.__ModuleLoader__.load({
       return typeof value === 'number' && Number.isFinite(value) ? String(value) : ''
     }
 
+    /** Render a text field's stored value as draft text (empty when absent). */
+    function formatText(value) {
+      return typeof value === 'string' ? value : ''
+    }
+
     /**
      * Convert draft text into the write the field stages.
      * @returns `{ kind: 'clear' }`, `{ kind: 'set', value }`, or `undefined` for
@@ -277,6 +335,130 @@ window.__ModuleLoader__.load({
     }
 
     /**
+     * One shared read of the host model catalog (`remote.session.modelCatalog()`) —
+     * the provider/model directory the composer's model picker renders from.
+     * The card reads it so the maintenance verify pin can be PICKED from the
+     * models the profile actually configured instead of typed from memory.
+     *
+     * Read-only and optional: a deployment whose client shell exposes no
+     * catalog (or no `remote.session` namespace) leaves the card on plain text
+     * inputs. Shape: `{ status, groups: [{ id, models: [{ id, name }] }], error }`.
+     */
+    function createModelCatalog() {
+      const listeners = new Set()
+      let state = { status: 'idle', groups: [], error: null }
+      let remoteCtx
+      let inflight
+
+      const emit = () => {
+        for (const listener of listeners) {
+          try {
+            listener()
+          } catch (error) {
+            /* a subscriber must never break the card */
+          }
+        }
+      }
+      const set = (next) => {
+        state = next
+        emit()
+      }
+
+      const load = () => {
+        if (remoteCtx === undefined
+          || remoteCtx.remote === undefined
+          || remoteCtx.remote.session === undefined
+          || typeof remoteCtx.remote.session.modelCatalog !== 'function') {
+          return Promise.resolve()
+        }
+        if (inflight !== undefined) return inflight
+        if (state.status === 'ready') return Promise.resolve()
+        set({ status: 'loading', groups: state.groups, error: null })
+        inflight = Promise.resolve(remoteCtx.remote.session.modelCatalog()).then(
+          (response) => {
+            if (response === null || typeof response !== 'object' || response.ok !== true) {
+              const detail = response !== null && typeof response === 'object' && response.error !== undefined
+                && typeof response.error === 'object' && typeof response.error.message === 'string'
+                ? response.error.message
+                : 'model catalog unavailable'
+              set({ status: 'error', groups: [], error: detail })
+              return
+            }
+            const groups = []
+            for (const group of response.value.groups ?? []) {
+              if (group === null || typeof group !== 'object') continue
+              if (typeof group.id !== 'string' || group.id === '') continue
+              const models = []
+              for (const model of group.models ?? []) {
+                if (model === null || typeof model !== 'object') continue
+                if (typeof model.id !== 'string' || model.id === '') continue
+                models.push({
+                  id: model.id,
+                  name: typeof model.name === 'string' && model.name !== '' ? model.name : model.id,
+                })
+              }
+              groups.push({ id: group.id, models })
+            }
+            set({ status: 'ready', groups, error: null })
+          },
+          (error) => {
+            set({ status: 'error', groups: [], error: error instanceof Error ? error.message : String(error) })
+          },
+        ).finally(() => {
+          inflight = undefined
+        })
+        return inflight
+      }
+
+      const refresh = () => {
+        if (state.status === 'ready') set({ status: 'idle', groups: state.groups, error: null })
+        load()
+      }
+
+      return {
+        /** Bind the client context that can reach `remote.session`. */
+        attach(context) {
+          remoteCtx = context
+          if (context.remote === undefined
+            || typeof context.remote.$on !== 'function'
+            || context.remote.session === undefined) {
+            return
+          }
+          context.effect(() => {
+            const disposers = [
+              context.remote.$on('llm/models-updated', () => refresh()),
+              context.on('connection/reset', () => refresh()),
+            ]
+            return () => {
+              for (const dispose of disposers) dispose()
+            }
+          }, 'magic-context: model catalog')
+          load()
+        },
+        getSnapshot: () => state,
+        subscribe(listener) {
+          listeners.add(listener)
+          return () => {
+            listeners.delete(listener)
+          }
+        },
+        load,
+      }
+    }
+
+    /** Subscribe one card to the catalog; loads on first render when attached. */
+    function useModelCatalog(catalog) {
+      const [state, setState] = useState(catalog.getSnapshot())
+      useEffect(() => {
+        setState(catalog.getSnapshot())
+        const off = catalog.subscribe(() => setState(catalog.getSnapshot()))
+        catalog.load()
+        return off
+      }, [catalog])
+      return state
+    }
+
+    /**
      * Build the Plugins page card bound to the shared configuration form of the
      * `magic-context-dsh` namespace.
      *
@@ -287,14 +469,17 @@ window.__ModuleLoader__.load({
      * `policy`/`journal`.
      *
      * @param scope - the `ConfigForm` for the namespace (`ctx.configForms.get`).
+     * @param catalog - the shared model catalog (see {@link createModelCatalog});
+     *   absent data falls back to plain text for the verify pin.
      * @returns the React component the two configuration seats register.
      */
-    function makeCard(scope) {
+    function makeCard(scope, catalog) {
       return function MagicContextCard(props) {
         const [, setRevision] = useState(0)
         const drafts = useRef(new Map())
         const [saving, setSaving] = useState(false)
         const [failed, setFailed] = useState(false)
+        const catalogState = useModelCatalog(catalog)
 
         useEffect(() => scope.subscribe(() => setRevision((value) => value + 1)), [scope])
 
@@ -308,8 +493,14 @@ window.__ModuleLoader__.load({
           const force = formatNumber(readPath(snapshot.value, ['policy', 'forceThreshold']))
           const historian = asBool(readPath(snapshot.value, ['historianEnabled']))
           if (snapshot.status !== 'ready') return 'Magic Context adapter settings'
+          const pinnedRoutes = ROUTES.flatMap((route) => {
+            const provider = formatText(readPath(snapshot.value, route.providerPath))
+            const model = formatText(readPath(snapshot.value, route.modelPath))
+            if (provider === '' || model === '') return []
+            return [' · ' + (route.id === 'maintenance' ? 'verify ' : 'gen ') + provider + '/' + model]
+          })
           return 'execute ' + (execute || '—') + '% · force ' + (force || '—') + '% · historian '
-            + (historian ? 'on' : 'off')
+            + (historian ? 'on' : 'off') + pinnedRoutes.join('')
         }
 
         /** Stage one field's draft and re-render. */
@@ -342,15 +533,159 @@ window.__ModuleLoader__.load({
               overridden: draft === undefined ? stored : (draft.clear ? false : value !== asBool(baseValue)),
             }
           }
+          if (spec.kind === 'number') {
+            const text = draft === undefined
+              ? formatNumber(sectionValue)
+              : (draft.clear ? formatNumber(baseValue) : draft.text)
+            const write = draft === undefined || draft.clear ? undefined : parseNumberText(draft.text)
+            return {
+              text,
+              invalid: draft !== undefined && !draft.clear && write === undefined,
+              overridden: draft === undefined ? stored : (draft.clear ? false : write !== undefined),
+            }
+          }
+          // Text leaves (the verify pin): a non-number value is never invalid.
           const text = draft === undefined
-            ? formatNumber(sectionValue)
-            : (draft.clear ? formatNumber(baseValue) : draft.text)
-          const write = draft === undefined || draft.clear ? undefined : parseNumberText(draft.text)
+            ? formatText(sectionValue)
+            : (draft.clear ? formatText(baseValue) : draft.text)
           return {
             text,
-            invalid: draft !== undefined && !draft.clear && write === undefined,
-            overridden: draft === undefined ? stored : (draft.clear ? false : write !== undefined),
+            invalid: false,
+            overridden: draft === undefined ? stored : (draft.clear ? false : text !== formatText(baseValue)),
           }
+        }
+
+        /**
+         * The route pins, resolved once per render. Each pin is a PAIR (both
+         * halves non-empty — the host rule), so the card treats it as one unit:
+         * one save writes or clears the pair, and a provider switch drops a
+         * model that does not belong to the new provider.
+         */
+        const routes = ROUTES.map((route) => {
+          const providerSpec = FIELDS.find((spec) => spec.routeId === route.id && spec.kind === 'route-provider')
+          const modelSpec = FIELDS.find((spec) => spec.routeId === route.id && spec.kind === 'route-model')
+          return {
+            ...route,
+            providerSpec,
+            modelSpec,
+            providerText: view(providerSpec).text,
+            modelText: view(modelSpec).text,
+          }
+        })
+        const routeOf = (spec) => routes.find((route) => route.id === spec.routeId)
+        const catalogReady = catalogState.status === 'ready' && catalogState.groups.length > 0
+        const catalogGroups = catalogReady ? catalogState.groups : []
+        /** Models the catalog advertises for one provider. */
+        const modelsOf = (providerId) => {
+          if (providerId === '') return []
+          const group = catalogGroups.find((candidate) => candidate.id === providerId)
+          return group === undefined ? [] : group.models
+        }
+
+        /** Stage one side of a pin; a provider switch drops a stale model. */
+        const stageRoute = (spec, value) => {
+          const route = routeOf(spec)
+          const textValue = value === undefined || value === null ? '' : String(value)
+          stage(fieldKey(spec.path), textValue === '' ? { clear: true } : { clear: false, text: textValue })
+          if (spec.kind !== 'route-provider') return
+          // Only a catalog-backed switch knows the new provider's models; the
+          // text fallback (no catalog) must never wipe a hand-typed model.
+          if (!catalogReady) return
+          const currentModel = view(route.modelSpec).text
+          if (currentModel !== '' && !modelsOf(textValue).some((model) => model.id === currentModel)) {
+            stage(fieldKey(route.modelSpec.path), { clear: true })
+          }
+        }
+
+        /**
+         * One route field: a catalog-backed select when the host serves the
+         * model directory, plain text otherwise (the manual fallback).
+         */
+        const renderRouteField = (spec, state, usePrimitives) => {
+          const route = routeOf(spec)
+          const id = 'mc-field-' + fieldKey(spec.path)
+          const isProvider = spec.kind === 'route-provider'
+          const providerText = route.providerText
+          const currentText = isProvider ? providerText : route.modelText
+          const disabled = !shell.writable || (!isProvider && catalogReady && providerText === '')
+          if (catalogReady) {
+            const options = []
+            if (isProvider) {
+              options.push({ value: '', label: 'Auto — follow the session route' })
+              for (const group of catalogGroups) options.push({ value: group.id, label: group.id })
+            } else {
+              options.push({
+                value: '',
+                label: providerText === ''
+                  ? 'Auto — pick a provider first'
+                  : 'Auto — follow the session route',
+              })
+              for (const model of modelsOf(providerText)) {
+                options.push({
+                  value: model.id,
+                  label: model.name === model.id ? model.id : model.name + ' (' + model.id + ')',
+                })
+              }
+            }
+            if (currentText !== '' && !options.some((option) => option.value === currentText)) {
+              options.push({ value: currentText, label: currentText + ' (not in catalog)' })
+            }
+            return el('div', { key: id, style: { display: 'grid', gap: 4, margin: '8px 0' } }, [
+              el('span', { key: 'label', style: { fontSize: 12 } }, spec.label),
+              el('select', {
+                key: 'select',
+                id,
+                value: currentText,
+                disabled,
+                onChange: (event) => stageRoute(spec, event.target.value),
+                style: {
+                  width: '100%',
+                  maxWidth: 520,
+                  boxSizing: 'border-box',
+                  height: 32,
+                  padding: '0 8px',
+                  borderRadius: 'var(--dsw-radius-sm, 6px)',
+                  border: '1px solid var(--dsw-alias-border-secondary, rgba(127,127,127,.35))',
+                  background: 'var(--dsw-alias-bg-layer-3, transparent)',
+                  color: 'var(--dsw-alias-label-primary, inherit)',
+                  font: 'inherit',
+                  fontSize: 12.5,
+                },
+              }, options.map((option) => el('option', { key: option.value, value: option.value }, option.label))),
+              el('span', { key: 'hint', style: { fontSize: 11, opacity: 0.6 } }, spec.hint),
+            ])
+          }
+          if (usePrimitives && SettingsValueField !== undefined) {
+            return el(SettingsValueField, {
+              key: id,
+              id,
+              label: spec.label,
+              hint: spec.hint,
+              numeric: false,
+              text: state.text,
+              overridden: state.overridden,
+              invalid: false,
+              overriddenLabel: 'Modified',
+              resetLabel: 'Reset',
+              invalidLabel: 'Invalid',
+              disabled: !shell.writable,
+              onEdit: (text) => stageRoute(spec, text),
+              onReset: () => stage(fieldKey(spec.path), { clear: true }),
+            })
+          }
+          return el('div', { key: id, style: { margin: '8px 0' } }, [
+            el('span', { key: 'label', style: { display: 'block', fontSize: 12 } }, spec.label),
+            el('input', {
+              key: 'input',
+              id,
+              type: 'text',
+              value: state.text,
+              placeholder: isProvider ? 'provider id' : 'model id',
+              disabled: !shell.writable,
+              onChange: (event) => stageRoute(spec, event.target.value),
+            }),
+            el('span', { key: 'hint', style: { display: 'block', fontSize: 11, opacity: 0.6 } }, spec.hint),
+          ])
         }
 
         /**
@@ -362,6 +697,8 @@ window.__ModuleLoader__.load({
           const ops = []
           let blocked = false
           for (const spec of FIELDS) {
+            // The route pairs are coupled and planned below.
+            if (spec.kind === 'route-provider' || spec.kind === 'route-model') continue
             const draft = staged.get(fieldKey(spec.path))
             if (draft === undefined) continue
             if (draft.clear) {
@@ -379,6 +716,26 @@ window.__ModuleLoader__.load({
             }
             if (write.kind === 'clear') ops.push({ op: 'unset', path: spec.path.slice() })
             else ops.push({ op: 'set', path: spec.path.slice(), value: write.value })
+          }
+          for (const route of routes) {
+            const providerStaged = staged.get(fieldKey(route.providerPath))
+            const modelStaged = staged.get(fieldKey(route.modelPath))
+            if (providerStaged === undefined && modelStaged === undefined) continue
+            // The final text of one side: draft → base → empty ("Auto").
+            const finalText = (path) => {
+              const draft = staged.get(fieldKey(path))
+              if (draft === undefined) return formatText(readPath(snapshot.value, path)).trim()
+              if (draft.clear) return ''
+              return String(draft.text ?? '').trim()
+            }
+            // "Auto" (or a half-filled pin, which the host cannot activate) is
+            // written as BOTH paths unset, so the profile stays unambiguous.
+            ops.push(...routePairOps(
+              finalText(route.providerPath),
+              finalText(route.modelPath),
+              route.providerPath,
+              route.modelPath,
+            ))
           }
           return { ops, blocked }
         }
@@ -428,6 +785,9 @@ window.__ModuleLoader__.load({
                 }),
                 el('label', { key: 'label', htmlFor: id, style: { marginLeft: 6, fontSize: 12 } }, spec.label),
               ])
+            }
+            if (spec.kind === 'route-provider' || spec.kind === 'route-model') {
+              return renderRouteField(spec, state, false)
             }
             return el('div', { key: id, style: { margin: '6px 0' } }, [
               el('label', { key: 'label', htmlFor: id, style: { display: 'block', fontSize: 12 } }, spec.label),
@@ -485,6 +845,9 @@ window.__ModuleLoader__.load({
                 }, 'Reset')
                 : null,
             ])
+          }
+          if (spec.kind === 'route-provider' || spec.kind === 'route-model') {
+            return renderRouteField(spec, state, true)
           }
           return el(SettingsValueField, {
             key: id,
@@ -1780,9 +2143,16 @@ window.__ModuleLoader__.load({
         }
       }, 'magic-context: telemetry badge')
 
+      // The model catalog is optional: without `remote.session` (or its
+      // `modelCatalog` RPC) the card stays on plain text for the verify pin.
+      const catalog = createModelCatalog()
+      ctx.inject(['remote', 'remote.session'], (remoteCtx) => {
+        catalog.attach(remoteCtx)
+      })
+
       ctx.inject(['configForms'], (settingsCtx) => {
         const scope = settingsCtx.configForms.get(CFG_NS)
-        const Card = makeCard(scope)
+        const Card = makeCard(scope, catalog)
         settingsCtx.effect(() => settingsCtx.configForms.whileServed([CFG_NS], () => {
           const offItem = ctx.slots.inject('plugins.item', () => ctx.slots.register({
             name: 'plugins.item',
@@ -1822,6 +2192,10 @@ window.__ModuleLoader__.load({
         // already drifted (`maintain` was missing) and the records-check script
         // crashed on it instead of reporting a category it did not know.
         recordCategories: RECORD_CATEGORIES,
+        /** The verify-pin picker reads the host model catalog; pinned on node. */
+        createModelCatalog,
+        /** The pin-pair write semantics (pure; pinned by the client spec). */
+        routePairOps,
         // The number/text formatters are the panel's display contract; the
         // node-side spec pins them so a formatting regression (the scope bug
         // that briefly unmounted the pill) cannot come back silently.

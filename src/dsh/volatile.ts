@@ -43,6 +43,25 @@ export function liveBoolean(value: unknown, fallback: boolean): boolean {
 }
 
 /**
+ * Read a provider/model route pin live.
+ *
+ * A pin is only a pin when BOTH halves are non-empty (the same rule the host
+ * applies to the maintenance route): a half-filled pair would otherwise be
+ * passed to the historian as a route and fail the run with "no configured
+ * model". `undefined` means "follow the session route".
+ */
+export function liveRoute(
+  provider: unknown,
+  model: unknown,
+): { provider: string; model: string } | undefined {
+  const providerValue = typeof provider === 'string' ? provider : liveString(provider, '')
+  const modelValue = typeof model === 'string' ? model : liveString(model, '')
+  return providerValue.length > 0 && modelValue.length > 0
+    ? { provider: providerValue, model: modelValue }
+    : undefined
+}
+
+/**
  * The effective pressure policy, evaluated AT THE DECISION POINT.
  *
  * This is what makes a settings-form edit take effect without a restart: the

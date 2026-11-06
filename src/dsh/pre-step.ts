@@ -45,7 +45,7 @@ import { appendSessionNotice } from './session-notice.ts'
 import { detectProjectDrift } from './project-drift.ts'
 import type { MagicContextDshConfig } from './config.ts'
 import type { MemoryLane } from './memory-lane.ts'
-import { liveBoolean } from './volatile.ts'
+import { liveBoolean, liveRoute } from './volatile.ts'
 import { planSearchHint, type SearchHintTracker } from './search-hint.ts'
 
 /** Identities shared by the preStep, the maintenance sweep and the panel. */
@@ -462,6 +462,9 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
             sessionId,
           )
         }
+        // The generation pin is a live settings-form field: re-read it every
+        // pass, and treat a half-filled pair as "follow the session route".
+        const generationRoute = liveRoute(config.historian?.provider, config.historian?.model)
         const outcome = runManagementPass({
           session: payload.agent.session,
           sessionId,
@@ -480,7 +483,7 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
             : {
               historian: {
                 llm,
-                ...config.historian === undefined ? {} : { route: config.historian },
+                ...generationRoute === undefined ? {} : { route: generationRoute },
               },
             },
           ...memoryRecall === undefined

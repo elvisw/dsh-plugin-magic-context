@@ -238,6 +238,82 @@ describe('recompactCompartments', () => {
     }
   })
 
+  it('prefers the LIVE generation pin over the mount-time snapshot', async () => {
+    const dataDir = tempDir('mc-recomp-live-route-')
+    const stores = openStores(dataDir)
+    const sessionId = 'session-recomp-live-route'
+    try {
+      const created = stores.allocateCompartment(
+        sessionId,
+        oldDraft(),
+        { startSeq: 1, endSeq: 3, seqs: [1, 2, 3], tokens: 30 },
+        1,
+        Date.now(),
+      )
+      stores.markCompartmentLanded(sessionId, created.compartmentId, 99)
+      const fake = scriptLlm([DIGEST])
+      await recompactCompartments(
+        {
+          stores,
+          policy: DEFAULT_POLICY,
+          logger: noopLogger,
+          llm: fake.llm,
+          route: { provider: 'snapshot', model: 'snapshot' },
+          // The settings-form value changed after mount: this invocation must
+          // use the live pair, not the snapshot captured at registration.
+          activeRoute: () => ({ provider: 'live', model: 'live' }),
+        },
+        {
+          sessionId,
+          session: stubSession(sessionId),
+          contextWindow: 100_000,
+          targets: selectRecompTargets(stores, sessionId, { kind: 'all' }),
+        },
+      )
+      expect(fake.calls[0]?.model).toBe('live')
+      expect((fake.calls[0]?.request as { provider?: string }).provider).toBe('live')
+    } finally {
+      stores.close()
+    }
+  })
+
+  it('falls back to the static route when the live resolver reports no pin', async () => {
+    const dataDir = tempDir('mc-recomp-follow-session-')
+    const stores = openStores(dataDir)
+    const sessionId = 'session-recomp-follow-session'
+    try {
+      const created = stores.allocateCompartment(
+        sessionId,
+        oldDraft(),
+        { startSeq: 1, endSeq: 3, seqs: [1, 2, 3], tokens: 30 },
+        1,
+        Date.now(),
+      )
+      stores.markCompartmentLanded(sessionId, created.compartmentId, 99)
+      const fake = scriptLlm([DIGEST])
+      const outcome = await recompactCompartments(
+        {
+          stores,
+          policy: DEFAULT_POLICY,
+          logger: noopLogger,
+          llm: fake.llm,
+          route: { provider: 'snapshot', model: 'snapshot' },
+          activeRoute: () => undefined,
+        },
+        {
+          sessionId,
+          session: stubSession(sessionId),
+          contextWindow: 100_000,
+          targets: selectRecompTargets(stores, sessionId, { kind: 'all' }),
+        },
+      )
+      expect(outcome.recompacted).toEqual([created.compartmentId])
+      expect(fake.calls[0]?.model).toBe('snapshot')
+    } finally {
+      stores.close()
+    }
+  })
+
   it('selects the newest landed compartments for last:<n>', () => {
     const dataDir = tempDir('mc-recomp-last-')
     const stores = openStores(dataDir)

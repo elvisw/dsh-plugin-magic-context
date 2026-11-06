@@ -44,6 +44,22 @@ const api = factory((name) => {
     recordsOf: (rows: readonly unknown[]) => Array<{ category: string; text: string; detail: string; count: number }>
     recordCategories: Record<string, { icon: string; labelKey: string; tone: string }>
     dictionaryKeys: () => { zh: string[]; en: string[] }
+    createModelCatalog: () => {
+      attach: (context: unknown) => void
+      getSnapshot: () => {
+        status: string
+        groups: Array<{ id: string; models: Array<{ id: string; name: string }> }>
+        error: string | null
+      }
+      subscribe: (listener: () => void) => () => void
+      load: () => Promise<void>
+    }
+    routePairOps: (
+      providerText: string,
+      modelText: string,
+      providerPath: string[],
+      modelPath: string[],
+    ) => Array<{ op: string; path: string[]; value?: string }>
   }
 }
 
@@ -266,5 +282,163 @@ describe('countRecentErrors — the pill answers "is anything wrong NOW"', () =>
     ], now)).toBe(0)
     expect(countRecentErrors(undefined as unknown as readonly unknown[], now)).toBe(0)
     expect(countRecentErrors('nope' as unknown as readonly unknown[], now)).toBe(0)
+  })
+})
+
+/**
+ * The maintenance verify picker reads the host model catalog
+ * (`remote.session.modelCatalog()`) — the only durable source of the
+ * provider/model pairs the profile configured. Two failure modes are pinned:
+ * a broken catalog must leave the fields usable (plain text), and a missing
+ * catalog RPC must never throw on the card.
+ */
+describe('createModelCatalog — the verify-pin picker source', () => {
+  const READY = {
+    ok: true,
+    value: {
+      groups: [
+        { id: 'corp-a', models: [{ id: 'fast', name: 'Fast' }, { id: 'deep' }] },
+        { id: 'corp-b', models: [{ id: 'tiny', name: 'Tiny' }] },
+      ],
+    },
+  }
+  /** Let the load/refresh promise chain settle without a timer. */
+  const settle = async () => {
+    for (let index = 0; index < 6; index += 1) await Promise.resolve()
+  }
+  interface StubContext {
+    remote: {
+      session: { modelCatalog: () => Promise<unknown> }
+      $on: (event: string, handler: () => void) => () => void
+    }
+    on: (event: string, handler: () => void) => () => void
+    effect: (factory: () => () => void) => () => void
+    fire: (event: string) => void
+    calls: () => number
+  }
+  const stubContext = (responses: unknown[]): StubContext => {
+    let calls = 0
+    const handlers = new Map<string, () => void>()
+    return {
+      remote: {
+        session: { modelCatalog: () => Promise.resolve(responses[Math.min(calls++, responses.length - 1)]) },
+        $on: (event, handler) => {
+          handlers.set(event, handler)
+          return () => { handlers.delete(event) }
+        },
+      },
+      on: (event, handler) => {
+        handlers.set('ctx:' + event, handler)
+        return () => { handlers.delete('ctx:' + event) }
+      },
+      effect: (factory) => factory(),
+      fire: (event) => { handlers.get(event)?.() },
+      calls: () => calls,
+    }
+  }
+  const catalogFrom = () => api.__diagnostics.createModelCatalog()
+
+  it('loads the configured providers and models in host order', async () => {
+    const catalog = catalogFrom()
+    catalog.attach(stubContext([READY]))
+    await settle()
+    const state = catalog.getSnapshot()
+    expect(state.status).toBe('ready')
+    expect(state.groups.map((group) => group.id)).toEqual(['corp-a', 'corp-b'])
+    expect(state.groups[0]?.models.map((model) => model.id)).toEqual(['fast', 'deep'])
+    // A model without a display name falls back to its id.
+    expect(state.groups[0]?.models[1]?.name).toBe('deep')
+  })
+
+  it('keeps the fields usable when the host answers with an error', async () => {
+    const catalog = catalogFrom()
+    catalog.attach(stubContext([{ ok: false, error: { message: 'catalog unavailable' } }]))
+    await settle()
+    const state = catalog.getSnapshot()
+    expect(state.status).toBe('error')
+    expect(state.error).toBe('catalog unavailable')
+    expect(state.groups).toEqual([])
+  })
+
+  it('stays on plain text (idle, no throw) when the shell exposes no catalog', () => {
+    const catalog = catalogFrom()
+    expect(() => catalog.attach({ effect: () => () => {} })).not.toThrow()
+    expect(catalog.getSnapshot().status).toBe('idle')
+  })
+
+  it('re-reads on llm/models-updated, so a provider edit reaches the picker', async () => {
+    const next = {
+      ok: true,
+      value: { groups: [{ id: 'corp-c', models: [{ id: 'new-model', name: 'New' }] }] },
+    }
+    const context = stubContext([READY, next])
+    const catalog = catalogFrom()
+    let notifications = 0
+    const off = catalog.subscribe(() => { notifications += 1 })
+    catalog.attach(context)
+    await settle()
+    expect(catalog.getSnapshot().groups[0]?.id).toBe('corp-a')
+    context.fire('llm/models-updated')
+    await settle()
+    expect(catalog.getSnapshot().groups[0]?.id).toBe('corp-c')
+    expect(notifications).toBeGreaterThan(1)
+    off()
+    expect(context.calls()).toBe(2)
+  })
+
+  it('treats a malformed catalog as empty, never as a crash', async () => {
+    const catalog = catalogFrom()
+    catalog.attach(stubContext([{
+      ok: true,
+      value: {
+        groups: [
+          null,
+          {},
+          { id: '', models: [] },
+          { id: 'x', models: [null, { id: 42 }, { id: 'ok-model' }] },
+        ],
+      },
+    }]))
+    await settle()
+    const state = catalog.getSnapshot()
+    expect(state.status).toBe('ready')
+    expect(state.groups.map((group) => group.id)).toEqual(['x'])
+    expect(state.groups[0]?.models.map((model) => model.id)).toEqual(['ok-model'])
+  })
+})
+
+/**
+ * A route pin is a PAIR on both sides of the seam (`liveRoute` on the host,
+ * `maintenance-wiring.ts` for the verify lane). The card must never write a
+ * half-filled pair: a provider without its model (or vice versa) reads as "no
+ * pin" on the host, so a half write would silently leave a stale model behind.
+ */
+describe('routePairOps — the pin-pair write semantics', () => {
+  const PROVIDER = ['maintenance', 'verifyProvider']
+  const MODEL = ['maintenance', 'verifyModel']
+  const pair = () => api.__diagnostics.routePairOps
+
+  it('writes both halves when both are set', () => {
+    expect(pair()('corp', 'flash', PROVIDER, MODEL)).toEqual([
+      { op: 'set', path: ['maintenance', 'verifyProvider'], value: 'corp' },
+      { op: 'set', path: ['maintenance', 'verifyModel'], value: 'flash' },
+    ])
+  })
+
+  it('clears BOTH halves when either side is empty ("Auto" and half pins)', () => {
+    const expected = [
+      { op: 'unset', path: ['maintenance', 'verifyProvider'] },
+      { op: 'unset', path: ['maintenance', 'verifyModel'] },
+    ]
+    expect(pair()('', 'flash', PROVIDER, MODEL)).toEqual(expected)
+    expect(pair()('corp', '', PROVIDER, MODEL)).toEqual(expected)
+    expect(pair()('', '', PROVIDER, MODEL)).toEqual(expected)
+  })
+
+  it('returns fresh path arrays, so a render cannot mutate the field definitions', () => {
+    const first = pair()('corp', 'flash', PROVIDER, MODEL)[0]!.path
+    expect(first).not.toBe(PROVIDER)
+    first.push('extra')
+    expect(PROVIDER).toEqual(['maintenance', 'verifyProvider'])
   })
 })

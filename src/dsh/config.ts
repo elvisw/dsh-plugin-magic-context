@@ -22,7 +22,12 @@ export interface MagicContextDshConfig {
    * modes where that specifier is resolvable from this package.
    */
   defineTool?: MagicContextDshConfigDefineTool
-  /** Explicit historian route; default is the session's last routed model. */
+  /**
+   * Generation route (historian + `/compact` summaries): a PROVIDER/MODEL
+   * pair. Both halves non-empty = pinned; anything else = follow the session's
+   * routed model. The schema always materialises this block (empty halves by
+   * default), so a `historian: {}` override is equivalent to leaving it unset.
+   */
   historian?: { provider: string; model: string }
   /** Turn the historian's out-of-band digests off (default: on). */
   historianEnabled?: boolean

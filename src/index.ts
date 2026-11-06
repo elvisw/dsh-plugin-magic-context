@@ -79,7 +79,7 @@ import { ensureTag, tagPrefix } from './core/tagger.ts'
 import { recoverOrphanHistorianRuns, type Journal } from './core/journal.ts'
 import { defaultDataDir, openStores, SCHEMA_VERSION } from './core/stores.ts'
 import { errText, type UsageRecord } from './core/types.ts'
-import { liveBoolean, liveNumber, liveString, policyOf } from './dsh/volatile.ts'
+import { liveBoolean, liveNumber, liveRoute, liveString, policyOf } from './dsh/volatile.ts'
 import {
   pressureUsedTokens,
   shouldLogContextPressure,
@@ -152,6 +152,14 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
   const policy: PressurePolicy = policyOf(config.policy)
   /** Re-evaluated per pass so a settings-form edit applies immediately. */
   const activePolicy = (): PressurePolicy => policyOf(config.policy)
+  /**
+   * The generation pin (historian + `/compact` summaries), re-read at every use
+   * point so a settings-form edit reaches the next run without a remount.
+   * `undefined` = follow the session's own route (the pre-step lane passes it
+   * as the fallback; the engine/command lanes pass no override).
+   */
+  const historianRouteOf = (): { provider: string; model: string } | undefined =>
+    liveRoute(config.historian?.provider, config.historian?.model)
   /** Process start, for the telemetry uptime readout. */
   const startedAt = Date.now()
   const storeDir = config.dataDir ?? defaultDataDir()
@@ -263,7 +271,7 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
             logger: ctx.logger,
             ...llm === undefined ? {} : { llm },
             ...journal === undefined ? {} : { journal },
-            ...config.historian === undefined ? {} : { route: config.historian },
+            activeRoute: historianRouteOf,
             ...memoryRecall === undefined ? {} : { recall: memoryRecall },
             isDisposed: () => adapterDisposed,
           })
@@ -647,7 +655,7 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
       enabled: () => liveBoolean(config.historianEnabled, true) !== false,
       ...journal === undefined ? {} : { journal },
       ...llm === undefined ? {} : { llm },
-      ...config.historian === undefined ? {} : { route: config.historian },
+      activeRoute: historianRouteOf,
     })
     ctx.logger.info('magic-context dsh adapter: /ctx-status and /ctx-recomp registered')
     // The global-domain surface rides the same gate: with Magic Context's
@@ -865,7 +873,10 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
     },
     historian: {
       enabled: liveBoolean(config.historianEnabled, true) !== false && llm !== undefined,
-      route: config.historian === undefined ? 'session-route' : `${config.historian.provider}/${config.historian.model}`,
+      // Resolved once for display; the lanes themselves re-read at use time.
+      route: historianRouteOf() === undefined
+        ? 'follow-session'
+        : `${historianRouteOf()!.provider}/${historianRouteOf()!.model}`,
     },
     journal: { enabled: journal !== undefined, mirror: journal?.mirrorPath, retentionDays: liveNumber(config.journal?.retentionDays, 30) },
     tagsRetentionDays: liveNumber(config.tags?.retentionDays, 30),
@@ -959,6 +970,21 @@ export const Config = z.object({
     /** Empty provider/model = verify off (schemastery objects cannot be optional). */
     verifyProvider: z.string().default('').volatile(),
     verifyModel: z.string().default('').volatile(),
+  }),
+
+  /**
+   * Generation route: the out-of-band historian and `/compact` summaries.
+   *
+   * A PAIR, like the maintenance route: both halves must be non-empty to pin;
+   * empty halves mean "follow the session's routed model", which is the
+   * shipped default (and the right one — the digest becomes future context, so
+   * the conversation's own model is usually the safe choice). Declaring the
+   * block is safe: unlike `memory`, its only effect is a route override, so a
+   * materialised empty object switches nothing on.
+   */
+  historian: z.object({
+    provider: z.string().default('').volatile(),
+    model: z.string().default('').volatile(),
   }),
 
   journal: z.object({

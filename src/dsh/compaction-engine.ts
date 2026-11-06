@@ -54,7 +54,19 @@ export interface CompactionEngineDeps {
   readonly activePolicy?: () => PressurePolicy
   readonly logger: { info(message: string): void; warn(message: string): void }
   readonly llm?: HistorianLlm
+  /**
+   * Static generation route (tests / stand-alone constructions). Live
+   * compositions pass {@link activeRoute} instead: the generation pin is a
+   * settings-form field, and a report opened before a remount must not keep
+   * the mount-time value.
+   */
   readonly route?: { provider: string; model: string }
+  /**
+   * Live generation route: the out-of-band historian and `/compact` summaries.
+   * `undefined` means "follow the session route" (the historian falls back to
+   * the request's own route when no pin is set).
+   */
+  readonly activeRoute?: () => { provider: string; model: string } | undefined
   /** Validation-period activity journal (optional). */
   readonly journal?: Journal
   /**
@@ -125,6 +137,8 @@ export async function registerMagicCompactionEngine(
   }
   /** The live policy at the use point (snapshot fallback: see deps). */
   const policyNow = (): PressurePolicy => deps.activePolicy?.() ?? deps.policy
+  /** The live generation route at the use point (snapshot fallback: see deps). */
+  const routeNow = (): { provider: string; model: string } | undefined => deps.activeRoute?.() ?? deps.route
 
   const sessionOf = (agent: unknown): Session => {
     const session = (agent as { session?: Session }).session
@@ -141,6 +155,7 @@ export async function registerMagicCompactionEngine(
   }): Promise<CheckpointResult> => {
     if (deps.llm === undefined) throw new Error('no LLM seam available for a manual compaction')
     const sessionId = input.session.id
+    const generationRoute = routeNow()
     const systemSeq = enumerateSurfaceNodes(input.session).find(node => node.role === 'system')?.seq
     const draft = await callHistorian(
       {
@@ -148,14 +163,14 @@ export async function registerMagicCompactionEngine(
         llm: deps.llm,
         logger: deps.logger,
         ...deps.journal === undefined ? {} : { journal: deps.journal },
-        ...deps.route === undefined ? {} : { route: deps.route },
+        ...generationRoute === undefined ? {} : { route: generationRoute },
       },
       {
         sessionId,
         session: input.session,
         nodes: input.nodes,
         trigger: 'manual',
-        ...deps.route === undefined ? {} : { route: deps.route },
+        ...generationRoute === undefined ? {} : { route: generationRoute },
         ...input.signal === undefined ? {} : { signal: input.signal },
         ...systemSeq === undefined ? {} : { systemSeq },
       },
@@ -183,8 +198,8 @@ export async function registerMagicCompactionEngine(
       shadowedRange: { start: first.seq, end: last.seq },
       shadowedSeqs,
       shadowedTokenCount,
-      provider: deps.route?.provider ?? 'unknown',
-      model: deps.route?.model ?? 'unknown',
+      provider: generationRoute?.provider ?? 'unknown',
+      model: generationRoute?.model ?? 'unknown',
       maxTokens: policyNow().historianMaxTokens,
       rawOutput: summary,
       llmStreamCall: true,
@@ -250,6 +265,7 @@ export async function registerMagicCompactionEngine(
       const session = sessionOf(agent)
       const sessionId = session.id
       try {
+        const generationRoute = routeNow()
         runManagementPass({
           session,
           sessionId,
@@ -261,7 +277,7 @@ export async function registerMagicCompactionEngine(
           ...deps.llm === undefined ? {} : {
             historian: {
               llm: deps.llm,
-              ...deps.route === undefined ? {} : { route: deps.route },
+              ...generationRoute === undefined ? {} : { route: generationRoute },
             },
           },
         })

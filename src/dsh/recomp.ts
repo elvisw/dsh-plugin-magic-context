@@ -37,7 +37,13 @@ export interface RecompDeps {
   readonly logger: { info(message: string): void; warn(message: string): void }
   readonly journal?: Journal
   readonly llm?: HistorianLlm
+  /** Static generation route (tests / stand-alone constructions). */
   readonly route?: { provider: string; model: string }
+  /**
+   * Live generation route: the same settings-form pin the pre-step historian
+   * lane reads. `undefined` means the historian follows the session's route.
+   */
+  readonly activeRoute?: () => { provider: string; model: string } | undefined
   readonly timeoutMs?: number
   readonly now?: () => number
   /**
@@ -151,7 +157,15 @@ export async function recompactCompartments(
   // Resolve the policy ONCE per invocation (a getter re-reads the live
   // volatile references; a snapshot is used as-is).
   const policy = typeof deps.policy === 'function' ? deps.policy() : deps.policy
-  const historianDeps = { ...deps, policy, llm }
+  // Same for the generation route: one read per invocation, so a settings-form
+  // edit reaches the next /ctx-recomp without waiting for a remount.
+  const route = deps.activeRoute?.() ?? deps.route
+  const historianDeps = {
+    ...deps,
+    policy,
+    llm,
+    ...route === undefined ? {} : { route },
+  }
   const recompacted: number[] = []
   const skipped: Array<{ compartmentId: number; reason: string }> = []
   const failed: Array<{ compartmentId: number; reason: string }> = []
