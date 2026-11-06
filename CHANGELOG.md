@@ -8,7 +8,42 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
-## [Unreleased]
+## [0.11.0] - 2026-11-06
+
+**设置卡片路由钉与门面重排。** 两类后台生成路由（维护 verify 与生成 historian）可以在设置
+卡片里从宿主模型目录直接钉住或清空；画像评审的「无事可做」跳过改为每天一条 journal 心跳；
+README 双语门面按「30 秒可装 → 5 分钟可感」重排并配实拍截图。
+
+### Changed
+
+- README 门面吸引力重排（双语同步）：npm registry 一行安装前置（源码构建降为开发子节）、
+  新增「快速上手」（含 `ctx_reduce` → `[dropped §N§]` → `ctx_expand` 真实参数示例）、英文版
+  补痛点引子与状态行、移除首段指向 DSH 的失效链接记号（DSH 无公开仓库页）、新增 npm version
+  badge、能力表机制列短语化（镜像链/水位/内部日期细节下沉）、修正「`memory: {}` 才启用记忆
+  车道」的过时说法（0.9.0 起默认开启，退路为 `memory.enabled: false`）、去除硬编码版本号与
+  用例数；「界面与遥测」一节插入设置卡片与遥测胶囊面板实拍截图（`docs/img/`，README 用
+  raw.githubusercontent 绝对 URL 引用，npm 页面可渲染且不增包体积）。
+- 画像评审 pass 的「无事可做」跳过不再静默：`no-candidates` / `too-few` / `too-few-sessions`
+  现在各打一条 info journal 心跳行，并同时写 24h 节流戳（`profile_last_review_at`）——每天恰好
+  一条评审记录，journal 里的安静不再可能被误读为「车道死了」，也顺带消除了 `too-few-sessions`
+  在池长期单会话时每 30 分钟重复打日志的隐患。失败类跳过（`llm-off` / `llm-failed` /
+  `invalid-output`）语义不变：不写戳、下个 tick 重试。
+- README 拆分为双语：`README.md` 默认英文完整版，`README.zh-CN.md` 中文完整版，顶部互链；
+  门面重写为记忆优先的叙事（项目记忆/本地向量/共享域在前，上下文管理在后），版本与测试数据
+  同步刷新（0.10.1 / 上游 v0.49.30 / 宿主 0.2.2-rc.1 / 782 用例）。
+
+### Added
+
+- 设置卡片新增**两档生成路由钉**（维护 / 生成两类，均成对生效）：
+  - `maintenance.verifyProvider` / `verifyModel` — 元数据类后台（verify/评分/自动归档分类/画像审阅）；
+  - `historian.provider` / `model` — 生成类后台（historian 带外摘要 + `/compact` 摘要，此前只能跟随会话路由）。
+
+  两组都从宿主已配置的模型目录（客户端 `remote.session.modelCatalog()`）下拉选择，带「Auto = 跟随
+  会话路由」与一键清空；宿主不提供该 RPC 的 shell 退回纯文本输入（值仍可手填）。切换 provider 时自动
+  清掉不属于它的旧 model 草稿；保存按「成对钉住 / 成对清空」写回，语义与 host 的 pin 判定一致
+  （`maintenance-wiring.ts`、`liveRoute`：两者都非空才钉住）。`historian.{provider,model}` 现已由
+  Config schema 声明，并在 pre-step、compaction engine、`/ctx-recomp` 三条路径上**实时读取**（改配置
+  下一次调用即生效）；空值 = 保持原有「跟随会话」行为。
 
 ## [0.10.1] - 2026-11-05
 
