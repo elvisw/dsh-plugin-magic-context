@@ -26,6 +26,13 @@
  *  4. **Candidates are consumed only for promotions that actually landed.**
  *     Deleting the inputs of a failed INSERT would lose the observation with
  *     nothing to show for it.
+ *  5. **A decided pass is never silent.** A skip that means "nothing to do
+ *     yet" (no-candidates / too-few / too-few-sessions) journals one info row
+ *     AND stamps the daily throttle, so the pass leaves exactly one
+ *     profile-review row per interval: a quiet journal can never again be read
+ *     as "the lane is dead", and a persistent skip cannot spam every tick.
+ *     Failed attempts (llm-off / llm-failed / invalid-output) stamp nothing,
+ *     so they stay retried on the next tick.
  */
 
 import type { Journal } from './journal.ts'
@@ -72,7 +79,8 @@ export const PROFILE_REVIEW_MAX_TOKENS = 4_096
 /** A promoted profile row is a standing rule; longer than this is not one. */
 export const PROFILE_MAX_CONTENT_CHARS = 800
 /**
- * Adapter-meta key holding when a review last RAN. The throttled timestamp
+ * Adapter-meta key holding when a review pass last reached a DECIDED state —
+ * a run, or a nothing-to-do skip (rule 5 above). The throttled timestamp
  * lives here rather than in the contract: it is our scheduling state, not
  * Magic Context's data, and writing it must not touch the shared store.
  */
@@ -207,6 +215,13 @@ export function planProfileReview(input: {
 export interface ProfileReviewOutcome {
   readonly expired: number
   readonly ran: boolean
+  /**
+   * The pass reached a decided state — a run, or a skip that means "nothing
+   * to do yet" — so the caller stamps the daily throttle (rule 5). Failed
+   * attempts never set it: they must retry on the next tick instead of being
+   * silenced for a day by their own failure.
+   */
+  readonly attempted?: boolean
   readonly promoted: number
   readonly consumed: number
   readonly reason?:
@@ -316,10 +331,19 @@ export async function runProfileReview(deps: ProfileReviewDeps): Promise<Profile
   const batch = Math.max(threshold, deps.batch ?? PROFILE_REVIEW_BATCH)
   const candidates = writer.listCandidates(batch)
   if (candidates.length === 0) {
-    return { ...empty, expired, reason: 'no-candidates' }
+    deps.journal.info('maintenance', `profile review skipped (no candidates); expired ${String(expired)}`, {
+      expired,
+      reason: 'no-candidates',
+    })
+    return { ...empty, expired, reason: 'no-candidates', attempted: true }
   }
   if (candidates.length < threshold) {
-    return { ...empty, expired, reason: 'too-few' }
+    deps.journal.info(
+      'maintenance',
+      `profile review skipped (${String(candidates.length)} candidate(s) below threshold ${String(threshold)}); expired ${String(expired)}`,
+      { expired, candidates: candidates.length, threshold, reason: 'too-few' },
+    )
+    return { ...empty, expired, reason: 'too-few', attempted: true }
   }
   // Cross-session gate (see PROFILE_REVIEW_MIN_SESSIONS). Checked before the LLM
   // call: a batch contributed by a single session cannot promote anything, so
@@ -333,7 +357,7 @@ export async function runProfileReview(deps: ProfileReviewDeps): Promise<Profile
       `profile review skipped (candidates span ${String(sessions.size)} session(s), need ${String(minSessions)}); expired ${String(expired)}`,
       { candidates: candidates.length, sessions: sessions.size, reason: 'too-few-sessions' },
     )
-    return { ...empty, expired, reason: 'too-few-sessions' }
+    return { ...empty, expired, reason: 'too-few-sessions', attempted: true }
   }
 
   const prompt = PROFILE_REVIEW_INSTRUCTION + '\n\nCandidate observations:\n'
@@ -431,5 +455,5 @@ export async function runProfileReview(deps: ProfileReviewDeps): Promise<Profile
       ...usage === undefined ? {} : { usage },
     },
   )
-  return { expired, ran: true, promoted: promotedIds.length, consumed }
+  return { expired, ran: true, attempted: true, promoted: promotedIds.length, consumed }
 }

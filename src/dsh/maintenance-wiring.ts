@@ -199,9 +199,11 @@ export function wireMaintenance(input: {
       // reached through their own connection).
       //
       // The throttle is a stored timestamp because DSH has no daily scheduler to
-      // hang MC's `review-user-memories` cadence on. It is written only when a
-      // review actually RAN, so a failed call is retried on the next tick
-      // instead of being silenced for a day by its own failure.
+      // hang MC's `review-user-memories` cadence on. It is written when the pass
+      // reaches a DECIDED outcome — a run, or a nothing-to-do skip — which turns
+      // those skips into a once-per-day heartbeat row instead of per-tick noise
+      // (or per-tick silence). A FAILED call is never stamped, so it is retried
+      // on the next tick instead of being silenced for a day by its own failure.
       if (liveBoolean(config.memory?.global?.user?.review, true) && profileWriter !== undefined) {
         const lastReviewRaw = Number(stores.getMeta(PROFILE_REVIEW_META_KEY) ?? '')
         const review = await runProfileReview({
@@ -213,7 +215,7 @@ export function wireMaintenance(input: {
             : {}),
           ...(Number.isFinite(lastReviewRaw) && lastReviewRaw > 0 ? { lastReviewAt: lastReviewRaw } : {}),
         })
-        if (review.ran) stores.setMeta(PROFILE_REVIEW_META_KEY, String(Date.now()))
+        if (review.attempted === true) stores.setMeta(PROFILE_REVIEW_META_KEY, String(Date.now()))
         profileReviewLast = review
       }
 

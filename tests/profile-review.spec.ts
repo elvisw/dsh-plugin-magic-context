@@ -23,6 +23,7 @@ import {
   PROFILE_CANDIDATE_TTL_MS,
   PROFILE_MAX_CONTENT_CHARS,
   PROFILE_REVIEW_INTERVAL_MS,
+  PROFILE_REVIEW_THRESHOLD,
   parseProfileReviewOutput,
   planProfileReview,
   runProfileReview,
@@ -334,6 +335,29 @@ describe('runProfileReview', () => {
     expect(candidateContents(path)).toHaveLength(2)
     // The model was never called: a threshold that still costs a call is not a threshold.
     expect(fake.calls).toHaveLength(0)
+    // Rule 5: the skip is a once-per-day heartbeat, never silence.
+    expect(outcome.attempted).toBe(true)
+    const skipped = calls.find(call => call.summary.includes('profile review skipped'))
+    expect(skipped?.data?.reason).toBe('too-few')
+    expect(skipped?.data?.candidates).toBe(2)
+    expect(skipped?.data?.threshold).toBe(PROFILE_REVIEW_THRESHOLD)
+  })
+
+  it('journals a heartbeat when the pool is empty', async () => {
+    const path = makeDb()
+    const calls: Call[] = []
+    const outcome = await withWriter(path, writer => runProfileReview({
+      writer,
+      llm: answerLlm('{"promote":[],"reject":[]}').llm as never,
+      route: { provider: 'mock', model: 'mock' },
+      sessionId: 'mc-maintenance',
+      journal: recordingJournal(calls),
+      now: () => T0,
+    }))
+    expect(outcome.reason).toBe('no-candidates')
+    expect(outcome.attempted).toBe(true)
+    const skipped = calls.find(call => call.summary.includes('profile review skipped'))
+    expect(skipped?.data?.reason).toBe('no-candidates')
   })
 
   it('throttles a second review inside the interval', async () => {
@@ -481,6 +505,9 @@ describe('runProfileReview', () => {
     }))
     expect(outcome.ran).toBe(false)
     expect(outcome.reason).toBe('too-few-sessions')
+    // A decided skip stamps the throttle too: one heartbeat row per day, not
+    // one per tick for as long as the pool stays single-session.
+    expect(outcome.attempted).toBe(true)
     expect(fake.calls).toHaveLength(0)
     expect(profiles(path)).toEqual([])
     expect(candidateContents(path)).toHaveLength(3)
