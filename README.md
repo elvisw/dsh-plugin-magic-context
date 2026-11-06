@@ -1,311 +1,393 @@
-# dsh-plugin-magic-context — Magic Context 的 DeepSeek Harness 适配插件
+# dsh-plugin-magic-context — Magic Context adapter for DeepSeek Harness
 
 [![CI](https://github.com/wk544863858/dsh-plugin-magic-context/actions/workflows/ci.yml/badge.svg)](https://github.com/wk544863858/dsh-plugin-magic-context/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/dsh-plugin-magic-context)](https://www.npmjs.com/package/dsh-plugin-magic-context)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D22.19-brightgreen.svg)](package.json)
-[![DeepSeek Harness](https://img.shields.io/badge/DSH-0.2.1--rc.1-blue.svg)](package.json)
+[![DeepSeek Harness](https://img.shields.io/badge/DSH-0.2.x-blue.svg)](package.json)
 
-> **English** · [中文](#它做什么)
+> **English** | [简体中文](README.zh-CN.md)
 
-**dsh-plugin-magic-context** brings [Magic Context](https://github.com/cortexkit/magic-context)'s
-context management to **DeepSeek Harness (DSH)**: reversible tool-result reclaim, an out-of-band
-historian that compacts history without touching the live prefix, a frozen m[0]/m[1] memory
-baseline, and per-project memory with FTS + local vector search — packaged as a DSH desktop bundle.
+> Anyone who has run long sessions knows the symptoms: the project details you worked out
+> yesterday are gone today, so the same pit gets re-dug; tool outputs bloat the context
+> window; and every compaction busts the cache prefix, so the expensive part re-runs.
+>
+> [Magic Context](https://github.com/cortexkit/magic-context)'s answer: **knowledge should
+> persist, context should be managed.** This plugin gives **DeepSeek Harness (DSH)**
+> sessions a **persistent, project-aware memory** — knowledge distilled from your sessions
+> survives restarts, is searchable with hybrid full-text + local vector search, and is
+> re-injected right where the model reads it — while the context window itself is run as
+> an asset: tool results become tagged, reclaimable history, digests come back as
+> four-level summaries, and none of it ever breaks the live KV-cache prefix.
 
-- **Reversible reclaim** — tag tool results with `§N§`; `ctx_reduce` only queues the drop, it lands
-  in the execute band as a `[dropped §N§]` placeholder, and `ctx_expand` restores the original text.
-- **Historian** — one out-of-band LLM call replays the real prefix and writes a four-level summary;
-  the next execute band publishes it as a range replacement (recoverable, never a spontaneous bust).
-- **Memory** — project memories in the plugin's own SQLite corpus, with local MiniLM embeddings
-  (WebAssembly, no native build) and fail-open fallback to FTS.
-- **UI** — a settings card and a telemetry pill in the DSH desktop UI, Chinese/English.
-- **Conservative by default** — the host `compaction-basic` engine stays in place unless you opt in.
+- **Memory that outlives the session** — a project corpus in the plugin's own SQLite store;
+  historian facts auto-promote into it, `ctx_memory` reads/writes/maintains it, and project
+  identity is auto-derived (git root or directory).
+- **Local-first retrieval** — MiniLM embeddings via WebAssembly (no native build, no API
+  keys), hybrid full-text 0.7 / vector 0.3 ranking, fail-open to full-text on any failure.
+- **Sharing with a human gate** — machine/org global domains: staging can be automated,
+  publishing is always yours (approval cards, `/ctx-global approve`); a user-profile layer
+  rides on top with read / collect / review as separate switches.
+- **Reversible reclaim, cache-aware compaction** — `ctx_reduce` only queues; drops land as
+  `[dropped §N§]` placeholders and `ctx_expand` restores the original; history digests into
+  p1–p4 summaries published as range replacements — never a spontaneous prefix bust.
+- **Conservative by default** — the host `compaction-basic` engine stays in place unless
+  you explicitly opt in.
 
-Requires **Node ≥ 22.19** and a **DSH 0.2.x** desktop host. Build and install:
+Requires **Node ≥ 22.19** and a **DSH 0.2.x** desktop host. The package ships compiled —
+install straight from the npm registry:
 
 ```bash
-npm install
-npm run build
-dsh plugin --profile desktop add https://github.com/wk544863858/dsh-plugin-magic-context
+dsh plugin --profile desktop add dsh-plugin-magic-context
 ```
 
-The Chinese sections below cover configuration, tools/commands, architecture and known limits in
-full. Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
+New to the plugin? A five-minute tour follows in [Quick start](#quick-start);
+configuration, tools and architecture are covered in full below. A complete Chinese
+translation is at [README.zh-CN.md](README.zh-CN.md). Contributions are welcome — see
+[CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
 
----
+## Quick start
 
-> 把 [Magic Context](https://github.com/cortexkit/magic-context) 的上下文管理与共享记忆能力移植到
-> **DeepSeek Harness（DSH）** 的适配插件。以 DSH **bundle** 形态安装进 desktop profile：出现在
-> GUI 的"插件"页面，在运行中的应用里即时开始工作。
->
-> 当前版本 **0.9.0** · 上游基线 **magic-context v0.46.0**（`651c105a9`）· devDeps 钉 **DSH
-> 0.2.1-rc.1**（peers `'*'`）· 已验证宿主 **0.2.1-rc.1**（2026-10-17）· 状态：**已在真实 DSH
-> Desktop 安装并日常运行**（2026-10-06 起）。
->
-> 本包原本长在上游 `packages/dsh-plugin` 下，2026-10-08 抽出为独立仓库（60 个提交原样重放，
-> 作者与日期保留）。上游 MIT © 2025 Ufuk Altinok；本仓库新增部分 © 2026 wukai。出处与内嵌
-> 第三方文件见 [NOTICE](NOTICE)，许可见 [LICENSE](LICENSE)。数据库在
-> `~/.local/share/cortexkit/magic-context-dsh-poc/` 下（插件自有 `memories.db`）：2026-10-13 起与
-> 上游 MC 库**彻底分家**，legacy 共享库封存仅作回滚保留；路径留在 cortexkit 命名空间是出于出处
-> 连续，非共享。
+After installing, the plugin hot-loads (no restart). In your next session:
 
-## 它做什么
+- Tool results carry `§N§` tags; a **telemetry badge** appears in the overlay showing live
+  context occupancy, with a panel of live metrics and an operation record behind it.
+- A **settings card** for the plugin shows up on the GUI Plugins page.
+- The `ctx_reduce` / `ctx_expand` / `ctx_memory` tools are registered for the agent;
+  project memory is **on by default** — facts distilled by the historian persist across
+  sessions and surface where the model reads them.
 
-Magic Context 的核心思想：**上下文是可管理的资产**——旧的工具结果可以打标、回收、需要时恢复；
-被消化的历史压缩成带外摘要；重要的知识沉淀为项目记忆，跨会话复用。本仓库把这套能力接到 DSH 的
-事件 / surface 体系上：
+Context reclaim, in one exchange (real parameter names):
 
-| 能力 | 机制 |
+```text
+you:   ctx_reduce {"drop": "4-7"}      # four tool outputs are no longer worth the tokens
+agent: queued 4 item(s) — the drops land as placeholders in the next reclaim band
+…later in the transcript…
+[dropped §4§] [dropped §5§] [dropped §6§] [dropped §7§]
+you:   ctx_expand {"tags": "5"}        # wait — what was in §5 again?
+agent: the original text of §5 is restored in place
+```
+
+The only opt-in surface is the compaction takeover (`registerCompactionEngine`, off by
+default — see [Configuration](#configuration)).
+
+## What it does
+
+Memory first, context management second — the first five rows are the memory system, the
+last five manage the context window (full design in [Architecture](#architecture) and
+[PARITY.md](PARITY.md)):
+
+| Capability | Mechanism |
 |---|---|
-| **可逆上下文回收** | 工具结果打 `§N§` 标签（admission 刻意不打标）；`ctx_reduce` **只入队**，落地发生在 execute 带内（content-only 替换为 `[dropped §N§]` 占位符，引用原事件）；`ctx_expand` 恢复原文。绝不自发打断缓存前缀 |
-| **压力调度** | 持久 usage（含 cache 读写）→ 压力 = 未缓存输入 + cache 读 + cache 写 ÷ `contextWindow`；execute/defer 决策（默认 65% 阈值、5 min cache TTL、85% 强制带）；`CONTEXT_WINDOW_EXCEEDED` 紧急回收 + retry；reduce-guidance 分级引导（60k/25k 地板、20/40/60% 阶梯） |
-| **historian（带外摘要）** | 一次性 LLM 调用重放真前缀（保 KV cache）→ 四层摘要 p1–p4 + importance + facts/events，**只写 store 不动线缆**；execute 带内发布为 `[compacted §C<n>§]` 范围替换（引用原事件，可恢复）；`/ctx-recomp` 可原地重做已压缩历史 |
-| **m[0]/m[1] 基线** | 合成 notice 节点承载冻结基线 + 增量车道（`<new-memories>` / `<memory-updates>` / `<user-profile>`）；每类增量有独立水位（`maxMemoryId`、mutation 水位、profile 水位 + digest），**新记忆永不重建缓存前缀**；内容未变则零变更 |
-| **项目记忆（自有语料库）** | 插件自有 `memories.db`（2026-10-13 起与上游 MC 数据库彻底分家，无共享无兼容义务）：身份自动推导（`git:<root-sha>` / `dir:<hash>`，未配置用会话 cwd，域共享从适配器域表解析）；注入 m[0] + `ctx_memory` 检索与**读写维护**；historian facts 自动提升；FTS 0.7/0.3 融合向量检索 |
-| **本地向量车道** | `vendor/onnx/` 内置 onnxruntime-web WASM 后端（27 MB，MIT，Microsoft），无原生编译、无额外依赖；首次 `embed()` 按**钉死的 revision+sha256** 下载 MiniLM（~90 MB，双镜像 huggingface.co → hf-mirror.com，任何哈希不符弃块换下一镜像），缓存在插件数据目录 `models/`；检索候选内嵌补分 + 维护 tick 向量回填；任何失败 fail-open 降级 FTS，journal 有可读 warn |
-| **全局域 + 用户画像** | 机器 / 组织域：**入队可自动化**（维护 tick `autoStage`、LLM 域分类），**发布永远是人**（`ctx_memory review_global` 审批卡、`/ctx-global approve`）；用户画像 render / collect / review 三开关分离——读默认开、写共享库的半边默认关 |
-| **维护 tick（MC dreamer 切片）** | 每 30 min：TTL 归档（走 archive 契约动作）→ 批量 LLM verify（keep / update / archive）→ 向量回填 → 全域候选入队 |
-| **压缩接缝** | `registerCompactionEngine` 可接管 `ctx.compaction`（真实 `compaction/start\|summary\|replace\|end` 协议，管理通道永不写 checkpoint）；**首装保守关闭**，不碰宿主 compaction-basic |
-| **界面集成** | 插件页设置卡片（volatile 字段保存即生效）；`shell.overlay` 遥测徽标 + 胶囊面板（实时指标 + 操作记录）；`session-notice` 会话流提示；中英双语即时切换 |
+| **Project memory (own corpus)** | Plugin's own SQLite store (`memories.db`), hard-split from upstream — no shared storage, no compatibility duty. Project identity auto-derived (`git:<root-sha>` / `dir:<hash>`); injected into the m[0] baseline and served to `ctx_memory` for read/write; historian facts auto-promote; FTS 0.7 / vector 0.3 hybrid retrieval |
+| **Local vector lane** | MiniLM embeddings run locally via the bundled onnxruntime-web WASM backend — no native build, no API keys; the model download is pinned by revision + sha256 (mirror fallback), cached in the plugin data dir; retrieval candidates get inline + maintenance-tick backfill; any failure fails open to full-text search |
+| **m[0]/m[1] memory baseline** | A synthetic notice node carries the frozen baseline plus incremental lanes (`<new-memories>` / `<memory-updates>` / `<user-profile>`); each lane keeps its own watermark, so new memory never rebuilds the cached prefix — unchanged content produces zero diff |
+| **Global domains + user profile** | machine/org domains: **staging can be automated** (maintenance tick, LLM classification), **publishing is always human** (approval cards, `/ctx-global approve`); the user profile's render / collect / review are separate switches |
+| **Maintenance tick (MC dreamer slice)** | Every 30 min: TTL archiving → batched LLM verify (keep / update / archive) → vector backfill → global-domain candidate staging |
+| **Reversible context reclaim** | Tool results get `§N§` tags; `ctx_reduce` **only queues** — drops land in the execute band as `[dropped §N§]` placeholders referencing the originals; `ctx_expand` restores the original text. The cached prefix is never busted spontaneously |
+| **Pressure scheduling** | Persistent usage (incl. cache reads/writes) → pressure score → execute/defer decisions (65% threshold, 5 min cache TTL, 85% force band); `CONTEXT_WINDOW_EXCEEDED` triggers emergency reclaim + retry; tiered reduce-guidance nudges |
+| **Historian (out-of-band digest)** | One LLM call replays the real prefix (KV cache preserved) → four-tier p1–p4 summary + facts/events, **writes the store only, never touches the wire**; published in the execute band as a `[compacted §C<n>§]` range replacement; `/ctx-recomp` redoes compacted history in place |
+| **Compaction seam** | `registerCompactionEngine` can take over `ctx.compaction` (real `compaction/start\|summary\|replace\|end` protocol); **off by default** — the host compaction-basic stays in place |
+| **UI integration** | Settings card on the Plugins page (volatile fields, save = live); `shell.overlay` telemetry badge + capsule panel (live metrics + operation record); `session-notice` rows in the session stream; Chinese/English instant switching |
 
-## 安装
+## Installation
 
-```powershell
-# 1) 构建（桌面运行时加载编译产物 lib/；包里没有 TS loader）
-npm install
-npm run build     # tsc → lib/（多文件 ESM）+ 浏览器半侧拷贝为 lib/client.js
+From the npm registry — recommended; the package ships compiled `lib/` and `vendor/`, no
+local build needed:
 
-# 2) 安装（应用自带 CLI；DSH_HOME 默认即 ~/.dsh）
-#    spec 可以是 Git 地址、本地路径或 registry 版本
-dsh plugin --profile desktop add <git-url 或本仓库路径>
+```bash
+dsh plugin --profile desktop add dsh-plugin-magic-context
 ```
 
-安装做三件事：profile 里 `pnpm add`（本地路径用 `link:`）、把包名追加进 `dsh.profile.bundles`、
-由 loader 组合。**Desktop 带 HMR → 立即热生效**（无需重启，运行中的会话即刻开始打标签）。
+Registry versions are published automatically by tag pushes (with npm provenance
+signatures); see the "Releasing" section of [CONTRIBUTING](CONTRIBUTING.md).
 
-- **从 npm registry 安装**（无需本地构建；包内自带编译产物 `lib/` 与 `vendor/`）：
-  `dsh plugin --profile desktop add dsh-plugin-magic-context@0.10.0`。registry 版本由 tag 推送
-  自动发布（带 npm provenance 签名），发布流程见 [CONTRIBUTING](CONTRIBUTING.md) 的「发布」一节。
+### From source (development)
 
-- `peerDependencies` 里的 `@deepseek-ai/*` 全部声明为 `"*"`——兼容性预检对任何 DSH 0.2.x 放行；
-  运行时真正 import 的宿主包同时列为**精确版本 dependencies**（随包解析，link: 开发安装由本仓
-  自己的 node_modules 提供）。
-- 运行环境需要 **Node ≥ 22.19**：自有存储基于内建的 `node:sqlite`，无原生模块（桌面宿主是
-  Electron RunAsNode 进程，ABI 编译模块不可移植）。
-- **工具构造器解析**：`config.defineTool`（宿主注入，树内 glue 用）优先，其次动态
-  `import('@deepseek-ai/dsh-tools')`（硬依赖，任何安装形态物理可解析）。二者皆不可用时**响亮
-  失败**（挂载中止）——ctx_* 工具是回收标记的唯一入口，不能静默半启动。
-- 两种加载模式：**patch-overlay / 文件 URL**（开发期，overlay yml + `config.defineTool` 注入）
-  与 **profile 安装**（生产，包名行 + link 依赖）。生产路径即上面的 `dsh plugin add`。
+```bash
+git clone https://github.com/wk544863858/dsh-plugin-magic-context
+cd dsh-plugin-magic-context
+npm install
+npm run build     # tsc → lib/ (multi-file ESM) + browser half copied to lib/client.js
+dsh plugin --profile desktop add <path to this repo>   # the CLI ships with the app; the spec can be a Git URL, a local path, or a registry version
+```
 
-卸载 / 停用：GUI 插件页停用该 bundle（写 profile patch 的 `disabled`），或
-`dsh plugin --profile desktop remove dsh-plugin-magic-context`。
+Installing does three things: `pnpm add` into the profile (`link:` for local paths),
+appends the package name to `dsh.profile.bundles`, and the loader composes it. **Desktop
+has HMR → takes effect immediately** (no restart; running sessions start tagging right
+away).
 
-## 配置
+- All `@deepseek-ai/*` in `peerDependencies` are declared `"*"` — the compatibility
+  precheck passes on any DSH 0.2.x; the host packages actually imported at runtime are
+  also listed as **exact-version dependencies** (resolved with the package; `link:` dev
+  installs are served by this repo's own node_modules).
+- **Node ≥ 22.19** required: the stores build on the built-in `node:sqlite`, no native
+  modules (the desktop host is an Electron RunAsNode process; ABI-compiled modules are not
+  portable).
+- **Tool-constructor resolution**: `config.defineTool` (host-injected, used by in-tree
+  glue) first, then dynamic `import('@deepseek-ai/dsh-tools')` (a hard dependency,
+  physically resolvable in every install shape). If both are unavailable the mount **fails
+  loudly** — the ctx_* tools are the only entry point for reclaim tags; no silent
+  half-boot.
+- Two loading modes: **patch-overlay / file URL** (development: overlay yml +
+  `config.defineTool` injection) and **profile install** (production: package-name line +
+  link dependency). The production path is the `dsh plugin add` above.
 
-改配置有两种途径，语义不同（详见[配置界面契约](docs/dsh-plugin-config-ui-contract.md)）：
+Uninstall / disable: disable the bundle on the GUI Plugins page (writes `disabled` into
+the profile patch), or `dsh plugin --profile desktop remove dsh-plugin-magic-context`.
 
-- **GUI 设置卡片**：暴露 `policy.*`（含 historian 生成上限 / 上限抬升 / 超时）、
-  `historianEnabled`、`registerCompactionEngine`、`journal.*` 等 volatile 字段。写回走 settings
-  链路：非 volatile 键原样保留、未触碰的字段不会 materialize 进覆盖行——**保存即生效**
-  （host 侧读取一律经 `liveNumber/liveBoolean/liveString` 在决策点现取）。
-- **手写 profile 覆盖行**：`config` 是**整体替换**包内 patch 的 config，**不是深合并**。只写
-  `memory:` 会把 `registerCompactionEngine: false` 抹掉。手写覆盖时必须把要保留的键一并写出。
+## Configuration
 
-bundle 自带配置只有一行：`registerCompactionEngine: false`（保守首装——只做回收与 historian，
-宿主压缩引擎保持原位）。要接管压缩时：
+Two ways to change configuration, with different semantics (see the
+[config UI contract](docs/dsh-plugin-config-ui-contract.md)):
+
+- **GUI settings card**: exposes `policy.*` (incl. historian generation cap / ceiling /
+  timeout), `historianEnabled`, `registerCompactionEngine`, `journal.*`, `maintenance.*`,
+  `historian.*` and other volatile fields. The two provider/model **route pins**
+  (maintenance verify, historian generation) prefer a dropdown fed by the **host's
+  configured model catalog** (client `remote.session.modelCatalog()`), with
+  "Auto = follow the session route" and clearing; shells without that RPC fall back to
+  plain text (values remain hand-editable). Writes go through the settings chain:
+  non-volatile keys are preserved untouched, untouched fields never materialize into
+  override rows — **saving takes effect immediately** (the host side always reads through
+  `liveNumber/liveBoolean/liveString/liveRoute` at the decision point).
+- **Hand-written profile override rows**: `config` **replaces** the package patch's config
+  wholesale — it is **not** a deep merge. Writing only `memory:` erases
+  `registerCompactionEngine: false`. When hand-writing overrides you must spell out every
+  key you want to keep.
+
+The bundle's built-in config is one line: `registerCompactionEngine: false` — a
+conservative first install that keeps the host compaction engine in place (memory, reclaim
+and historian are on by default). To take over compaction:
 
 ```yaml
 - id: magic-context-dsh
   name: 'dsh-plugin-magic-context'
   config:
     registerCompactionEngine: true
-    memory: {}            # 空对象即启用记忆车道：身份/工作区/共享类别全部自动解析
 - id: compaction-basic
   name: '@deepseek-ai/dsh-compaction-basic'
-  disabled: true          # 二者互斥，接管时必须同时禁用宿主引擎
+  disabled: true          # mutually exclusive; taking over requires disabling the host engine too
 ```
 
-配置参考（完整类型见 [src/dsh/config.ts](src/dsh/config.ts)；除注明外均为 profile 覆盖行可写）：
+Configuration reference (full types in [src/dsh/config.ts](src/dsh/config.ts); all keys
+writable as profile override rows unless noted):
 
-| 组 | 键（默认值） | 说明 |
+| Group | Keys (defaults) | Notes |
 |---|---|---|
-| 总开关 | `enabled` (true) · `registerTools` (true) · `registerStatusCommand` (true) · `sessionNotices` (true) · `reduceGuidance` (true) · `searchHint` (true) | `enabled: false` 保持加载但完全惰性；`sessionNotices` 控制会话流内的管理提示行 |
-| 压缩接缝 | `registerCompactionEngine`（代码默认可解析即挂；**bundle 随发 false**）· `compactionBase`（宿主注入基类） | 接管需同时禁用 compaction-basic；pre-step 每步 `reconcileEngine` 动态挂/卸 |
-| 压力策略 | `policy.*`：`executeThreshold` (65) · `forceThreshold` (85) · `ttlMs` (5 min) · `assumedContextWindow` (256k) · `protectedToolResults` (8) · `historianTimeoutMs` (120 s) · `historianMaxTokens` (8192，低于会被抬到 8192) · `historianMaxTokensCeiling` (32768) · `baselineTokens` (2000) · `memoryBudgetTokens` (8000) · `memoryLimit` (40) · `forceWaitReadyMs` (0) | 阈值在下一个决策点生效（含 `/ctx-status` 与 compaction engine 路径）。`compartmentGuardMode` / `compartmentEntrantTokens`（发布护栏）已于 **2026-10-16 退役**，不再是可配置项 |
-| historian | `historianEnabled` (true) · `historian.{provider, model}`（默认会话最后路由的模型） | 带外运行；verify 之外的唯一 LLM 消耗点 |
-| 项目记忆 | `memory.{}`：`enabled` · `dbPath` · `project`（省略用会话 cwd）· `domainProjects` · `shareCategories` · `autoPromote` (true) · `write` (true) | `memory: {}` 即可用；`write: false` 让 `ctx_memory` 退回只读 |
-| 检索 / 向量 | `memory.embedBackfill` (true，查询侧内嵌补分) · `memory.vectorBackfill` (true，维护 tick 回填) · `memory.vectorBackfillLimit` (24 行/tick) | 向量车道任何失败 fail-open 降级 FTS |
-| S(t) 衰减 | `memory.scoring.{enabled (true)，alpha (0.4)，beta (0.2)，archiveThreshold (2)，halfLives}` | 统计恒收集；2026-10-13 分发缺省起 enabled=true 接管排序；profile-JSON only，不进设置卡片 |
-| 全局域 | `memory.global.machine.{enabled (true)，excludeProjects，autoStage (true)}` · `memory.global.user.{render (true)，collect (true)，review (true)}` · `memory.global.review.batchLimit` (50) | 分发缺省全开（2026-10-13）：入队可自动化（≤3 条/pass、≥10 候选待审时暂停），**发布永远是人**；LLM 分类失败 fail-closed |
-| 用户画像 | `memory.global.user.{render (true)，collect (false)，review (false)}` | 读 / 收集 / 评审三半独立；写共享库的两个半边默认关 |
-| 域解析 | `memory.domains.source` (`adapter` \| `contract`) | `contract` 是对照用的回退杆，不是支持终态 |
-| 维护 | `maintenance.{enabled，intervalMs (30 min)，verifyProvider，verifyModel}` | LLM verify 需显式路由（未钉则跟随主对话最新路线） |
-| 观测 | `journal.{enabled (true)，level (info)，retentionDays (30)，mirror (true)}` · `tags.retentionDays` (30) | level/mirror 对下一条写入生效；挂载时就是 off 的 journal 运行中打开需重启；`retentionDays` 有 `min(1)` 下限防误剪 |
+| Master switches | `enabled` (true) · `registerTools` (true) · `registerStatusCommand` (true) · `sessionNotices` (true) · `reduceGuidance` (true) · `searchHint` (true) | `enabled: false` stays loaded but fully inert; `sessionNotices` controls the management notice rows in the session stream |
+| Compaction seam | `registerCompactionEngine` (code default: mount when resolvable; **ships false in the bundle**) · `compactionBase` (host-injected base class) | Taking over requires disabling compaction-basic too; pre-step `reconcileEngine` mounts/unmounts dynamically every step |
+| Pressure policy | `policy.*`: `executeThreshold` (65) · `forceThreshold` (85) · `ttlMs` (5 min) · `assumedContextWindow` (256k) · `protectedToolResults` (8) · `historianTimeoutMs` (120 s) · `historianMaxTokens` (8192, raised to 8192 if set lower) · `historianMaxTokensCeiling` (32768) · `baselineTokens` (2000) · `memoryBudgetTokens` (8000) · `memoryLimit` (40) · `forceWaitReadyMs` (0) | Thresholds take effect at the next decision point (incl. `/ctx-status` and the compaction-engine paths). `compartmentGuardMode` / `compartmentEntrantTokens` (publish guards) were retired and are no longer configurable |
+| historian | `historianEnabled` (true) · `historian.{provider, model}` (**pinned as a pair**; empty = follow the session's last route) | Generation route for out-of-band digests and `/compact` summaries; the GUI card has "Historian provider/model" dropdowns (Auto = follow session, recommended). The only LLM spend besides verify |
+| Project memory | `memory.{}`: `enabled` (true, on by default since 0.9.0 — opt out with `enabled: false`) · `dbPath` · `project` (omitted = session cwd) · `domainProjects` · `shareCategories` · `autoPromote` (true) · `write` (true) | `write: false` makes `ctx_memory` read-only |
+| Retrieval / vectors | `memory.embedBackfill` (true, query-side inline backfill) · `memory.vectorBackfill` (true, maintenance-tick backfill) · `memory.vectorBackfillLimit` (24 rows/tick) | Any vector-lane failure fails open to FTS |
+| S(t) decay | `memory.scoring.{enabled (true), alpha (0.4), beta (0.2), archiveThreshold (2), halfLives}` | Stats are always collected; the distribution default enabled=true takes over ranking; profile-JSON only, not on the settings card |
+| Global domains | `memory.global.machine.{enabled (true), excludeProjects, autoStage (true)}` · `memory.global.user.{render (true), collect (true), review (true)}` · `memory.global.review.batchLimit` (50) | Defaults all on: staging can be automated (≤3/pass, paused at ≥10 pending candidates), **publishing is always human**; LLM classification failure is fail-closed |
+| User profile | `memory.global.user.{render (true), collect (false), review (false)}` | Read / collect / review are independent halves; the two halves that write to the shared store are off by default |
+| Domain resolution | `memory.domains.source` (`adapter` \| `contract`) | `contract` is a fallback pole for comparison, not a supported end state |
+| Maintenance | `maintenance.{enabled, intervalMs (30 min), verifyProvider, verifyModel}` | LLM verify needs an explicit route (unpinned = follow the conversation's latest route); the GUI card offers host-catalog dropdowns, Auto = unpinned (same picker for both pins) |
+| Observability | `journal.{enabled (true), level (info), retentionDays (30), mirror (true)}` · `tags.retentionDays` (30) | level/mirror apply to the next write; a journal that was off at mount needs a restart to turn on at runtime; `retentionDays` has a `min(1)` floor against accidental pruning |
 
-## 工具与命令
+## Tools & commands
 
-Agent 工具（挂载时注册；`registerTools: false` 可关）：
+Agent tools (registered at mount; `registerTools: false` turns them off):
 
-| 工具 | 作用 |
+| Tool | What it does |
 |---|---|
-| `ctx_reduce` | 解析 MC 范围语法（`"3-5,8"`）→ **只入队**；落地是有价 bust，等待回收带，绝不自发 |
-| `ctx_expand` | 从占位符引用的源事件**恢复原文**（恢复的即打标原文） |
-| `ctx_memory` | 共享记忆库的读写口。读：`list` / `search` / `get`；写：`write` / `update` / `archive` / `merge`（与 MC 相同的规范化内容哈希、mutation log 与 authority 守卫全程在环）；`review_global`（把机器/组织域候选逐条弹成审批卡，批准才发布）；`promote`（单条项目记忆即时入池弹卡，无复现门槛的人工通道）。每个动作可带 `project`（绝对路径或 git 根）操作其它项目 |
+| `ctx_reduce` | Parses MC range syntax (`"3-5,8"`) → **queues only**; landing is a priced bust that waits for the reclaim band, never spontaneous |
+| `ctx_expand` | **Restores the original text** from the source event referenced by a placeholder (what gets restored is the tagged original) |
+| `ctx_memory` | The shared memory store's read/write port. Reads: `list` / `search` / `get`; writes: `write` / `update` / `archive` / `merge` (with MC's normalized content hashing, mutation log and authority guards in the loop throughout); `review_global` (surfaces machine/org domain candidates one by one as approval cards; publishes only on approval); `promote` (stages a single project memory instantly — a manual lane with no recurrence gate). Every action accepts `project` (absolute path or git root) to operate on another project |
 
-斜杠命令（`registerStatusCommand: false` 只关 `ctx-status`）：
+Slash commands (`registerStatusCommand: false` disables only `ctx-status`):
 
-| 命令 | 作用 |
+| Command | What it does |
 |---|---|
-| `/ctx-status` | 压力 / 决策 / 回收台账 / compartments / 基线 / 策略 |
-| `/ctx-recomp` `all` \| `last:<n>` \| `<startSeq>-<endSeq>` | 重跑 historian 并**原地替换** store 里的摘要（区间按 compartment 吸附、绝不切分；身份与已落地占位符不变，下一趟 pre-step 重建基线） |
-| `/ctx-profile` `confirm` \| `reject` \| `retire` | 用户画像候选的确认 / 拒绝 / 退休；晋升进共享 profile 在下一维护 tick 发生 |
-| `/ctx-global` `add` \| `remove` \| `status` \| `promote` \| `approve` \| `reject` | 全域成员管理与候选审批的人工通道（与审批卡走同一 gate→publish 路径，`source_type=user`） |
+| `/ctx-status` | pressure / decisions / reclaim ledger / compartments / baseline / policy |
+| `/ctx-recomp` `all` \| `last:<n>` \| `<startSeq>-<endSeq>` | re-runs the historian and **replaces the stored digest in place** (ranges snap to compartments, never split; identity and landed placeholders unchanged, the next pre-step rebuilds the baseline) |
+| `/ctx-profile` `confirm` \| `reject` \| `retire` | confirm / reject / retire user-profile candidates; promotion into the shared profile happens at the next maintenance tick |
+| `/ctx-global` `add` \| `remove` \| `status` \| `promote` \| `approve` \| `reject` | the manual lane for global-domain membership and candidate approval (same gate→publish path as the approval cards, `source_type=user`) |
 
-## 界面与遥测
+## UI & telemetry
 
-两个界面能力都靠同一个浏览器半侧（`src/client/index.js`，构建时原样拷为 `lib/client.js`）：
+Both UI capabilities ride the same browser half (`src/client/index.js`, copied verbatim to
+`lib/client.js` at build time):
 
-- **插件页设置卡片**：上文 volatile 配置项的可视化编辑，保存即生效（见"配置"一节）。
-- **`shell.overlay` 遥测徽标 + 胶囊面板**：收起态显示占用百分比；面板里是两行指标、节拍与
-  **实时操作记录**（最多 12 条，相邻同操作折叠 `×N`）：🧠 写入记忆 · 🔎 加载记忆 · 🗑️ 回收入队 ·
-  🧭 恢复原文 · ✂️ 压缩上下文 · 🗑️ 丢弃上下文 · 🧭 归档已存 · 🧰 维护巡检 · ⚠️ 失败。
-  点击面板/徽标之外、按 Esc、窗口失焦即关闭。
-- 数据来自本插件自己的 HTTP 路由（harness 的 Remote 事件白名单是编译期常量，第三方 bundle 的
-  受支持口子是 `ctx.webServer.register`）：
-  - `GET /mc-telemetry/summary` — 一次性快照（适配器 / 项目 / 健康状态 + 最近事件）
-  - `GET /mc-telemetry/events` — SSE 实时尾
-- **安全**：路由仅 loopback、无 token 鉴权，因此**只输出计数与单行摘要**——不含消息正文、
-  不含文件路径、不含凭据。
-- **多语言**：浏览器侧 `magic-context` 命名空间字典（zh/en），设置 → 通用切换即时生效、无需刷新；
-  写进会话流、模型可见的 `session-notice` 保持英文常量（避免同会话中途换语言造成 cached prefix
-  抖动）。机制见[主界面遥测契约](docs/dsh-plugin-ui-telemetry-contract.md)。
+- **Settings card on the Plugins page**: visual editing of the volatile config above;
+  saving takes effect immediately (see "Configuration").
 
-## 观测与运维
+  ![Magic Context settings card on the DSH Plugins page — execute/force thresholds, scheduling window, reclaim TTL, protected results, historian minimum nodes](https://raw.githubusercontent.com/wk544863858/dsh-plugin-magic-context/main/docs/img/settings-card-top.jpg)
 
-Desktop **不持久化 `ctx.logger` 输出**，所以插件把决策与结果写进自己的 append-only journal：
+  ![Lower half of the settings card — memory recall budget and limits, journal retention, historian and compaction toggles, verify/historian route selectors, journal switches](https://raw.githubusercontent.com/wk544863858/dsh-plugin-magic-context/main/docs/img/settings-card-bottom.jpg)
 
-- `~/.local/share/cortexkit/magic-context-dsh-poc/dsh-magic-context.db` → `journal` 表
-  （结构化，可 SQL 查询）
-- `~/.local/share/cortexkit/magic-context-dsh-poc/activity.log` → 单行文本镜像
-  （`tail`/grep 友好，超 5 MiB 自动轮转为 `.1`）
+- **`shell.overlay` telemetry badge + capsule panel**: collapsed state shows the occupancy
+  percentage; the panel holds two metric rows, the beat, and a **live operation record**
+  (up to 12 entries, adjacent identical operations folded as `×N`): 🧠 memory write ·
+  🔎 memory load · 🗑️ reclaim queued · 🧭 original restored · ✂️ context compacted ·
+  🗑️ context dropped · 🧭 archived-stored · 🧰 maintenance sweep · ⚠️ failure. Clicking
+  outside the panel/badge, Esc, or window blur closes it.
 
-**隐私**：消息正文**永不记录**。只记计数、标签号、token 估算、原因与耗时；字符串截断 300 字符、
-数组上限 20 项（`redactData` 兜底）。
+  ![Telemetry capsule panel — live context pressure, occupancy metrics and a running record of recent reclaim and archive operations](https://raw.githubusercontent.com/wk544863858/dsh-plugin-magic-context/main/docs/img/telemetry-panel.png)
+- Data comes from the plugin's own HTTP routes (the harness's Remote event whitelist is a
+  compile-time constant; the supported seam for third-party bundles is
+  `ctx.webServer.register`):
+  - `GET /mc-telemetry/summary` — one-shot snapshot (adapter / project / health + recent
+    events)
+  - `GET /mc-telemetry/events` — SSE live tail
+- **Security**: the routes are loopback-only with no token auth, so they **emit counts and
+  one-line summaries only** — no message bodies, no file paths, no credentials.
+- **Languages**: browser-side `magic-context` namespace dictionaries (zh/en); Settings →
+  General switches instantly without a refresh; the `session-notice` rows written into the
+  session stream (model-visible) stay English constants (to avoid cached-prefix churn from
+  mid-session language switches). Mechanics in the
+  [UI telemetry contract](docs/dsh-plugin-ui-telemetry-contract.md).
 
-journal 覆盖（按组）：生命周期（`boot` / `config-drift` / `session-first-seen`）；回收与压缩
-（`pass` —— execute 全量记录，含 **tokensBefore→After 净回收证明** 与 defer 原因、`drop-landed`、
-`compartment-published`/`-recomp`/`-guard`、`force-path`、`emergency-reclaim`、`context-pressure`）；
-historian 与基线（`historian` —— 含 start/done/failed 配对与 LLM 用量、`baseline`、`session-notice`、
-`wire-repair`）；记忆（`memory-recall` / `profile-recall` / `memory-promote` / `memory-stats` /
-`vector-lane` / `search-hint` / `project-drift` / `global-review`）；维护（`maintenance`）；
-工具与引擎（`tool-call` / `engine` / `error` —— 所有 fail-open 吞掉的异常）。
+## Observability & operations
 
-### 运维命令
+Desktop **does not persist `ctx.logger` output**, so the plugin writes its decisions and
+outcomes into its own append-only journal:
+
+- `~/.local/share/cortexkit/magic-context-dsh-poc/dsh-magic-context.db` → `journal` table
+  (structured, SQL-queryable)
+- `~/.local/share/cortexkit/magic-context-dsh-poc/activity.log` → single-line text mirror
+  (`tail`/grep friendly, auto-rotates to `.1` past 5 MiB)
+
+**Privacy**: message bodies are **never logged**. Only counts, tag numbers, token
+estimates, reasons and durations; strings truncate at 300 chars, arrays cap at 20 items
+(`redactData` as the backstop).
+
+Journal coverage (by group): lifecycle (`boot` / `config-drift` / `session-first-seen`);
+reclaim & compaction (`pass` — every execute recorded, with **tokensBefore→After
+net-reclaim proof** and defer reasons, `drop-landed`, `compartment-published`/`-recomp`/
+`-guard`, `force-path`, `emergency-reclaim`, `context-pressure`); historian & baseline
+(`historian` — start/done/failed pairs with LLM usage, `baseline`, `session-notice`,
+`wire-repair`); memory (`memory-recall` / `profile-recall` / `memory-promote` /
+`memory-stats` / `vector-lane` / `search-hint` / `project-drift` / `global-review`);
+maintenance (`maintenance`); tools & engine (`tool-call` / `engine` / `error` — every
+exception swallowed fail-open).
+
+### Operations commands
 
 ```sh
-npm test               # vitest run（73 个 spec / 761 个用例）
-npm run gate           # 全门禁：typecheck + 套件 + build + 验收 + 记忆审计 + records
-npm run doctor         # 只读健康报告：corpus fence / 事件车道心跳 / 悬空 run / embedding 车道
+npm test               # vitest run
+npm run gate           # full gate: typecheck + suite + build + acceptance + memory audit + records
+npm run doctor         # read-only health report: corpus fence / event-lane heartbeat / dangling runs / embedding lane
 
-node scripts/mc-report.mjs --days 7 [--json] [--session <id>]   # journal 复盘报告
-node scripts/mc-acceptance.mjs [--hours 72 --json]              # 语料库验收，失败 exit 1
-npm run phase          # 阶段门：跑某一阶段的套件并给出裁决与盲区
+node scripts/mc-report.mjs --days 7 [--json] [--session <id>]   # journal retrospective report
+node scripts/mc-acceptance.mjs [--hours 72 --json]              # corpus acceptance, exit 1 on failure
+npm run phase          # phase gate: run one phase's suite with verdict and blind spots
 ```
 
-复盘报告含：库与状态、按 kind/按天计数、关键指标（execute/defer 比例与原因分布、净回收、
-historian 失败率与耗时、紧急回收、工具调用）、最近事件明细与健康提示（"窗口内没有 execute
-pass" / "historian 从未运行" / "存在 error" / "journal 最新事件超过 24h" 等）。
+The retrospective report includes: stores and status, per-kind/per-day counts, key metrics
+(execute/defer ratio and reason distribution, net reclaim, historian failure rate and
+duration, emergency reclaims, tool calls), recent event details and health hints ("no
+execute pass in the window" / "historian never ran" / "errors present" / "latest journal
+event older than 24h", …).
 
-`scripts/` 专项工具：检索权重 A/B（`retrieval-eval`）、S(t) 排序离线 diff（`score-diff`）、
-稀释与 fold 仪表（`report-dilution`）、域命中统计（`report-hits`）、historian 失败分类
-（`report-classify`）、向量模型预检（`embedder-precheck`）、参考种子重建（`npm run build:seeds`）、
-面板分类校验（`mc-records-check`）、多语言检查（`npm run check:i18n`）。
+`scripts/` specialists: retrieval-weight A/B (`retrieval-eval`), S(t) ranking offline diff
+(`score-diff`), dilution & fold dashboard (`report-dilution`), domain-hit stats
+(`report-hits`), historian failure classification (`report-classify`), embedding-model
+precheck (`embedder-precheck`), reference-seed rebuild (`npm run build:seeds`),
+panel-category validation (`mc-records-check`), i18n check (`npm run check:i18n`).
 
-## 架构
+## Architecture
 
 ```
 src/
-  dsh/     # ← 全包唯一允许 import @deepseek-ai/* 的目录（防腐层）。
-           #    事件名、payload 形状、surface 词汇表全部收拢在这里，
-           #    DSH 升级只改这个目录。
-  core/    # 中性逻辑与存储：policy/stores/journal/memory-*/domains。
-           #    不依赖 DSH。
-  client/  # 浏览器半侧（设置卡片 + 遥测徽标），纯 JS，
-           #    构建时原样拷为 lib/client.js。
-  index.ts # 组合根：boot probe（fail-loud）→ 接缝监听 → 中性存储。
+  dsh/     # ← the ONLY directory allowed to import @deepseek-ai/* (the
+           #    anti-corruption layer). Event names, payload shapes and the
+           #    surface vocabulary all live here; a DSH upgrade touches this
+           #    directory only.
+  core/    # Neutral logic and storage: policy/stores/journal/memory-*/domains.
+           #    No DSH dependency.
+  client/  # Browser half (settings card + telemetry badge), plain JS,
+           #    copied verbatim to lib/client.js at build time.
+  index.ts # Composition root: boot probe (fail-loud) → seam listeners →
+           #    neutral stores.
 ```
 
-隔离纪律（DSH 处于 developer preview，破坏性变更预期之内；这就是本包的结构策略）：
+Isolation discipline (DSH is in developer preview; breaking changes are expected — this
+package's structural answer):
 
-- **能力探测 fail-loud**：`probeDshSeams` 启动期校验接缝可用性，不可用即抛错，绝不静默假装
-  在管理上下文；
-- **版本 fence**：适配器库 schema 链当前 **v10**（前向迁移，库比新即拒开）；**自有语料库**
-  `memories.db` 版本线继承 **v95** 起点（2026-10-13 切换，续号归本插件；`MEMORY_SCHEMA_MAX_VERSION`
-  守自有迁移线），超出即读路径拒绝、写路径转只读并响亮告警；
-- **测试即探针**：集成测试同时是接缝契约测试——DSH 升级后重跑，破坏点精确定位到 `src/dsh/`；
-- **双库结构**：
-  - **适配器库** `~/.local/share/cortexkit/magic-context-dsh-poc/dsh-magic-context.db`
-    （tags / usage / pending_drops / compartments / baseline / domains / queues / journal…，
-    schema v10）；
-  - **自有语料库** `~/.local/share/cortexkit/magic-context-dsh-poc/memories.db`
-    （项目记忆 + 全域行 + 画像 + 向量；legacy `context.db` 已封存不读——2026-10-13 硬切换，
-    与上游只做功能跟进、无存储兼容义务）；
-- **上游对齐账本**：与 OpenCode / Pi 两个上游适配器的逐条有效行为对齐与刻意差异见
-  [PARITY.md](PARITY.md)（aligned / host-imposed / intentional 三种裁决，每条引用宿主文件）。
+- **Fail-loud capability probing**: `probeDshSeams` validates seam availability at boot and
+  throws when absent — never silently pretends to manage context;
+- **Version fences**: the adapter DB schema chain is at **v10** (forward migrations; a
+  newer DB refuses to open); the **own corpus** `memories.db` inherits the **v95** starting
+  point (switched 2026-10-13, numbering owned by this plugin; `MEMORY_SCHEMA_MAX_VERSION`
+  guards the migration line) — beyond it, reads refuse and writes degrade to read-only
+  with a loud warning;
+- **Tests as probes**: the integration tests double as seam-contract tests — rerun after a
+  DSH upgrade and breakage localizes to `src/dsh/`;
+- **Two-database layout**:
+  - **Adapter DB** `~/.local/share/cortexkit/magic-context-dsh-poc/dsh-magic-context.db`
+    (tags / usage / pending_drops / compartments / baseline / domains / queues / journal…,
+    schema v10);
+  - **Own corpus** `~/.local/share/cortexkit/magic-context-dsh-poc/memories.db` (project
+    memories + global-domain rows + profile + vectors; the legacy `context.db` is sealed
+    and unread — the 2026-10-13 hard split; the upstream relationship is feature-following
+    only, no storage-compat duty);
+- **Upstream parity ledger**: effective-behavior alignment and deliberate differences
+  against the OpenCode / Pi adapters are tracked in [PARITY.md](PARITY.md) (aligned /
+  host-imposed / intentional verdicts, each citing host files).
 
-## 文档索引
+## Documentation index
 
-**契约类**：[记忆写契约](docs/dsh-plugin-memory-write-contract.md) ·
-[记忆提升契约](docs/dsh-plugin-memory-promotion-contract.md) ·
-[记忆验收](docs/dsh-plugin-memory-acceptance.md) ·
-[配置界面契约](docs/dsh-plugin-config-ui-contract.md) ·
-[主界面遥测契约](docs/dsh-plugin-ui-telemetry-contract.md) ·
-[升级跟随](docs/dsh-plugin-upgrade-followup.md) ·
-[hooks 覆盖](docs/dsh-plugin-hooks-coverage-2026-10-08.md)
+(The linked documents are written in Chinese.)
 
-**设计决策**：[移植可行性（接缝地图）](docs/dsh-port-feasibility-2026-10-06.md) ·
-[平台接管与全域](docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md) ·
-[dreamer 向量决策](docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md) ·
-[记忆机制清单](docs/memory-mechanisms-inventory-2026-10-09.md) ·
-[上游源码分析](docs/upstream-source-analysis-2026-10-09.md) ·
-[全域来源调查](docs/global-domain-source-finding-2026-10-10.md) ·
-[记忆架构挑战](docs/memory-architecture-challenge-2026-10-10.md)
+**Contracts**: [memory write](docs/dsh-plugin-memory-write-contract.md) ·
+[memory promotion](docs/dsh-plugin-memory-promotion-contract.md) ·
+[memory acceptance](docs/dsh-plugin-memory-acceptance.md) ·
+[config UI](docs/dsh-plugin-config-ui-contract.md) ·
+[UI telemetry](docs/dsh-plugin-ui-telemetry-contract.md) ·
+[upgrade follow-up](docs/dsh-plugin-upgrade-followup.md) ·
+[hooks coverage](docs/dsh-plugin-hooks-coverage-2026-10-08.md)
 
-**复盘与运行**：[测试设计审计](docs/dsh-plugin-test-design-audit-2026-10-07.md) ·
-[运维手册](docs/dsh-plugin-operations-runbook-2026-10-10.md) ·
-[surface 写审计](docs/dsh-surface-write-audit-2026-10-09.md) ·
-[本地向量运行时审计](docs/local-embedding-runtime-audit-2026-10-15.md)
+**Design decisions**: [port feasibility (seam map)](docs/dsh-port-feasibility-2026-10-06.md) ·
+[platform takeover & global domains](docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md) ·
+[dreamer vector decision](docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md) ·
+[memory mechanisms inventory](docs/memory-mechanisms-inventory-2026-10-09.md) ·
+[upstream source analysis](docs/upstream-source-analysis-2026-10-09.md) ·
+[global-domain source finding](docs/global-domain-source-finding-2026-10-10.md) ·
+[memory architecture challenge](docs/memory-architecture-challenge-2026-10-10.md)
 
-**报告**：[dreamer token 用量](docs/reports/dreamer-token-usage.md) ·
-[记忆方案对比](docs/reports/memory-solutions-comparison.md)
+**Retrospectives & runbooks**: [test design audit](docs/dsh-plugin-test-design-audit-2026-10-07.md) ·
+[operations runbook](docs/dsh-plugin-operations-runbook-2026-10-10.md) ·
+[surface write audit](docs/dsh-surface-write-audit-2026-10-09.md) ·
+[local embedding runtime audit](docs/local-embedding-runtime-audit-2026-10-15.md)
 
-## 已知边界
+**Reports**: [dreamer token usage](docs/reports/dreamer-token-usage.md) ·
+[memory solutions comparison](docs/reports/memory-solutions-comparison.md)
 
-- historian 的触发与预算用 **chars/4 估算**，不是真 tokenizer（检索向量的分词是真
-  tokenizer）；四层摘要在**一次调用**内产出（MC 是跨调用累积）；
-- `review_global` 审批卡必须由 agent 轮内触发；headless 无审答器时明确拒绝、零状态变更；
-- 挂载时就是 off 的 journal，运行中打开需要重启（其余 journal / 阈值改动均即时生效）；
-- Desktop 不持久化 harness logger——可观测性完全由自记 journal 承担。
+## Known limits
 
-## 贡献
+- Historian triggering and budgeting use **chars/4 estimates**, not a real tokenizer
+  (retrieval vectorization does use a real one); the four-tier digest is produced in **one
+  call** (MC accumulates across calls);
+- `review_global` approval cards must be raised inside an agent turn; headless without a
+  responder it refuses explicitly with zero state change;
+- A journal that was off at mount needs a restart to turn on at runtime (all other
+  journal / threshold changes apply immediately);
+- Desktop does not persist the harness logger — observability rests entirely on the
+  self-kept journal.
 
-- 贡献指南：[CONTRIBUTING.md](CONTRIBUTING.md)（环境、代码约定、PR 流程）
-- 安全漏洞请走私密报告通道：[SECURITY.md](SECURITY.md)
-- 行为准则：[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-- 变更记录：[CHANGELOG.md](CHANGELOG.md)
+## Contributing
 
-本仓库以 npm 为唯一包管理器（`package-lock.json` 为准），CI 在 Node 22.x / 24.x 上跑
-typecheck → test → build → check:i18n。
+- Contributing guide: [CONTRIBUTING.md](CONTRIBUTING.md) (environment, code conventions,
+  PR flow)
+- Security reports go through the private channel: [SECURITY.md](SECURITY.md)
+- Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- Changelog: [CHANGELOG.md](CHANGELOG.md)
 
-## 出处与许可
+This repo uses npm as its only package manager (`package-lock.json` is the truth); CI runs
+typecheck → test → build → check:i18n on Node 22.x / 24.x.
 
-- **magic-context**（MIT © 2025 Ufuk Altinok）：本仓库的衍生来源。抽取自上游 tag
-  v0.46.0（`651c105a9`）；适配器自有提交从本地 checkout `dsh` 分支的 `e34eda955`
-  （2026-10-08）原样重放。
-- **DeepSeek Harness**（MIT）：以依赖消费，不含在内。代码针对 0.2.1-rc.1 编写
-  （checkout `1600d8a1e`，npm 协调 dist-tag `next`；注意这些包的 `latest`
-  标签落后一个发布线，精确钉版以 devDependencies 为准）。
-- 内嵌第三方：`vendor/onnx/`（onnxruntime-web WASM 子集，MIT © Microsoft）、
-  `tests/helpers/mock-adapter.ts`（DSH 测试树原样内嵌）。明细见 [NOTICE](NOTICE)，
-  许可见 [LICENSE](LICENSE)。
+## Provenance & license
+
+- **magic-context** (MIT © 2025 Ufuk Altinok): the derivative origin of this repo.
+  Extracted from upstream tag v0.46.0 (`651c105a9`); the adapter's own commits were
+  replayed verbatim from `e34eda955` (2026-10-08) on the local `dsh` branch.
+- **DeepSeek Harness** (MIT): consumed as a dependency, not vendored. Code written against
+  0.2.1-rc.1 (checkout `1600d8a1e`, npm dist-tag `next`; note their `latest` tag trails a
+  release line — exact pins are the devDependencies).
+- Vendored third-party: `vendor/onnx/` (onnxruntime-web WASM subset, MIT © Microsoft),
+  `tests/helpers/mock-adapter.ts` (DSH test tree, verbatim). Details in [NOTICE](NOTICE);
+  license in [LICENSE](LICENSE).

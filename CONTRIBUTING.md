@@ -3,7 +3,7 @@
 感谢你愿意为 **dsh-plugin-magic-context**（Magic Context 的 DeepSeek Harness 适配插件）做贡献。
 本文件说明环境准备、常用命令、代码约定和 PR 流程。
 
-- 语言约定：仓库文档（README、`docs/`）用中文；代码注释、测试名、变量名用英文。
+- 语言约定：`README.md` 用英文（默认），`README.zh-CN.md` 与 `docs/` 用中文，两份 README 保持结构对齐；代码注释、测试名、变量名用英文。
 - 提交信息：Conventional Commits，type 用英文，subject 用中文。
 - 沟通渠道：只用 **GitHub Issues**（缺陷 / 功能建议模板）。安全问题走 [SECURITY.md](SECURITY.md)，
   不要在公开 issue 里贴敏感信息。
