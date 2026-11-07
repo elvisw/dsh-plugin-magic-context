@@ -349,6 +349,8 @@ window.__ModuleLoader__.load({
       let state = { status: 'idle', groups: [], error: null }
       let remoteCtx
       let inflight
+      /** When the current directory was last read successfully. */
+      let loadedAt = 0
 
       const emit = () => {
         for (const listener of listeners) {
@@ -399,6 +401,7 @@ window.__ModuleLoader__.load({
               }
               groups.push({ id: group.id, models })
             }
+            loadedAt = Date.now()
             set({ status: 'ready', groups, error: null })
           },
           (error) => {
@@ -413,6 +416,22 @@ window.__ModuleLoader__.load({
       const refresh = () => {
         if (state.status === 'ready') set({ status: 'idle', groups: state.groups, error: null })
         load()
+      }
+
+      /**
+       * Reload a directory older than `maxAgeMs` (and load one that was never
+       * read). The `llm/models-updated` event covers live provider edits, but a
+       * card that merely opens after an event it missed — or one whose event was
+       * raced by a remount — would otherwise keep comparing against a stale
+       * directory and surface a false "(not in catalog)" on a valid pin. One
+       * cheap RPC per card open is worth never showing that lie.
+       * @param maxAgeMs - age past which the cached directory is re-read.
+       * @returns completion of the read in flight or started here.
+       */
+      const ensureFresh = (maxAgeMs = 60_000) => {
+        if (state.status !== 'ready') return load()
+        if (Date.now() - loadedAt <= maxAgeMs) return Promise.resolve()
+        return refresh()
       }
 
       return {
@@ -436,6 +455,7 @@ window.__ModuleLoader__.load({
           load()
         },
         getSnapshot: () => state,
+        ensureFresh,
         subscribe(listener) {
           listeners.add(listener)
           return () => {
@@ -446,13 +466,17 @@ window.__ModuleLoader__.load({
       }
     }
 
-    /** Subscribe one card to the catalog; loads on first render when attached. */
+    /**
+     * Subscribe one card to the catalog; re-reads a stale directory when the
+     * card mounts so an edit made while it was closed cannot leave the route
+     * selects comparing against yesterday's providers.
+     */
     function useModelCatalog(catalog) {
       const [state, setState] = useState(catalog.getSnapshot())
       useEffect(() => {
         setState(catalog.getSnapshot())
         const off = catalog.subscribe(() => setState(catalog.getSnapshot()))
-        catalog.load()
+        catalog.ensureFresh()
         return off
       }, [catalog])
       return state
