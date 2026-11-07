@@ -335,6 +335,14 @@ window.__ModuleLoader__.load({
     }
 
     /**
+     * Age past which opening the settings card revalidates the model directory.
+     * Long enough that reopening the card a few times costs nothing, short enough
+     * that a provider edit made while the card was closed is never compared
+     * against a directory from another day.
+     */
+    const MODEL_CATALOG_MAX_AGE_MS = 60_000
+
+    /**
      * One shared read of the host model catalog (`remote.session.modelCatalog()`) —
      * the provider/model directory the composer's model picker renders from.
      * The card reads it so the maintenance verify pin can be PICKED from the
@@ -428,7 +436,7 @@ window.__ModuleLoader__.load({
        * @param maxAgeMs - age past which the cached directory is re-read.
        * @returns completion of the read in flight or started here.
        */
-      const ensureFresh = (maxAgeMs = 60_000) => {
+      const ensureFresh = (maxAgeMs = MODEL_CATALOG_MAX_AGE_MS) => {
         if (state.status !== 'ready') return load()
         if (Date.now() - loadedAt <= maxAgeMs) return Promise.resolve()
         return refresh()
