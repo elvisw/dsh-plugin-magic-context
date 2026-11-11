@@ -7,6 +7,15 @@
  * bust in DSH exactly like a wire rewrite is in OpenCode. The execute band
  * (pressure >= threshold, or the cache presumed dead past the TTL) is the
  * one permission under which queued drops land; below it the adapter defers.
+ *
+ * Recorded divergence (2026-11-11, audited against upstream v0.49.50): MC
+ * deliberately REMOVED the TTL branch (issue 882) — an expired provider cache is
+ * no longer a reason to rebuild there, because a rebuild also discards signed
+ * thinking and folds m[0] earlier than pressure asks. Neither cost exists here:
+ * DSH has no signed-thinking prefix, the adapter has no m[0] tier fold, and the
+ * only thing this branch applies is the agent's OWN `ctx_reduce` marks. The
+ * branch stays because it is the adapter's only "free bust" lever: MC has a
+ * manual flush to land queued drops at will, and DSH has no equivalent command.
  */
 import type { UsageRecord } from './types.ts'
 

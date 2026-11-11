@@ -51,6 +51,7 @@ const PHASE_BASE = [
   'tests/phase1.spec.ts',
   'tests/phase2.spec.ts',
   'tests/poc.spec.ts',
+  'tests/pressure-staleness.spec.ts',
   'tests/probe.spec.ts',
   'tests/project-drift.spec.ts',
   'tests/publish-guard.spec.ts',

@@ -190,6 +190,19 @@ export interface AdapterStores {
   listUsage(sessionId: string): UsageRecord[]
   /** Newest usage row by seq, or undefined before the first response. */
   latestUsage(sessionId: string): UsageRecord | undefined
+  /**
+   * Newest moment the injected history changed for this session (a compartment
+   * was stored, or the baseline was re-frozen) — the surface a usage reading
+   * describes. `undefined` when neither exists yet.
+   *
+   * Exists so the pressure decision can tell a CURRENT reading from one that
+   * predates a publish: a reading recorded before the surface changed measures a
+   * prompt that no longer exists, and acting on it again (force-band reclaim)
+   * drops content the agent may still need. Upstream MC fixed the same class in
+   * v0.49.49 (`usagePredatesHistoryChange`); the deadlock half of that fix does
+   * not apply here — the adapter has no refusal path.
+   */
+  latestHistoryChangeAt(sessionId: string): number | undefined
   queueDrop(sessionId: string, tagNumber: number, now: number): void
   /** Pending (not yet landed) drop tag numbers, oldest first. */
   listPendingDrops(sessionId: string): number[]
@@ -835,6 +848,32 @@ export function openStores(dataDir: string): AdapterStores {
     }
   }
 
+  /**
+   * Newest history change (compartment stored / baseline re-frozen) for the
+   * session. Both stamps are metadata about the SAME injected surface, so a
+   * reading older than either one describes bytes the provider will not see
+   * again.
+   *
+   * Deliberately not extended to drop landings: `pending_drops` carries no
+   * landing timestamp, and a drop-only mutation is already followed by the same
+   * pass's baseline refresh in every path that refreshes one. The compaction
+   * case — the one that loses content — is covered.
+   */
+  const latestHistoryChangeAt = (sessionId: string): number | undefined => {
+    try {
+      const row = db.prepare(
+        'SELECT MAX(t) AS t FROM ('
+          + 'SELECT MAX(created_at) AS t FROM compartments WHERE session_id = ?'
+          + ' UNION ALL SELECT MAX(updated_at) AS t FROM baseline_state WHERE session_id = ?)',
+      ).get(sessionId, sessionId) as { t?: number | null } | undefined
+      const value = row?.t
+      return typeof value === 'number' && Number.isFinite(value) ? value : undefined
+    } catch {
+      // A freshness probe must never fail the turn that asked for it.
+      return undefined
+    }
+  }
+
   const queueDrop = (sessionId: string, tagNumber: number, now: number): void => {
     db.prepare(
       'INSERT INTO pending_drops(session_id, tag_number, queued_at) VALUES(?, ?, ?) '
@@ -1392,6 +1431,7 @@ export function openStores(dataDir: string): AdapterStores {
     recordUsage,
     listUsage,
     latestUsage,
+    latestHistoryChangeAt,
     queueDrop,
     listPendingDrops,
     markDropLanded,

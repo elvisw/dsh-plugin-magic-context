@@ -273,6 +273,14 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
       // execute band — and every drop waiting behind it — would never open.
       const pressureWindow = pressureWindowTokens(context.contextWindow, policy)
       const pressure = pressurePercent(latest, pressureWindow)
+      // A reading recorded before the injected surface last changed measures a
+      // prompt that no longer exists (a compartment landed / the baseline was
+      // re-frozen after it). It remains the only size signal for the pass
+      // decision, but the force band must not reclaim against it — that is how
+      // compaction ends up dropping a second batch of content for nothing.
+      const historyChangedAt = stores.latestHistoryChangeAt(sessionId)
+      const pressureStale = latest !== undefined && historyChangedAt !== undefined
+        && historyChangedAt > latest.recordedAt
       const pass = decidePass({
         latest,
         pressure,
@@ -293,6 +301,9 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
       const basePassData = {
         reason: pass.reason,
         pressure: pressure === undefined ? undefined : Number(pressure.toFixed(1)),
+        // Visible in the pass row: a stale reading explains why a high
+        // percentage did not reclaim (see the force-band guard).
+        ...pressureStale ? { pressureStale: true } : {},
         // The denominator the decision actually used, flagged when it was the
         // assumption rather than the route's own reading.
         contextWindow: pressureWindow,
@@ -473,6 +484,7 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
           logger: ctx.logger,
           pass,
           pressure,
+          ...pressureStale ? { pressureStale: true } : {},
           ...journal === undefined ? {} : { journal },
           ...context.provider === undefined || context.model === undefined
             ? {}

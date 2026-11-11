@@ -20,6 +20,7 @@ import { DatabaseSync } from 'node:sqlite'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
 import LlmRuntime, { createUserMessage } from '@deepseek-ai/dsh-llm'
+import type { GenerateOptions, StreamChunk } from '@deepseek-ai/dsh-llm'
 import SessionStore, { SessionId } from '@deepseek-ai/dsh-session'
 import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
 import ToolRuntime from '@deepseek-ai/dsh-tools'
@@ -462,5 +463,59 @@ describe('vectorBackfill default (WP11 gate)', () => {
   it('stays operator-off-able with an explicit false', () => {
     expect(vectorBackfillEnabled({ vectorBackfill: false })).toBe(false)
     expect(vectorBackfillEnabled({ vectorBackfill: true })).toBe(true)
+  })
+})
+
+/**
+ * The schedule must not depend on any single tick returning.
+ *
+ * Before 2026-11-11 the interval was installed from the FIRST tick's `finally`:
+ * one verify stream that never settled therefore stopped TTL expiry,
+ * verification, profile review and the vector lane for the life of the process,
+ * with no error anywhere (the panel only ever showed "never ran"). This drives a
+ * hanging first call through the real timer wiring: the budget ends the tick, and
+ * the schedule is still there for the next one.
+ */
+describe('maintenance schedule survives a tick that never settles', () => {
+  class HangingOnceAdapter extends MockAdapter {
+    private hung = false
+    override async * stream(options: GenerateOptions): AsyncIterable<StreamChunk> {
+      if (!this.hung) {
+        this.hung = true
+        // Never yields, never returns, never observes the abort signal.
+        await new Promise<never>(() => {})
+      }
+      yield* super.stream(options)
+    }
+  }
+
+  it('fails the hung call on its budget and keeps ticking', async () => {
+    vi.useFakeTimers()
+    const cwd = tempDir('mc-maint-cwd-hang-')
+    const identity = resolveIdentitySpec(cwd)!
+    const store = makeMemoryDb(identity)
+    const { ctx, agent, journalPath } = await boot({ memoryDbPath: store.path, cwd, maintenance: true })
+    const adapter = new HangingOnceAdapter([
+      textResponse(JSON.stringify({ verdicts: [{ id: store.id, verdict: 'verified' }] })),
+    ])
+    ctx.llm.registerAdapter(['mock-verify'], adapter)
+    try {
+      await driveTurn(ctx, agent, 'hello')
+
+      // t=60s: the first sweep starts and its verify call hangs — nothing logged yet.
+      await vi.advanceTimersByTimeAsync(60_000)
+      expect(maintenanceRows(journalPath)).toHaveLength(0)
+
+      // The 120s budget ends the tick: a warn row carries the deadline.
+      await vi.advanceTimersByTimeAsync(120_000)
+      const failed = maintenanceRows(journalPath)
+      expect(failed.some(row => row.level === 'warn' && row.summary.includes('deadline'))).toBe(true)
+
+      // And the schedule is still installed: the next interval tick verifies.
+      await vi.advanceTimersByTimeAsync(60_000)
+      expect(maintenanceRows(journalPath).some(row => row.data.verify === 'ran')).toBe(true)
+    } finally {
+      await ctx.fiber.dispose()
+    }
   })
 })

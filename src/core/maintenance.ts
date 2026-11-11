@@ -19,12 +19,16 @@
  *    like MC's "a timed-out batch banks what it verified" per-memory
  *    watermark).
  *
- * Scope deviation (recorded): MC's dreamer sweeps every project in the
- * shared store; the adapter only ever touches rows owned by its own project
- * identity. Other projects belong to the MC application or their own agents.
+ * Scope note (revised 2026-11-11 after upstream audit): upstream's dreamer timer
+ * also lives inside a host process and only sweeps projects that host has open
+ * (MC v0.49.50, `166344dc5` — the earlier "sweeps every project" reading was
+ * wrong). The adapter's deviation is narrower: its tick only touches rows owned
+ * by the identities this process has served.
  */
 import type { Journal } from './journal.ts'
 import type { MemoryRecord, MemoryWriter } from './memory-write.ts'
+import { memoryContentHash } from './memory-write.ts'
+import { LlmDeadlineError, withDeadline } from './llm-deadline.ts'
 import type { LlmSeamMessage } from './types.ts'
 
 /**
@@ -75,6 +79,8 @@ export interface MaintenanceDeps {
   readonly sessionId: string
   readonly journal: Journal
   readonly now?: () => number
+  /** Wall-clock budget for the verify call. Defaults to {@link VERIFY_TIMEOUT_MS}. */
+  readonly verifyTimeoutMs?: number
 }
 
 export interface MaintenanceOutcome {
@@ -102,6 +108,22 @@ const CONTENT_PREVIEW = 400
  * zero deltas on one tick and three verdicts on another). 32768 is the
  * historian's ceiling — the same floor/ceiling reasoning applies here. */
 const VERIFY_MAX_TOKENS = 32768
+/** Wall-clock budget for one verify round trip (upstream MC's dreamer applies a
+ * per-batch deadline for the same reason: a provider stream that never settles
+ * must not own the lane's only execution slot). Generous against observed calls
+ * (a few seconds), strict enough that a hung one lands in the next tick. */
+const VERIFY_TIMEOUT_MS = 120_000
+/**
+ * Rows read from the unverified window per tick, before the skip filter.
+ *
+ * The window itself is a SQL LIMIT (see {@link listMemoriesSql} in
+ * memory-write.ts), so a row the model could not judge must not simply occupy a
+ * slot forever: `skip` verdicts are remembered in `metadata_json` and filtered
+ * AFTER the window read but BEFORE `VERIFY_BATCH` is taken. The scan window is
+ * 8× the batch so a realistic run of skips still leaves a full batch of live
+ * candidates; it stays one cheap indexed read either way.
+ */
+const VERIFY_SCAN = VERIFY_BATCH * 8
 
 const VERIFY_INSTRUCTION = [
   'You are auditing project memories for a coding agent. For each memory, judge whether it is still true and useful for this project:',
@@ -184,54 +206,62 @@ function parseVerdicts(text: string): Array<{ id: number; verdict: string; impor
  * worth of root cause). The provider's usage sample rides along when the
  * stream reports one: it is the dream token anchor the patrol watches. */
 async function collectText(llm: MaintenanceLlm, deps: MaintenanceDeps, userPrompt: string): Promise<{ ok: true; text: string; truncated: boolean; usage?: Record<string, number> } | { ok: false; why: string }> {
-  const byIndex = new Map<number, string>()
-  let truncated = false
-  let usage: Record<string, number> | undefined
+  const budgetMs = deps.verifyTimeoutMs ?? VERIFY_TIMEOUT_MS
   try {
-    const chunks = llm.stream({
-      provider: deps.route!.provider,
-      model: deps.route!.model,
-      // The DSH llm seam takes content BLOCKS, not a bare string (the host
-      // calls content.some(...) — a string threw "content.some is not a
-      // function" and failed every tick silently).
-      messages: [{ role: 'user', content: [{ type: 'text', text: userPrompt }] }],
-      maxTokens: VERIFY_MAX_TOKENS,
-      sessionId: deps.sessionId,
-      purpose: 'compaction',
-    })
-    for await (const raw of chunks) {
-      const chunk = raw as { type: string; index?: number; text?: string }
-      if (chunk.type === 'text-delta' && typeof chunk.index === 'number' && typeof chunk.text === 'string') {
-        byIndex.set(chunk.index, (byIndex.get(chunk.index) ?? '') + chunk.text)
-      } else if (chunk.type === 'usage') {
-        // Same capture as the historian's collector: keep the numeric fields.
-        const reported = (raw as { usage?: Record<string, unknown> }).usage
-        const numeric: Record<string, number> = {}
-        for (const [key, value] of Object.entries(reported ?? {})) {
-          if (typeof value === 'number') numeric[key] = value
+    return await withDeadline(async (signal) => {
+      const byIndex = new Map<number, string>()
+      let truncated = false
+      let usage: Record<string, number> | undefined
+      const chunks = llm.stream({
+        provider: deps.route!.provider,
+        model: deps.route!.model,
+        // The DSH llm seam takes content BLOCKS, not a bare string (the host
+        // calls content.some(...) — a string threw "content.some is not a
+        // function" and failed every tick silently).
+        messages: [{ role: 'user', content: [{ type: 'text', text: userPrompt }] }],
+        maxTokens: VERIFY_MAX_TOKENS,
+        sessionId: deps.sessionId,
+        purpose: 'compaction',
+        signal,
+      })
+      for await (const raw of chunks) {
+        const chunk = raw as { type: string; index?: number; text?: string }
+        if (chunk.type === 'text-delta' && typeof chunk.index === 'number' && typeof chunk.text === 'string') {
+          byIndex.set(chunk.index, (byIndex.get(chunk.index) ?? '') + chunk.text)
+        } else if (chunk.type === 'usage') {
+          // Same capture as the historian's collector: keep the numeric fields.
+          const reported = (raw as { usage?: Record<string, unknown> }).usage
+          const numeric: Record<string, number> = {}
+          for (const [key, value] of Object.entries(reported ?? {})) {
+            if (typeof value === 'number') numeric[key] = value
+          }
+          usage = numeric
+        } else if (chunk.type === 'finish') {
+          // Same terminal-reason semantics as the historian's collector:
+          // error/aborted fail with the failure detail. max-tokens is NOT fatal
+          // here: the verdict list is a flat JSON array, so whatever objects made
+          // it out before the cap are still worth banking (MC's "a timed-out
+          // batch banks what it verified"); rows without a verdict stay
+          // unverified and are retried on a later tick.
+          const reason = (raw as { reason?: { kind?: string; failure?: { message?: string; code?: string } } }).reason
+          if (reason !== undefined && (reason.kind === 'error' || reason.kind === 'aborted')) {
+            const detail = reason.failure?.message ?? reason.failure?.code
+            return { ok: false as const, why: `stream finished (${reason.kind})${detail === undefined ? '' : `: ${detail}`}` }
+          }
+          if (reason?.kind === 'max-tokens') truncated = true
         }
-        usage = numeric
-      } else if (chunk.type === 'finish') {
-        // Same terminal-reason semantics as the historian's collector:
-        // error/aborted fail with the failure detail. max-tokens is NOT fatal
-        // here: the verdict list is a flat JSON array, so whatever objects made
-        // it out before the cap are still worth banking (MC's "a timed-out
-        // batch banks what it verified"); rows without a verdict stay
-        // unverified and are retried on a later tick.
-        const reason = (raw as { reason?: { kind?: string; failure?: { message?: string; code?: string } } }).reason
-        if (reason !== undefined && (reason.kind === 'error' || reason.kind === 'aborted')) {
-          const detail = reason.failure?.message ?? reason.failure?.code
-          return { ok: false, why: `stream finished (${reason.kind})${detail === undefined ? '' : `: ${detail}`}` }
-        }
-        if (reason?.kind === 'max-tokens') truncated = true
       }
-    }
+      const text = [...byIndex.entries()].sort(([a], [b]) => a - b).map(([, value]) => value).join('')
+      if (text.length === 0) {
+        return { ok: false as const, why: truncated ? 'stream hit max-tokens with no text' : 'stream produced no text deltas' }
+      }
+      return { ok: true as const, text, truncated, ...(usage === undefined ? {} : { usage }) }
+    }, budgetMs)
   } catch (error) {
-    return { ok: false, why: error instanceof Error ? error.message : String(error) }
+    // A spent budget is reported like any other failed call (journaled by the
+    // caller, retried next tick) — the point is that it is reported at all.
+    return { ok: false, why: error instanceof LlmDeadlineError ? `deadline ${error.message}` : error instanceof Error ? error.message : String(error) }
   }
-  const text = [...byIndex.entries()].sort(([a], [b]) => a - b).map(([, value]) => value).join('')
-  if (text.length === 0) return { ok: false, why: truncated ? 'stream hit max-tokens with no text' : 'stream produced no text deltas' }
-  return { ok: true, text, truncated, ...(usage === undefined ? {} : { usage }) }
 }
 
 function renderRow(row: MemoryRecord, nowMs: number): string {
@@ -271,11 +301,34 @@ export async function runMaintenanceTick(deps: MaintenanceDeps): Promise<Mainten
   // verified, because verification deliberately leaves `updated_at` alone and
   // those rows keep their window slots. Recurrence (seen_count ≥ 2) jumps the
   // queue — see listMemoriesSql.
-  const candidates = writer.listMemories(identity, { limit: VERIFY_BATCH, now, unverifiedOnly: true })
+  //
+  // Second stall guard (2026-11-11): a `skip` verdict ("cannot judge from the
+  // text alone") used to leave NO trace, so the same rows were asked again on
+  // every tick — and with ≥ VERIFY_BATCH such rows the sweep would circle
+  // forever while every tick paid for an LLM call. The verdict is now remembered
+  // in `metadata_json` (content hash), and remembered rows are stepped over
+  // here. The hash is compared against the CURRENT content, so any edit (a
+  // `stale` rewrite, a human edit, a re-promotion) puts the row back in the
+  // pool automatically.
+  const window = writer.listMemories(identity, { limit: VERIFY_SCAN, now, unverifiedOnly: true })
+  const skipHashes = window.length === 0
+    ? undefined
+    : writer.verifySkipHashes(identity, window.map(row => row.id))
+  const candidates: MemoryRecord[] = []
+  let rememberedSkips = 0
+  for (const row of window) {
+    if (skipHashes?.get(row.id) === memoryContentHash(row.content)) {
+      rememberedSkips += 1
+      continue
+    }
+    candidates.push(row)
+    if (candidates.length === VERIFY_BATCH) break
+  }
   if (candidates.length === 0) {
     deps.journal.info('maintenance', `maintenance: expired ${String(tally.expired)} (nothing to verify)`, {
       expired: tally.expired,
       poolUnverified: 0,
+      ...rememberedSkips === 0 ? {} : { rememberedSkips },
       verify: 'idle',
     })
     return { ...tally }
@@ -328,6 +381,14 @@ export async function runMaintenanceTick(deps: MaintenanceDeps): Promise<Mainten
       }
     } else if (verdict.verdict === 'skip') {
       skipped += 1
+      // Remember it (metadata only, no status change: a skip stays
+      // inconclusive). Keyed by content hash so a later edit re-opens the row.
+      writer.recordVerifySkip({
+        identity,
+        id: verdict.id,
+        contentHash: memoryContentHash(row.content),
+        at: now,
+      })
     }
   }
   if (verifiedIds.length > 0) tally.verified += writer.markVerified(identity, verifiedIds, now)
@@ -363,6 +424,7 @@ export async function runMaintenanceTick(deps: MaintenanceDeps): Promise<Mainten
       verdicts: verdicts.length,
       poolUnverified: pool,
       verify: 'ran',
+      ...rememberedSkips === 0 ? {} : { rememberedSkips },
       ...(usage !== undefined ? { usage } : {}),
       ...(lagMaxH !== undefined ? { lagMaxH: round1(lagMaxH) } : {}),
       ...(lagAvgH !== undefined ? { lagAvgH: round1(lagAvgH) } : {}),

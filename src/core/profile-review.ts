@@ -37,6 +37,7 @@
 
 import type { Journal } from './journal.ts'
 import type { ProfileCandidateRow, ProfileWriter } from './profile-write.ts'
+import { LlmDeadlineError, withDeadline } from './llm-deadline.ts'
 import { errText } from './types.ts'
 
 /** The review LLM seam: the same call shape the maintenance tick uses. */
@@ -51,6 +52,7 @@ export interface ProfileReviewLlm {
     readonly maxTokens: number
     readonly sessionId: string
     readonly purpose: 'compaction'
+    readonly signal?: AbortSignal
   }): AsyncIterable<unknown>
 }
 
@@ -76,6 +78,13 @@ export const PROFILE_CANDIDATE_TTL_MS = 30 * 24 * 60 * 60 * 1000
 export const PROFILE_REVIEW_BATCH = 40
 /** Output cap for the verdict. */
 export const PROFILE_REVIEW_MAX_TOKENS = 4_096
+/**
+ * Wall-clock budget for the review's single round trip, for the same reason the
+ * verify lane has one: the review rides the maintenance tick, and the ticker's
+ * interval is installed only after a tick resolves — a stream that never settles
+ * would therefore stop the whole maintenance lane for the life of the process.
+ */
+export const PROFILE_REVIEW_TIMEOUT_MS = 120_000
 /** A promoted profile row is a standing rule; longer than this is not one. */
 export const PROFILE_MAX_CONTENT_CHARS = 800
 /**
@@ -248,6 +257,8 @@ export interface ProfileReviewDeps {
   readonly batch?: number
   /** Distinct sessions the batch must span. Defaults to PROFILE_REVIEW_MIN_SESSIONS. */
   readonly minSessions?: number
+  /** Wall-clock budget for the review call. Defaults to {@link PROFILE_REVIEW_TIMEOUT_MS}. */
+  readonly reviewTimeoutMs?: number
 }
 
 /** One LLM call, collected by block index — the same shape the tick uses. */
@@ -256,42 +267,49 @@ async function collectText(
   route: { readonly provider: string; readonly model: string },
   sessionId: string,
   prompt: string,
+  budgetMs: number = PROFILE_REVIEW_TIMEOUT_MS,
 ): Promise<{ ok: true; text: string; usage?: Record<string, number> } | { ok: false; why: string }> {
-  const byIndex = new Map<number, string>()
-  let usage: Record<string, number> | undefined
   try {
-    const chunks = llm.stream({
-      provider: route.provider,
-      model: route.model,
-      messages: [{ role: 'user', content: [{ type: 'text', text: prompt }] }],
-      maxTokens: PROFILE_REVIEW_MAX_TOKENS,
-      sessionId,
-      purpose: 'compaction',
-    })
-    for await (const raw of chunks) {
-      const chunk = raw as { type?: string; index?: number; text?: string; reason?: { kind?: string; failure?: { message?: string } } }
-      if (chunk.type === 'text-delta' && typeof chunk.index === 'number' && typeof chunk.text === 'string') {
-        byIndex.set(chunk.index, (byIndex.get(chunk.index) ?? '') + chunk.text)
-      } else if (chunk.type === 'usage') {
-        const reported = (raw as { usage?: Record<string, unknown> }).usage
-        const numeric: Record<string, number> = {}
-        for (const [key, value] of Object.entries(reported ?? {})) {
-          if (typeof value === 'number') numeric[key] = value
-        }
-        usage = numeric
-      } else if (chunk.type === 'finish') {
-        const kind = chunk.reason?.kind
-        if (kind === 'error' || kind === 'aborted') {
-          return { ok: false, why: `stream finished (${kind})${chunk.reason?.failure?.message === undefined ? '' : `: ${chunk.reason.failure.message}`}` }
+    return await withDeadline(async (signal) => {
+      const byIndex = new Map<number, string>()
+      let usage: Record<string, number> | undefined
+      const chunks = llm.stream({
+        provider: route.provider,
+        model: route.model,
+        messages: [{ role: 'user', content: [{ type: 'text', text: prompt }] }],
+        maxTokens: PROFILE_REVIEW_MAX_TOKENS,
+        sessionId,
+        purpose: 'compaction',
+        signal,
+      })
+      for await (const raw of chunks) {
+        const chunk = raw as { type?: string; index?: number; text?: string; reason?: { kind?: string; failure?: { message?: string } } }
+        if (chunk.type === 'text-delta' && typeof chunk.index === 'number' && typeof chunk.text === 'string') {
+          byIndex.set(chunk.index, (byIndex.get(chunk.index) ?? '') + chunk.text)
+        } else if (chunk.type === 'usage') {
+          const reported = (raw as { usage?: Record<string, unknown> }).usage
+          const numeric: Record<string, number> = {}
+          for (const [key, value] of Object.entries(reported ?? {})) {
+            if (typeof value === 'number') numeric[key] = value
+          }
+          usage = numeric
+        } else if (chunk.type === 'finish') {
+          const kind = chunk.reason?.kind
+          if (kind === 'error' || kind === 'aborted') {
+            return { ok: false as const, why: `stream finished (${kind})${chunk.reason?.failure?.message === undefined ? '' : `: ${chunk.reason.failure.message}`}` }
+          }
         }
       }
-    }
+      const text = [...byIndex.entries()].sort(([a], [b]) => a - b).map(([, value]) => value).join('')
+      if (text.trim().length === 0) return { ok: false as const, why: 'stream produced no text deltas' }
+      return { ok: true as const, text, ...usage === undefined ? {} : { usage } }
+    }, budgetMs)
   } catch (error) {
-    return { ok: false, why: errText(error) }
+    return {
+      ok: false,
+      why: error instanceof LlmDeadlineError ? `deadline ${error.message}` : errText(error),
+    }
   }
-  const text = [...byIndex.entries()].sort(([a], [b]) => a - b).map(([, value]) => value).join('')
-  if (text.trim().length === 0) return { ok: false, why: 'stream produced no text deltas' }
-  return { ok: true, text, ...usage === undefined ? {} : { usage } }
 }
 
 function renderCandidate(row: ProfileCandidateRow, nowMs: number): string {
@@ -362,7 +380,7 @@ export async function runProfileReview(deps: ProfileReviewDeps): Promise<Profile
 
   const prompt = PROFILE_REVIEW_INSTRUCTION + '\n\nCandidate observations:\n'
     + candidates.map(row => renderCandidate(row, now)).join('\n')
-  const call = await collectText(deps.llm, deps.route, deps.sessionId, prompt)
+  const call = await collectText(deps.llm, deps.route, deps.sessionId, prompt, deps.reviewTimeoutMs)
   if (!call.ok) {
     deps.journal.warn('maintenance', `profile review call failed (retried next tick): ${call.why}`, {
       candidates: candidates.length,

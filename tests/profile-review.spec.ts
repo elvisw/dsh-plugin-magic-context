@@ -563,4 +563,36 @@ describe('runProfileReview', () => {
     expect(profiles(path)).toHaveLength(1)
     expect(candidateContents(path)).toEqual([])
   })
+
+  it('fails the review inside its budget when the stream never settles', async () => {
+    // The review rides the maintenance tick, whose ticker depends on the tick
+    // returning: without a budget a hung stream would stop every maintenance
+    // task, silently, for the life of the process.
+    const path = makeDb()
+    seedCandidate(path, 'answer in Chinese', T0)
+    seedCandidate(path, 'always answer in Chinese', T0)
+    seedCandidate(path, 'reply in Chinese', T0, 'sess-b')
+    const calls: Call[] = []
+    const hanging = {
+      stream() {
+        return (async function* () {
+          await new Promise<never>(() => {})
+        })()
+      },
+    }
+    const startedAt = Date.now()
+    const outcome = await withWriter(path, writer => runProfileReview({
+      writer,
+      llm: hanging as never,
+      route: { provider: 'mock', model: 'mock' },
+      sessionId: 'mc-maintenance',
+      journal: recordingJournal(calls),
+      now: () => T0,
+      reviewTimeoutMs: 40,
+    }))
+    expect(Date.now() - startedAt).toBeLessThan(2_000)
+    expect(outcome).toMatchObject({ ran: false, reason: 'llm-failed' })
+    // A failed call is never stamped: the next tick retries it.
+    expect(calls.some(call => call.level === 'warn' && call.summary.includes('deadline'))).toBe(true)
+  })
 })
