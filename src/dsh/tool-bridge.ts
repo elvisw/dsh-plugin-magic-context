@@ -16,8 +16,9 @@
  *
  * Semantics follow Magic Context's discipline: ctx_reduce only QUEUES marks
  * (a landing is a priced bust, so it waits for the execute band in pre-step
- * — never origins its own); ctx_expand restores original content from the
- * placeholder's cited source event (durable, content-only replacement).
+ * — never origins its own); ctx_expand RETURNS the original content as a new
+ * tool result read from the persisted log (the old placeholder and its spent
+ * tag stay untouched — contract D1, #13 A).
  */
 import type { ContentBlock } from '@deepseek-ai/dsh-llm'
 import type { ToolRunContext } from '@deepseek-ai/dsh-tools'
@@ -27,8 +28,7 @@ import { parseTagRanges } from '../core/policy.ts'
 import type { AdapterStores } from '../core/stores.ts'
 import {
   enumerateSurfaceToolResults,
-  originalContentOfPlaceholder,
-  replaceToolResultContent,
+  originalContentOfToolCall,
   type SurfaceToolNode,
 } from './seams.ts'
 
@@ -114,6 +114,43 @@ function ackText(lines: string[]): ContentBlock[] {
   return [{ type: 'text', text: lines.join('\n') }]
 }
 
+/** One `ctx_expand` request after argument validation (contract Q3/D4). */
+type ExpandRequest = { readonly tags: readonly number[] } | { readonly reason: string }
+
+/**
+ * Resolve `tag` (canonical, single) or `tags` (deprecated multi-tag alias).
+ * A pair where either side is empty counts as absent, so `{tag: ''}` reads as
+ * "nothing asked" rather than as tag 0. `message` is T3, not this path.
+ */
+function expandRequest(args: { readonly tag?: string; readonly tags?: string }): ExpandRequest {
+  const tag = typeof args.tag === 'string' ? args.tag.trim() : ''
+  const tags = typeof args.tags === 'string' ? args.tags.trim() : ''
+  if (tag !== '' && tags !== '') return { reason: 'pass either tag or tags, not both' }
+  if (tag === '' && tags === '') return { reason: 'no tag given (pass tag: "N")' }
+  const source = tag !== '' ? tag : tags
+  // Request order is the payload order (contract D4/Q3): "9,2" restores 9
+  // first. Only this path keeps it; `ctx_reduce` stays ascending.
+  const parsed = parseTagRanges(source, { preserveOrder: true })
+  if (parsed.length === 0) return { reason: `"${source}" names no tag number` }
+  if (tag !== '' && parsed.length !== 1) {
+    return { reason: `"${source}" is not a single tag number (use tags for several)` }
+  }
+  return { tags: parsed }
+}
+
+/** One payload per restored tag, in request order (contract D4/Q3). */
+function joinExpandPayloads(payloads: readonly (readonly ContentBlock[])[]): ContentBlock[] | undefined {
+  if (payloads.length === 0) return undefined
+  const blocks: ContentBlock[] = []
+  for (const [index, content] of payloads.entries()) {
+    // The separator is a block so non-text payloads are carried through
+    // unchanged; a text-only projection reads `p1\n\n---\n\np2`.
+    if (index > 0) blocks.push({ type: 'text', text: '\n\n---\n\n' })
+    blocks.push(...content)
+  }
+  return blocks
+}
+
 export function defineCtxReduceTool(deps: ToolBridgeDeps): unknown {
   const defineTool = deps.defineTool
   return defineTool<{ readonly drop: string }>({
@@ -123,7 +160,7 @@ export function defineCtxReduceTool(deps: ToolBridgeDeps): unknown {
         + 'Pass tag IDs you saw on tool outputs: drop: "3-5, 1, 9". '
         + 'Marks are queued and land when the context manager opens its reclaim band; '
         + 'dropped tool outputs become `[dropped §N§]` placeholders. Nothing is lost: '
-        + 'ctx_expand restores any original.',
+        + 'ctx_expand returns any original as a new result (the placeholder stays dropped).',
     parameters: { drop: { type: 'string', required: true } },
     output: {
       schema: { type: 'json' },
@@ -156,12 +193,27 @@ export function defineCtxReduceTool(deps: ToolBridgeDeps): unknown {
       const refused: TagVerdict[] = []
       const now = Date.now()
       for (const tag of requested) {
+        // Durable lifecycle first (#13 A): a spent tag stays refused even when
+        // its placeholder has left the live surface (historian publication), and
+        // a queued tag is refused explicitly as `already queued` rather than
+        // being written again.
+        const state = deps.stores.dropState(sessionId, tag)
+        if (state === 'landed') {
+          refused.push({ tag, ok: false, reason: 'already dropped' })
+          continue
+        }
+        if (state === 'pending') {
+          refused.push({ tag, ok: false, reason: 'already queued' })
+          continue
+        }
         const node: SurfaceToolNode | undefined = nodes.find(candidate => candidate.tagNumber === tag)
         if (node === undefined) {
           refused.push({ tag, ok: false, reason: 'no such tool-output tag on the current surface' })
           continue
         }
         if (node.isPlaceholder) {
+          // A drop the emergency band performed never entered the queue, so its
+          // durable state is still `none`; the live placeholder is the record.
           refused.push({ tag, ok: false, reason: 'already dropped' })
           continue
         }
@@ -182,22 +234,35 @@ export function defineCtxReduceTool(deps: ToolBridgeDeps): unknown {
 
 export function defineCtxExpandTool(deps: ToolBridgeDeps): unknown {
   const defineTool = deps.defineTool
-  return defineTool<{ readonly tags: string }>({
+  return defineTool<{ readonly tag?: string; readonly tags?: string }>({
     name: 'ctx_expand',
     description:
-      'Restore previously dropped items in full. Pass tag IDs: tags: "3, 7". '
-        + 'The original content returns to the conversation exactly as it was.',
-    parameters: { tags: { type: 'string', required: true } },
+      'Restore previously dropped items in full. Pass tag: "3" — or the deprecated tags: "3, 7" alias. '
+        + 'The original content returns as this tool result; the old `[dropped §N§]` placeholder stays in place '
+        + 'and its tag stays spent (drop the new result if you no longer need it).',
+    parameters: { tag: { type: 'string' }, tags: { type: 'string' } },
     output: {
       schema: { type: 'json' },
       render: (_args, value) => {
-        const payload = value as { restored?: number[]; refused?: TagVerdict[] }
-        const lines: string[] = []
-        if (payload.restored !== undefined && payload.restored.length > 0) {
-          lines.push(`Restored in full: ${payload.restored.map(tag => `§${tag}§`).join(', ')}.`)
+        const payload = value as {
+          restored?: number[]
+          refused?: TagVerdict[]
+          content?: ContentBlock[]
+          reason?: string
         }
+        const lines: string[] = []
+        if (payload.reason !== undefined) lines.push(`ctx_expand refused: ${payload.reason}.`)
         for (const refused of payload.refused ?? []) {
           lines.push(`§${refused.tag}§ not restored: ${refused.reason ?? 'unavailable'}.`)
+        }
+        const content = payload.content ?? []
+        if (content.length > 0) {
+          // The payload IS the restored original. A partial multi-tag request
+          // (deprecated `tags`) appends its refusals after the payload so a
+          // successful single-tag result stays byte-identical to the original.
+          return lines.length === 0
+            ? [...content]
+            : [...content, { type: 'text', text: `\n\n${lines.join('\n')}` }]
         }
         if (lines.length === 0) lines.push('Nothing restored.')
         return ackText(lines)
@@ -207,35 +272,77 @@ export function defineCtxExpandTool(deps: ToolBridgeDeps): unknown {
       const startedAt = Date.now()
       const sessionId = sessionIdOf(exec)
       if (sessionId === undefined) return { ok: false, restored: [], refused: [], reason: 'no-session' }
-      const requested = parseTagRanges(args.tags)
+      const request = expandRequest(args)
+      if ('reason' in request) {
+        deps.journal?.info('tool-call', 'ctx_expand: restored 0, refused 0', {
+          tool: 'ctx_expand',
+          requested: [],
+          restored: [],
+          refused: [],
+          reason: request.reason,
+          ms: Date.now() - startedAt,
+        }, sessionId)
+        return { ok: false, restored: [], refused: [], reason: request.reason }
+      }
       const session = exec.agent!.session
-      const nodes = enumerateSurfaceToolResults(session, callId =>
-        deps.stores.getTag(sessionId, { kind: 'tool-result', callId }))
+      // Resolve the tag's persisted call identity — no live placeholder is
+      // required, so a historian-published or restarted session reads the same
+      // original from the log (contract D1.4, E4).
+      const records = new Map(deps.stores.listTags(sessionId).map(record => [record.tagNumber, record]))
       const restored: number[] = []
       const refused: TagVerdict[] = []
-      for (const tag of requested) {
-        const placeholder = nodes.find(candidate => candidate.isPlaceholder && candidate.droppedTag === tag)
-        if (placeholder === undefined) {
-          refused.push({ tag, ok: false, reason: 'no dropped item carries this tag' })
+      const payloads: ContentBlock[][] = []
+      for (const tag of request.tags) {
+        const record = records.get(tag)
+        if (record === undefined) {
+          // Tag numbers are per-session (contract D5). The global index names a
+          // foreign owner only when this session has no tag records at all: once
+          // it holds any tag of its own, its numbering is live, so a number it
+          // never used is a typo, not a handle from another session.
+          const crossSession = records.size === 0
+            && deps.stores.tagSessions(tag).some(other => other !== sessionId)
+          refused.push({ tag, ok: false, reason: crossSession ? 'cross-session tag' : 'no such tag' })
           continue
         }
-        const original = originalContentOfPlaceholder(session, placeholder.seq)
-        if (original === undefined) {
-          refused.push({ tag, ok: false, reason: 'original content is no longer recoverable' })
+        if (record.target.kind !== 'tool-result') {
+          refused.push({ tag, ok: false, reason: 'not a tool-result tag' })
           continue
         }
-        const restoreSeq = replaceToolResultContent(session, placeholder.seq, original)
-        deps.stores.markDropLanded(sessionId, tag, restoreSeq)
+        const state = deps.stores.dropState(sessionId, tag)
+        if (state === 'pending') {
+          refused.push({ tag, ok: false, reason: 'not dropped yet' })
+          continue
+        }
+        const original = originalContentOfToolCall(session, record.target.callId)
+        if (original.kind === 'missing-event') {
+          refused.push({ tag, ok: false, reason: 'tag no longer available' })
+          continue
+        }
+        // A landed drop has a placeholder event in the log; an emergency drop
+        // bypassed the queue but left the same placeholder behind.
+        // The guard below is sound because the post-execute hook prefixes EVERY
+        // tagged tool result, so an unprefixed, placeholder-shaped event can
+        // only be a drop — never an original that merely looks like one.
+        if (state !== 'landed' && original.droppedTag === undefined) {
+          refused.push({ tag, ok: false, reason: 'not dropped' })
+          continue
+        }
+        if (original.kind === 'missing-source') {
+          refused.push({ tag, ok: false, reason: 'raw source unavailable' })
+          continue
+        }
+        payloads.push(original.content)
         restored.push(tag)
       }
+      const content = joinExpandPayloads(payloads)
       deps.journal?.info('tool-call', `ctx_expand: restored ${String(restored.length)}, refused ${String(refused.length)}`, {
         tool: 'ctx_expand',
-        requested,
+        requested: request.tags,
         restored,
         refused: refused.map(entry => ({ tag: entry.tag, reason: entry.reason })),
         ms: Date.now() - startedAt,
       }, sessionId)
-      return { ok: true, restored, refused }
+      return { ok: true, restored, refused, ...content === undefined ? {} : { content } }
     },
   })
 }

@@ -34,6 +34,17 @@ export interface TagRecord {
   readonly createdAt: number
 }
 
+/**
+ * The durable lifecycle of a drop mark for one tag.
+ *
+ * `none` means no `ctx_reduce` mark was ever queued for the tag (it may still
+ * have been dropped by the emergency band, which does not pass through the
+ * pending queue); `pending` means queued and not yet landed; `landed` means the
+ * durable `pending_drops` row has a landing seq and the tag is spent. It is
+ * deliberately independent of whether a placeholder is still live.
+ */
+export type DropState = 'none' | 'pending' | 'landed'
+
 /** One recorded provider usage sample (anchored to the durable event). */
 export interface UsageRecord {
   readonly sessionId: string

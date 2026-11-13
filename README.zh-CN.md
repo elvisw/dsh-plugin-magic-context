@@ -47,8 +47,8 @@ dsh plugin --profile desktop add dsh-plugin-magic-context
 模型： 已入队 4 项——落地为占位符，发生在下一个回收带
 ……稍后的对话流里……
 [dropped §4§] [dropped §5§] [dropped §6§] [dropped §7§]
-你：   ctx_expand {"tags": "5"}        # 等等，§5 里原来是什么？
-模型： §5 的原文已原地恢复
+你：   ctx_expand {"tag": "5"}         # 等等，§5 里原来是什么？
+结果： §5 的原文作为新工具结果返回；§5 占位符保持 dropped
 ```
 
 唯一需要主动开启的是压缩接管（`registerCompactionEngine`，默认关，见[配置](#配置)）。
@@ -65,7 +65,7 @@ dsh plugin --profile desktop add dsh-plugin-magic-context
 | **m[0]/m[1] 记忆基线** | 合成 notice 节点承载冻结基线 + 增量车道（`<new-memories>` / `<memory-updates>` / `<user-profile>`）；每类增量独立水位，**新记忆永不重建缓存前缀**；内容未变则零变更 |
 | **全局域 + 用户画像** | 机器 / 组织域：**入队可自动化**（维护 tick、LLM 域分类），**发布永远是人**（审批卡、`/ctx-global approve`）；用户画像 render / collect / review 三开关分离 |
 | **维护 tick（MC dreamer 切片）** | 每 30 min：TTL 归档 → 批量 LLM verify（keep / update / archive）→ 向量回填 → 全域候选入队 |
-| **可逆上下文回收** | 工具结果打 `§N§` 标签；`ctx_reduce` **只入队**——落地发生在 execute 带内，成为引用原文的 `[dropped §N§]` 占位符；`ctx_expand` 恢复原文。绝不自发打断缓存前缀 |
+| **可逆上下文回收** | 工具结果打 `§N§` 标签；`ctx_reduce` **只入队**——落地发生在 execute 带内，成为引用原文的 `[dropped §N§]` 占位符；`ctx_expand` 把原文作为新结果返回，占位符保持 dropped。绝不自发打断缓存前缀 |
 | **压力调度** | 持久 usage（含 cache 读写）→ 压力分 → execute/defer 决策（65% 阈值、5 min cache TTL、85% 强制带）；`CONTEXT_WINDOW_EXCEEDED` 触发紧急回收 + retry；reduce-guidance 分级引导 |
 | **historian（带外摘要）** | 一次 LLM 调用重放真前缀（保 KV cache）→ 四层摘要 p1–p4 + facts/events，**只写 store 不动线缆**；execute 带内发布为 `[compacted §C<n>§]` 范围替换；`/ctx-recomp` 原地重做已压缩历史 |
 | **压缩接缝** | `registerCompactionEngine` 可接管 `ctx.compaction`（真实 `compaction/start\|summary\|replace\|end` 协议）；**默认关**，宿主 compaction-basic 保持原位 |
@@ -160,7 +160,7 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
 | 工具 | 作用 |
 |---|---|
 | `ctx_reduce` | 解析 MC 范围语法（`"3-5,8"`）→ **只入队**；落地是有价 bust，等待回收带，绝不自发 |
-| `ctx_expand` | 从占位符引用的源事件**恢复原文**（恢复的即打标原文） |
+| `ctx_expand` | 按 `tag`（单个，正式）或已弃用的 `tags` 别名，从持久化日志**把原文作为新结果返回**；旧占位符及其已用尽的 tag 保持原位 |
 | `ctx_memory` | 共享记忆库的读写口。读：`list` / `search` / `get`；写：`write` / `update` / `archive` / `merge`（与 MC 相同的规范化内容哈希、mutation log 与 authority 守卫全程在环）；`review_global`（把机器/组织域候选逐条弹成审批卡，批准才发布）；`promote`（单条项目记忆即时入池弹卡，无复现门槛的人工通道）。每个动作可带 `project`（绝对路径或 git 根）操作其它项目 |
 
 斜杠命令（`registerStatusCommand: false` 只关 `ctx-status`）：

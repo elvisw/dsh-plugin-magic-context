@@ -1,0 +1,62 @@
+# Recovery contract — T1
+# Table order is build order. `id` is permanent, never reused.
+
+[[entry]]
+id = 1
+type = "story"
+title = "Recovery contract decision record"
+description = "Writes the signed-off contract for A-only expand, post-Historian retrieval, flush, API shape, failure/degradation, and retention; Q1-Q5 are decided."
+verify = "A reviewer confirms the contract records Q1-Q5 as dated decisions and maps them to D1-D6 and E1-E10, so implementation can start without re-deciding."
+covers = []
+after = []
+hitl = true
+risk = "high"
+refine = true
+
+[[entry]]
+id = 2
+type = "story"
+title = "#13 A: result-return expand"
+description = "Makes ctx_expand return a new result and makes the spent tag a durable no-op; tag is canonical, while tags remains a deprecated multi-tag alias."
+verify = "A dropped tag expands to a new result with the original payload; the old tag is already dropped; the new tag can be dropped and expanded; restart and the legacy tags alias work."
+covers = []
+after = [1]
+hitl = false
+risk = "high"
+refine = true
+
+[[entry]]
+id = 3
+type = "story"
+title = "#14: post-Historian raw retrieval"
+description = "Makes the original content readable by tag after a Historian compartment covers the placeholder, without undoing the summary or re-running the tool; adds message (DSH surface event seq) as the fallback locator."
+verify = "After a published compartment covers the drop, expanding the old tag or its message seq returns the original content; the summary is unchanged; a missing raw source fails explicitly."
+covers = []
+after = [2]
+hitl = false
+risk = "high"
+refine = true
+
+[[entry]]
+id = 4
+type = "story"
+title = "#15: manual ctx-flush"
+description = "Adds a /ctx-flush command that marks current-session pending drops for processing on the next preStep, refreshes the affected injection cache, and reports the real result."
+verify = "With pending drops, /ctx-flush reports the processed/pending counts and the next request applies them; empty, repeated, no-session, disabled, and storage-failure cases are diagnosable."
+covers = []
+after = [2]
+hitl = false
+risk = "medium"
+refine = true
+
+[[entry]]
+id = 5
+type = "story"
+title = "Tag retention alignment"
+description = "Removes the fork's 30-day tag prune and deprecates the retention config; it does not add message/session deletion."
+verify = "With an old tag row present, mounting the adapter does not delete it; a second mount is a no-op; the retention config is removed or deprecated with a note; tag allocation stays monotonic."
+covers = []
+after = [2]
+hitl = false
+risk = "medium"
+refine = true

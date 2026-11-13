@@ -29,7 +29,7 @@
   publishing is always yours (approval cards, `/ctx-global approve`); a user-profile layer
   rides on top with read / collect / review as separate switches.
 - **Reversible reclaim, cache-aware compaction** — `ctx_reduce` only queues; drops land as
-  `[dropped §N§]` placeholders and `ctx_expand` restores the original; history digests into
+  `[dropped §N§]` placeholders and `ctx_expand` returns the original as a new result; history digests into
   p1–p4 summaries published as range replacements — never a spontaneous prefix bust.
 - **Conservative by default** — the host `compaction-basic` engine stays in place unless
   you explicitly opt in.
@@ -64,8 +64,8 @@ you:   ctx_reduce {"drop": "4-7"}      # four tool outputs are no longer worth t
 agent: queued 4 item(s) — the drops land as placeholders in the next reclaim band
 …later in the transcript…
 [dropped §4§] [dropped §5§] [dropped §6§] [dropped §7§]
-you:   ctx_expand {"tags": "5"}        # wait — what was in §5 again?
-agent: the original text of §5 is restored in place
+you:   ctx_expand {"tag": "5"}         # wait — what was in §5 again?
+tool:  the original text of §5, as a new result — the §5 placeholder stays dropped
 ```
 
 The only opt-in surface is the compaction takeover (`registerCompactionEngine`, off by
@@ -84,7 +84,7 @@ last five manage the context window (full design in [Architecture](#architecture
 | **m[0]/m[1] memory baseline** | A synthetic notice node carries the frozen baseline plus incremental lanes (`<new-memories>` / `<memory-updates>` / `<user-profile>`); each lane keeps its own watermark, so new memory never rebuilds the cached prefix — unchanged content produces zero diff |
 | **Global domains + user profile** | machine/org domains: **staging can be automated** (maintenance tick, LLM classification), **publishing is always human** (approval cards, `/ctx-global approve`); the user profile's render / collect / review are separate switches |
 | **Maintenance tick (MC dreamer slice)** | Every 30 min: TTL archiving → batched LLM verify (keep / update / archive) → vector backfill → global-domain candidate staging |
-| **Reversible context reclaim** | Tool results get `§N§` tags; `ctx_reduce` **only queues** — drops land in the execute band as `[dropped §N§]` placeholders referencing the originals; `ctx_expand` restores the original text. The cached prefix is never busted spontaneously |
+| **Reversible context reclaim** | Tool results get `§N§` tags; `ctx_reduce` **only queues** — drops land in the execute band as `[dropped §N§]` placeholders referencing the originals; `ctx_expand` returns the original text as a new result while the placeholder stays dropped. The cached prefix is never busted spontaneously |
 | **Pressure scheduling** | Persistent usage (incl. cache reads/writes) → pressure score → execute/defer decisions (65% threshold, 5 min cache TTL, 85% force band); `CONTEXT_WINDOW_EXCEEDED` triggers emergency reclaim + retry; tiered reduce-guidance nudges |
 | **Historian (out-of-band digest)** | One LLM call replays the real prefix (KV cache preserved) → four-tier p1–p4 summary + facts/events, **writes the store only, never touches the wire**; published in the execute band as a `[compacted §C<n>§]` range replacement; `/ctx-recomp` redoes compacted history in place |
 | **Compaction seam** | `registerCompactionEngine` can take over `ctx.compaction` (real `compaction/start\|summary\|replace\|end` protocol); **off by default** — the host compaction-basic stays in place |
@@ -195,7 +195,7 @@ Agent tools (registered at mount; `registerTools: false` turns them off):
 | Tool | What it does |
 |---|---|
 | `ctx_reduce` | Parses MC range syntax (`"3-5,8"`) → **queues only**; landing is a priced bust that waits for the reclaim band, never spontaneous |
-| `ctx_expand` | **Restores the original text** from the source event referenced by a placeholder (what gets restored is the tagged original) |
+| `ctx_expand` | **Returns the original text as a new result**, read from the persisted log by `tag` (single) or the deprecated `tags` alias — the old placeholder and its spent tag stay in place |
 | `ctx_memory` | The shared memory store's read/write port. Reads: `list` / `search` / `get`; writes: `write` / `update` / `archive` / `merge` (with MC's normalized content hashing, mutation log and authority guards in the loop throughout); `review_global` (surfaces machine/org domain candidates one by one as approval cards; publishes only on approval); `promote` (stages a single project memory instantly — a manual lane with no recurrence gate). Every action accepts `project` (absolute path or git root) to operate on another project |
 
 Slash commands (`registerStatusCommand: false` disables only `ctx-status`):

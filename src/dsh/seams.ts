@@ -124,6 +124,19 @@ export interface SurfaceToolNode {
 const DROPPED_PATTERN = /^\[dropped §(\d+)§\]$/
 
 /**
+ * The tag number of a `[dropped §N§]` placeholder content, when the content is
+ * one. The placeholder is the adapter's own landing format (`dropPlaceholderContent`),
+ * so the check is exact and anchored to the first block.
+ */
+export function dropTagOfContent(content: readonly ContentBlock[]): number | undefined {
+  const first = content[0]
+  const firstText = first?.type === 'text' ? first.text : undefined
+  if (firstText === undefined) return undefined
+  const dropped = DROPPED_PATTERN.exec(firstText)
+  return dropped === null ? undefined : Number(dropped[1])
+}
+
+/**
  * Enumerate CURRENT tool-result surface nodes (model-visible order —
  * `session.surface.nodes` excludes shadowed log events, which is what the
  * replace validator requires targets to be).
@@ -145,9 +158,7 @@ export function enumerateSurfaceToolResults(
     const event = events.find(candidate => candidate.seq === seq)
     if (event?.type !== 'tool/result') continue
     const callId = event.data.message.toolCallId
-    const first = event.data.message.content[0]
-    const firstText = first?.type === 'text' ? first.text : undefined
-    const dropped = firstText === undefined ? null : DROPPED_PATTERN.exec(firstText)
+    const droppedTag = dropTagOfContent(event.data.message.content)
     const textLength = event.data.message.content.reduce(
       (total, block) => total + (block.type === 'text' ? block.text.length : 0),
       0,
@@ -158,8 +169,8 @@ export function enumerateSurfaceToolResults(
       turn: event.data.turn,
       step: event.data.step,
       tagNumber: tagOf(callId),
-      isPlaceholder: dropped !== null,
-      droppedTag: dropped === null ? undefined : Number(dropped[1]),
+      isPlaceholder: droppedTag !== undefined,
+      droppedTag,
       ...toolNameByCallId.get(callId) === undefined ? {} : { toolName: toolNameByCallId.get(callId) },
       textLength,
     })
@@ -215,6 +226,64 @@ export function originalContentOfPlaceholder(
   const original = events.find((event): event is SessionEvent<'tool/result'> => event.seq === cited[0])
   if (original?.type !== 'tool/result') return undefined
   return [...original.data.message.content]
+}
+
+/**
+ * What the persisted log still holds for one tool call's result (#13 A).
+ *
+ * `missing-event` means no `tool/result` for the call exists at all (the tag
+ * outlived its message/session); `missing-source` means only placeholder
+ * events remain and none of their cited originals resolve. A `content` result
+ * also reports `droppedTag` when a persisted placeholder for the same call
+ * exists — the emergency band replaces a node without going through the
+ * pending-drop queue, so this is the only durable record of that drop.
+ */
+export type ToolCallOriginal =
+  | { readonly kind: 'content'; readonly content: ContentBlock[]; readonly droppedTag?: number }
+  | { readonly kind: 'missing-event' }
+  | { readonly kind: 'missing-source'; readonly droppedTag?: number }
+
+/**
+ * The original result content of a persisted tool call, resolved from the
+ * session log by call identity — the read side of `ctx_expand`'s result-return
+ * path. Never requires a placeholder to be live: a dropped node's original
+ * event stays in the log (shadowed, not deleted), and a legacy in-place
+ * restore is itself a non-placeholder event.
+ *
+ * Prefers a full-fidelity event; when only placeholders remain it follows
+ * their cited source (the same citation path `originalContentOfPlaceholder`
+ * uses). Never fabricates and never re-executes the tool.
+ */
+export function originalContentOfToolCall(session: Session, callId: string): ToolCallOriginal {
+  const events = session.snapshotEvents()
+  const results: Array<SessionEvent<'tool/result'>> = []
+  for (const event of events) {
+    if (event.type !== 'tool/result') continue
+    if (event.data.message.toolCallId !== callId) continue
+    results.push(event)
+  }
+  if (results.length === 0) return { kind: 'missing-event' }
+  let droppedTag: number | undefined
+  for (const event of results) {
+    droppedTag ??= dropTagOfContent(event.data.message.content)
+  }
+  const withDrop = droppedTag === undefined ? {} : { droppedTag }
+  // The call's own full-fidelity result (its landing, or a legacy in-place
+  // restore). Placeholders only cite such an event, so the first one is the
+  // original.
+  for (const event of results) {
+    if (dropTagOfContent(event.data.message.content) !== undefined) continue
+    return { kind: 'content', content: [...event.data.message.content], ...withDrop }
+  }
+  // Only placeholders remain: follow the newest cited original (the landing
+  // replaces the original on the surface but both stay in the log).
+  for (const event of [...results].reverse()) {
+    const content = originalContentOfPlaceholder(session, event.seq)
+    if (content === undefined) continue
+    if (dropTagOfContent(content) !== undefined) continue
+    return { kind: 'content', content, ...withDrop }
+  }
+  return { kind: 'missing-source', ...withDrop }
 }
 
 /** The logged request envelope facts pressure math needs. */

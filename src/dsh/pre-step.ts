@@ -145,14 +145,16 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
       }
       return decision
     }
-    // Admission stamps NOTHING — deliberately. The reclaim lanes (ctx_reduce /
-    // ctx_expand, drop landing, emergency reclaim) resolve tags against surface
-    // TOOL RESULTS only, so a handle on a user message or on a host-injected
-    // context node (runtime-context, skill-catalog, time-context) could never be
-    // acted on: ctx_reduce would answer "no such tool-output tag on the current
-    // surface". Unlike opencode/pi — which stamp a throwaway per-call array, so
-    // the stamp never reaches the record — DSH has ONE surface shared by the
-    // model and the UI, and no wire-only seam. A dead handle is therefore not
+    // Admission stamps NOTHING — deliberately. `ctx_reduce` and the drop /
+    // emergency lanes resolve tags against surface TOOL RESULTS; `ctx_expand`
+    // resolves the persisted tag record and its call's original event, so it
+    // needs no live placeholder. A handle on a user message or on a
+    // host-injected context node (runtime-context, skill-catalog, time-context)
+    // could never be acted on: `ctx_reduce` would answer "no such tool-output
+    // tag on the current surface", and `ctx_expand` would answer "not a
+    // tool-result tag". Unlike opencode/pi — which stamp a throwaway per-call
+    // array, so the stamp never reaches the record — DSH has ONE surface shared
+    // by the model and the UI, and no wire-only seam. A dead handle is not
     // free: it shows up in the conversation transcript, and `session-title`
     // derives its deterministic fallback from the first `source: 'user'`
     // message, so it becomes the session title too (measured live: seq 9

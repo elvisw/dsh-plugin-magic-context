@@ -31,11 +31,6 @@ with every refactor, the semantics behind them do not.
 
 ## A. Aligned effective behavior
 
-- **Reclaim lane.** Tags are stamped on tool results only
-  (`src/dsh/seams.ts:78`), resolved from the surface
-  (`src/dsh/seams.ts:131`), dropped as `[dropped §N§]` placeholders, and restored
-  by `ctx_expand` from the referenced event — the same contract as
-  `packages/plugin` and `packages/pi-plugin`.
 - **Memory write contract.** 29 columns, `UNIQUE` normalized hash, promotion as
   a pure append (`docs/dsh-plugin-memory-write-contract.md`, `src/core/memory-write.ts`).
 - **Fusion retrieval.** 0.7/0.3 keyword↔vector fusion, id lookup, merge rules
@@ -86,10 +81,12 @@ the model *and* the GUI, and survives as the same artifact.
 
 ### B2. `§N§` can only be stamped on tool results
 
-Because the model face and the UI face are one surface (B1) and the reclaim lanes
-resolve tool results only (`src/dsh/seams.ts:131`), a tag on a user message is a
-dead handle: `ctx_reduce` refuses it, and it pollutes the deterministic session
-title, which reads the first message whose `source.kind === 'user'`
+Because the model face and the UI face are one surface (B1), `ctx_reduce` and the
+drop / emergency lanes resolve surface tool results only, and `ctx_expand`
+refuses any target whose kind is not `tool-result`
+(`src/dsh/tool-bridge.ts:307`), a tag on a user message is a dead handle: it is
+refused by both tools, and it pollutes the deterministic session title, which
+reads the first message whose `source.kind === 'user'`
 (`host: packages/session/session-title/src/normalize.ts:70` and
 `host: packages/session/session-title/src/index.ts:788`).
 
@@ -205,6 +202,9 @@ earlier "add promote-primers next" reading).
 
 ## D. Intentional deviations — do not "fix" on upgrade
 
+- `ctx_expand` returns the persisted original as a new tool result; the old
+  placeholder and its spent tag stay (contract D1, A-only). This deliberately
+  replaces upstream's in-place restore from the cited event.
 - `recordRetrieval` does **not** write `updated_at` (MC does), keeping the m[0]
   digest `id:updatedAt` stable.
 - Above v94 the write path degrades to read-only; `seen_count` uses `COALESCE`;

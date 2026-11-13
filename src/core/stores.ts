@@ -18,7 +18,7 @@ import type { JournalEntry, JournalKind, JournalLevel } from './journal.ts'
 import type { MemoryFact } from './memory-categories.ts'
 import type { DomainKind } from './domains.ts'
 import { parseShareCategories, serializeShareCategories } from './domains.ts'
-import type { TagRecord, TagTarget, UsageRecord } from './types.ts'
+import type { DropState, TagRecord, TagTarget, UsageRecord } from './types.ts'
 
 export const SCHEMA_VERSION = 10
 
@@ -207,6 +207,19 @@ export interface AdapterStores {
   /** Pending (not yet landed) drop tag numbers, oldest first. */
   listPendingDrops(sessionId: string): number[]
   markDropLanded(sessionId: string, tagNumber: number, landedEventSeq: number): void
+  /**
+   * Durable drop lifecycle for one tag (#13 A): `landed` and `pending` are
+   * answered from `pending_drops`, never from whether a placeholder happens to
+   * be live on the current surface. A drop performed by the emergency band
+   * bypasses the queue and therefore reads `none` here.
+   */
+  dropState(sessionId: string, tagNumber: number): DropState
+  /**
+   * Sessions holding a §N§ allocation with this number. Tag numbers are
+   * per-session, so this is the only way to tell a cross-session tag
+   * (`cross-session tag`) from one that never existed (`no such tag`).
+   */
+  tagSessions(tagNumber: number): string[]
   /** Store one validated historian digest for a covered span. */
   allocateCompartment(
     sessionId: string,
@@ -893,6 +906,19 @@ export function openStores(dataDir: string): AdapterStores {
     ).run(landedEventSeq, sessionId, tagNumber)
   }
 
+  const dropState = (sessionId: string, tagNumber: number): DropState => {
+    const row = db.prepare(
+      'SELECT landed_event_seq FROM pending_drops WHERE session_id = ? AND tag_number = ?',
+    ).get(sessionId, tagNumber) as { landed_event_seq: number | null } | undefined
+    if (row === undefined) return 'none'
+    return row.landed_event_seq === null ? 'pending' : 'landed'
+  }
+
+  const tagSessions = (tagNumber: number): string[] =>
+    (db.prepare(
+      'SELECT DISTINCT session_id FROM tags WHERE tag_number = ? ORDER BY session_id',
+    ).all(tagNumber) as Array<{ session_id: string }>).map(row => row.session_id)
+
   interface CompartmentRow {
     session_id: string; compartment_id: number; created_at: number
     covered_start_seq: number; covered_end_seq: number; covered_seqs: string
@@ -1435,6 +1461,8 @@ export function openStores(dataDir: string): AdapterStores {
     queueDrop,
     listPendingDrops,
     markDropLanded,
+    dropState,
+    tagSessions,
     allocateCompartment,
     listCompartments,
     listUnlandedCompartments,

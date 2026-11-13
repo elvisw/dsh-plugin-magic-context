@@ -24,7 +24,7 @@
  *  - pressure measurement from durable usage + the logged context window;
  *  - execute/defer pass decisions (threshold + cache TTL; MC scheduler);
  *  - ctx_reduce marks queue and LAND only inside the execute band;
- *  - ctx_expand restores original content from cited source events;
+ *  - ctx_expand returns a persisted original as a new tool result (read by tag);
  *  - emergency reclaim + retry on CONTEXT_WINDOW_EXCEEDED;
  *  - /ctx-status command.
  *

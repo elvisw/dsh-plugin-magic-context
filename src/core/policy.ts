@@ -159,9 +159,21 @@ export function decidePass(args: {
   return { kind: 'defer', reason: 'below-threshold' }
 }
 
-/** Parse MC's drop-range grammar: "3-5,8,12-15" → ascending unique tag numbers. */
-export function parseTagRanges(input: string): number[] {
-  const tags = new Set<number>()
+/**
+ * Parse MC's drop-range grammar: "3-5,8,12-15" → unique tag numbers.
+ *
+ * Ascending by default (the `ctx_reduce` contract: batch order is irrelevant).
+ * `ctx_expand` passes `preserveOrder` because its payload is joined in request
+ * order (contract D4/Q3), so "9,2" must stay 9 before 2.
+ */
+export function parseTagRanges(input: string, options?: { readonly preserveOrder?: boolean }): number[] {
+  const tags: number[] = []
+  const seen = new Set<number>()
+  const add = (tag: number): void => {
+    if (seen.has(tag)) return
+    seen.add(tag)
+    tags.push(tag)
+  }
   for (const part of input.split(',')) {
     const token = part.trim()
     if (token.length === 0) continue
@@ -170,13 +182,13 @@ export function parseTagRanges(input: string): number[] {
       const start = Number(range[1])
       const end = Number(range[2])
       if (!Number.isInteger(start) || !Number.isInteger(end) || start < 1 || end < start || end - start > 10_000) continue
-      for (let tag = start; tag <= end; tag++) tags.add(tag)
+      for (let tag = start; tag <= end; tag++) add(tag)
       continue
     }
     if (/^\d+$/.test(token)) {
       const tag = Number(token)
-      if (tag >= 1) tags.add(tag)
+      if (tag >= 1) add(tag)
     }
   }
-  return [...tags].sort((a, b) => a - b)
+  return options?.preserveOrder === true ? tags : tags.sort((a, b) => a - b)
 }

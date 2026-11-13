@@ -6,7 +6,8 @@
  *    (queue discipline: the mark waits for the reclaim band);
  *  - the next execute-band pass lands it as a durable placeholder before
  *    request derivation (the drop rides the band's one priced bust);
- *  - ctx_expand restores the original content from the cited source event;
+ *  - ctx_expand returns the original content as a NEW tool result read from the
+ *    persisted log; the old placeholder and its spent tag stay in place (#13 A);
  *  - emergency reclaim drops beyond the protected window and advances
  *    surface.replaceGeneration (the retry proof);
  *  - parseTagRanges handles MC's range grammar.
@@ -102,14 +103,14 @@ function send(agent: Agent, text: string): void {
 }
 
 describe('magic-context dsh adapter (phase 1: management loop)', () => {
-  it('queues ctx_reduce marks, lands them only in the execute band, and restores via ctx_expand', async () => {
+  it('queues ctx_reduce marks, lands them only in the execute band, and returns the original via ctx_expand', async () => {
     const dataDir = mkdtempSync(join(tmpdir(), 'mc-dsh-p1-'))
     const adapter = new WindowedAdapter([
       toolCallResponse('call-1', 'echo', { text: 'tool one' }),
       toolCallResponse('call-2', 'ctx_reduce', { drop: '1' }),
       textResponse('queued'),
       textResponse('done more'),
-      toolCallResponse('call-3', 'ctx_expand', { tags: '1' }),
+      toolCallResponse('call-3', 'ctx_expand', { tag: '1' }),
       textResponse('all done'),
     ], 12)
     const ctx = await boot(adapter, dataDir)
@@ -156,12 +157,26 @@ describe('magic-context dsh adapter (phase 1: management loop)', () => {
       await waitForIdle(ctx, agent)
       expect(toolTexts(adapter.requests.at(-1))).toContain('[dropped §1§]')
 
-      // Turn 3: ctx_expand restores the original content from the cited event.
+      // Turn 3: ctx_expand RETURNS the original as a new result (contract D1,
+      // #13 A). The new result carries one fresh outer tag and the stored
+      // content verbatim, old §1§ marker included.
       send(agent, 'expand please')
       await waitForIdle(ctx, agent)
-      // The restored original is the tagged one (tool-result tags are durable).
-      expect(toolTexts(adapter.requests.at(-1))).toContain('§1§ echo:tool one')
-      expect(toolTexts(adapter.requests.at(-1))).not.toContain('[dropped §1§]')
+      const afterExpand = toolTexts(adapter.requests.at(-1))
+      expect(afterExpand).toContain('[dropped §1§]')
+      const restored = afterExpand.filter(text => /^§\d+§ §1§ echo:tool one$/.test(text))
+      expect(restored).toHaveLength(1)
+      // Exactly one full-fidelity copy: no in-place duplicate of the original.
+      expect(afterExpand.filter(text => text.includes('echo:tool one'))).toHaveLength(1)
+
+      // The spent tag stays landed; nothing is queued behind the expand.
+      const state = openStores(dataDir)
+      try {
+        expect(state.dropState(sessionId, 1)).toBe('landed')
+        expect(state.listPendingDrops(sessionId)).toEqual([])
+      } finally {
+        state.close()
+      }
     } finally {
       try {
         await ctx.fiber.dispose()

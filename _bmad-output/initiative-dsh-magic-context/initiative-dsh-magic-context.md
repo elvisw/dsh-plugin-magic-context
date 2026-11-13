@@ -29,5 +29,13 @@ parent: none
 - 用户决定：不再把作者回应、上游接受或合并 PR 作为目标，改为自主维护本 fork；仍保留选择性吸收上游修复的可能。此方向决定不等于自动授权基线升级、实现、安装、模型实验或发布。
 - BMad 已就地部署在本仓库：`_bmad/` 为工作流脚本（仅 `config.toml` 纳入版本管理），规划与研究资料在 `_bmad-output/initiative-dsh-magic-context/`。原先存放在 `dsh-magic-context` 仓库的资料已整体迁入；该仓库转为归档，不再作为权威来源。
 - 上文“2026-11-10 fork 轻量交接”中“不迁移 BMad、不复制两套规划”的描述自本节起失效；旧交接文档仅作历史记录。
-- 当前未决：仓库已同步上游 `dsh-plugin-magic-context@0.11.2` 的两个提交（后台车道缺陷修复与版本发布），但尚未在本机做隔离验收，是否作为新基线待验证；#13/#14/#15 的恢复契约与 ticket 拆分也同样待定。后续按 BMad 流程立项、拆分并逐项实施。
+- 2026-11-13 已完成 `dsh-plugin-magic-context@0.11.2` 的 DSH 隔离基线（T0-B）：安装、同进程/跨进程恢复、跨会话记忆、引擎注册通过；#13/#14 仍复现，8a/8b/8c 未覆盖。T0-A 上游运行取消，上游参考改用既有研究记录。详见 [0.11.2 验收报告](acceptance-windows-dsh-2026-11-13/acceptance-report.md)。
+- 当前状态：恢复契约 T1 已签收；T2（#13 A）已 refine，T3（#14 + `message`）、T4（#15）、T5（保留期）待 refine。后续按 BMad 流程逐项实施；0.11.2 可作为 DSH 可用基线，但不宣称历史始终可逆或运行级上游 parity。
 - 会话层面的决策、纠错与未决事项整理在[会话与实验历史续接记录](session-continuity-2026-11-13.md)，供新会话快速接续；原始证据仍以验收报告与证据归档为准。
+
+## Notes
+
+- Decision: 2026-11-13 — 当前是 entry 型 initiative，先做 T1（契约），暂不建 epic；T1 签收后再建实现 epic，T2（#13 A）作为 tracer。
+- Decision: 2026-11-13 — 不承诺兼容 fork 上游 `dsh-plugin-magic-context` 的既有行为；语义以原版 `cortexkit/magic-context` 为目标。Q1–Q5 已签收：A-only；V1 `tag` + `message`；`tags` deprecated；flush 下一次 preStep；移除 30 天 prune。见 `tickets/recovery-contract.md`。
+- Decision: 2026-11-13 — T1 已完成；T2（#13 A）、T3（#14 + `message`）、T4（#15）、T5（保留期对齐）已建票，T2 为 tracer。Q2 的 `message` 拆到 T3，Q5 拆到 T5，交付顺序变化但目标不变。
+- 注：T1 完成票内仍写 “T2–T4”，是签收当时的记录；T5 为后续拆分，现行范围以本条与 `tickets/recovery-contract.md` 为准。

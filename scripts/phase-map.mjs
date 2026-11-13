@@ -13,12 +13,12 @@
  * the failure mode this file exists to prevent, so the runner prints the blind
  * list on every run — pass or fail.
  *
- * Phase 0 is the plugin's existing regression suite: everything that shipped
- * before the takeover work. It gates every later phase, because new lanes must
- * not break the old ones.
+ * Phase 0 is the plugin's core regression suite: the behaviour that shipped
+ * before the takeover work plus the #13 A recovery lane. It gates every later
+ * phase, because new lanes must not break the old ones.
  */
 
-/** Phase 0: the behaviour that already shipped, before any of the takeover work. */
+/** Phase 0: core behavior — pre-takeover regressions plus the #13 A recovery lane. */
 const PHASE_BASE = [
   'tests/phase-map.spec.ts',
   'tests/client-pure.spec.ts',
@@ -62,6 +62,8 @@ const PHASE_BASE = [
   'tests/search-hint.spec.ts',
   'tests/session-notice.spec.ts',
   'tests/store-fusion.spec.ts',
+  'tests/tag-state.spec.ts',
+  'tests/ctx-expand-result.spec.ts',
   'tests/tags-retention.spec.ts',
   'tests/telemetry.spec.ts',
   'tests/wire-repair.spec.ts',
@@ -121,10 +123,13 @@ const PHASE_D = [
 export const PHASES = [
   {
     id: '0',
-    title: '0 基线回归（接管前已发布的行为）',
+    title: '0 核心回归（既有行为 + #13 A 恢复车道）',
     specs: PHASE_BASE,
     checks: [],
-    blind: ['不含接管新增的域/画像/命令车道——那四条见 A–D'],
+    blind: [
+      '不含接管新增的域/画像/命令车道——那四条见 A–D',
+      '#13 A 的宿主级真实模型验收仍由 T0 报告承担，本相位只覆盖单元/集成套件',
+    ],
   },
   {
     id: 'a',
