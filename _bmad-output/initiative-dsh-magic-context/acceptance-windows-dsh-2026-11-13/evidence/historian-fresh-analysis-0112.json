@@ -1,0 +1,70 @@
+{
+  "session": "session-47130071-e625-4c8e-bd50-a61da6b7d70a",
+  "drops": [
+    {
+      "seq": 34,
+      "original": [
+        24
+      ],
+      "was_live": true,
+      "live_now": false
+    }
+  ],
+  "compartments": [
+    {
+      "seq": 64,
+      "compartment_id": 1,
+      "covered_start_seq": 12,
+      "covered_end_seq": 40,
+      "covered_seqs": [
+        12,
+        13,
+        14,
+        22,
+        34,
+        30,
+        32,
+        38,
+        40
+      ],
+      "covers_drop": true,
+      "stored_log": {
+        "raw": "2026-11-13T15:02:22.462Z INFO  historian session-4713 compartment §C1§ stored (~7659 tokens, importance 8) {\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":7659,\"importance\":8,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":12,\"coveredEndSeq\":40}",
+        "phase": "stored",
+        "compartmentId": 1,
+        "nodes": 9,
+        "tokens": 7659,
+        "importance": 8,
+        "userObservations": 0,
+        "profileCollect": "off",
+        "coveredStartSeq": 12,
+        "coveredEndSeq": 40
+      },
+      "published_log": {
+        "raw": "2026-11-13T15:02:39.257Z INFO  compartment-published session-4713 compartment §C1§ replaced 9 nodes on the wire {\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":7659,\"estTokensReclaimed\":7659,\"nodeSeq\":64,\"importance\":8}",
+        "compartmentId": 1,
+        "nodes": 9,
+        "coveredTokens": 7659,
+        "estTokensReclaimed": 7659,
+        "nodeSeq": 64,
+        "importance": 8
+      }
+    }
+  ],
+  "originals_still_in_raw_log": true,
+  "expand_result": {
+    "raw": "2026-11-13T15:03:01.936Z INFO  tool-call session-4713 ctx_expand: restored 0, refused 1 {\"tool\":\"ctx_expand\",\"requested\":[1],\"restored\":[],\"refused\":[{\"tag\":1,\"reason\":\"no dropped item carries this tag\"}],\"ms\":1}",
+    "tool": "ctx_expand",
+    "requested": [
+      1
+    ],
+    "restored": [],
+    "refused": [
+      {
+        "tag": 1,
+        "reason": "no dropped item carries this tag"
+      }
+    ],
+    "ms": 1
+  }
+}

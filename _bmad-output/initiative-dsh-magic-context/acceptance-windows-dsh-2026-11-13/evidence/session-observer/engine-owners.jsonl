@@ -1,0 +1,14 @@
+{"processId":2192,"time":"2026-11-13T14:51:31.928Z","constructor":"BasicCompactionEngine"}
+{"processId":10672,"time":"2026-11-13T14:54:36.272Z","constructor":"BasicCompactionEngine"}
+{"processId":23176,"time":"2026-11-13T14:54:55.771Z","constructor":"BasicCompactionEngine"}
+{"processId":15424,"time":"2026-11-13T14:55:06.143Z","constructor":"BasicCompactionEngine"}
+{"processId":21840,"time":"2026-11-13T14:55:20.113Z","constructor":"BasicCompactionEngine"}
+{"processId":7744,"time":"2026-11-13T14:55:30.327Z","constructor":"BasicCompactionEngine"}
+{"processId":24884,"time":"2026-11-13T14:56:30.637Z","constructor":"BasicCompactionEngine"}
+{"processId":22436,"time":"2026-11-13T14:58:06.935Z","constructor":"MagicContextCompactionEngine"}
+{"processId":22024,"time":"2026-11-13T14:58:15.931Z","constructor":"MagicContextCompactionEngine"}
+{"processId":27068,"time":"2026-11-13T14:58:23.518Z","constructor":"BasicCompactionEngine"}
+{"processId":23788,"time":"2026-11-13T14:59:49.605Z","constructor":"BasicCompactionEngine"}
+{"processId":25112,"time":"2026-11-13T15:00:02.614Z","constructor":"BasicCompactionEngine"}
+{"processId":21736,"time":"2026-11-13T15:02:04.175Z","constructor":"BasicCompactionEngine"}
+{"processId":26996,"time":"2026-11-13T15:02:17.424Z","constructor":"BasicCompactionEngine"}

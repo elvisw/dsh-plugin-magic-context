@@ -1,0 +1,44 @@
+{
+  "phase": "after",
+  "real": {
+    "plugin_default": {
+      "exists": false
+    },
+    "upstream_store": {
+      "exists": true,
+      "files": 38,
+      "bytes": 731421775,
+      "max_mtime_ns": 1794582279705682200
+    },
+    "cortexkit_config": {
+      "exists": true,
+      "files": 2,
+      "bytes": 1537,
+      "max_mtime_ns": 1794498912642553200
+    },
+    "opencode_data": {
+      "exists": true,
+      "files": 23528,
+      "bytes": 5477280861,
+      "max_mtime_ns": 1794582288796952500
+    },
+    "dashboard": {
+      "exists": true,
+      "files": 384,
+      "bytes": 88152933,
+      "max_mtime_ns": 1794499205699330600
+    },
+    "opencode_desktop": {
+      "exists": true,
+      "files": 75,
+      "bytes": 11295098,
+      "max_mtime_ns": 1781058479955080500
+    }
+  },
+  "isolated": {
+    "exists": true,
+    "files": 7,
+    "bytes": 675878,
+    "max_mtime_ns": 1794582275209822800
+  }
+}

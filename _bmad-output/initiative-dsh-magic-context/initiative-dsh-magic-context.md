@@ -39,3 +39,4 @@ parent: none
 - Decision: 2026-11-13 — 不承诺兼容 fork 上游 `dsh-plugin-magic-context` 的既有行为；语义以原版 `cortexkit/magic-context` 为目标。Q1–Q5 已签收：A-only；V1 `tag` + `message`；`tags` deprecated；flush 下一次 preStep；移除 30 天 prune。见 `tickets/recovery-contract.md`。
 - Decision: 2026-11-13 — T1 已完成；T2（#13 A）、T3（#14 + `message`）、T4（#15）、T5（保留期对齐）已建票，T2 为 tracer。Q2 的 `message` 拆到 T3，Q5 拆到 T5，交付顺序变化但目标不变。
 - 注：T1 完成票内仍写 “T2–T4”，是签收当时的记录；T5 为后续拆分，现行范围以本条与 `tickets/recovery-contract.md` 为准。
+- 2026-11-14 — T2（#13 A）完成：单元/集成 76 文件 / 818 用例通过，且真实 DSH `0.2.2-rc.1` + `deepseek-flash` 宿主验收通过（结果返回、旧 tag no-op、新 tag 生命周期、跨进程重启）。报告：[T2 宿主验收](acceptance-windows-dsh-2026-11-14-t2-host/acceptance-report.md)。T3/T4/T5 待 refine。

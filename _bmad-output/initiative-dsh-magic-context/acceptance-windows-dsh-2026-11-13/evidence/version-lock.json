@@ -1,0 +1,14 @@
+{
+  "host_package": "@deepseek-ai/dsh",
+  "host_version": "0.2.2-rc.1",
+  "host_package_json_sha256": "3e14837ceb3bbc0ba419ed08e9b5ba164338369b1268b93c3c25d89f7b1c9953",
+  "host_lockfile_sha256": "38d9b33720a920dcc9b54b6c50cdc936ca74dfd3b8fb0f2876b04cfd5a1b3e88",
+  "host_bin": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh\\node_modules\\@deepseek-ai\\dsh\\lib\\bin.js",
+  "node": "C:\\Users\\elvis\\AppData\\Local\\Author Software\\nvm\\installs\\v24.21.0\\node.exe",
+  "node_version": "24.21.0",
+  "plugin": "dsh-plugin-magic-context",
+  "plugin_version": "0.11.2",
+  "plugin_tarball_integrity": "sha512-PSfr4ZL0kr7SygQK56unwaSUcv2GMb9uG8zFbPbz6fIe3jqrw4mKQw9AHNyS9NgwX39w2wwPpSzjzEkDphm9+w==",
+  "plugin_gitHead": "8d4b6aa78995cc35c43fc0377dd58f171f0fbb9e",
+  "local_head": "d5dbad7047d08f22b83e2d5f867c310443937d10"
+}

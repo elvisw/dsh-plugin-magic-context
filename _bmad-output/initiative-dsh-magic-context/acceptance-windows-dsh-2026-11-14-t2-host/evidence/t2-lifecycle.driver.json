@@ -1,0 +1,81 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\overlays\\base-control.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "This is an isolated T2 new-tag lifecycle acceptance test. Follow this exact sequence, one tool call per model step. (1) read fixture.txt and note its actual §N§ tag. (2) call ctx_reduce with drop set to that tag. (3) after it returns, call ctx_expand with tag set to that same old tag. (4) the ctx_expand result begins with a NEW §M§ marker; note M, then call ctx_reduce with drop set to M. (5) after it returns, call ctx_expand with tag set to M. (6) respond exactly T2_NEW_TAG_OK plus the nonce from the second expanded original. Do not reread the file, do not use other tools, and do not batch calls."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 13.305,
+  "session_id": "session-095d47b3-47d2-49d7-a99f-1432878f0cd4",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "T2_NEW_TAG_OK bdff36d58cccf20d2274742264b7d392",
+  "tool_calls": [
+    {
+      "tool": "read",
+      "input": {
+        "file_path": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt"
+      }
+    },
+    {
+      "tool": "ctx_reduce",
+      "input": {
+        "drop": "1"
+      }
+    },
+    {
+      "tool": "ctx_expand",
+      "input": {
+        "tag": "1"
+      }
+    },
+    {
+      "tool": "ctx_reduce",
+      "input": {
+        "drop": "3"
+      }
+    },
+    {
+      "tool": "ctx_expand",
+      "input": {
+        "tag": "3"
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_XnQZSAXkvhYCdEJGLLAD7485",
+      "status": "completed",
+      "result": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=bdff36d58cccf20d2274742264b7d392\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>"
+    },
+    {
+      "callId": "call_00_SOuvt5z7ZplPZYaZrywt6429",
+      "status": "completed",
+      "result": "§2§ Queued 1 tag for reclaim."
+    },
+    {
+      "callId": "call_00_ET_vkGShJ7IHdBUdHBzQr5X4114",
+      "status": "completed",
+      "result": "§3§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=bdff36d58cccf20d2274742264b7d392\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>"
+    },
+    {
+      "callId": "call_00_gGQ1inHgic0ywQeyTJVN4757",
+      "status": "completed",
+      "result": "§4§ Queued 1 tag for reclaim."
+    },
+    {
+      "callId": "call_00_ET_umndTMinUQIxjtvNVjVX7045",
+      "status": "completed",
+      "result": "§5§ §3§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=bdff36d58cccf20d2274742264b7d392\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>"
+    }
+  ]
+}

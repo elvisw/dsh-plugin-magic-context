@@ -1,0 +1,10 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407",
+  "nonce": "bdff36d58cccf20d2274742264b7d392",
+  "fixture_sha256": "5e769d4c423d61e5d1fd6c1e5cdc1957dafe521b4b5aa7ce4b08b103584f499a",
+  "plugin_package": "0.11.2",
+  "installed_tool_bridge_sha256": "fc225d1db44aa9c2aadb075181190d843765434e71b630ec6d0d506331775860",
+  "built_tool_bridge_sha256": "fc225d1db44aa9c2aadb075181190d843765434e71b630ec6d0d506331775860",
+  "tarball_sha256": "0c25e8211168295ab272e04486e4c6cfa3e41bc5cd62a0f2f5de921aa0c16188",
+  "deepseek_key_present": true
+}

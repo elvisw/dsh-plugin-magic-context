@@ -1,0 +1,24 @@
+{
+  "historian": {
+    "seed": {
+      "label": "historian-fresh-seed-0112",
+      "exit_code": 0,
+      "session_id": "session-47130071-e625-4c8e-bd50-a61da6b7d70a",
+      "final_reason": {
+        "kind": "completed"
+      },
+      "final_text": "HISTORY_READY §1§",
+      "tool_calls": []
+    },
+    "expand": {
+      "label": "historian-fresh-publish-and-expand-0112",
+      "exit_code": 0,
+      "session_id": "session-47130071-e625-4c8e-bd50-a61da6b7d70a",
+      "final_reason": {
+        "kind": "completed"
+      },
+      "final_text": "The three calls ran in order, and here are the results exactly as returned:\n\n1. `acceptance_wait(seconds=20)` → §4§ \"Waited 20 seconds.\"\n2. `acceptance_wait(seconds=20)` → §5§ \"Waited 20 seconds.\"\n3. `ctx_expand(tags=\"1\")` → §6§ \"§1§ not restored: no dropped item carries this tag.\"\n\nSo tag 1 could not be restored. The expand returned that error instead of the original fixture.txt content. No file was read, no retry was made, no drop was repeated, and nothing was reconstructed.",
+      "tool_calls": []
+    }
+  }
+}

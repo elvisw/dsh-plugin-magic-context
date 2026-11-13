@@ -1,0 +1,182 @@
+[
+  {
+    "session_id": "session-0128722d-ba90-4de8-b35f-dfd244212b47",
+    "process_ids": [
+      2192
+    ],
+    "events": 19,
+    "snapshots": 4,
+    "tool_names": [],
+    "drops": [],
+    "restores": []
+  },
+  {
+    "session_id": "session-0c0cfbf2-43a0-46ce-9f36-0101d00d7082",
+    "process_ids": [
+      7744
+    ],
+    "events": 33,
+    "snapshots": 9,
+    "tool_names": [
+      "ctx_expand",
+      "ctx_memory"
+    ],
+    "drops": [],
+    "restores": []
+  },
+  {
+    "session_id": "session-5340528c-d931-47b1-8a2e-473bffbc99ac",
+    "process_ids": [
+      27068
+    ],
+    "events": 23,
+    "snapshots": 5,
+    "tool_names": [],
+    "drops": [],
+    "restores": []
+  },
+  {
+    "session_id": "session-5aac249a-ae41-4b3a-9f77-c8fa11fdd049",
+    "process_ids": [
+      10672
+    ],
+    "events": 41,
+    "snapshots": 12,
+    "tool_names": [
+      "ctx_expand",
+      "ctx_reduce",
+      "read"
+    ],
+    "drops": [
+      {
+        "seq": 28,
+        "placeholder": "[dropped §1§]",
+        "source": [
+          20
+        ]
+      }
+    ],
+    "restores": [
+      {
+        "seq": 34,
+        "drop_seq": 28,
+        "original_seq": 20,
+        "content_equal": true,
+        "identity_equal": true,
+        "original_content_sha256": "4559d229958c5d4f424fdc3a967ed3bb14944763e999291049aa62bf52e5e6dc",
+        "restored_content_sha256": "4559d229958c5d4f424fdc3a967ed3bb14944763e999291049aa62bf52e5e6dc",
+        "original_text_utf8_bytes": 506,
+        "drop_seen_on_live_surface": true,
+        "restore_seen_on_live_surface": true
+      }
+    ]
+  },
+  {
+    "session_id": "session-79e852ac-c401-4d20-a92e-60f50bdf5062",
+    "process_ids": [
+      22024
+    ],
+    "events": 22,
+    "snapshots": 5,
+    "tool_names": [],
+    "drops": [],
+    "restores": []
+  },
+  {
+    "session_id": "session-c6250978-c716-418b-b69b-df662e1d1d66",
+    "process_ids": [
+      15424,
+      23176
+    ],
+    "events": 55,
+    "snapshots": 14,
+    "tool_names": [
+      "ctx_expand",
+      "ctx_reduce",
+      "read"
+    ],
+    "drops": [
+      {
+        "seq": 28,
+        "placeholder": "[dropped §1§]",
+        "source": [
+          20
+        ]
+      }
+    ],
+    "restores": [
+      {
+        "seq": 48,
+        "drop_seq": 28,
+        "original_seq": 20,
+        "content_equal": true,
+        "identity_equal": true,
+        "original_content_sha256": "4559d229958c5d4f424fdc3a967ed3bb14944763e999291049aa62bf52e5e6dc",
+        "restored_content_sha256": "4559d229958c5d4f424fdc3a967ed3bb14944763e999291049aa62bf52e5e6dc",
+        "original_text_utf8_bytes": 506,
+        "drop_seen_on_live_surface": true,
+        "restore_seen_on_live_surface": true
+      }
+    ]
+  },
+  {
+    "session_id": "session-e6bd61a6-10ac-43c1-a721-4a18ae22067b",
+    "process_ids": [
+      21840
+    ],
+    "events": 27,
+    "snapshots": 7,
+    "tool_names": [
+      "ctx_memory"
+    ],
+    "drops": [],
+    "restores": []
+  },
+  {
+    "session_id": "session-eecaf455-104e-480b-9235-193ea8eda40f",
+    "process_ids": [
+      22436
+    ],
+    "events": 23,
+    "snapshots": 5,
+    "tool_names": [],
+    "drops": [],
+    "restores": []
+  },
+  {
+    "session_id": "session-f1c2fddd-122d-4781-b41a-8cef0820ac9f",
+    "process_ids": [
+      24884
+    ],
+    "events": 56,
+    "snapshots": 18,
+    "tool_names": [
+      "ctx_expand",
+      "ctx_reduce",
+      "read"
+    ],
+    "drops": [
+      {
+        "seq": 31,
+        "placeholder": "[dropped §1§]",
+        "source": [
+          21
+        ]
+      }
+    ],
+    "restores": [
+      {
+        "seq": 37,
+        "drop_seq": 31,
+        "original_seq": 21,
+        "content_equal": true,
+        "identity_equal": true,
+        "original_content_sha256": "c4cb735ee5e976338363e6ac763b7794856d3a464bb888532c085e153f5c41ea",
+        "restored_content_sha256": "c4cb735ee5e976338363e6ac763b7794856d3a464bb888532c085e153f5c41ea",
+        "original_text_utf8_bytes": 506,
+        "drop_seen_on_live_surface": true,
+        "restore_seen_on_live_surface": true
+      }
+    ]
+  }
+]

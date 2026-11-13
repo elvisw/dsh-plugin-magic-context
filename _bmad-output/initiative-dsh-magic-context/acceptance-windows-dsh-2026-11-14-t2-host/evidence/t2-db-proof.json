@@ -1,0 +1,114 @@
+{
+  "db": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\plugin-data\\dsh-magic-context.db",
+  "meta": {
+    "schema_version": "10",
+    "corpus_bootstrap": "{\"outcome\":\"created\",\"detail\":\"v95\",\"at\":1794589467520}",
+    "compaction_engine": "disabled-by-config",
+    "adapter_version": "phase2",
+    "memory_bridge": "ok schema v95",
+    "memory_write": "read-write auto-promote",
+    "switch_snapshot": "{\"write\":true,\"autoPromote\":true,\"embedBackfill\":false,\"vectorBackfill\":false,\"scoring\":true,\"userRender\":false,\"userCollect\":false,\"userReview\":false,\"machine\":false,\"machineAutoStage\":true,\"forceWaitMs\":0}"
+  },
+  "tags": [
+    {
+      "session": "session-095d47b3-47d2-49d7-a99f-1432878f0cd4",
+      "kind": "tool-result",
+      "target": "call_00_XnQZSAXkvhYCdEJGLLAD7485",
+      "tag": 1
+    },
+    {
+      "session": "session-095d47b3-47d2-49d7-a99f-1432878f0cd4",
+      "kind": "tool-result",
+      "target": "call_00_SOuvt5z7ZplPZYaZrywt6429",
+      "tag": 2
+    },
+    {
+      "session": "session-095d47b3-47d2-49d7-a99f-1432878f0cd4",
+      "kind": "tool-result",
+      "target": "call_00_ET_vkGShJ7IHdBUdHBzQr5X4114",
+      "tag": 3
+    },
+    {
+      "session": "session-095d47b3-47d2-49d7-a99f-1432878f0cd4",
+      "kind": "tool-result",
+      "target": "call_00_gGQ1inHgic0ywQeyTJVN4757",
+      "tag": 4
+    },
+    {
+      "session": "session-095d47b3-47d2-49d7-a99f-1432878f0cd4",
+      "kind": "tool-result",
+      "target": "call_00_ET_umndTMinUQIxjtvNVjVX7045",
+      "tag": 5
+    },
+    {
+      "session": "session-6fc413ae-3cc8-456f-98e6-a839783576ca",
+      "kind": "tool-result",
+      "target": "call_00_ET_zkzBkhjjwkbrENvR24BY6438",
+      "tag": 1
+    },
+    {
+      "session": "session-6fc413ae-3cc8-456f-98e6-a839783576ca",
+      "kind": "tool-result",
+      "target": "call_00_FGrKnMQpL4t4MYcWt7r79092",
+      "tag": 2
+    },
+    {
+      "session": "session-6fc413ae-3cc8-456f-98e6-a839783576ca",
+      "kind": "tool-result",
+      "target": "call_00_ET_6T6KCI0Tna2K7SksTFP76465",
+      "tag": 3
+    },
+    {
+      "session": "session-6fc413ae-3cc8-456f-98e6-a839783576ca",
+      "kind": "tool-result",
+      "target": "call_00_ET_GkBhvBNbDLuHfmcUlnG16300",
+      "tag": 4
+    },
+    {
+      "session": "session-af62ae6b-f8e7-4b66-9a36-4661a53f00e8",
+      "kind": "tool-result",
+      "target": "call_00_GNbrIYaojtdiKdtbjrtE3631",
+      "tag": 1
+    },
+    {
+      "session": "session-af62ae6b-f8e7-4b66-9a36-4661a53f00e8",
+      "kind": "tool-result",
+      "target": "call_00_nXEmzBO1F4laWkw2QdQ02603",
+      "tag": 2
+    },
+    {
+      "session": "session-af62ae6b-f8e7-4b66-9a36-4661a53f00e8",
+      "kind": "tool-result",
+      "target": "call_00_5An9iV3JiHectr8E6pkE6232",
+      "tag": 3
+    },
+    {
+      "session": "session-af62ae6b-f8e7-4b66-9a36-4661a53f00e8",
+      "kind": "tool-result",
+      "target": "call_00_StmT9yafmoJ0h5Yx7bag1917",
+      "tag": 4
+    }
+  ],
+  "pending_drops": [
+    {
+      "session": "session-095d47b3-47d2-49d7-a99f-1432878f0cd4",
+      "tag": 1,
+      "landed_event_seq": 28
+    },
+    {
+      "session": "session-095d47b3-47d2-49d7-a99f-1432878f0cd4",
+      "tag": 3,
+      "landed_event_seq": 42
+    },
+    {
+      "session": "session-6fc413ae-3cc8-456f-98e6-a839783576ca",
+      "tag": 1,
+      "landed_event_seq": 28
+    },
+    {
+      "session": "session-af62ae6b-f8e7-4b66-9a36-4661a53f00e8",
+      "tag": 1,
+      "landed_event_seq": 28
+    }
+  ]
+}

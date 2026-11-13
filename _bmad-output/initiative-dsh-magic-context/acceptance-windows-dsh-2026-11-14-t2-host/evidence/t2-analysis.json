@@ -1,0 +1,235 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407",
+  "sessions": {
+    "session-095d47b3-47d2-49d7-a99f-1432878f0cd4": {
+      "file": "session-095d47b3-47d2-49d7-a99f-1432878f0cd4.jsonl",
+      "surface": [
+        10,
+        11,
+        12,
+        13,
+        18,
+        28,
+        24,
+        26,
+        32,
+        42,
+        38,
+        40,
+        46,
+        48,
+        52
+      ],
+      "placeholders": [
+        {
+          "seq": 28,
+          "text": "[dropped §1§]",
+          "onSurface": true
+        },
+        {
+          "seq": 42,
+          "text": "[dropped §3§]",
+          "onSurface": true
+        }
+      ],
+      "tool_results": [
+        {
+          "seq": 20,
+          "text": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=bdff36d58cccf20d2274742264b7d392\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>",
+          "onSurface": false,
+          "sourceEventSeqs": [
+            19
+          ],
+          "stripped_sha256": "fd8984bf68f8e673458bff96a9815e14c5eebe09cae9cdfe32f931d039808bb3",
+          "stripped_matches_earlier_result": false
+        },
+        {
+          "seq": 26,
+          "text": "§2§ Queued 1 tag for reclaim.",
+          "onSurface": true,
+          "sourceEventSeqs": [
+            25
+          ],
+          "stripped_sha256": "96329e623fd977cb1e506b334f78c52ca8f1cfc0deb6a168645a7cb9c3575ee6",
+          "stripped_matches_earlier_result": false
+        },
+        {
+          "seq": 34,
+          "text": "§3§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=bdff36d58cccf20d2274742264b7d392\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>",
+          "onSurface": false,
+          "sourceEventSeqs": [
+            33
+          ],
+          "stripped_sha256": "fc8d53e54a918499c2e8fc5ac35a46de08dc79b9e82643f86e0eeb3e597d2414",
+          "stripped_matches_earlier_result": true
+        },
+        {
+          "seq": 40,
+          "text": "§4§ Queued 1 tag for reclaim.",
+          "onSurface": true,
+          "sourceEventSeqs": [
+            39
+          ],
+          "stripped_sha256": "96329e623fd977cb1e506b334f78c52ca8f1cfc0deb6a168645a7cb9c3575ee6",
+          "stripped_matches_earlier_result": false
+        },
+        {
+          "seq": 48,
+          "text": "§5§ §3§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=bdff36d58cccf20d2274742264b7d392\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>",
+          "onSurface": true,
+          "sourceEventSeqs": [
+            47
+          ],
+          "stripped_sha256": "93a3880f7f4a617c192160ef262db02f8e0ad0f7de7eef4189bbbbd39d238272",
+          "stripped_matches_earlier_result": true
+        }
+      ],
+      "tool_result_count": 5
+    },
+    "session-6fc413ae-3cc8-456f-98e6-a839783576ca": {
+      "file": "session-6fc413ae-3cc8-456f-98e6-a839783576ca.jsonl",
+      "surface": [
+        10,
+        11,
+        12,
+        13,
+        18,
+        28,
+        24,
+        26,
+        32,
+        34,
+        38,
+        40,
+        44
+      ],
+      "placeholders": [
+        {
+          "seq": 28,
+          "text": "[dropped §1§]",
+          "onSurface": true
+        }
+      ],
+      "tool_results": [
+        {
+          "seq": 20,
+          "text": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=bdff36d58cccf20d2274742264b7d392\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>",
+          "onSurface": false,
+          "sourceEventSeqs": [
+            19
+          ],
+          "stripped_sha256": "fd8984bf68f8e673458bff96a9815e14c5eebe09cae9cdfe32f931d039808bb3",
+          "stripped_matches_earlier_result": false
+        },
+        {
+          "seq": 26,
+          "text": "§2§ Queued 1 tag for reclaim.",
+          "onSurface": true,
+          "sourceEventSeqs": [
+            25
+          ],
+          "stripped_sha256": "96329e623fd977cb1e506b334f78c52ca8f1cfc0deb6a168645a7cb9c3575ee6",
+          "stripped_matches_earlier_result": false
+        },
+        {
+          "seq": 34,
+          "text": "§3§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=bdff36d58cccf20d2274742264b7d392\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>",
+          "onSurface": true,
+          "sourceEventSeqs": [
+            33
+          ],
+          "stripped_sha256": "fc8d53e54a918499c2e8fc5ac35a46de08dc79b9e82643f86e0eeb3e597d2414",
+          "stripped_matches_earlier_result": true
+        },
+        {
+          "seq": 40,
+          "text": "§4§ §1§ not queued: already dropped.",
+          "onSurface": true,
+          "sourceEventSeqs": [
+            39
+          ],
+          "stripped_sha256": "a77cfd9c9ff8ffe9f1e8522af696cf2eb7dc0a5b116a03bc62166d02401b03f2",
+          "stripped_matches_earlier_result": false
+        }
+      ],
+      "tool_result_count": 4
+    },
+    "session-af62ae6b-f8e7-4b66-9a36-4661a53f00e8": {
+      "file": "session-af62ae6b-f8e7-4b66-9a36-4661a53f00e8.jsonl",
+      "surface": [
+        10,
+        11,
+        12,
+        13,
+        18,
+        28,
+        24,
+        26,
+        32,
+        43,
+        46,
+        48,
+        52,
+        54,
+        58
+      ],
+      "placeholders": [
+        {
+          "seq": 28,
+          "text": "[dropped §1§]",
+          "onSurface": true
+        }
+      ],
+      "tool_results": [
+        {
+          "seq": 20,
+          "text": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=bdff36d58cccf20d2274742264b7d392\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>",
+          "onSurface": false,
+          "sourceEventSeqs": [
+            19
+          ],
+          "stripped_sha256": "fd8984bf68f8e673458bff96a9815e14c5eebe09cae9cdfe32f931d039808bb3",
+          "stripped_matches_earlier_result": false
+        },
+        {
+          "seq": 26,
+          "text": "§2§ Queued 1 tag for reclaim.",
+          "onSurface": true,
+          "sourceEventSeqs": [
+            25
+          ],
+          "stripped_sha256": "96329e623fd977cb1e506b334f78c52ca8f1cfc0deb6a168645a7cb9c3575ee6",
+          "stripped_matches_earlier_result": false
+        },
+        {
+          "seq": 48,
+          "text": "§3§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=bdff36d58cccf20d2274742264b7d392\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>",
+          "onSurface": true,
+          "sourceEventSeqs": [
+            47
+          ],
+          "stripped_sha256": "fc8d53e54a918499c2e8fc5ac35a46de08dc79b9e82643f86e0eeb3e597d2414",
+          "stripped_matches_earlier_result": true
+        },
+        {
+          "seq": 54,
+          "text": "§4§ §1§ not queued: already dropped.",
+          "onSurface": true,
+          "sourceEventSeqs": [
+            53
+          ],
+          "stripped_sha256": "a77cfd9c9ff8ffe9f1e8522af696cf2eb7dc0a5b116a03bc62166d02401b03f2",
+          "stripped_matches_earlier_result": false
+        }
+      ],
+      "tool_result_count": 4
+    }
+  },
+  "driver": {
+    "roundtrip": "**Step 4 receipt (exact):**\n\n```\n§1§ not queued: already dropped.\n```\n\nYes — it explicitly reports **already dropped**; the tag was not queued again.\n\nT2_OLD_TAG_OK bdff36d58cccf20d2274742264b7d392",
+    "lifecycle": "T2_NEW_TAG_OK bdff36d58cccf20d2274742264b7d392",
+    "restart_first": "DROP_READY 1",
+    "restart_second": "T2_RESTART_OK bdff36d58cccf20d2274742264b7d392\nReceipt: §1§ not queued: already dropped.",
+    "fixture_disk_nonce": "22cf05939b5455da87940b9f52b07872"
+  }
+}

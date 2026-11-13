@@ -1,0 +1,14 @@
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Progress: resolved 3, reused 0, downloaded 1, added 0
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: C:\Users\elvis\AppData\Local\Temp\opencode\dsh-mc-acceptance-0112-j4ydat07\pnpm-store\v11
+  Virtual store is at:             node_modules/.pnpm
+Packages: +3
++++
+Progress: resolved 3, reused 0, downloaded 3, added 3, done
+[WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
+
+dependencies:
++ dsh-plugin-magic-context 0.11.2
+
+Done in 5.1s using pnpm v12.18.0

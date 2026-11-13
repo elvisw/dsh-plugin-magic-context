@@ -1,0 +1,17 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-acceptance-0112-j4ydat07\\overlays\\base-control.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "Call ctx_memory exactly once, action write, category CONFIG_VALUES, content 'Acceptance project persistent marker is MEM_c886d7cfa3784c69b9a983f9c3056b45.', importance 50. This is synthetic acceptance data. Do not use other tools. Report the actual result."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 8.897
+}

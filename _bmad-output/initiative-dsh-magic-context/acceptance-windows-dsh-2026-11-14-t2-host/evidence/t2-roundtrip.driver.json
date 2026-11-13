@@ -1,0 +1,70 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\overlays\\base-control.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "This is an isolated T2 host acceptance test. Follow this exact sequence, one tool call per model step. (1) read fixture.txt with the file read tool and note the actual §N§ tag on its result. (2) call ctx_reduce with drop set to ONLY that tag. (3) in a NEW model step after ctx_reduce returns, call ctx_expand with tag set to that SAME old tag. (4) in a NEW model step after ctx_expand returns, call ctx_reduce again with drop set to that SAME old tag; report the exact receipt you receive, including whether it says already dropped. (5) respond exactly T2_OLD_TAG_OK plus the nonce from the expanded original. Do not reread the file, do not use other tools, and do not batch calls."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 13.797,
+  "session_id": "session-6fc413ae-3cc8-456f-98e6-a839783576ca",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "**Step 4 receipt (exact):**\n\n```\n§1§ not queued: already dropped.\n```\n\nYes — it explicitly reports **already dropped**; the tag was not queued again.\n\nT2_OLD_TAG_OK bdff36d58cccf20d2274742264b7d392",
+  "tool_calls": [
+    {
+      "tool": "read",
+      "input": {
+        "file_path": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt"
+      }
+    },
+    {
+      "tool": "ctx_reduce",
+      "input": {
+        "drop": "1"
+      }
+    },
+    {
+      "tool": "ctx_expand",
+      "input": {
+        "tag": "1"
+      }
+    },
+    {
+      "tool": "ctx_reduce",
+      "input": {
+        "drop": "1"
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_ET_zkzBkhjjwkbrENvR24BY6438",
+      "status": "completed",
+      "result": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=bdff36d58cccf20d2274742264b7d392\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>"
+    },
+    {
+      "callId": "call_00_FGrKnMQpL4t4MYcWt7r79092",
+      "status": "completed",
+      "result": "§2§ Queued 1 tag for reclaim."
+    },
+    {
+      "callId": "call_00_ET_6T6KCI0Tna2K7SksTFP76465",
+      "status": "completed",
+      "result": "§3§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=bdff36d58cccf20d2274742264b7d392\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>"
+    },
+    {
+      "callId": "call_00_ET_GkBhvBNbDLuHfmcUlnG16300",
+      "status": "completed",
+      "result": "§4§ §1§ not queued: already dropped."
+    }
+  ]
+}
