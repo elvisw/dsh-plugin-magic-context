@@ -39,3 +39,13 @@ coverage/
 npm-debug.log*
 
 .idea/
+
+# BMad installation is local tooling, not product code. Keep the portable
+# project config; generated scripts and personal overrides stay untracked.
+/_bmad/*
+!/_bmad/config.toml
+
+# Local run pointers and Python caches under the planning store.
+/_bmad-output/**/experiment-root.json
+/_bmad-output/**/__pycache__/
+*.py[cod]

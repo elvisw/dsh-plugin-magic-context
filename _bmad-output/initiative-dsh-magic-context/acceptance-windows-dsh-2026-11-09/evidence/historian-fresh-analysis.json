@@ -1,0 +1,35 @@
+{
+  "session": "session-2a5ef657-e236-4270-bbc3-4c4d4998799d",
+  "drops": [
+    {
+      "seq": 31,
+      "original": [
+        21
+      ],
+      "was_live": true,
+      "live_now": false
+    }
+  ],
+  "compartments": [
+    {
+      "seq": 61,
+      "sourceEventSeqs": [
+        12,
+        13,
+        14,
+        19,
+        31,
+        27,
+        29,
+        35,
+        37
+      ],
+      "covers_drop": true
+    }
+  ],
+  "originals_still_in_raw_log": true,
+  "expand_result": [
+    "§4§ Waited 15 seconds.",
+    "§5§ §1§ not restored: no dropped item carries this tag."
+  ]
+}

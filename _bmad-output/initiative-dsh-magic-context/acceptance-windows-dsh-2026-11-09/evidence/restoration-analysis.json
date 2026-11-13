@@ -1,0 +1,188 @@
+[
+  {
+    "session_id": "session-00ed26bd-f431-47a5-a703-955ee05c6477",
+    "process_ids": [
+      26888
+    ],
+    "events": 33,
+    "snapshots": 9,
+    "tool_names": [
+      "ctx_expand",
+      "ctx_memory"
+    ],
+    "drops": [],
+    "restores": []
+  },
+  {
+    "session_id": "session-2a5ef657-e236-4270-bbc3-4c4d4998799d",
+    "process_ids": [
+      768,
+      2392
+    ],
+    "events": 79,
+    "snapshots": 27,
+    "tool_names": [
+      "acceptance_wait",
+      "ctx_expand",
+      "ctx_reduce",
+      "read"
+    ],
+    "drops": [
+      {
+        "seq": 31,
+        "placeholder": "[dropped §1§]",
+        "source": [
+          21
+        ]
+      }
+    ],
+    "restores": []
+  },
+  {
+    "session_id": "session-31cc3c70-5a72-494e-aa0b-185d6e648bff",
+    "process_ids": [
+      22084
+    ],
+    "events": 19,
+    "snapshots": 4,
+    "tool_names": [],
+    "drops": [],
+    "restores": []
+  },
+  {
+    "session_id": "session-39d42cc1-efb0-42b7-8061-4bf5e6048d54",
+    "process_ids": [
+      10256
+    ],
+    "events": 56,
+    "snapshots": 18,
+    "tool_names": [
+      "ctx_expand",
+      "ctx_reduce",
+      "read"
+    ],
+    "drops": [
+      {
+        "seq": 31,
+        "placeholder": "[dropped §1§]",
+        "source": [
+          21
+        ]
+      }
+    ],
+    "restores": [
+      {
+        "seq": 37,
+        "drop_seq": 31,
+        "original_seq": 21,
+        "content_equal": true,
+        "identity_equal": true,
+        "original_content_sha256": "c20c26e1806960367db010359244ee260ae0905984472d80b23002e894912d73",
+        "restored_content_sha256": "c20c26e1806960367db010359244ee260ae0905984472d80b23002e894912d73",
+        "original_text_utf8_bytes": 607,
+        "drop_seen_on_live_surface": true,
+        "restore_seen_on_live_surface": true
+      }
+    ]
+  },
+  {
+    "session_id": "session-5a3fffcf-e5cf-47d5-8782-32bbf4ce7709",
+    "process_ids": [
+      11036
+    ],
+    "events": 19,
+    "snapshots": 4,
+    "tool_names": [],
+    "drops": [],
+    "restores": []
+  },
+  {
+    "session_id": "session-7f20e2db-2f37-4c11-93b2-77398bdd4085",
+    "process_ids": [
+      24272
+    ],
+    "events": 41,
+    "snapshots": 12,
+    "tool_names": [
+      "ctx_expand",
+      "ctx_reduce",
+      "read"
+    ],
+    "drops": [
+      {
+        "seq": 28,
+        "placeholder": "[dropped §1§]",
+        "source": [
+          20
+        ]
+      }
+    ],
+    "restores": [
+      {
+        "seq": 34,
+        "drop_seq": 28,
+        "original_seq": 20,
+        "content_equal": true,
+        "identity_equal": true,
+        "original_content_sha256": "f389c94eacecfa7828160625f50bffd239aeb76bdeb7b898711211f478fa02c2",
+        "restored_content_sha256": "f389c94eacecfa7828160625f50bffd239aeb76bdeb7b898711211f478fa02c2",
+        "original_text_utf8_bytes": 501,
+        "drop_seen_on_live_surface": true,
+        "restore_seen_on_live_surface": true
+      }
+    ]
+  },
+  {
+    "session_id": "session-a31842e2-cdac-40d2-ba84-c2ad5b8da71c",
+    "process_ids": [
+      1752,
+      7988,
+      12792,
+      16184,
+      28208
+    ],
+    "events": 143,
+    "snapshots": 40,
+    "tool_names": [
+      "acceptance_wait",
+      "ctx_expand",
+      "ctx_memory",
+      "ctx_reduce",
+      "read"
+    ],
+    "drops": [
+      {
+        "seq": 28,
+        "placeholder": "[dropped §1§]",
+        "source": [
+          20
+        ]
+      }
+    ],
+    "restores": [
+      {
+        "seq": 48,
+        "drop_seq": 28,
+        "original_seq": 20,
+        "content_equal": true,
+        "identity_equal": true,
+        "original_content_sha256": "f389c94eacecfa7828160625f50bffd239aeb76bdeb7b898711211f478fa02c2",
+        "restored_content_sha256": "f389c94eacecfa7828160625f50bffd239aeb76bdeb7b898711211f478fa02c2",
+        "original_text_utf8_bytes": 501,
+        "drop_seen_on_live_surface": true,
+        "restore_seen_on_live_surface": true
+      }
+    ]
+  },
+  {
+    "session_id": "session-d3785bea-2e21-4406-8482-5da3c76af2fa",
+    "process_ids": [
+      5708
+    ],
+    "events": 19,
+    "snapshots": 4,
+    "tool_names": [],
+    "drops": [],
+    "restores": []
+  }
+]

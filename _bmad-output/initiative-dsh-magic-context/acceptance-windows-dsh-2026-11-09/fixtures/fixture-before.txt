@@ -1,0 +1,6 @@
+合成验收数据：这不是用户真实项目资料。
+nonce=9a601b5765b64bc19ec3c13e5235dd4a
+JSON={"status":"待核验","path":"C:\\synthetic\\实验","number":3.141592653589793,"empty":""}
+Symbols: <>&"' / \ § 🧪 零一二三
+Whitespace:  keep  two  spaces.
+END=ef4c2dc934cc4fdaa263f350fbb1ca61

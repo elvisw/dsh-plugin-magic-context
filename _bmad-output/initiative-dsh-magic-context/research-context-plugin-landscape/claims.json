@@ -1,0 +1,6 @@
+[
+  {"ref":"[1]", "claim":"指定竞品已有npm 0.11.1分发记录及对应SHA近期成功CI（仅记录层）", "class":"release", "pub_date":"2026-11-07", "status":"verified"},
+  {"ref":"[3]", "claim":"指定竞品从归档事件恢复工具content而非重新执行", "class":"capability", "pub_date":"2026-11-07", "status":"unverified"},
+  {"ref":"[8]", "claim":"指定竞品明确自有存储并无MC互读兼容义务", "class":"capability", "pub_date":"2026-10-30", "status":"unverified"},
+  {"ref":"[6]", "claim":"公开CI只覆盖Ubuntu Node22/24，Windows状态未由本次验证", "class":"compatibility", "pub_date":"2026-11-07", "status":"unverified"}
+]

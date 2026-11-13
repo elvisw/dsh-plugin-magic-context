@@ -1,0 +1,23 @@
+{"version":"0.11.1","expected_pending":[1],"actual_pending":[]}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: A restored item must become pending when queued again.
++ actual - expected
+
++ []
+- [
+-   1
+- ]
+
+    at file:///C:/Users/elvis/Documents/dev/plugin/dsh-magic-context/_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-09/repro_requeue.mjs:20:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [],
+  expected: [ 1 ],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.21.0

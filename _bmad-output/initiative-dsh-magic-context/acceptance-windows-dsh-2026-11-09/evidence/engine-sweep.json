@@ -1,0 +1,26 @@
+[
+  {
+    "scenario": "conflict",
+    "runner_exit": 0,
+    "runner_summary": "{\"args\": [\"--profile\", \"headless\", \"--patch\", \"C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\dsh-mc-acceptance-kngotjd0\\\\overlays\\\\conflict.yml\", \"--json\", \"--permission-mode\", \"read-only\", \"--approval-policy\", \"never\", \"Respond exactly ENGINE_CONFLICT_OK. Do not use tools.\"], \"exit_code\": 0, \"mode\": \"real-host\", \"seconds\": 4.551, \"evidence\": \"C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\dsh-mc-acceptance-kngotjd0\\\\evidence\\\\engine-conflict\", \"stdout_chars\": 726, \"stderr_chars\": 2012}",
+    "engine_journal": [
+      "2026-11-09T15:09:32.751Z INFO  engine CompactionEngine mounted on ctx.compaction {\"action\":\"mounted\"}"
+    ]
+  },
+  {
+    "scenario": "takeover",
+    "runner_exit": 0,
+    "runner_summary": "{\"args\": [\"--profile\", \"headless\", \"--patch\", \"C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\dsh-mc-acceptance-kngotjd0\\\\overlays\\\\takeover.yml\", \"--json\", \"--permission-mode\", \"read-only\", \"--approval-policy\", \"never\", \"Respond exactly ENGINE_TAKEOVER_OK. Do not use tools.\"], \"exit_code\": 0, \"mode\": \"real-host\", \"seconds\": 4.144, \"evidence\": \"C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\dsh-mc-acceptance-kngotjd0\\\\evidence\\\\engine-takeover\", \"stdout_chars\": 726, \"stderr_chars\": 110}",
+    "engine_journal": [
+      "2026-11-09T15:09:38.469Z INFO  engine CompactionEngine mounted on ctx.compaction {\"action\":\"mounted\"}"
+    ]
+  },
+  {
+    "scenario": "fallback",
+    "runner_exit": 0,
+    "runner_summary": "{\"args\": [\"--profile\", \"headless\", \"--patch\", \"C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\dsh-mc-acceptance-kngotjd0\\\\overlays\\\\fallback.yml\", \"--json\", \"--permission-mode\", \"read-only\", \"--approval-policy\", \"never\", \"Respond exactly ENGINE_FALLBACK_OK. Do not use tools.\"], \"exit_code\": 0, \"mode\": \"real-host\", \"seconds\": 4.857, \"evidence\": \"C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\dsh-mc-acceptance-kngotjd0\\\\evidence\\\\engine-fallback\", \"stdout_chars\": 830, \"stderr_chars\": 110}",
+    "engine_journal": [
+      "2026-11-09T15:09:42.634Z INFO  engine CompactionEngine disabled by configuration {\"action\":\"disabled-by-config\"}"
+    ]
+  }
+]

@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>上下文插件竞品与开发价值评估</title><style>
+:root{color-scheme:light dark;--bg:#f5f6f8;--paper:#fff;--ink:#202630;--muted:#56616e;--line:#d8dfe7;--accent:#245c91;--warn:#783c00;--warnbg:#fff0d9}
+@media(prefers-color-scheme:dark){:root{--bg:#15191f;--paper:#20262e;--ink:#e5eaf0;--muted:#b0bac8;--line:#414b58;--accent:#9acbff;--warn:#ffd294;--warnbg:#49331b}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.8 system-ui,sans-serif}header,main,footer{max-width:1160px;margin:auto;padding:28px}header{padding-bottom:8px}h1{font-size:30px;line-height:1.35}h2{margin-top:42px;font-size:24px}h3{margin-top:30px;font-size:20px}a{color:var(--accent);overflow-wrap:anywhere}.layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:30px}nav{position:sticky;top:16px;align-self:start;font-size:13px;max-height:90vh;overflow:auto}nav ul{padding-left:18px}article{min-width:0;background:var(--paper);padding:26px;border:1px solid var(--line);border-radius:10px}p{margin:12px 0}table{display:block;overflow:auto;border-collapse:collapse;width:100%;font-size:14px}th,td{border:1px solid var(--line);padding:10px;text-align:left;vertical-align:top}th{background:var(--bg)}code{font:13px/1.6 ui-monospace,monospace;overflow-wrap:anywhere}pre{overflow:auto}.badge{display:inline-block;background:var(--warnbg);color:var(--warn);font-size:12px;font-weight:650;padding:2px 8px;border-radius:4px}.notice{border-left:4px solid var(--accent);padding:12px 18px;background:var(--paper)}.meta{color:var(--muted);font-size:14px}.citation{font-size:12px;white-space:nowrap}details{margin-top:28px}summary{cursor:pointer;font-size:22px;font-weight:bold}:target{outline:2px solid var(--accent)}@media(max-width:850px){header,main,footer{padding:16px}.layout{display:block}nav{position:static;max-height:none;margin-bottom:20px}article{padding:16px}h1{font-size:25px}}
+</style></head>
+<body><header><h1>上下文插件竞品与开发价值评估</h1><p class="meta">Market research · 2026-11-09 · standard / normal verification · 决策：是否继续独立开发 dsh-magic-context</p><p class="notice"><strong>建议：暂停从零复制完整插件，先验证现有实现；仅为已确认的关键差距做扩展。</strong><br><span class="badge">medium / unverified · 非运行验收</span>　发行记录不等于可用性；本次未安装插件或执行测试。</p></header>
+<main class="layout"><nav aria-label="报告目录"><div class="toc">
+<ul>
+<li><a href="#_1">上下文插件竞品与开发价值评估</a><ul>
+<li><a href="#_2">决策摘要</a></li>
+<li><a href="#_3">还找到了哪些现成方案</a><ul>
+<li><a href="#dsh">DSH直接相关插件</a></li>
+<li><a href="#_4">跨宿主替代与参考</a></li>
+</ul>
+</li>
+<li><a href="#_5">指定项目：核心范围已有实现与文档证据</a><ul>
+<li><a href="#_6">文档与实现边界</a></li>
+</ul>
+</li>
+<li><a href="#_7">对照本项目需求：有缺口，但缺口不自动等于新项目机会</a><ul>
+<li><a href="#_8">真正可能形成差异的方向</a></li>
+</ul>
+</li>
+<li><a href="#_9">建议采用的决策门槛</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav><article><h1 id="_1">上下文插件竞品与开发价值评估</h1>
+<p><strong>决策：是否继续独立开发 dsh-magic-context。</strong> 访问日：2026-11-09。</p>
+<p>证据分级：<strong>源码支持</strong>表示本次读取了实现；<strong>作者自述</strong>表示来自维护者文档；<strong>发行证据</strong>表示注册表/CI记录存在。均不等于本机运行验证。没有独立的不同数据源确认时，承重声明仍记为 <code>medium / unverified</code>，不是断言虚假。</p>
+<h2 id="_2">决策摘要</h2><span class="badge">medium / unverified · 非运行验收</span>
+<p><strong>不建议按当前“大而全的DSH版Magic Context”方向从零重做。建议先采用并验证<code>wk544863858/dsh-plugin-magic-context</code>，把本项目暂时定位为差距验证与可贡献扩展。</strong> 源码与作者文档显示，其范围包含可逆工具回收、Historian、持久记忆与基础UI。本项目尚未证明存在这样的关键场景：现成方案无法满足，且用户确实需要。<a class="citation" href="#src-2">[2]</a><a class="citation" href="#src-3">[3]</a><a class="citation" href="#src-8">[8]</a></p>
+<p>这不是建议删除项目或立即安装依赖。现有需求与研究仍可作为验收清单；只有出现可复现的关键缺口，再比较上游贡献、受限fork和独立实现的成本。以下是产品建议，不是已批准的PRD变更。</p>
+<h2 id="_3">还找到了哪些现成方案</h2><span class="badge">medium / unverified · 非运行验收</span>
+<p>以下能力除特别标注外均为作者文档或源码支持，<strong>medium / unverified：没有本次独立运行验收</strong>。npm版本只证明发行记录存在，不证明兼容或好用。</p>
+<h3 id="dsh">DSH直接相关插件</h3><span class="badge">medium / unverified · 非运行验收</span>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>当前发行证据</th>
+<th>做什么</th>
+<th>与本项目的边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/overact/dsh-multi-window-context-management">dsh-multi-window-context-management</a></td>
+<td>npm0.7.0，2026-11-09发布；README称验证DSH0.2.2-rc.1。<a class="citation" href="#src-10">[10]</a><a class="citation" href="#src-13">[13]</a></td>
+<td>原生压缩后追加窗口交接；会话私有笔记；history_search/read；按稳定item_seq分页读取完整原始事件</td>
+<td><strong>已经不只是摘要</strong>，同一会话跨窗口的原文定位与恢复也有现成方案；工具不开放任意跨会话访问，不是ctx_reduce同形实现。<a class="citation" href="#src-10">[10]</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/athif23/dsh-context-rollover">dsh-context-rollover</a></td>
+<td>npm0.2.2，2026-09-16发布。<a class="citation" href="#src-14">[14]</a></td>
+<td>模型主动换窗；持久笔记＋近期原文尾部＋history(search/read)；确定性交接不调用摘要模型</td>
+<td>会话内为主，无跨会话同步；Web须用standard-rollover实验preset，默认standard不获得其工具。当前DSH兼容性待测。<a class="citation" href="#src-11">[11]</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/EPCN-fla/dsh-observational-memory">dsh-observational-memory</a></td>
+<td>npm0.4.3，2026-10-30发布；本次能力文档为0.4.1快照。<a class="citation" href="#src-12">[12]</a><a class="citation" href="#src-15">[15]</a></td>
+<td>observer→reflector→dropper后台记忆；压缩时render；recall(id)恢复某条记忆背后的原始证据；Memory tab</td>
+<td>recall是按已知记忆ID精确查证，不是任意历史全文搜索；后台worker仍消耗模型调用，不能称整体零成本；不是完整MC对等实现。<a class="citation" href="#src-12">[12]</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_4">跨宿主替代与参考</h3><span class="badge">medium / unverified · 非运行验收</span>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>类别与本次证据</th>
+<th>对本项目的意义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/cortexkit/magic-context">Magic Context / CortexKit</a></td>
+<td>OpenCode、Pi、OMP上的完整上下文管理与记忆体系：缓存感知回收、Historian、Dreamer、跨会话搜索和原文展开；官方README称Pi与OpenCode共享数据库。<a class="citation" href="#src-16">[16]</a></td>
+<td>完整能力的上游参考，不是可直接装进DSH的插件；“跨宿主记忆”本身也已有方案，DSH接入价值需单独证明</td>
+</tr>
+<tr>
+<td><a href="https://github.com/Opencode-DCP/opencode-dynamic-context-pruning">Dynamic Context Pruning / DCP</a></td>
+<td>OpenCode请求侧压缩，当前单compress工具，range及message（实验性）两模式；不修改宿主历史。已读decompress源码显示压缩块可置为inactive；底层消息恢复的完整路径未逐行复核或运行验收。<a class="citation" href="#src-17">[17]</a><a class="citation" href="#src-18">[18]</a></td>
+<td><strong>不能误称纯永久删除</strong>。但块级解压不等于本项目所有稳定引用、跨会话检索和记忆需求；作者明确新工作优先转往Sleev。<a class="citation" href="#src-17">[17]</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/thedotmack/claude-mem">claude-mem</a></td>
+<td>工具活动→observations→跨会话检索与注入；调研摘要核到2026-11-09仍有release。<a class="citation" href="#src-19">[19]</a></td>
+<td>是跨会话观察式记忆的替代层，不等于卸载工具输出后逐项恢复原文；不要因有记忆功能就视为完整替代</td>
+</tr>
+<tr>
+<td><a href="https://sleev.ai">Sleev</a></td>
+<td>本地代理层上下文优化；厂商宣称支持多种coding harness。DCP维护者明确迁移开发重心，技术主张未独立验证。<a class="citation" href="#src-17">[17]</a><a class="citation" href="#src-20">[20]</a></td>
+<td>对“再做一个通用压缩器”构成路线竞争；DSH接入、精确恢复、隐私与回退细节均未确认，不推荐直接替代安装</td>
+</tr>
+<tr>
+<td><a href="https://github.com/SleepingBag945/opencode-recall">opencode-recall</a></td>
+<td>早期工具I/O落盘方案，保留blob指针并用rcl_restore读回快照；已读源码默认超8KB拒绝，force可覆盖。<a class="citation" href="#src-21">[21]</a></td>
+<td>说明“落盘＋指针＋按需读取”也已有实现；0.1.0及较早的更新记录不足以支持将其直接当作成熟替代；8KB是拒绝阈值而非静默截断</td>
+</tr>
+</tbody>
+</table>
+<p><strong>反向证据：</strong> 竞争确实存在，但这些方案并非全部等价，也没有本次实测能证明任一方案完整满足本项目八组需求。DSH的跨会话原文搜索、Smart notes及与上游数据互通仍是待核实缺口；上游MC已有对应能力，不代表其DSH适配已完成。<a class="citation" href="#src-16">[16]</a> 不能据此直接判定项目“毫无价值”。同会话跨窗口的历史原文读取已有方案，不能再把它单独当作空白市场；观察记忆的recall则仅限按已知记忆ID查证，不是任意历史读取。<a class="citation" href="#src-10">[10]</a><a class="citation" href="#src-11">[11]</a><a class="citation" href="#src-12">[12]</a></p>
+<h2 id="_5">指定项目：核心范围已有实现与文档证据</h2><span class="badge">medium / unverified · 非运行验收</span>
+<p><code>wk544863858/dsh-plugin-magic-context</code> 是本项目最直接的替代，而不是名字相近的普通记忆插件。</p>
+<ul>
+<li><strong>已经发布，而不是只有规划</strong>：npm <code>latest=0.11.1</code>，<code>gitHead=93ef5fe4a06a2c05f53e6a6225346919e860d74e</code>；changelog记载2026-11-07更新，当日对应CI成功。<a class="citation" href="#src-1">[1]</a><a class="citation" href="#src-7">[7]</a><a class="citation" href="#src-9">[9]</a></li>
+<li><strong>核心闭环有源码及测试代码，未在本次执行</strong>：<code>ctx_reduce</code>只入队；<code>ctx_expand(tags)</code>寻找当前surface上的占位符，沿<code>sourceEventSeqs</code>读取原始工具结果content，再替换回surface。已读恢复路径不重新执行原工具，也不生成替代摘要。集成测试代码使用真实DSH agent loop和MockAdapter，编写了原正文→占位符→原正文的断言，不代表本次已跑通。<a class="citation" href="#src-3">[3]</a><a class="citation" href="#src-4">[4]</a><a class="citation" href="#src-5">[5]</a></li>
+<li><strong>作者文档描述的范围广于我们尚未实施的阶段0</strong>：列出四层Historian、项目SQLite记忆、FTS＋本地向量、共享域、维护tick、GUI设置及遥测。按README，默认不接管宿主compaction-basic；若启用接管，要处理互斥配置。<a class="citation" href="#src-2">[2]</a></li>
+<li><strong>仍不是完整Magic Context移植</strong>：独立<code>ctx_search</code>、<code>ctx_note</code>未见于已读工具接口；记忆检索用<code>ctx_memory(action=search)</code>，不等于跨会话的原始历史全文检索。<a class="citation" href="#src-2">[2]</a><a class="citation" href="#src-3">[3]</a> 作者明确独立维护自有corpus，不承担上游数据库互读义务；完整Dreamer、watermark age reclaim、精确tokenizer及图像计量未移植，并非完全没有计量（仍有chars/4估算）。<a class="citation" href="#src-8">[8]</a></li>
+<li><strong>兼容性有待测，而不是已证明不可用</strong>：已读<code>ci.yml</code>配置为<code>ubuntu-latest</code>＋Node22/24，未穷尽其他工作流；本次没有Windows安装、DSH0.2.2-rc.1运行或重启测试。README的0.2.1-rc.1源码基线与新changelog提到的0.2.2-rc.1应区分，不能拿旧锚点直接宣布不兼容。<a class="citation" href="#src-2">[2]</a><a class="citation" href="#src-6">[6]</a><a class="citation" href="#src-9">[9]</a></li>
+</ul>
+<h3 id="_6">文档与实现边界</h3><span class="badge">medium / unverified · 非运行验收</span>
+<ol>
+<li>README的“never breaks the live prefix”不应解释成永久缓存命中。其配置和实现同时承认回收落地是受控的priced bust。<a class="citation" href="#src-2">[2]</a><a class="citation" href="#src-3">[3]</a></li>
+<li><code>ctx_expand</code>依赖当前surface可见占位符；整段被Historian遮蔽后的恢复、任意消息范围和跨会话恢复，不在已读phase1测试证明范围内。<a class="citation" href="#src-3">[3]</a><a class="citation" href="#src-4">[4]</a><a class="citation" href="#src-5">[5]</a></li>
+<li>PARITY仍有旧版号及默认值与README冲突（例如embedBackfill）；它适合提供有明确意图的产品边界，不应把其所有配置当作最新事实。<a class="citation" href="#src-2">[2]</a><a class="citation" href="#src-8">[8]</a></li>
+</ol>
+<h2 id="_7">对照本项目需求：有缺口，但缺口不自动等于新项目机会</h2><span class="badge">medium / unverified · 非运行验收</span>
+<p>本表的需求来自本项目PRD（只用于比较），外部能力来自本次检索。它不是验收报告，也没有修改PRD或冻结V1。</p>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>指定竞品本次证据</th>
+<th>对继续开发的含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-1 可逆卸载与精确恢复</td>
+<td>当前工具占位符闭环有源码和mock集成测试代码，本次未执行；重启及Historian后恢复尚未独立验收。<a class="citation" href="#src-3">[3]</a><a class="citation" href="#src-4">[4]</a><a class="citation" href="#src-5">[5]</a></td>
+<td>先采用现有实现做契约验证，而非重复实现同一闭环</td>
+</tr>
+<tr>
+<td>FR-2 代理参与/不参与管理</td>
+<td>标记入队、压力调度与紧急回收已有；不等于完整上游自动模式，PARITY明确watermark age reclaim未移植。<a class="citation" href="#src-2">[2]</a><a class="citation" href="#src-8">[8]</a></td>
+<td>先确定真正需要的自动策略，优先小范围扩展</td>
+</tr>
+<tr>
+<td>FR-3 Historian</td>
+<td>作者文档列出四层带外摘要与发布；预算/调用组织不同于上游，未独立验收。<a class="citation" href="#src-2">[2]</a><a class="citation" href="#src-8">[8]</a></td>
+<td>非空白，不宜以“有Historian”作新项目定位</td>
+</tr>
+<tr>
+<td>FR-4 跨会话检索并恢复原始历史</td>
+<td>项目记忆检索已有；已读接口未提供上游任意message/range及跨会话原文检索恢复。<a class="citation" href="#src-2">[2]</a><a class="citation" href="#src-3">[3]</a></td>
+<td>最值得验证的功能缺口之一；先确认是否可贡献扩展</td>
+</tr>
+<tr>
+<td>FR-5 持久事实记忆</td>
+<td>作者自述已做项目SQLite、FTS/向量、Historian事实提升。<a class="citation" href="#src-2">[2]</a></td>
+<td>直接重复的价值弱</td>
+</tr>
+<tr>
+<td>FR-6 延迟意图笔记/Smart notes</td>
+<td>已读工具接口未列ctx_note；维护tick不等于完整Dreamer。<a class="citation" href="#src-2">[2]</a><a class="citation" href="#src-3">[3]</a><a class="citation" href="#src-8">[8]</a></td>
+<td>若确实需要，可作为独立扩展议题；不是已冻结V1</td>
+</tr>
+<tr>
+<td>FR-7 搜索提示/Git索引</td>
+<td>文档有searchHint；未在已读接口和范围文档确认Git提交索引。<a class="citation" href="#src-2">[2]</a><a class="citation" href="#src-8">[8]</a></td>
+<td>“未确认”不能写成“绝不存在”</td>
+</tr>
+<tr>
+<td>FR-8 DSH UI</td>
+<td>作者文档列出配置卡和遥测；不能等同完整历史/记忆管理界面。<a class="citation" href="#src-2">[2]</a></td>
+<td>基础UI方向已重复，特定管理体验仍需需求验证</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">真正可能形成差异的方向</h3><span class="badge">medium / unverified · 非运行验收</span>
+<ul>
+<li><strong>可审计的长程恢复契约</strong>：同会话跨窗口读取原文已有其他DSH插件；更值得验证的是重启、再次压缩、Historian遮蔽及跨会话后，稳定引用和完整性保证是否一致。如现有方案已满足，就不另做。<a class="citation" href="#src-3">[3]</a><a class="citation" href="#src-4">[4]</a><a class="citation" href="#src-5">[5]</a><a class="citation" href="#src-10">[10]</a><a class="citation" href="#src-11">[11]</a></li>
+<li><strong>跨宿主迁移或互通</strong>：指定竞品明确不承担MC存储互读义务，因此这里有边界差异；但本项目OQ-2尚未确认它是否首版必需，不能先造需求。<a class="citation" href="#src-8">[8]</a></li>
+<li><strong>Windows/DSH兼容验收与回归套件</strong>：提供能运行、能复查的证据；公共Ubuntu CI未覆盖的部分是验证机会，不是现有产品缺陷的证明。<a class="citation" href="#src-6">[6]</a></li>
+</ul>
+<p>这些方向首先是<strong>贡献或验证机会</strong>。只有在用户确需、现有插件有可复现缺口且维护者不接受兼容扩展时，才足以支持受限fork或独立实现。使用较新上游基线、换存储目录或再写一层adapter，本身都不是用户收益。</p>
+<h2 id="_9">建议采用的决策门槛</h2><span class="badge">medium / unverified · 非运行验收</span>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>当前建议</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>从零复制完整功能</td>
+<td>暂停</td>
+<td>核心范围已被直接竞品覆盖，尚无已验证的独有需求</td>
+</tr>
+<tr>
+<td>采用现有插件</td>
+<td>优先验证</td>
+<td>最快判断当前需求是否已被满足，但不预设兼容或可靠</td>
+</tr>
+<tr>
+<td>向现有插件贡献</td>
+<td>优先于fork</td>
+<td>测试、兼容修复和小功能无需另负担一整套产品维护</td>
+</tr>
+<tr>
+<td>受限fork或独立模块</td>
+<td>条件成立后再做</td>
+<td>需要关键差距、扩展不可行及可承担维护成本的证据</td>
+</tr>
+<tr>
+<td>学习性实现</td>
+<td>可以，但另设边界</td>
+<td>学习价值可以成立，不应把它误当作尚未证明的产品机会</td>
+</tr>
+</tbody>
+</table>
+<p><strong>验证清单：</strong> 在隔离环境用真实DSH及Windows测试回收后恢复原文、重启后恢复、Historian遮蔽后的定位、跨会话查找原始历史、compaction配置互斥。区分需求不支持与实现缺陷，不以源码或Ubuntu CI替代验收。<a class="citation" href="#src-2">[2]</a><a class="citation" href="#src-3">[3]</a><a class="citation" href="#src-4">[4]</a><a class="citation" href="#src-5">[5]</a><a class="citation" href="#src-6">[6]</a></p>
+<p><strong>独立实现的额外门槛：</strong> 差距属于首版必需，现有项目不能兼容扩展，且差异是架构性的；维护收益还要超过持续追踪宿主和上游的成本。长程恢复、互通与Smart notes目前均是假设方向，不是已批准的首版范围。<a class="citation" href="#src-8">[8]</a></p>
+<p><strong>BMad交接：</strong> 若接受方向调整，下一步由<code>bmad-agent-pm</code>（John）基于本报告更新现有PRD，将首个产出改成有明确通过/失败标准的验证实验，而不是直接进入架构和开发。本次未改动PRD、initiative配置或安装插件。</p><details><summary>来源：21项引用</summary><table class="sources"><tbody><tr id="src-1"><td>[1]</td><td>npm当前版本与gitHead</td><td><a href="https://registry.npmjs.org/dsh-plugin-magic-context/latest" target="_blank" rel="noopener">npm registry</a></td><td>0.11.1；此端点无时间字段</td><td>2026-11-09</td><td>medium；发行元数据</td></tr><tr id="src-2"><td>[2]</td><td>指定竞品功能、配置和运行边界</td><td><a href="https://github.com/wk544863858/dsh-plugin-magic-context/blob/93ef5fe4a06a2c05f53e6a6225346919e860d74e/README.md" target="_blank" rel="noopener">wk544863858 README</a></td><td>HEAD 2026-11-07</td><td>2026-11-09</td><td>medium；作者自述</td></tr><tr id="src-3"><td>[3]</td><td>ctx工具参数及恢复实现</td><td><a href="https://github.com/wk544863858/dsh-plugin-magic-context/blob/93ef5fe4a06a2c05f53e6a6225346919e860d74e/src/dsh/tool-bridge.ts" target="_blank" rel="noopener">wk544863858 tool-bridge.ts</a></td><td>同上固定SHA</td><td>2026-11-09</td><td>medium；源码支持</td></tr><tr id="src-4"><td>[4]</td><td>sourceEventSeqs与原始content恢复</td><td><a href="https://github.com/wk544863858/dsh-plugin-magic-context/blob/93ef5fe4a06a2c05f53e6a6225346919e860d74e/src/dsh/seams.ts" target="_blank" rel="noopener">wk544863858 seams.ts</a></td><td>同上固定SHA</td><td>2026-11-09</td><td>medium；源码支持</td></tr><tr id="src-5"><td>[5]</td><td>回收恢复集成测试覆盖边界</td><td><a href="https://github.com/wk544863858/dsh-plugin-magic-context/blob/93ef5fe4a06a2c05f53e6a6225346919e860d74e/tests/phase1.spec.ts" target="_blank" rel="noopener">wk544863858 phase1.spec.ts</a></td><td>同上固定SHA</td><td>2026-11-09</td><td>medium；本次未执行</td></tr><tr id="src-6"><td>[6]</td><td>Ubuntu CI矩阵，不证明Windows状态</td><td><a href="https://github.com/wk544863858/dsh-plugin-magic-context/blob/93ef5fe4a06a2c05f53e6a6225346919e860d74e/.github/workflows/ci.yml" target="_blank" rel="noopener">wk544863858 CI workflow</a></td><td>同上固定SHA</td><td>2026-11-09</td><td>medium；配置支持</td></tr><tr id="src-7"><td>[7]</td><td>当前SHA CI成功记录</td><td><a href="https://github.com/wk544863858/dsh-plugin-magic-context/actions/runs/42383941346" target="_blank" rel="noopener">GitHub Actions CI</a></td><td>2026-11-07</td><td>2026-11-09</td><td>medium；平台记录</td></tr><tr id="src-8"><td>[8]</td><td>独立存储和有意未移植模块</td><td><a href="https://github.com/wk544863858/dsh-plugin-magic-context/blob/93ef5fe4a06a2c05f53e6a6225346919e860d74e/PARITY.md" target="_blank" rel="noopener">wk544863858 PARITY</a></td><td>比较日期2026-10-30；部分条目滞后</td><td>2026-11-09</td><td>medium；作者自述</td></tr><tr id="src-9"><td>[9]</td><td>0.10/0.11发行历史与宿主描述</td><td><a href="https://github.com/wk544863858/dsh-plugin-magic-context/blob/93ef5fe4a06a2c05f53e6a6225346919e860d74e/CHANGELOG.md" target="_blank" rel="noopener">wk544863858 CHANGELOG</a></td><td>最新条目2026-11-07</td><td>2026-11-09</td><td>medium；作者自述</td></tr><tr id="src-10"><td>[10]</td><td>DSH多窗口、稳定事件ID与会话隔离边界</td><td><a href="https://github.com/overact/dsh-multi-window-context-management/blob/9dfab4803545a8d5d9c66c60ec77cfa302d94991/README.zh-CN.md" target="_blank" rel="noopener">overact README</a></td><td>0.7.0；2026-11-09</td><td>2026-11-09</td><td>medium；作者文档</td></tr><tr id="src-11"><td>[11]</td><td>换窗、原始历史与preset边界</td><td><a href="https://github.com/athif23/dsh-context-rollover/blob/main/README.md" target="_blank" rel="noopener">athif23 README</a></td><td>日期未知；当前main</td><td>2026-11-09</td><td>medium；作者文档</td></tr><tr id="src-12"><td>[12]</td><td>观察记忆、精确recall及后台调用</td><td><a href="https://cdn.jsdelivr.net/npm/dsh-observational-memory@0.4.1/README.en.md" target="_blank" rel="noopener">EPCN-fla npm README快照</a></td><td>固定0.4.1；日期未核</td><td>2026-11-09</td><td>medium；作者文档</td></tr><tr id="src-13"><td>[13]</td><td>多窗口包发行</td><td><a href="https://registry.npmjs.org/dsh-multi-window-context-management" target="_blank" rel="noopener">npm registry</a></td><td>0.7.0；2026-11-09</td><td>2026-11-09</td><td>high；仅分发记录</td></tr><tr id="src-14"><td>[14]</td><td>rollover发行</td><td><a href="https://registry.npmjs.org/dsh-context-rollover" target="_blank" rel="noopener">npm registry</a></td><td>0.2.2；2026-09-16</td><td>2026-11-09</td><td>high；仅分发记录</td></tr><tr id="src-15"><td>[15]</td><td>观察记忆当前发行</td><td><a href="https://registry.npmjs.org/dsh-observational-memory" target="_blank" rel="noopener">npm registry</a></td><td>0.4.3；2026-10-30</td><td>2026-11-09</td><td>high；仅分发记录</td></tr><tr id="src-16"><td>[16]</td><td>MC多宿主、工具及共享记忆</td><td><a href="https://github.com/cortexkit/magic-context/blob/master/README.md" target="_blank" rel="noopener">CortexKit README</a></td><td>当前master；逐段日期未知</td><td>2026-11-09</td><td>medium；作者文档</td></tr><tr id="src-17"><td>[17]</td><td>DCP当前机制、缓存权衡及转向Sleev</td><td><a href="https://github.com/Opencode-DCP/opencode-dynamic-context-pruning/blob/master/README.md" target="_blank" rel="noopener">Opencode-DCP README</a></td><td>当前master；逐段日期未知</td><td>2026-11-09</td><td>medium；作者文档</td></tr><tr id="src-18"><td>[18]</td><td>DCP块级解压实现</td><td><a href="https://github.com/Tarquinen/opencode-dynamic-context-pruning/blob/HEAD/lib/commands/decompress.ts" target="_blank" rel="noopener">DCP decompress.ts</a></td><td>研究所读HEAD；未固定SHA</td><td>2026-11-09</td><td>medium；源码摘要，未运行</td></tr><tr id="src-19"><td>[19]</td><td>claude-mem定位及发行</td><td><a href="https://github.com/thedotmack/claude-mem" target="_blank" rel="noopener">thedotmack仓库</a></td><td>摘要核到v15.13.0；2026-11-09</td><td>2026-11-09</td><td>medium；README/release摘要</td></tr><tr id="src-20"><td>[20]</td><td>Sleev代理层定位</td><td><a href="https://sleev.ai" target="_blank" rel="noopener">Sleev官网</a></td><td>发布日期未知</td><td>2026-11-09</td><td>low；厂商主张，技术未验证</td></tr><tr id="src-21"><td>[21]</td><td>recall快照落盘及恢复阈值</td><td><a href="https://github.com/SleepingBag945/opencode-recall/blob/HEAD/lib/restore-tool.ts" target="_blank" rel="noopener">SleepingBag945 restore-tool.ts</a></td><td>摘要核到0.1.0；未固定SHA</td><td>2026-11-09</td><td>medium；源码及README摘要</td></tr></tbody></table></details><h2 id="_1">时效与限制</h2>
+<table>
+<thead>
+<tr>
+<th>信息</th>
+<th>何时重查</th>
+<th>本次限制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>npm版本、维护和CI</td>
+<td>安装前，以及约30天后</td>
+<td>发行存在不代表真实用户采用或可靠运行</td>
+</tr>
+<tr>
+<td>DSH/Windows与compaction行为</td>
+<td>每次宿主或插件升级前</td>
+<td>本次未安装、运行或执行其测试；Windows状态未验证</td>
+</tr>
+<tr>
+<td>工具恢复与跨会话能力</td>
+<td>验证实验前；相关接口变更时</td>
+<td>源码路径及mock测试不等于完整端到端验收</td>
+</tr>
+<tr>
+<td>候选名称、版本和开发重心</td>
+<td>安装前，约30天内复查</td>
+<td>索引仍有dsh-context-management 0.3.6旧名/版，当前已改名且发布0.7.0；DCP开发转向Sleev；文档快照未必等于最新发行。<a class="citation" href="#src-10">[10]</a><a class="citation" href="#src-13">[13]</a><a class="citation" href="#src-17">[17]</a></td>
+</tr>
+<tr>
+<td>商业价值及差异化需求</td>
+<td>决定独立开发前</td>
+<td>未做用户访谈、成本基准或收益实测，不能声称ROI已成立</td>
+</tr>
+</tbody>
+</table>
+<p>本次检索不是穷尽性证明；“未找到”不等于“不存在”。可通过Refresh复查版本与维护，通过Deepen针对原文恢复或兼容性进一步研究。</p></article></main>
+<footer class="meta">本页从同目录 Markdown 报告生成，是可离线阅读的呈现层，不是第二份事实来源。无外部资源请求。</footer></body></html>

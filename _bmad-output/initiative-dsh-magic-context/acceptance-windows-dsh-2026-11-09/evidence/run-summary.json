@@ -1,0 +1,122 @@
+{
+  "host": "0.2.2-rc.1",
+  "node": "24.21.0",
+  "plugin": "0.11.1",
+  "mode": "real DSH + real DeepSeek API; no simulated model",
+  "invocations": [
+    {
+      "label": "engine-conflict",
+      "session_id": "session-5a3fffcf-e5cf-47d5-8782-32bbf4ce7709",
+      "reason": {
+        "kind": "completed"
+      }
+    },
+    {
+      "label": "engine-fallback",
+      "session_id": "session-31cc3c70-5a72-494e-aa0b-185d6e648bff",
+      "reason": {
+        "kind": "completed"
+      }
+    },
+    {
+      "label": "engine-takeover",
+      "session_id": "session-d3785bea-2e21-4406-8482-5da3c76af2fa",
+      "reason": {
+        "kind": "completed"
+      }
+    },
+    {
+      "label": "historian-fresh-publish-and-expand",
+      "session_id": "session-2a5ef657-e236-4270-bbc3-4c4d4998799d",
+      "reason": {
+        "kind": "completed"
+      }
+    },
+    {
+      "label": "historian-fresh-seed",
+      "session_id": "session-2a5ef657-e236-4270-bbc3-4c4d4998799d",
+      "reason": {
+        "kind": "completed"
+      }
+    },
+    {
+      "label": "historian-publish-and-expand",
+      "session_id": "session-a31842e2-cdac-40d2-ba84-c2ad5b8da71c",
+      "reason": {
+        "kind": "completed"
+      }
+    },
+    {
+      "label": "historian-seed",
+      "session_id": "session-a31842e2-cdac-40d2-ba84-c2ad5b8da71c",
+      "reason": {
+        "kind": "completed"
+      }
+    },
+    {
+      "label": "memory-and-raw-history-session-b",
+      "session_id": "session-00ed26bd-f431-47a5-a703-955ee05c6477",
+      "reason": {
+        "kind": "completed"
+      }
+    },
+    {
+      "label": "memory-write-session-a",
+      "session_id": "session-a31842e2-cdac-40d2-ba84-c2ad5b8da71c",
+      "reason": {
+        "kind": "completed"
+      }
+    },
+    {
+      "label": "real-model-drop-before-restart",
+      "session_id": "session-a31842e2-cdac-40d2-ba84-c2ad5b8da71c",
+      "reason": {
+        "kind": "completed"
+      }
+    },
+    {
+      "label": "real-model-expand-after-restart",
+      "session_id": "session-a31842e2-cdac-40d2-ba84-c2ad5b8da71c",
+      "reason": {
+        "kind": "completed"
+      }
+    },
+    {
+      "label": "real-model-repeat-drop",
+      "session_id": "session-39d42cc1-efb0-42b7-8061-4bf5e6048d54",
+      "reason": {
+        "kind": "completed"
+      }
+    },
+    {
+      "label": "real-model-roundtrip",
+      "session_id": "session-7f20e2db-2f37-4c11-93b2-77398bdd4085",
+      "reason": {
+        "kind": "completed"
+      }
+    },
+    {
+      "label": "real-model-smoke",
+      "session_id": "session-74a1780e-8ad2-4d38-a650-59dd02596ecb",
+      "reason": {
+        "kind": "completed"
+      }
+    }
+  ],
+  "agent_model_steps": 37,
+  "agent_reported_usage": {
+    "inputTokens": 58434,
+    "outputTokens": 4928,
+    "cacheReadTokens": 280576,
+    "cacheWriteTokens": 0,
+    "totalTokens": 343938
+  },
+  "historian_done_runs": 2,
+  "historian_done_evidence": [
+    "2026-11-09T15:12:46.640Z INFO  historian session-a318 historian digest ready (importance 15, 21 nodes) {\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":21,\"tokens\":8035,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":45000,\"importance\":15,\"facts\":5,\"events\":4,\"attempts\":1,\"durationMs\":6380,\"usage\":{\"inputTokens\":8004,\"outputTokens\":945,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":10485},\"finishReason\":\"stop\"}",
+    "2026-11-09T15:15:41.433Z INFO  historian session-2a5e historian digest ready (importance 6, 9 nodes) {\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":7653,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":45000,\"importance\":6,\"facts\":3,\"events\":3,\"attempts\":1,\"durationMs\":4281,\"usage\":{\"inputTokens\":6893,\"outputTokens\":707,\"cacheReadTokens\":1920,\"cacheWriteTokens\":0,\"totalTokens\":9520},\"finishReason\":\"stop\"}"
+  ],
+  "requeue_regression_expected_exit": 1,
+  "requeue_regression_actual_exit": 1,
+  "usage_note": "Agent totals exclude auxiliary historian usage; neither is a monetary invoice."
+}
