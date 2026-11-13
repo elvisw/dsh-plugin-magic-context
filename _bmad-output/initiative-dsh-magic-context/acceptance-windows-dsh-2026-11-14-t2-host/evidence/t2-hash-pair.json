@@ -1,0 +1,9 @@
+{
+  "session": "session-6fc413ae-3cc8-456f-98e6-a839783576ca",
+  "event20_full_sha256": "fc8d53e54a918499c2e8fc5ac35a46de08dc79b9e82643f86e0eeb3e597d2414",
+  "event34_outer_stripped_sha256": "fc8d53e54a918499c2e8fc5ac35a46de08dc79b9e82643f86e0eeb3e597d2414",
+  "event34_outer_marker": "\u00a73\u00a7 ",
+  "event20_marker_stripped_sha256": "fd8984bf68f8e673458bff96a9815e14c5eebe09cae9cdfe32f931d039808bb3",
+  "event20_full_equals_event34_outer_stripped": true,
+  "comparison": "SHA-256(event 20 full text) == SHA-256(event 34 with the outer \u00a73\u00a7 plus one trailing space removed); event20 marker-stripped hash is a different projection and is not the comparison target."
+}

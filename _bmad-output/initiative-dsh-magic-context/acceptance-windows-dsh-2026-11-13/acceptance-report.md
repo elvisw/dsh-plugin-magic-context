@@ -111,6 +111,10 @@ conflict 的 stderr 仍有警告：`compaction-basic ... service "compaction" ha
 - 凭据只从环境继承，未写入配置或报告；observer 按环境变量名替换值。**未做通用秘密检测**；`collect_evidence.py` 只检查环境变量值是否出现在证据文本中。
 - 旧证据目录 `acceptance-windows-dsh-2026-11-09/` 的 26 个文件 SHA-256 未变：`old-evidence-sha256.txt`，`hash_old_evidence.py --verify` 通过。
 
+### 5.1 2026-11-14 追加披露：T2 首轮 overlay 污染
+
+T2 首轮运行的 overlay 路径替换 bug 使 `dataDir` 和 observer `outDir` 指向本报告的根 `dsh-mc-acceptance-0112-j4ydat07`。该根被追加了 3 个 T2 首轮 session（13 个 tags、4 条 `pending_drops`），`activity.log` 被追加，`evidence/session-observer` 被新增 3 个 JSONL、`engine-owners.jsonl` 从 14 行变为 18 行。仓库内本报告和证据副本未被首轮 T2 运行改写；本轮只向本报告追加本节披露。本报告的恢复/requeue/Historian 结论不依赖这些追加行（使用 observer seq、内容哈希、stdout 与独立 `unit-requeue` DB）。但本根的 plugin DB 与 observer 证据目录不再是原始基线，后续引用时必须注明。详见 [T2 报告第 5 节](../acceptance-windows-dsh-2026-11-14-t2-host/acceptance-report.md)。
+
 ## 6. T0-A 上游参考：取消（既有研究覆盖）
 
 **状态：cancelled。** 不再运行上游实验。既有研究已在固定提交上核对并独立复核；验收 gate 只要求插件在 DSH 可用，语义目标按 2026-11-13 修订为原版 Magic Context，重复运行不会增加决策所需信息。

@@ -21,9 +21,14 @@ def main() -> None:
             )
         ]
         drops = [
-            {"session": row[0], "tag": row[1], "landed_event_seq": row[2]}
+            {
+                "session": row[0],
+                "tag": row[1],
+                "queued_at": row[2],
+                "landed_event_seq": row[3],
+            }
             for row in con.execute(
-                "SELECT session_id, tag_number, landed_event_seq FROM pending_drops ORDER BY session_id, tag_number"
+                "SELECT session_id, tag_number, queued_at, landed_event_seq FROM pending_drops ORDER BY session_id, tag_number"
             )
         ]
         meta = {row[0]: row[1] for row in con.execute("SELECT key, value FROM meta")}

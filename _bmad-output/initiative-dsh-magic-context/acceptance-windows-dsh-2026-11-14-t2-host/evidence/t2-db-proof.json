@@ -93,21 +93,25 @@
     {
       "session": "session-095d47b3-47d2-49d7-a99f-1432878f0cd4",
       "tag": 1,
+      "queued_at": 1794589483444,
       "landed_event_seq": 28
     },
     {
       "session": "session-095d47b3-47d2-49d7-a99f-1432878f0cd4",
       "tag": 3,
+      "queued_at": 1794589485178,
       "landed_event_seq": 42
     },
     {
       "session": "session-6fc413ae-3cc8-456f-98e6-a839783576ca",
       "tag": 1,
+      "queued_at": 1794589470989,
       "landed_event_seq": 28
     },
     {
       "session": "session-af62ae6b-f8e7-4b66-9a36-4661a53f00e8",
       "tag": 1,
+      "queued_at": 1794589496427,
       "landed_event_seq": 28
     }
   ]
