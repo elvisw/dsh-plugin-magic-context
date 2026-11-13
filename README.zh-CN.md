@@ -317,7 +317,7 @@ typecheck → test → build → check:i18n。
 
 ## 相关项目
 
-- [Academic Research Skills — OpenCode V2 适配器中文说明](https://github.com/elvisw/academic-research-skills/blob/feat/opencode-v2/opencode/README.zh-CN.md)（当前在 `feat/opencode-v2` 分支；合并到 `main` 后应改为 `main` 路径）
+- [Academic Research Skills — OpenCode V2 适配器中文说明](https://github.com/elvisw/academic-research-skills/blob/main/opencode/README.zh-CN.md)
 
 ## 出处与许可
 
