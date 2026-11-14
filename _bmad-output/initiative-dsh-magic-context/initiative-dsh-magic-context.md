@@ -30,7 +30,7 @@ parent: none
 - BMad 已就地部署在本仓库：`_bmad/` 为工作流脚本（仅 `config.toml` 纳入版本管理），规划与研究资料在 `_bmad-output/initiative-dsh-magic-context/`。原先存放在 `dsh-magic-context` 仓库的资料已整体迁入；该仓库转为归档，不再作为权威来源。
 - 上文“2026-11-10 fork 轻量交接”中“不迁移 BMad、不复制两套规划”的描述自本节起失效；旧交接文档仅作历史记录。
 - 2026-11-13 已完成 `dsh-plugin-magic-context@0.11.2` 的 DSH 隔离基线（T0-B）：安装、同进程/跨进程恢复、跨会话记忆、引擎注册通过；#13/#14 仍复现，8a/8b/8c 未覆盖。T0-A 上游运行取消，上游参考改用既有研究记录。详见 [0.11.2 验收报告](acceptance-windows-dsh-2026-11-13/acceptance-report.md)。
-- 当前状态：恢复契约 T1 已签收；T2（#13 A）已 refine，T3（#14 + `message`）、T4（#15）、T5（保留期）待 refine。后续按 BMad 流程逐项实施；0.11.2 可作为 DSH 可用基线，但不宣称历史始终可逆或运行级上游 parity。
+- 当前状态：恢复契约 T1 已签收；T2（#13 A）已完成；T3（#14 + `message`）已 refine、待签收开工；T4（#15）、T5（保留期）待 refine。后续按 BMad 流程逐项实施；0.11.2 可作为 DSH 可用基线，但不宣称历史始终可逆或运行级上游 parity。
 - 会话层面的决策、纠错与未决事项整理在[会话与实验历史续接记录](session-continuity-2026-11-13.md)，供新会话快速接续；原始证据仍以验收报告与证据归档为准。
 
 ## Notes
@@ -39,4 +39,4 @@ parent: none
 - Decision: 2026-11-13 — 不承诺兼容 fork 上游 `dsh-plugin-magic-context` 的既有行为；语义以原版 `cortexkit/magic-context` 为目标。Q1–Q5 已签收：A-only；V1 `tag` + `message`；`tags` deprecated；flush 下一次 preStep；移除 30 天 prune。见 `tickets/recovery-contract.md`。
 - Decision: 2026-11-13 — T1 已完成；T2（#13 A）、T3（#14 + `message`）、T4（#15）、T5（保留期对齐）已建票，T2 为 tracer。Q2 的 `message` 拆到 T3，Q5 拆到 T5，交付顺序变化但目标不变。
 - 注：T1 完成票内仍写 “T2–T4”，是签收当时的记录；T5 为后续拆分，现行范围以本条与 `tickets/recovery-contract.md` 为准。
-- 2026-11-14 — T2（#13 A）完成：全量 76 文件 / 818 用例通过（`evidence/unit-test.txt`），真实 DSH `0.2.2-rc.1` + `deepseek-official/deepseek-flash` 的宿主可观测项 1/2/3a/4/5(tags)/6/7(部分) 通过（结果返回、旧 tag no-op、新 tag 生命周期、`tags` 别名、代表失败路径、跨进程重启）；3b 与 7 的其余失败名仅单元/集成，9/10 不在 T2。独立证据审计后修正了报告结论范围和 T0-B 污染披露。报告：[T2 宿主验收](acceptance-windows-dsh-2026-11-14-t2-host/acceptance-report.md)。T3/T4/T5 待 refine。
+- 2026-11-14 — T2（#13 A）完成：全量 76 文件 / 818 用例通过（`evidence/unit-test.txt`），真实 DSH `0.2.2-rc.1` + `deepseek-official/deepseek-flash` 的宿主可观测项 1/2/3a/4/5(tags)/6/7(部分) 通过（结果返回、旧 tag no-op、新 tag 生命周期、`tags` 别名、代表失败路径、跨进程重启）；3b 与 7 的其余失败名仅单元/集成，9/10 不在 T2。独立证据审计后修正了报告结论范围和 T0-B 污染披露。报告：[T2 宿主验收](acceptance-windows-dsh-2026-11-14-t2-host/acceptance-report.md)。T3 已 refine、待签收开工；T4/T5 待 refine。

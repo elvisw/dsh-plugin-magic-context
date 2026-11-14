@@ -23,7 +23,7 @@
 
 **决定（2026-11-13）：A-only。** 不做原位恢复，不保留双模式。
 
-1. `ctx_expand` 按 tag 读取持久化原始历史，把原文作为**本次工具结果**返回；不修改旧占位符、不修改旧节点的内容或身份。
+1. `ctx_expand` 按 tag（或 T3 的 `message` 回退定位，见 D4）读取持久化原始历史，把原文作为**本次工具结果**返回；不修改旧占位符、不修改旧节点的内容或身份。
 2. 旧 tag 保持 dropped；再次 `ctx_reduce` 旧 tag 是 **no-op**，回执明确 `already dropped`，不得再回 `Queued`。该判定必须基于持久化 pending/landed 状态，不依赖 live 占位符；pending 返回 `already queued`，landed 返回 `already dropped`。
 3. 本次 `ctx_expand` 结果由宿主现有的 post-execute tagger 分配**新 tag**；后续 `ctx_reduce` 新 tag 正常入队、落地。
 4. `ctx_expand` 不得以“当前 surface 上仍可见占位符”为前提；占位符不可见时，仍应能按持久化 tag 读取 raw history。
@@ -38,8 +38,8 @@
 
 1. Historian 发布 compartment 后，旧 tag 的占位符可能已不在 surface；`ctx_expand` 仍按持久化 tag 读取 raw history，返回新结果。
 2. 不撤销 compartment、不重建旧位置、不重新生成摘要、不重新执行原工具。
-3. 摘要保持不变；原文只出现在本次 `ctx_expand` 结果中。
-4. 如果 tag 已过期或 raw source 缺失：显式失败；不得用摘要文本冒充原文。
+3. 摘要保持不变；这里的“不变”指已发布 `compartments` 行的 `tier_p1..p4`、`facts`、`events`、`importance`、`covered_*`、`baseline_epoch`、`landed_event_seq`、`landed_reason`、`superseded` 字段不变。后续正常 pass 把同一个摘要重新渲染进 baseline 节点，单独记录，不算摘要重写。原文只出现在本次 `ctx_expand` 结果中。
+4. 如果 tag/message 已过期或 raw source 缺失：显式失败；不得用摘要文本冒充原文。
 5. **类型边界：** 文本与工具输入/输出可恢复；reasoning/结构噪声可能省略；附件/图片可能只返回位置或提示，不作字节级还原承诺（`research-context-lifecycle.md:53`）。
 6. **定位标识：** 原版支持 tag、message、start/end、verbose；DSH 的事件序号不是原版消息序号。V1 做哪些见 Q2。
 
@@ -60,21 +60,28 @@
 | 工具 | V1 候选 | 说明 |
 |---|---|---|
 | `ctx_expand` | `tag`（原版单数） | 首选；T2 实现 |
-| `ctx_expand` | `message`（DSH 映射） | 原版按消息序号；DSH 需映射到 surface event seq；T3 实现 |
+| `ctx_expand` | `message`（DSH 映射） | 原版按消息序号；DSH 映射到 **log event seq（含 shadowed 事件）**；不是原版消息序号；T3 实现 |
 | `ctx_expand` | `start`/`end`、`verbose` | Q2 已定：V1.1 后置 |
 | `ctx_reduce` | `drop`（逗号分隔） | 与原版一致，保留 |
 
-**Q2 决定（2026-11-13）：V1 做 `tag` + `message`；`start`/`end`/`verbose` 留到 V1.1。** `message` 映射到 DSH 的 surface event seq，文档必须写明“不是原版消息序号”；范围/详细输出需要单独验证，不为了形状相同引入错误标识。
+**Q2 决定（2026-11-13）：V1 做 `tag` + `message`；`start`/`end`/`verbose` 留到 V1.1。** `message` 映射到 DSH 的 log event seq（包括 Historian 后已 shadow 的原始事件），文档必须写明“不是原版消息序号”；范围/详细输出需要单独验证，不为了形状相同引入错误标识。
 
 **Q3 决定（2026-11-13）：`tag` 为正式参数；`tags` 仅保留为 deprecated 多 tag 过渡别名。** 别名继续接受旧逗号/区间写法，只用于避免现有 DSH 会话和测试硬中断，不写进兼容承诺，下一 major 移除。
 
 **2026-11-13 交付拆分（签收后修正）：** Q2/Q3 的目标不变，但拆成 V1a（T2：`tag` + `tags` 别名）、V1b（T3：`message` 回退定位）、V1c（T5：保留期对齐）。拆分只改交付顺序，不改变“V1 做 `tag` + `message`”的决定。
+
+**T3 补充（2026-11-14，签收后澄清）：** `message` 是 `tag` 的**备用定位**，不是通用历史浏览器。它只读取**已经被 drop** 的 tool result，并复用 tag → call identity → 原始 `tool/result` 的读取路径；不改变 drop 状态，不新增 pending，不跨会话。`message` 的值是当前会话的 **DSH log event seq**，可以指向原始 `tool/result`，也可以指向 landed 的 `[dropped §N§]` 占位符；它不要求占位符仍在 surface 上。`[compacted §C1§]` 不是 `tool/result`，必须拒绝，调用方应传原始 `tool/result` 的 seq。`message` 的 seq 由 harness/UI/journal 提供，模型通常只看到 tag。`message` 与 `tag`/`tags` 互斥；只用正整数（`/^[1-9]\d*$/`）。未 drop 的项与 tag 路径一样按 `not dropped`/`not dropped yet` 拒绝。若 message 指向的 call 有持久化占位符暴露了 tag 号、但 tag 行已不存在，返回 `tag no longer available`；若既无 tag 行也无任何持久化占位符 tag 号，返回 `not a tool-result tag`。判断按 call 级进行，因此 message 指向原始 `tool/result`、同一 call 另有占位符时也适用。
 
 ## D5. 失败、降级与保留期
 
 | 情况 | 行为 |
 |---|---|
 | tag 不存在 | 拒绝，`no such tag`；不猜内容 |
+| message seq 不存在 | 拒绝，`no such message`；不猜内容 |
+| message 指向非 `tool/result`（含 `[compacted §C1§]`） | 拒绝，`not a tool-result message`；不让调用方猜源事件 |
+| message 指向的 call 既无持久化 tag 行、也无任何持久化占位符 tag 号 | 拒绝，`not a tool-result tag`；不读取未纳入 tag 管理的结果 |
+| message 指向的 call 有持久化占位符暴露 tag 号，但该 tag 行已不存在 | 拒绝，`tag no longer available`；不根据残留占位符恢复已清理的 tag |
+| message 指向未 drop / pending 的项 | 拒绝，`not dropped` / `not dropped yet`；`message` 不是通用历史浏览器 |
 | tag 已随消息/会话清理 | 拒绝，`tag no longer available`；仅消息/会话删除；`compacted` 仍按 D2 可读 |
 | 原始事件/工具结果缺失 | 拒绝，`raw source unavailable`；不用摘要或模型生成替代 |
 | 跨会话 tag | 仅当前会话没有任何 tag 记录时返回 `cross-session tag`；否则 `no such tag`（裸号按会话独立计数，无法可靠判定）；不读别的会话 |
@@ -104,8 +111,8 @@
 | E2 | 再 reduce 旧 tag 1 → `already dropped`/no-op；不出现 Queued 假回执 | 工具回执 + pending 查询 |
 | E3 | expand 结果获得新 tag N；reduce N → 落地为占位符；再 expand N → 原文 | 宿主事件 + 新 tag |
 | E4 | 跨进程重启后 E1/E3 仍成立 | 两个进程 + 持久化历史 |
-| E5 | 全新会话首次 drop → 真实 Historian 发布 → 旧 tag expand → 原文；摘要不变 | 宿主事件 + compartment 记录 |
-| E6 | 无 raw source / tag 已清理 → 明确失败，不生成替代内容 | 负向用例 |
+| E5 | 全新会话首次 drop → 真实 Historian 发布 → 旧 tag 与原始 `tool/result` message seq 均 expand → 原文；`compartments` 行字段不变 | 宿主事件 + compartment 记录 + 字段哈希 |
+| E6 | 无 raw source / tag 已清理 / message 非 tool-result → 明确失败，不生成替代内容 | 负向用例 |
 | E7 | 队列非空 → `/ctx-flush` → 下一次请求出现占位符；无摘要模型调用；旧注入不复用 | 宿主事件 + usage |
 | E8 | 空队列、重复 flush、无会话、关闭、存储失败 → 可诊断结果 | 工具回执 |
 | E9 | API 形状按 Q2/Q3 定稿，错误信息可诊断 | 契约审查 + 工具回执 |
@@ -113,7 +120,7 @@
 
 ## Q2–Q5 已定
 
-- **Q2（2026-11-13）：** V1 做 `tag` + `message`（DSH surface event seq 映射）；`start`/`end`/`verbose` 后置。
+- **Q2（2026-11-13；T3 澄清 2026-11-14）：** V1 做 `tag` + `message`（DSH log event seq，含 shadowed 事件）；`start`/`end`/`verbose` 后置。
 - **Q3（2026-11-13）：** `tag` 正式参数；`tags` deprecated 多 tag 过渡别名，下一 major 移除。
 - **Q4（2026-11-13）：** 标记 + 下一次 preStep；回执明确“尚待下一次请求落地”。
 - **Q5（2026-11-13）：** 移除/关闭 30 天 prune；按原版消息/会话删除与 `compacted` 状态保留。
