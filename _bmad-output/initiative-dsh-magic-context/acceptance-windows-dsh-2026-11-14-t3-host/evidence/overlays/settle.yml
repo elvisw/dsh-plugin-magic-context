@@ -1,0 +1,73 @@
+[
+  {
+    "id": "magic-context-dsh",
+    "name": "dsh-plugin-magic-context",
+    "config": {
+      "dataDir": "C:/Users/elvis/AppData/Local/Temp/opencode/dsh-mc-t3-20261114-161041/plugin-data",
+      "registerCompactionEngine": false,
+      "historianEnabled": false,
+      "policy": {
+        "executeThreshold": 100,
+        "historianProtectedNodes": 1,
+        "historianMinNodes": 1,
+        "historianTimeoutMs": 120000
+      },
+      "maintenance": {
+        "enabled": false
+      },
+      "memory": {
+        "embedBackfill": false,
+        "vectorBackfill": false,
+        "global": {
+          "machine": {
+            "enabled": false
+          },
+          "user": {
+            "render": false,
+            "collect": false,
+            "review": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "tool-result-pruner",
+    "name": "@deepseek-ai/dsh-compaction-tool-result-pruner",
+    "disabled": true
+  },
+  {
+    "id": "llm-deepseek",
+    "name": "@deepseek-ai/dsh-llm-deepseek-api-key",
+    "config": {
+      "models": [
+        {
+          "id": "deepseek-flash",
+          "contextWindow": 32768,
+          "maxTokens": 8192
+        }
+      ],
+      "maxTokens": 4096,
+      "reasoningEffort": "off"
+    }
+  },
+  {
+    "insert": [
+      {
+        "id": "acceptance-test-driver",
+        "name": "file:///C:/Users/elvis/AppData/Local/Temp/opencode/dsh-mc-t3-20261114-161041/dsh-home/profiles/headless/acceptance-test-driver.mjs"
+      }
+    ]
+  },
+  {
+    "insert": [
+      {
+        "id": "acceptance-observer",
+        "name": "file:///C:/Users/elvis/AppData/Local/Temp/opencode/dsh-mc-t3-20261114-161041/observer.mjs",
+        "config": {
+          "outDir": "C:/Users/elvis/AppData/Local/Temp/opencode/dsh-mc-t3-20261114-161041/evidence/session-observer"
+        }
+      }
+    ]
+  }
+]

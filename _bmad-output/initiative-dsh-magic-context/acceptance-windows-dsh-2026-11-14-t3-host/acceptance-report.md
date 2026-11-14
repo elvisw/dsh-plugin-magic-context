@@ -45,8 +45,12 @@ proof that no draft could be published, not the disabled flag.
    (`landed_event_seq IS NULL AND superseded=0 AND landed_reason IS NULL`).
 4. E1: independent host, resume, call only `ctx_expand {tag:"<actual>"}`.
    E2: independent host, resume, call only `ctx_expand {message:"<original seq>"}`.
-   Each run has its own pre/post snapshot; the post window starts at the
-   observer's `ctx_expand` `tool/result`, before the next pre-step.
+   Each run has its own pre/post DB snapshot. The observer window starts at the
+   `ctx_expand` `tool/result`; the DB post snapshot is taken at host exit, which
+   is later than the possible second-step pre-step. That is stricter than a
+   snapshot before the next pre-step for mutation checks: any publish or
+   compartment write in that later window would still be caught, and the
+   observer shows no `[compacted]` event after the expand result.
 5. Parse observer `events` (not `surface`) for the original, placeholder, and
    publish events; record source file/line and JSON hashes across snapshots.
 6. Compare the target `compartments` row fields, the full compartment hash, the
@@ -97,8 +101,12 @@ The analyzer is `analyze_t3_evidence.py`; its full machine-readable result is
 
 - `evidence/preflight.json` — build, tarball, both lib hashes, root, nonce.
 - `evidence/t3-analysis.json` — checks, target identity, E1/E2, window comparisons.
+- `evidence/t3-state.json` — raw pre/post DB rows and the E1/E2 window objects
+  used to produce the analysis.
 - `evidence/t3-seed.driver.json`, `t3-wait-*.driver.json`, `t3-settle.driver.json`,
   `t3-e1-tag.driver.json`, `t3-e2-message.driver.json` — host tool calls/results.
+- `evidence/overlays/historian.yml`, `evidence/overlays/settle.yml` — the exact
+  test-profile acceleration used by the seed/wait and E1/E2 hosts.
 - `evidence/t3-observer-extract.json` — compact observer extract: every snapshot's
   metadata plus the original, placeholder, publish, and E1/E2 event JSON; the raw
   ~91 MB observer file stays outside the repository at the isolated root.

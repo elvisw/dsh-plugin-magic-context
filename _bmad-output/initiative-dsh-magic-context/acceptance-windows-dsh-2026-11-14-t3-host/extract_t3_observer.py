@@ -62,7 +62,7 @@ def main() -> None:
                 "seq": seq,
                 "type": event.get("type"),
                 "callId": (event.get("data") or {}).get("message", {}).get("toolCallId"),
-                "text": run.event_text(event)[:500],
+                "text": run.event_text(event),
                 "sourceEventSeqs": event.get("sourceEventSeqs"),
                 "firstSeen": {"file": str(path), "line": number},
                 "eventSha256": sha(event),

@@ -327,6 +327,7 @@
   "checks": {
     "buildHashesMatch": true,
     "targetPublishedOnce": true,
+    "targetCoversPlaceholder": true,
     "targetLandedAtPublishSeq": true,
     "passRowFound": true,
     "emptyUnlandedBeforeExpand": true,
@@ -345,8 +346,7 @@
     "noNewPendingRow": true,
     "fixtureUnchanged": true,
     "bootDbPathInRoot": true,
-    "eventsStable": true,
-    "memoryDoesNotLeaveT3": true
+    "eventsStable": true
   },
   "ok": true
 }

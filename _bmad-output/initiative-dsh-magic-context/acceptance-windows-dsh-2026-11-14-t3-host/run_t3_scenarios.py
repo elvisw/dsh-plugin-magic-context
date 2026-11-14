@@ -315,6 +315,8 @@ def compare_window(pre: dict, post: dict, label: str) -> dict:
     for kind in ("historian", "compartment-published"):
         if pre["journal"][kind]["count"] != post["journal"][kind]["count"]:
             errors.append(f"{kind} journal count changed")
+    if pre["pendingDrops"] != post["pendingDrops"]:
+        errors.append("pending drops changed")
     # Total usage_records always grows with the agent's own model step; the
     # ticket scopes the no-growth claim to the Historian, which is covered by
     # the unchanged `historian` journal count above. Keep the counts in the

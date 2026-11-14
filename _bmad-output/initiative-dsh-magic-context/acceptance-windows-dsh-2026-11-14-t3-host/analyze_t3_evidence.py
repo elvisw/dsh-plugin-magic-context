@@ -166,6 +166,7 @@ def main() -> None:
         "buildHashesMatch": PREFLIGHT["installed_tool_bridge_sha256"] == PREFLIGHT["built_tool_bridge_sha256"]
             and PREFLIGHT["installed_seams_sha256"] == PREFLIGHT["built_seams_sha256"],
         "targetPublishedOnce": TARGET.get("ok") is True,
+        "targetCoversPlaceholder": str(IDENTITY["placeholderSeq"]) in [str(seq) for seq in TARGET["sourceEventSeqs"]],
         "targetLandedAtPublishSeq": analysis["target"]["rowLandedAtPublishSeq"],
         "passRowFound": pass_row is not None,
         "emptyUnlandedBeforeExpand": analysis["precondition"]["emptyUnlanded"],
@@ -188,7 +189,6 @@ def main() -> None:
         "eventsStable": analysis["identity"]["originalStableAcrossSnapshots"]
             and analysis["identity"]["placeholderStableAcrossSnapshots"]
             and analysis["target"]["publishStableAcrossSnapshots"],
-        "memoryDoesNotLeaveT3": True,
     }
     analysis["checks"] = checks
     analysis["ok"] = all(checks.values())
