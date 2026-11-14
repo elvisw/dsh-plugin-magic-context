@@ -1,7 +1,7 @@
 ---
 title: "Independent package identity and release — implementation plan"
 ticket: 6
-status: ready-for-dev
+status: in-progress
 ---
 
 # Independent package identity and release — implementation plan

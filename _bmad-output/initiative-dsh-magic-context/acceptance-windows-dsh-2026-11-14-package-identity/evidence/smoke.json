@@ -1,0 +1,22 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-pkg-20261114-193841\\overlays\\base-control.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "This is an isolated package-identity smoke test. Reply with exactly PACKAGE_IDENTITY_OK and nothing else."
+  ],
+  "exit_code": 0,
+  "seconds": 41.784,
+  "session_id": "session-16216c94-3e13-4050-9a30-16633a6cfb28",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "PACKAGE_IDENTITY_OK",
+  "model": null
+}

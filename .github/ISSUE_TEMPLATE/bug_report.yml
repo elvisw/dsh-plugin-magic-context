@@ -7,7 +7,7 @@ body:
       value: |
         > **你提交的内容是公开的。** 请勿贴出 API key、token、cookie、私人会话正文、
         > 记忆库内容或本机绝对路径；贴 journal 前请先脱敏。敏感问题不要开公开 issue，
-        > 请走 [SECURITY.md](https://github.com/wk544863858/dsh-plugin-magic-context/blob/main/SECURITY.md)
+        > 请走 [SECURITY.md](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/SECURITY.md)
         > 里的私密报告通道。
         > 中文或英文都可以，English is welcome too。
 

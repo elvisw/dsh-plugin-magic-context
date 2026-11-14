@@ -460,6 +460,8 @@ $dsh="%USERPROFILE%\AppData\Local\Programs\DeepSeek Harness\resources\runtime\cl
 
 ## 勘误与补充（Lead + client-ui 实现期实测，2026-10-07）
 
+> 2026-11-14：npm 包名已迁移为 `@elvisw/dsh-plugin-magic-context`。下文中 2026-10-07 的 boot graph 与 URL 实测保留当时的旧包名，作为历史证据；当前 client id 以 `src/client/index.js` 为准。
+
 实现本插件的浏览器半侧时，下面几点与本文正文的表述不同，以本节为准：
 
 1. **`__ModuleLoader__.load({ id })` 的 id 是「包名」，不是 loader 行 id**。boot graph 行形如

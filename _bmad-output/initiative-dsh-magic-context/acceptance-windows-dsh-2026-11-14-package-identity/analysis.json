@@ -1,0 +1,32 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-pkg-20261114-193841",
+  "tarball_sha256": "eac83d0951823030f7faccec88f81ef926057eeffc0c0b371cbd6af189766581",
+  "add_exit_code": 0,
+  "add_stdout_has_new_name": true,
+  "profile_dependencies": {
+    "@elvisw/dsh-plugin-magic-context": "file:C:/Users/elvis/AppData/Local/Temp/opencode/pkg-012/elvisw-dsh-plugin-magic-context-0.12.0.tgz"
+  },
+  "profile_bundles": [
+    "@deepseek-ai/dsh-base",
+    "@deepseek-ai/dsh-headless",
+    "@elvisw/dsh-plugin-magic-context"
+  ],
+  "old_installed": false,
+  "new_installed": true,
+  "new_installed_package_name": "@elvisw/dsh-plugin-magic-context",
+  "dump_has_new_name": true,
+  "dump_has_old_name": false,
+  "dump_has_row_id": true,
+  "dump_has_plugin_name": true,
+  "dump_provider": true,
+  "dump_model": true,
+  "client_registers_new_id": true,
+  "boot_tools_dynamic_import": true,
+  "smoke_exit_code": 0,
+  "smoke_final_reason": {
+    "kind": "completed"
+  },
+  "smoke_final_text": "PACKAGE_IDENTITY_OK",
+  "smoke_session_id": "session-16216c94-3e13-4050-9a30-16633a6cfb28",
+  "smoke_model": "deepseek-official/deepseek-flash"
+}

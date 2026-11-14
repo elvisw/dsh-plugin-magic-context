@@ -4,6 +4,8 @@
 >
 > 标注约定：〔码〕= 源码行号证据；〔测〕= 本机实测（隔离 TEMP 目录，未触碰用户 desktop profile）；〔档〕= 仓库文档/README。
 > 证据基线：DSH Desktop 0.2.0-rc.2；源码参考 `deepseek-harness-master`（vendor 版本：cordis 4.0.5-alpha.1、schemastery 3.18.5-alpha.1）。
+>
+> 2026-11-14：npm 包名迁移为 `@elvisw/dsh-plugin-magic-context`；本文的契约示例已按新包名更新，早期实测输出中若出现旧名只作历史记录。
 
 ---
 
@@ -37,7 +39,7 @@
 - **行页只在被注册者点名时存在**；没有注册者时，行上只有开关（启用/禁用），没有任何配置入口。
   〔档〕`ui-plugin-manager/README.md:69,93`
 
-结论：对 `dsh-plugin-magic-context#magic-context-dsh` 这一行，**只要没有人注册该 key，用户点进去只能看到行状态和开关，没有任何配置表单**。今天我确认没有这样一个注册者存在（我们没有任何 client 半侧产物）。
+结论：对 `@elvisw/dsh-plugin-magic-context#magic-context-dsh` 这一行，**只要没有人注册该 key，用户点进去只能看到行状态和开关，没有任何配置表单**。今天我确认没有这样一个注册者存在（我们没有任何 client 半侧产物）。
 
 ### 1.2 设置页（Settings）——只有官方手写 section，没有"所有插件"列表
 
@@ -245,11 +247,11 @@ for (const [key, value] of Object.entries(overrides)) {
 
 ```js
 applyEntryPatches(
-  [{ id:'magic-context-dsh', name:'dsh-plugin-magic-context',
+  [{ id:'magic-context-dsh', name:'@elvisw/dsh-plugin-magic-context',
      config:{ registerCompactionEngine:false, policy:{ executeThreshold:0.8, forceThreshold:0.95 } } }],
   [{ id:'magic-context-dsh', config:{ policy:{ executeThreshold:0.5 } } }],
   warn)
-// => [{ id:'magic-context-dsh', name:'dsh-plugin-magic-context',
+// => [{ id:'magic-context-dsh', name:'@elvisw/dsh-plugin-magic-context',
 //       config:{ policy:{ executeThreshold:0.5 } } }]
 // registerCompactionEngine 与 forceThreshold 全部消失
 ```
@@ -268,7 +270,7 @@ applyEntryPatches(
 - 上述 rows 来自 `flatten(composeEntries([patches.filter(item => item.insert !== undefined)]))`。
   〔码〕同上 `:664`
 - UI 配置 key = `${包名}#${rowId}` 〔码〕`config-ledger.ts:36-38`
-  → 我们是 `dsh-plugin-magic-context#magic-context-dsh`。
+  → 我们是 `@elvisw/dsh-plugin-magic-context#magic-context-dsh`。
 - 行可寻址性（开关能否落到 patch）要求：id 唯一、`name` 与被保护模块匹配、且父级是 `include`；否则标 `unaddressable` / `management-required`。
   〔码〕`plugin-manager/src/index.ts:256-271`
 
@@ -390,7 +392,7 @@ export async function apply(ctx, config) { /* ... */ }
 ```yaml
 - insert:
     - id: magic-context-dsh
-      name: 'dsh-plugin-magic-context'
+      name: '@elvisw/dsh-plugin-magic-context'
       config:
         registerCompactionEngine: false
 ```
@@ -418,7 +420,7 @@ export function apply(ctx) {
   ctx.effect(() => ctx.configForms.whileServed([NS], () => ctx.slots.inject('plugins.row.config', () =>
     ctx.slots.register({
       name: 'plugins.row.config',
-      key: 'dsh-plugin-magic-context#magic-context-dsh',   // ← 包名#行id
+      key: '@elvisw/dsh-plugin-magic-context#magic-context-dsh',   // ← 包名#行id
     }, Card))), 'magic-context: page')
 }
 ```
@@ -430,7 +432,7 @@ export function apply(ctx) {
 
 ```js
 window.__ModuleLoader__.load({
-  id: "dsh-plugin-magic-context",
+  id: "@elvisw/dsh-plugin-magic-context",
   factory: (require) => {
     const React = require('react')
     // ...
@@ -443,7 +445,7 @@ window.__ModuleLoader__.load({
 - **坏消息**：官方构建预设 `@deepseek-ai/dsh-client-tsdown`（即 `packages/client/tsdown.client.ts`）**未发布到 npm**（〔测〕`npm view` → E404），且它是 monorepo 内文件。第三方需要自己写 esbuild/tsdown 包装脚本产出上面那个 `__ModuleLoader__.load` 外壳（或在发行包里手写这份 artifact 并冒烟验证）。
 - Host 侧只服务 `exports["./client"]` 指向的文件，路由为 `/plugins/<包名>/client.js`。〔码〕`client/modules/src/index.ts:194-204,229-236`
 
-3. 无需额外重建 DSH：`clientModules` 扫描**已启用的 Loader 行**里声明了 `dsh.client` 的包；我们的行 `name` 恰为 `dsh-plugin-magic-context`，满足"说明符恰为包名"的挂载条件。〔档〕`ui-plugin-manager/README.md:121`
+3. 无需额外重建 DSH：`clientModules` 扫描**已启用的 Loader 行**里声明了 `dsh.client` 的包；我们的行 `name` 恰为 `@elvisw/dsh-plugin-magic-context`，满足"说明符恰为包名"的挂载条件。〔档〕`ui-plugin-manager/README.md:121`
 
 ### 6.4 改完是否 HMR 即时生效？
 
@@ -519,5 +521,5 @@ npm install --prefix $t @deepseek-ai/schemastery@3.18.5-alpha.1 @deepseek-ai/cor
 2. `src/index.ts`：`export const Config = z.object({...})`，**每个界面要改的叶子字段加 `.volatile()` 和 `.default()`**（未声明的键透传，可只声明要暴露的部分）；把 `Config` 放进 `export default { name, inject, apply, Config }`（否则 loader 看不到）。
 3. `src/index.ts`：阈值读取改为使用点 `config.policy.executeThreshold.get()`（volatile 引用；这也是"改了立刻生效"的前提）。
 4. 包内 patch 只留默认值；profile patch 因为是整体替换，必须重复所有要保留的键。
-5. 要做界面：新增 `src/client/index.js`，`ctx.configForms.get('magic-context-dsh')` + `ctx.slots.register({ name:'plugins.row.config', key:'dsh-plugin-magic-context#magic-context-dsh' })`；用自备打包脚本产出 `lib/client.js`（`window.__ModuleLoader__.load({id, factory})` 外壳）；`react`/`ui-primitives` 走静态模块表，无需 `external`。
+5. 要做界面：新增 `src/client/index.js`，`ctx.configForms.get('magic-context-dsh')` + `ctx.slots.register({ name:'plugins.row.config', key:'@elvisw/dsh-plugin-magic-context#magic-context-dsh' })`；用自备打包脚本产出 `lib/client.js`（`window.__ModuleLoader__.load({id, factory})` 外壳）；`react`/`ui-primitives` 走静态模块表，无需 `external`。
 6. 生效：数值改动即时（volatile 提交，不重挂）；host 代码重建后经 `hmr.root` 热重载；client 半侧重建后刷新页面。

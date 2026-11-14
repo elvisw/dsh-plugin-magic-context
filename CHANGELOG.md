@@ -20,6 +20,7 @@
 
 ### Changed
 
+- npm 包名迁移到 `@elvisw/dsh-plugin-magic-context`。Cordis loader row id 仍为 `magic-context-dsh`，settings namespace 与插件数据目录不变；安装新包前需要移除旧的 `dsh-plugin-magic-context`。
 - **Breaking:** `ctx_expand` 不再原地恢复占位符，也不再改写旧事件；它读取持久化的原始 `tool/result`，作为新的工具结果返回并分配新 tag。旧 tag 保持 dropped；再次 reduce 旧 tag 是 no-op（`already dropped`）。
 - `ctx_expand` 正式参数为单值 `tag`；旧 `tags` 逗号/区间多 tag 形式保留为 deprecated 别名，下一 major 移除。多 tag 结果用 `\n\n---\n\n` 合并，并按请求顺序返回。
 - `ctx_expand` 成功返回 `{ok:true, restored:[tag], refused:[], content}`；失败返回 `{ok:false, restored:[], refused:[], reason}`，不再显示 “restored 0”。
@@ -191,8 +192,10 @@ npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布�
 - 插件数据目录沿用上游命名空间（`~/.local/share/cortexkit/magic-context-dsh-poc/`）以保持出处
   连续，自 2026-10-13 起与上游 MC 数据库分家，插件自有 `memories.db` 无共享兼容义务。
 
-[Unreleased]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.12.0...HEAD
-[0.12.0]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.11.2...v0.12.0
+0.12.0 之前的 tag 位于上游仓库 `wk544863858/dsh-plugin-magic-context`；从 0.12.0 起，版本与 tag 属于本 fork。
+
+[Unreleased]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.11.2...v0.12.0
 [0.11.2]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.11.1...v0.11.2
 [0.11.1]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.10.1...v0.11.0

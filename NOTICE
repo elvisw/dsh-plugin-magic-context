@@ -5,6 +5,15 @@ It carries work from more than one project, under more than one copyright, and
 MIT requires the notices to travel with it. This file records where each part
 came from and the exact revisions it was taken at.
 
+## This fork
+
+The npm package `@elvisw/dsh-plugin-magic-context` is maintained by **elvisw**
+(https://github.com/elvisw). It is a fork of the DSH adapter previously
+published as `dsh-plugin-magic-context` by wukai. The upstream package and
+repository are not modified by this fork; upstream credit and the notices below
+remain in force. The loader row id (`magic-context-dsh`), settings namespace,
+and plugin data directory are intentionally unchanged.
+
 ## magic-context — https://github.com/cortexkit/magic-context
 
 MIT License, Copyright (c) 2025 Ufuk Altinok.

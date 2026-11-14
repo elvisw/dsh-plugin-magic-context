@@ -1,7 +1,7 @@
 # dsh-plugin-magic-context — Magic Context adapter for DeepSeek Harness
 
-[![CI](https://github.com/wk544863858/dsh-plugin-magic-context/actions/workflows/ci.yml/badge.svg)](https://github.com/wk544863858/dsh-plugin-magic-context/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/dsh-plugin-magic-context)](https://www.npmjs.com/package/dsh-plugin-magic-context)
+[![CI](https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml/badge.svg)](https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/@elvisw/dsh-plugin-magic-context)](https://www.npmjs.com/package/@elvisw/dsh-plugin-magic-context)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D22.19-brightgreen.svg)](package.json)
 [![DeepSeek Harness](https://img.shields.io/badge/DSH-0.2.x-blue.svg)](package.json)
@@ -38,8 +38,10 @@ Requires **Node ≥ 22.19** and a **DSH 0.2.x** desktop host. The package ships 
 install straight from the npm registry:
 
 ```bash
-dsh plugin --profile desktop add dsh-plugin-magic-context
+dsh plugin --profile desktop add @elvisw/dsh-plugin-magic-context
 ```
+
+Since `0.12.0` the npm package is `@elvisw/dsh-plugin-magic-context`. If you previously installed the upstream `dsh-plugin-magic-context`, remove it first: both packages use the same loader row id (`magic-context-dsh`).
 
 New to the plugin? A five-minute tour follows in [Quick start](#quick-start);
 configuration, tools and architecture are covered in full below. A complete Chinese
@@ -96,7 +98,7 @@ From the npm registry — recommended; the package ships compiled `lib/` and `ve
 local build needed:
 
 ```bash
-dsh plugin --profile desktop add dsh-plugin-magic-context
+dsh plugin --profile desktop add @elvisw/dsh-plugin-magic-context
 ```
 
 Registry versions are published automatically by tag pushes (with npm provenance
@@ -105,7 +107,7 @@ signatures); see the "Releasing" section of [CONTRIBUTING](CONTRIBUTING.md).
 ### From source (development)
 
 ```bash
-git clone https://github.com/wk544863858/dsh-plugin-magic-context
+git clone https://github.com/elvisw/dsh-plugin-magic-context
 cd dsh-plugin-magic-context
 npm install
 npm run build     # tsc → lib/ (multi-file ESM) + browser half copied to lib/client.js
@@ -134,7 +136,7 @@ away).
   link dependency). The production path is the `dsh plugin add` above.
 
 Uninstall / disable: disable the bundle on the GUI Plugins page (writes `disabled` into
-the profile patch), or `dsh plugin --profile desktop remove dsh-plugin-magic-context`.
+the profile patch), or `dsh plugin --profile desktop remove @elvisw/dsh-plugin-magic-context`.
 
 ## Configuration
 
@@ -162,7 +164,7 @@ and historian are on by default). To take over compaction:
 
 ```yaml
 - id: magic-context-dsh
-  name: 'dsh-plugin-magic-context'
+  name: '@elvisw/dsh-plugin-magic-context'
   config:
     registerCompactionEngine: true
 - id: compaction-basic
@@ -216,9 +218,9 @@ Both UI capabilities ride the same browser half (`src/client/index.js`, copied v
 - **Settings card on the Plugins page**: visual editing of the volatile config above;
   saving takes effect immediately (see "Configuration").
 
-  ![Magic Context settings card on the DSH Plugins page — execute/force thresholds, scheduling window, reclaim TTL, protected results, historian minimum nodes](https://raw.githubusercontent.com/wk544863858/dsh-plugin-magic-context/main/docs/img/settings-card-top.jpg)
+  ![Magic Context settings card on the DSH Plugins page — execute/force thresholds, scheduling window, reclaim TTL, protected results, historian minimum nodes](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-card-top.jpg)
 
-  ![Lower half of the settings card — memory recall budget and limits, journal retention, historian and compaction toggles, verify/historian route selectors, journal switches](https://raw.githubusercontent.com/wk544863858/dsh-plugin-magic-context/main/docs/img/settings-card-bottom.jpg)
+  ![Lower half of the settings card — memory recall budget and limits, journal retention, historian and compaction toggles, verify/historian route selectors, journal switches](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-card-bottom.jpg)
 
 - **`shell.overlay` telemetry badge + capsule panel**: collapsed state shows the occupancy
   percentage; the panel holds two metric rows, the beat, and a **live operation record**
@@ -227,7 +229,7 @@ Both UI capabilities ride the same browser half (`src/client/index.js`, copied v
   🗑️ context dropped · 🧭 archived-stored · 🧰 maintenance sweep · ⚠️ failure. Clicking
   outside the panel/badge, Esc, or window blur closes it.
 
-  ![Telemetry capsule panel — live context pressure, occupancy metrics and a running record of recent reclaim and archive operations](https://raw.githubusercontent.com/wk544863858/dsh-plugin-magic-context/main/docs/img/telemetry-panel.png)
+  ![Telemetry capsule panel — live context pressure, occupancy metrics and a running record of recent reclaim and archive operations](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/telemetry-panel.png)
 - Data comes from the plugin's own HTTP routes (the harness's Remote event whitelist is a
   compile-time constant; the supported seam for third-party bundles is
   `ctx.webServer.register`):

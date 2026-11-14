@@ -20,7 +20,7 @@
 ## 准备
 
 ```bash
-git clone https://github.com/wk544863858/dsh-plugin-magic-context.git
+git clone https://github.com/elvisw/dsh-plugin-magic-context.git
 cd dsh-plugin-magic-context
 npm install
 ```
@@ -91,7 +91,7 @@ chore(deps): 升级 vitest
    `package-lock.json`，生成提交与 annotated tag）。
 3. `git push --follow-tags`，等 Actions 里的 **Release** 工作流跑完。
 4. 在 npm 页面确认新版本带 **provenance** 徽章，并用临时 DSH profile 冒烟：
-   `dsh plugin --profile <tmp> add dsh-plugin-magic-context@x.y.z`。
+   `dsh plugin --profile <tmp> add @elvisw/dsh-plugin-magic-context@x.y.z`。
 
 认证走 npm Trusted Publishing（OIDC），仓库里**不存长期 token**。0.10.0 首发布用了一次性
 `NPM_TOKEN` secret（npm 不支持为尚不存在的包预配置 trusted publisher，必须先有包体才能绑定）；

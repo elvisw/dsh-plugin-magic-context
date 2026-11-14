@@ -1,0 +1,8 @@
+{"type":"session","sessionId":"session-16216c94-3e13-4050-9a30-16633a6cfb28","cwd":"C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-pkg-20261114-193841\\workspace"}
+{"type":"status","phase":"turn_start","turn":1}
+{"type":"status","phase":"step_start","turn":1,"step":1}
+{"type":"thinking","text":""}
+{"type":"text","text":"PACKAGE_IDENTITY_OK"}
+{"type":"status","phase":"step_end","turn":1,"step":1,"usage":{"inputTokens":557,"outputTokens":7,"cacheReadTokens":7680,"cacheWriteTokens":0,"totalTokens":8244}}
+{"type":"status","phase":"turn_end","turn":1,"reason":{"kind":"completed"}}
+{"type":"final","sessionId":"session-16216c94-3e13-4050-9a30-16633a6cfb28","reason":{"kind":"completed"},"text":"PACKAGE_IDENTITY_OK"}

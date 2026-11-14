@@ -17,8 +17,8 @@
 
 适配器自 2026-10-08 起独立成仓，开发、构建、测试均在本仓库闭环：
 
-- **插件仓库** = 本仓库（npm 包名 `dsh-plugin-magic-context`，含 typecheck + 仓内 vitest 套件 + `npm run gate`）。
-  desktop profile 经 pnpm `link:` 加载它（`bundles: [dsh-plugin-magic-context]`，loader row id 仍为 `magic-context-dsh`），HMR root 指向同一目录。
+- **插件仓库** = 本仓库（npm 包名 `@elvisw/dsh-plugin-magic-context`，含 typecheck + 仓内 vitest 套件 + `npm run gate`）。
+  desktop profile 经 pnpm `link:` 加载它（`bundles: ['@elvisw/dsh-plugin-magic-context']`，loader row id 仍为 `magic-context-dsh`），HMR root 指向同一目录。
 - **开发循环**：改代码 → `npm run gate` → HMR 热重载。构建、测试、体检（`npm run doctor`）都在本仓内闭环。
 - **上游跟进**：把上游 `cortexkit/magic-context` clone 到任意位置，看新 tag 的 diff → 按 §5 对齐面把相关变更移植进本仓 → `npm run gate` 全绿。
 

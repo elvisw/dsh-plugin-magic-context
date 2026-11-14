@@ -1,7 +1,7 @@
 # dsh-plugin-magic-context — Magic Context 的 DeepSeek Harness 适配插件
 
-[![CI](https://github.com/wk544863858/dsh-plugin-magic-context/actions/workflows/ci.yml/badge.svg)](https://github.com/wk544863858/dsh-plugin-magic-context/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/dsh-plugin-magic-context)](https://www.npmjs.com/package/dsh-plugin-magic-context)
+[![CI](https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml/badge.svg)](https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/@elvisw/dsh-plugin-magic-context)](https://www.npmjs.com/package/@elvisw/dsh-plugin-magic-context)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D22.19-brightgreen.svg)](package.json)
 [![DeepSeek Harness](https://img.shields.io/badge/DSH-0.2.x-blue.svg)](package.json)
@@ -18,15 +18,17 @@
 > 桌面端：以 bundle 形态装进 profile，出现在 GUI"插件"页，在运行中的应用里即时开始工作。
 >
 > 上游跟进已核到 **v0.49.30**（适配器对齐面 0 变动）· 宿主 **0.2.2-rc.1** 实测运行正常 ·
-> 状态：**已在真实 DSH Desktop 日常运行**，780+ 测试用例门禁。仓库历史与出处见
+> 状态：**已在真实 DSH Desktop 日常运行**，838 测试用例门禁。仓库历史与出处见
 > [NOTICE](NOTICE)；数据目录见[观测与运维](#观测与运维)。
 
 需要 **Node ≥ 22.19** 与 **DSH 0.2.x** 桌面宿主。包内自带编译产物，直接从 npm registry
 安装：
 
 ```bash
-dsh plugin --profile desktop add dsh-plugin-magic-context
+dsh plugin --profile desktop add @elvisw/dsh-plugin-magic-context
 ```
+
+自 `0.12.0` 起 npm 包名为 `@elvisw/dsh-plugin-magic-context`。如果之前装过上游的 `dsh-plugin-magic-context`，请先移除旧包：两者使用同一个 loader row id（`magic-context-dsh`）。
 
 五分钟上手见[快速上手](#快速上手)；配置、工具与架构见下文各节。
 
@@ -76,7 +78,7 @@ dsh plugin --profile desktop add dsh-plugin-magic-context
 从 npm registry 安装（推荐；包内自带编译产物 `lib/` 与 `vendor/`，无需本地构建）：
 
 ```bash
-dsh plugin --profile desktop add dsh-plugin-magic-context
+dsh plugin --profile desktop add @elvisw/dsh-plugin-magic-context
 ```
 
 registry 版本由 tag 推送自动发布（带 npm provenance 签名），发布流程见
@@ -85,7 +87,7 @@ registry 版本由 tag 推送自动发布（带 npm provenance 签名），发�
 ### 从源码安装（开发）
 
 ```bash
-git clone https://github.com/wk544863858/dsh-plugin-magic-context
+git clone https://github.com/elvisw/dsh-plugin-magic-context
 cd dsh-plugin-magic-context
 npm install
 npm run build     # tsc → lib/（多文件 ESM）+ 浏览器半侧拷贝为 lib/client.js
@@ -107,7 +109,7 @@ dsh plugin --profile desktop add <本仓库路径>   # 应用自带 CLI；spec �
   与 **profile 安装**（生产，包名行 + link 依赖）。生产路径即上面的 `dsh plugin add`。
 
 卸载 / 停用：GUI 插件页停用该 bundle（写 profile patch 的 `disabled`），或
-`dsh plugin --profile desktop remove dsh-plugin-magic-context`。
+`dsh plugin --profile desktop remove @elvisw/dsh-plugin-magic-context`。
 
 ## 配置
 
@@ -128,7 +130,7 @@ bundle 自带配置只有一行：`registerCompactionEngine: false`——保守�
 
 ```yaml
 - id: magic-context-dsh
-  name: 'dsh-plugin-magic-context'
+  name: '@elvisw/dsh-plugin-magic-context'
   config:
     registerCompactionEngine: true
 - id: compaction-basic
@@ -179,16 +181,16 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
 
 - **插件页设置卡片**：上文 volatile 配置项的可视化编辑，保存即生效（见"配置"一节）。
 
-  ![DSH 插件页的 Magic Context 设置卡片——执行/强制阈值、调度窗口、回收 TTL、保护条数、historian 最小节点数](https://raw.githubusercontent.com/wk544863858/dsh-plugin-magic-context/main/docs/img/settings-card-top.jpg)
+  ![DSH 插件页的 Magic Context 设置卡片——执行/强制阈值、调度窗口、回收 TTL、保护条数、historian 最小节点数](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-card-top.jpg)
 
-  ![设置卡片下半部——记忆召回预算与行数上限、journal 保留天数、historian 与压缩引擎开关、verify/historian 路由选择器、journal 开关](https://raw.githubusercontent.com/wk544863858/dsh-plugin-magic-context/main/docs/img/settings-card-bottom.jpg)
+  ![设置卡片下半部——记忆召回预算与行数上限、journal 保留天数、historian 与压缩引擎开关、verify/historian 路由选择器、journal 开关](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-card-bottom.jpg)
 
 - **`shell.overlay` 遥测徽标 + 胶囊面板**：收起态显示占用百分比；面板里是两行指标、节拍与
   **实时操作记录**（最多 12 条，相邻同操作折叠 `×N`）：🧠 写入记忆 · 🔎 加载记忆 · 🗑️ 回收入队 ·
   🧭 恢复原文 · ✂️ 压缩上下文 · 🗑️ 丢弃上下文 · 🧭 归档已存 · 🧰 维护巡检 · ⚠️ 失败。
   点击面板/徽标之外、按 Esc、窗口失焦即关闭。
 
-  ![遥测胶囊面板——实时上下文压力、占用指标与最近的回收/归档操作记录](https://raw.githubusercontent.com/wk544863858/dsh-plugin-magic-context/main/docs/img/telemetry-panel.png)
+  ![遥测胶囊面板——实时上下文压力、占用指标与最近的回收/归档操作记录](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/telemetry-panel.png)
 - 数据来自本插件自己的 HTTP 路由（harness 的 Remote 事件白名单是编译期常量，第三方 bundle 的
   受支持口子是 `ctx.webServer.register`）：
   - `GET /mc-telemetry/summary` — 一次性快照（适配器 / 项目 / 健康状态 + 最近事件）

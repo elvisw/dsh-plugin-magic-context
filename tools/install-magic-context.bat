@@ -1,5 +1,5 @@
 @echo off
-rem Magic Context plugin installer, shipped next to dsh-plugin-magic-context-<version>.tgz.
+rem Magic Context plugin installer, shipped next to elvisw-dsh-plugin-magic-context-<version>.tgz.
 rem
 rem Why this file exists: `dsh plugin add <file>.tgz` records the tarball's
 rem ABSOLUTE PATH in the profile manifest, so deleting that file breaks every
@@ -10,14 +10,15 @@ rem the next version a plain overwrite.
 rem
 rem Usage:  install-magic-context.bat [profile] [tarball]
 rem         default profile: desktop
-rem         default tarball: newest dsh-plugin-magic-context-*.tgz next to this script
+rem         default tarball: newest elvisw-dsh-plugin-magic-context-*.tgz next to this script
 rem
 rem Messages are ASCII on purpose: a .bat with non-ASCII text renders as mojibake
 rem under the default console code page.
 setlocal EnableExtensions
 title Magic Context plugin installer
 
-set "PKG=dsh-plugin-magic-context"
+set "PKG=@elvisw/dsh-plugin-magic-context"
+set "TGZ_PREFIX=elvisw-dsh-plugin-magic-context"
 set "PROFILE=%~1"
 if "%PROFILE%"=="" set "PROFILE=desktop"
 set "ARCHIVE=%MC_ARCHIVE_DIR%"
@@ -30,9 +31,9 @@ set "DSH_IMAGE=%DSH_PROCESS%.exe"
 
 rem ---- 1) find the tarball -------------------------------------------------
 set "TGZ=%~2"
-if not defined TGZ for /f "delims=" %%F in ('dir /b /o-n "%~dp0%PKG%-*.tgz" 2^>nul') do if not defined TGZ set "TGZ=%~dp0%%F"
+if not defined TGZ for /f "delims=" %%F in ('dir /b /o-n "%~dp0%TGZ_PREFIX%-*.tgz" 2^>nul') do if not defined TGZ set "TGZ=%~dp0%%F"
 if not defined TGZ (
-  echo [X] No %PKG%-*.tgz next to this script.
+  echo [X] No %TGZ_PREFIX%-*.tgz next to this script.
   pause
   exit /b 1
 )

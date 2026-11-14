@@ -18,7 +18,7 @@
 
 请通过 GitHub 的私密漏洞报告通道提交：
 
-<https://github.com/wk544863858/dsh-plugin-magic-context/security/advisories/new>
+<https://github.com/elvisw/dsh-plugin-magic-context/security/advisories/new>
 
 （仓库 **Security** 标签页 → *Report a vulnerability*。）
 
@@ -75,7 +75,7 @@
 This plugin runs locally inside DSH Desktop and touches session journals, a local memory database
 (`memories.db`) and loopback HTTP telemetry routes (`/mc-telemetry/summary`, `/mc-telemetry/events`).
 Please report vulnerabilities **privately** through GitHub Security Advisories:
-<https://github.com/wk544863858/dsh-plugin-magic-context/security/advisories/new> — never in a public
+<https://github.com/elvisw/dsh-plugin-magic-context/security/advisories/new> — never in a public
 issue. Do not include secrets, real memory databases, private conversation text or absolute local
 paths; do not test instances you do not own. In scope: the loopback telemetry routes, the memory
 store and `m[0]`/`m[1]` injection, project/domain isolation and global-domain approval, journal

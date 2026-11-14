@@ -1,5 +1,5 @@
 {
-  "name": "dsh-plugin-magic-context",
+  "name": "@elvisw/dsh-plugin-magic-context",
   "version": "0.12.0",
   "description": "Magic Context for DeepSeek Harness: reversible context reclaim, an out-of-band historian, an m[0]/m[1] baseline, project memories in the plugin's own corpus, and the compaction seam.",
   "keywords": [
@@ -14,17 +14,20 @@
     "ai-agent",
     "typescript"
   ],
-  "homepage": "https://github.com/wk544863858/dsh-plugin-magic-context#readme",
+  "homepage": "https://github.com/elvisw/dsh-plugin-magic-context#readme",
   "bugs": {
-    "url": "https://github.com/wk544863858/dsh-plugin-magic-context/issues"
+    "url": "https://github.com/elvisw/dsh-plugin-magic-context/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wk544863858/dsh-plugin-magic-context.git"
+    "url": "git+https://github.com/elvisw/dsh-plugin-magic-context.git"
   },
   "type": "module",
   "license": "MIT",
-  "author": "wukai",
+  "author": "elvisw",
+  "contributors": [
+    "wukai"
+  ],
   "engines": {
     "node": ">=22.19"
   },
