@@ -315,6 +315,67 @@ describe('magic-context dsh adapter (phase 1: management loop)', () => {
     }
   })
 
+  it('does not prune old tag rows across independent mounts', async () => {
+    const dataDir = mkdtempSync(join(tmpdir(), 'mc-dsh-p1-tags-'))
+    const now = Date.now()
+    const day = 24 * 60 * 60 * 1000
+    const oldTargetA = { kind: 'tool-result' as const, callId: 'call-old-a' }
+    const oldTargetB = { kind: 'tool-result' as const, callId: 'call-old-b' }
+
+    try {
+      // Seed one 40-day-old row per session before any plugin mount.
+      const seed = openStores(dataDir)
+      try {
+        expect(seed.allocateTag('session-a', oldTargetA, now - 40 * day)).toBe(1)
+        expect(seed.allocateTag('session-b', oldTargetB, now - 40 * day)).toBe(1)
+      } finally {
+        seed.close()
+      }
+
+      const first = await boot(new MockAdapter([]), dataDir)
+      try {
+        const reader = openStores(dataDir)
+        try {
+          expect(reader.getTag('session-a', oldTargetA)).toBe(1)
+          expect(reader.getTag('session-b', oldTargetB)).toBe(1)
+          expect(reader.listTags('session-a')).toHaveLength(1)
+        } finally {
+          reader.close()
+        }
+      } finally {
+        await first.fiber.dispose()
+      }
+
+      // A real remount is a new Context after dispose; calling ctx.plugin twice
+      // on one Context would stack a second fiber and duplicate registrations.
+      const second = await boot(new MockAdapter([]), dataDir)
+      try {
+        const reader = openStores(dataDir)
+        try {
+          expect(reader.getTag('session-a', oldTargetA)).toBe(1)
+          expect(reader.getTag('session-b', oldTargetB)).toBe(1)
+          expect(reader.listTags('session-a')).toHaveLength(1)
+          expect(reader.listTags('session-b')).toHaveLength(1)
+        } finally {
+          reader.close()
+        }
+      } finally {
+        await second.fiber.dispose()
+      }
+
+      // Counters were not touched by either mount: each session's next tag is 2.
+      const after = openStores(dataDir)
+      try {
+        expect(after.allocateTag('session-a', { kind: 'tool-result', callId: 'call-new-a' }, now)).toBe(2)
+        expect(after.allocateTag('session-b', { kind: 'tool-result', callId: 'call-new-b' }, now)).toBe(2)
+      } finally {
+        after.close()
+      }
+    } finally {
+      rmSync(dataDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 50 })
+    }
+  })
+
   it('parses Magic Context drop-range grammar', () => {
     expect(parseTagRanges('3-5, 1, 9')).toEqual([1, 3, 4, 5, 9])
     expect(parseTagRanges('')).toEqual([])

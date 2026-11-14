@@ -73,7 +73,11 @@ import { injectReduceGuidance, preStepListener, type PreStepProjects } from './d
 import { wireMaintenance } from './dsh/maintenance-wiring.ts'
 import { SWITCH_SNAPSHOT_META_KEY, buildSwitchSnapshot, diffSwitches } from './dsh/config-switches.ts'
 import { isQuotaExhaustedDetail, RouteHealth, type RouteChoice } from './core/route-health.ts'
-import type { MagicContextDshConfig, MagicContextDshConfigDefineTool } from './dsh/config.ts'
+import {
+  legacyTagsRetentionWarning,
+  type MagicContextDshConfig,
+  type MagicContextDshConfigDefineTool,
+} from './dsh/config.ts'
 import { DEFAULT_POLICY, type PressurePolicy } from './core/policy.ts'
 import z from '@deepseek-ai/schemastery'
 import { ensureTag, tagPrefix } from './core/tagger.ts'
@@ -136,6 +140,9 @@ interface Registrar {
   register(definition: unknown): unknown
 }
 
+/** One legacy-config note per process, not one per mount. */
+let legacyTagsWarningEmitted = false
+
 export async function apply(ctx: Context, config: MagicContextDshConfig = {}): Promise<void> {
   if (config.enabled === false) {
     ctx.logger.info('magic-context dsh adapter: disabled by config')
@@ -166,17 +173,13 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
   const storeDir = config.dataDir ?? defaultDataDir()
   const stores = openStores(storeDir)
   ctx.logger.info(`magic-context dsh adapter: stores at ${stores.dbPath}`)
-  // §N§ registry retention (the tags table only ever grows; the journal's
-  // mount-time prune is the precedent): one DELETE per mount, logged only when
-  // it removed something, and never allowed to break the mount.
-  try {
-    const tagsRetentionDays = liveNumber(config.tags?.retentionDays, 30)
-    const prunedTags = stores.pruneTags(Date.now() - tagsRetentionDays * 24 * 60 * 60_000)
-    if (prunedTags > 0) {
-      ctx.logger.info(`magic-context dsh adapter: pruned ${String(prunedTags)} tag registry rows past ${String(tagsRetentionDays)}d retention`)
-    }
-  } catch (error) {
-    ctx.logger.warn(`magic-context dsh adapter: tag retention prune failed: ${errText(error)}`)
+  // §N§ tags are not deleted by age. The fork's mount-time 30-day prune is
+  // gone; message/session deletion and compaction are the original model's
+  // retention paths, but this adapter does not implement deletion here.
+  const legacyTagsWarning = legacyTagsRetentionWarning(config)
+  if (legacyTagsWarning !== undefined && !legacyTagsWarningEmitted) {
+    legacyTagsWarningEmitted = true
+    ctx.logger.warn(legacyTagsWarning)
   }
   // Volatile config leaves arrive as live references (see `Config`), so every
   // consumer reads through the `live*` helpers instead of comparing the raw
@@ -884,7 +887,6 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
         : `${historianRouteOf()!.provider}/${historianRouteOf()!.model}`,
     },
     journal: { enabled: journal !== undefined, mirror: journal?.mirrorPath, retentionDays: liveNumber(config.journal?.retentionDays, 30) },
-    tagsRetentionDays: liveNumber(config.tags?.retentionDays, 30),
     // 融合 v7 的待观察翻转（boot 行可见，巡检核对配置漂移）。
     // compartmentGuardMode 已于 2026-10-16 退役，不再进 boot 行。
     forceWaitReadyMs: liveNumber(config.policy?.forceWaitReadyMs, 0),
@@ -998,15 +1000,6 @@ export const Config = z.object({
     /** min(1): a stray 0/negative would prune the whole table at open. */
     retentionDays: z.number().min(1).default(30).volatile(),
     mirror: z.boolean().default(true).volatile(),
-  }),
-
-  /**
-   * §N§ tag registry retention: one registry row per tagged target, pruned
-   * once per mount. Rows that old belong to compacted spans and the
-   * per-session counters are never touched, so tag numbers stay monotonic.
-   */
-  tags: z.object({
-    retentionDays: z.number().min(1).default(30).volatile(),
   }),
 
   policy: z.object({

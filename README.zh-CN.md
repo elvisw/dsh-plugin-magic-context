@@ -151,7 +151,7 @@ bundle 自带配置只有一行：`registerCompactionEngine: false`——保守�
 | 用户画像 | `memory.global.user.{render (true)，collect (false)，review (false)}` | 读 / 收集 / 评审三半独立；写共享库的两个半边默认关 |
 | 域解析 | `memory.domains.source` (`adapter` \| `contract`) | `contract` 是对照用的回退杆，不是支持终态 |
 | 维护 | `maintenance.{enabled，intervalMs (30 min)，verifyProvider，verifyModel}` | LLM verify 需显式路由（未钉则跟随主对话最新路线）；GUI 卡片可从宿主模型目录下拉选择，Auto = 不钉（两组 pin 同款选择器） |
-| 观测 | `journal.{enabled (true)，level (info)，retentionDays (30)，mirror (true)}` · `tags.retentionDays` (30) | level/mirror 对下一条写入生效；挂载时就是 off 的 journal 运行中打开需重启；`retentionDays` 有 `min(1)` 下限防误剪 |
+| 观测 | `journal.{enabled (true)，level (info)，retentionDays (30)，mirror (true)}` | level/mirror 对下一条写入生效；挂载时就是 off 的 journal 运行中打开需重启；`retentionDays` 有 `min(1)` 下限防误剪。§N§ tag 行没有按天 TTL；本适配器当前没有自动的消息/会话删除路径 |
 
 ## 工具与命令
 

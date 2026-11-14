@@ -201,6 +201,8 @@ describe('maintenance sweep wiring (real plugin, fake clock)', () => {
       expect(switches.machineAutoStage).toBe(true)
       expect(switches.userCollect).toBe(true)
       expect(switches.userReview).toBe(true)
+      // T5: the boot snapshot no longer advertises a tag TTL.
+      expect(switches.tagsRetentionDays).toBeUndefined()
 
       // The verdict route is the configured one, not the session's.
       ctx.llm.registerAdapter(['mock-verify'], new MockAdapter([

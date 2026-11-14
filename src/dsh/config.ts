@@ -236,12 +236,21 @@ export interface MagicContextDshConfig {
     /** Write the one-line text mirror (default true). */
     mirror?: boolean
   }
-  /** §N§ tag registry retention (default 30 days; pruned once per mount). */
-  tags?: {
-    retentionDays?: number
-  }
   /** Pressure policy overrides; unset fields keep the defaults. */
   policy?: Partial<PressurePolicy>
+}
+
+/**
+ * Legacy `tags.retentionDays` detector. The schema no longer declares `tags`,
+ * but schemastery preserves undeclared keys, so an old profile can still carry
+ * the block. It is data, not a setting: return a warning only when a value is
+ * present, never for an absent or empty block. The mount path owns the
+ * once-per-process latch.
+ */
+export function legacyTagsRetentionWarning(config: MagicContextDshConfig): string | undefined {
+  const legacy = (config as MagicContextDshConfig & { tags?: { retentionDays?: unknown } }).tags
+  if (legacy?.retentionDays === undefined) return undefined
+  return 'magic-context dsh adapter: tags.retentionDays is deprecated and ignored; tag rows are no longer pruned by age. Remove the tags block from the profile.'
 }
 
 export type MagicContextDshConfigDefineTool = typeof import('@deepseek-ai/dsh-tools')['defineTool']

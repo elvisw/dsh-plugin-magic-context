@@ -171,6 +171,22 @@ function pendingRow(dataDir: string, sessionId: string, tag: number): {
   }
 }
 
+/**
+ * #14's deleted-tag fixture: the adapter no longer exposes a time-based
+ * `pruneTags` API, so the test deletes exactly one target row. Never an
+ * unqualified `DELETE FROM tags`.
+ */
+function deleteToolTagRow(dataDir: string, sessionId: string, callId: string): void {
+  const db = new DatabaseSync(join(dataDir, 'dsh-magic-context.db'))
+  try {
+    db.prepare(
+      "DELETE FROM tags WHERE session_id = ? AND target_kind = 'tool-result' AND target_id = ?",
+    ).run(sessionId, callId)
+  } finally {
+    db.close()
+  }
+}
+
 describe('result-return expand', () => {
   it('returns the original payload as a new result and leaves the old placeholder dropped', async () => {
     const ctx = context('mc-expand-happy')
@@ -445,7 +461,7 @@ describe('message locator', () => {
     try {
       const seeded = seedResult(deletedCtx, 'call-deleted', 'deleted tag payload')
       landDrop(deletedCtx, 'call-deleted', seeded.tag, seeded.seq)
-      deletedCtx.stores.pruneTags(Date.now() + 1_000)
+      deleteToolTagRow(deletedCtx.dataDir, deletedCtx.session.id, 'call-deleted')
       expect(deletedCtx.stores.getTag(deletedCtx.session.id, {
         kind: 'tool-result',
         callId: 'call-deleted',

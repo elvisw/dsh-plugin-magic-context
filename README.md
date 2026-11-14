@@ -186,7 +186,7 @@ writable as profile override rows unless noted):
 | User profile | `memory.global.user.{render (true), collect (false), review (false)}` | Read / collect / review are independent halves; the two halves that write to the shared store are off by default |
 | Domain resolution | `memory.domains.source` (`adapter` \| `contract`) | `contract` is a fallback pole for comparison, not a supported end state |
 | Maintenance | `maintenance.{enabled, intervalMs (30 min), verifyProvider, verifyModel}` | LLM verify needs an explicit route (unpinned = follow the conversation's latest route); the GUI card offers host-catalog dropdowns, Auto = unpinned (same picker for both pins) |
-| Observability | `journal.{enabled (true), level (info), retentionDays (30), mirror (true)}` · `tags.retentionDays` (30) | level/mirror apply to the next write; a journal that was off at mount needs a restart to turn on at runtime; `retentionDays` has a `min(1)` floor against accidental pruning |
+| Observability | `journal.{enabled (true), level (info), retentionDays (30), mirror (true)}` | level/mirror apply to the next write; a journal that was off at mount needs a restart to turn on at runtime; `retentionDays` has a `min(1)` floor against accidental pruning. §N§ tag rows have no age-based TTL; this adapter has no automatic message/session deletion path today |
 
 ## Tools & commands
 

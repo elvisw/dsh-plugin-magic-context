@@ -8,6 +8,12 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
+## [Unreleased]
+
+### Changed
+
+- **§N§ tag 注册表不再按时间删除**：移除了挂载时的 30 天 `pruneTags`，以及 `tags.retentionDays` 配置与 boot 快照字段。tag 行不再因为“太旧”而消失；旧 profile 里的 `tags.retentionDays` 仍可被解析但会被忽略，并每进程最多告警一次，建议从 profile 中删除该块。`journal.retentionDays` 不受影响。当前适配器没有自动的消息/会话删除路径，消息/会话删除与 compaction 状态保留仍是契约目标，不是现状。
+
 ## [0.11.2] - 2026-11-11
 
 **后台车道不再会静默停摆。** 跟进上游 magic-context v0.49.50（区间 v0.49.30→v0.49.50，375 个非 merge

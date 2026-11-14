@@ -56,7 +56,7 @@ evidence-verify（`off|shadow|enforce`）。**S(t) 衰减评分默认关**，统
 | 表 | 关键列 | 用途 |
 |---|---|---|
 | `meta` | key/value | `memory_bridge`、`memory_write`、`compaction_engine` 等启动自检快照 |
-| `tags` / `tag_counters` | session+target → tag_number；每会话单调计数 | §N§ 句柄（30 天剪枝，`tags.retentionDays`；剪枝不动 counters） |
+| `tags` / `tag_counters` | session+target → tag_number；每会话单调计数 | §N§ 句柄（不再按天剪枝；随消息/会话删除或 compaction 状态保留是上游目标，本仓库当前无自动删除路径；counters 不动） |
 | `usage_records` | `(session_id, seq)` 主键 | provider 用量（压力决策输入） |
 | `pending_drops` | `(session_id, tag_number)` | `ctx_reduce` 入队，execute 带落地 |
 | `compartments` | `tier_p1..p4`、`facts`、`events`、`landed_event_seq`、v7 `landed_reason`/`superseded` | historian 摘要 |

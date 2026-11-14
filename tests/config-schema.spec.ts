@@ -15,7 +15,8 @@
  *     memory on for every profile that never asked for it.
  */
 import { describe, expect, it } from 'vitest'
-import mcDshPlugin, { Config, policyOf } from '../src/index.ts'
+import mcDshPlugin, { Config, policyOf, type MagicContextDshConfig } from '../src/index.ts'
+import { legacyTagsRetentionWarning } from '../src/dsh/config.ts'
 import { DEFAULT_POLICY } from '../src/core/policy.ts'
 import { liveRoute } from '../src/dsh/volatile.ts'
 
@@ -58,6 +59,18 @@ describe('runtime Config schema', () => {
     expect(() => Config({ journal: { retentionDays: -5 } })).toThrow()
     const value = Config({ journal: { retentionDays: 7 } }) as unknown as Record<string, any>
     expect((value.journal.retentionDays as Volatile).get()).toBe(7)
+  })
+
+  it('removes the tag retention setting but passes the legacy block through', () => {
+    expect((Config({}) as unknown as Record<string, unknown>).tags).toBeUndefined()
+    const legacy = Config({
+      tags: { retentionDays: 7 },
+    } as unknown as MagicContextDshConfig) as unknown as Record<string, any>
+    expect(legacy.tags.retentionDays).toBe(7)
+    expect(legacyTagsRetentionWarning({})).toBeUndefined()
+    expect(legacyTagsRetentionWarning({ tags: {} } as unknown as MagicContextDshConfig)).toBeUndefined()
+    expect(legacyTagsRetentionWarning({ tags: { retentionDays: 7 } } as unknown as MagicContextDshConfig))
+      .toContain('tags.retentionDays is deprecated')
   })
 
   it('never materialises the memory block, and passes unknown keys through', () => {

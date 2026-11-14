@@ -55,7 +55,7 @@ context: []
 
 - `src/dsh/tool-bridge.ts` — `expandRequest` 120-139; `defineCtxExpandTool` 235-348. Add `message?: string` to the args, a strict parser, locator exclusivity, and a message resolver that applies the same drop gate and calls `originalContentOfToolCall`.
 - `src/dsh/seams.ts` — `dropTagOfContent` 131-137; `originalContentOfToolCall` 257-287. Add `toolResultAt(session, seq)` returning a discriminated union: `{ kind: 'tool-result'; seq; callId }` / `{ kind: 'not-tool-result'; seq }` / `{ kind: 'unknown' }`. It resolves identity only; call-level placeholder evidence comes from `originalContentOfToolCall(...).droppedTag`, not from the event shape. Do not duplicate the content read.
-- `src/core/stores.ts` — `pruneTags` 1563 makes the deleted-tag fixture without a new store API.
+- `src/core/stores.ts` — **superseded by T5 (2026-11-14):** `pruneTags` has been removed with the 30-day retention API. The deleted-tag fixture now uses a targeted `DELETE FROM tags` in `tests/ctx-expand-result.spec.ts`; do not reintroduce a store deletion API.
 - `src/dsh/pre-step.ts` / `src/index.ts` — no change expected; the post-execute tagger still tags the new expand result.
 - `tests/ctx-expand-result.spec.ts` — extend `ExpandArgs` with `message`; add message happy paths, active/pending, unknown/non-tool/compacted, untagged, deleted tag, missing source, invalid seq, locator conflict, restart, and post-Historian regression.
 - `tests/tag-state.spec.ts` — no change unless the call-level helper needs a store fixture.
@@ -71,7 +71,7 @@ context: []
 - [ ] Extract the post-`getTag` call-level gate into a shared helper used by tag and message; call-level placeholder evidence comes from `originalContentOfToolCall(...).droppedTag`.
 - [ ] Implement message as single-value, all-or-nothing: success `{ok:true, restored:[tag], refused:[], content}`; failure `{ok:false, restored:[], refused:[], reason}`; journal keeps `restored:[tag]` and records `message: seq`; never invent a tag in `refused`.
 - [ ] Map rejection in this order: `no-session` → locator validation/parse → `unknown` seq → non-tool → call-level `getTag` gap (`tag no longer available` if placeholder evidence, else `not a tool-result tag`) → pending → `missing-event` (defensive; message path is unreachable) → `not dropped` → `missing-source` → success.
-- [ ] Extend tests for all I/O matrix rows, including emergency-drop message, simulated publish with both original and placeholder seq, `pruneTags` removed-tag-row, invalid seq, locator conflict, restart, and the tag regression; on every message success assert `dropState` is unchanged and `listPendingDrops` gains no row (emergency stays `none`, landed stays `landed`). Update the existing `pass either tag or tags` / `no tag given` assertions intentionally.
+- [ ] Extend tests for all I/O matrix rows, including emergency-drop message, simulated publish with both original and placeholder seq, a targeted `DELETE FROM tags` removed-tag-row (not the removed `pruneTags` API), invalid seq, locator conflict, restart, and the tag regression; on every message success assert `dropState` is unchanged and `listPendingDrops` gains no row (emergency stays `none`, landed stays `landed`). Update the existing `pass either tag or tags` / `no tag given` assertions intentionally.
 - [ ] Add a `client-pure` assertion for a message success (`restored` count) and, if the host-loop fixture supports it, a `phase1` message call; otherwise record that host-loop coverage is only in the T3 acceptance window.
 - [ ] Update README, README.zh-CN, PARITY, and `scripts/phase-map.mjs`'s Phase 0 blind list. Write tag primary, message fallback, `[compacted §C…§]` not accepted, and no recovery promise when the raw event is gone; no i18n dictionary change expected.
 - [ ] Run targeted tests, full tests, typecheck, and i18n check.
@@ -116,7 +116,7 @@ context: []
 | Unsafe integer can throw in `SessionSeq` | high | patch | Plan adds `Number.isSafeInteger` after regex. |
 | Existing `tag`+`tags` / `no tag` assertions would go red | medium | patch | Plan explicitly updates them; tag+tags text stays, no-locator keeps the substring. |
 | Message presence/empty rules missing | medium | patch | Plan defines `message !== undefined` as provided, no trim, non-string invalid. |
-| Emergency/post-publish/deleted-tag message cases missing | medium | patch | Plan adds all three, using `pruneTags` for the deleted row. |
+| Emergency/post-publish/deleted-tag message cases missing | medium | patch | Plan adds all three, using a targeted `DELETE FROM tags` for the deleted row (the old `pruneTags` API was removed by T5). |
 | Cross-session expectation was wrong | medium | patch | Plan changes it to “current session has no such seq”. |
 | Shared gate extraction not located | medium | patch | Plan requires the post-`getTag` gate helper shared by tag/message. |
 | Message `missing-event` mapping missing | medium | patch | Plan maps it defensively to `tag no longer available`. |
