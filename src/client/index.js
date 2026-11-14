@@ -263,6 +263,10 @@ window.__ModuleLoader__.load({
         hint: 'Model for the historian and /compact summaries. Set both halves to pin; “Auto” follows the session route.',
       },
       {
+        path: ['historian', 'reasoningEffort'], kind: 'text', label: 'Historian reasoning effort',
+        hint: 'Optional effort id advertised by the routed model (for example low/medium/high). Blank uses the model default.',
+      },
+      {
         path: ['journal', 'enabled'], kind: 'boolean', label: 'Journal enabled',
         hint: 'Record adapter activity. Turning off applies immediately; turning on from an off start needs an app restart.',
       },
@@ -741,6 +745,12 @@ window.__ModuleLoader__.load({
               ops.push({ op: 'set', path: spec.path.slice(), value: draft.bool === true })
               continue
             }
+            if (spec.kind === 'text') {
+              const text = String(draft.text ?? '').trim()
+              if (text === '') ops.push({ op: 'unset', path: spec.path.slice() })
+              else ops.push({ op: 'set', path: spec.path.slice(), value: text })
+              continue
+            }
             const write = parseNumberText(draft.text)
             if (write === undefined) {
               blocked = true
@@ -886,7 +896,7 @@ window.__ModuleLoader__.load({
             id,
             label: spec.label,
             hint: spec.hint,
-            numeric: true,
+            numeric: spec.kind === 'number',
             text: state.text,
             overridden: state.overridden,
             invalid: state.invalid,

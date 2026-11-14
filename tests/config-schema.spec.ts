@@ -110,10 +110,12 @@ describe('runtime Config schema', () => {
     expect(bare.historian).toBeDefined()
     expect((bare.historian.provider as Volatile).get()).toBe('')
     expect((bare.historian.model as Volatile).get()).toBe('')
+    expect((bare.historian.reasoningEffort as Volatile).get()).toBe('')
     expect((bare.maintenance.verifyProvider as Volatile).get()).toBe('')
-    const pinned = Config({ historian: { provider: 'corp', model: 'flash' } }) as unknown as Record<string, any>
+    const pinned = Config({ historian: { provider: 'corp', model: 'flash', reasoningEffort: 'low' } }) as unknown as Record<string, any>
     expect((pinned.historian.provider as Volatile).get()).toBe('corp')
     expect((pinned.historian.model as Volatile).get()).toBe('flash')
+    expect((pinned.historian.reasoningEffort as Volatile).get()).toBe('low')
   })
 
   it('liveRoute treats a half-filled pair as "no pin" and unwraps volatile refs', () => {

@@ -609,6 +609,9 @@ describe('agent write path (contract §11)', () => {
       // Re-archiving is refused and adds nothing.
       expect(writer.archiveMemory({ identity: OWN, id })).toMatchObject({ ok: false, reason: 'archived-or-superseded' })
       expect(writer.stats(OWN).mutationLog).toBe(1)
+      // `total` is the live pool, like verified/unverified: an archived row must
+      // not leave "total 1 / verified 0 / unverified 0" on the telemetry panel.
+      expect(writer.stats(OWN)).toMatchObject({ rows: 0, verified: 0, unverified: 0 })
       // Archived rows stay visible to their own project's `get`.
       expect(writer.getMemory(OWN, id)?.status).toBe('archived')
     } finally {

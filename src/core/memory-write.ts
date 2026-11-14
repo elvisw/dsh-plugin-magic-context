@@ -857,7 +857,12 @@ export function openMemoryWriter(options: MemoryWriterOptions): MemoryWriter {
     const insert = db.prepare(INSERT_MEMORY)
     const insertDomain = db.prepare(INSERT_DOMAIN_MEMORY)
     const maxId = db.prepare('SELECT MAX(id) AS id FROM memories WHERE project_path = ?')
-    const statsRows = db.prepare('SELECT COUNT(*) AS c FROM memories WHERE project_path = ?')
+    // The telemetry panel's "total" is the live pool, not every historical row:
+    // verified/unverified below already use the same status scope. Counting
+    // archived rows here produced "total 1 / verified 0 / unverified 0".
+    const statsRows = db.prepare(
+      "SELECT COUNT(*) AS c FROM memories WHERE project_path = ? AND status IN ('active','permanent')",
+    )
     const statsMutations = db.prepare('SELECT COUNT(*) AS c FROM memory_mutation_log WHERE project_path = ?')
     const statsEpoch = db.prepare('SELECT project_memory_epoch AS e FROM project_state WHERE project_path = ?')
     // Verification coverage for the telemetry panel: the dreamer slice's own KPI.

@@ -21,7 +21,7 @@ import type { Compartment, CompartmentDraft } from '../core/compartments.ts'
 import type { Journal } from '../core/journal.ts'
 import type { PressurePolicy } from '../core/policy.ts'
 import type { AdapterStores } from '../core/stores.ts'
-import { callHistorian, historianTriggerBudget, type HistorianLlm } from './historian.ts'
+import { callHistorian, historianTriggerBudget, type HistorianLlm, type HistorianRoute } from './historian.ts'
 import { nodesForSeqs, requestContextOf, type SessionSeq, type SurfaceNode } from './seams.ts'
 
 export const RECOMP_USAGE = 'Usage: /ctx-recomp [all | last:<n> | <startSeq>-<endSeq>]'
@@ -38,12 +38,14 @@ export interface RecompDeps {
   readonly journal?: Journal
   readonly llm?: HistorianLlm
   /** Static generation route (tests / stand-alone constructions). */
-  readonly route?: { provider: string; model: string }
+  readonly route?: HistorianRoute
   /**
    * Live generation route: the same settings-form pin the pre-step historian
    * lane reads. `undefined` means the historian follows the session's route.
    */
-  readonly activeRoute?: () => { provider: string; model: string } | undefined
+  readonly activeRoute?: () => HistorianRoute | undefined
+  /** Live effort leaf; merged with the active/fallback route when non-empty. */
+  readonly activeEffort?: () => string | undefined
   readonly timeoutMs?: number
   readonly now?: () => number
   /**
@@ -160,11 +162,15 @@ export async function recompactCompartments(
   // Same for the generation route: one read per invocation, so a settings-form
   // edit reaches the next /ctx-recomp without waiting for a remount.
   const route = deps.activeRoute?.() ?? deps.route
+  const effort = deps.activeEffort?.()?.trim()
+  const generationRoute = route === undefined || effort === undefined || effort === '' || route.reasoningEffort !== undefined
+    ? route
+    : { ...route, reasoningEffort: effort }
   const historianDeps = {
     ...deps,
     policy,
     llm,
-    ...route === undefined ? {} : { route },
+    ...generationRoute === undefined ? {} : { route: generationRoute },
   }
   const recompacted: number[] = []
   const skipped: Array<{ compartmentId: number; reason: string }> = []

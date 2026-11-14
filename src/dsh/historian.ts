@@ -37,9 +37,21 @@ export interface HistorianLlm {
   stream(options: HistorianStreamOptions): AsyncIterable<unknown>
 }
 
+export interface HistorianRoute {
+  readonly provider: string
+  readonly model: string
+  /**
+   * Optional provider/model-specific reasoning effort. Omitted means "let the
+   * host apply the adapter's default"; an empty string is normalised away at
+   * the config boundary.
+   */
+  readonly reasoningEffort?: string
+}
+
 export interface HistorianStreamOptions {
   readonly provider: string
   readonly model: string
+  readonly reasoningEffort?: string
   readonly messages: readonly LlmSeamMessage[]
   readonly toolHistory?: unknown
   readonly maxTokens: number
@@ -86,10 +98,13 @@ export class HistorianTruncatedError extends Error {
     /** Characters already streamed when the cap was hit — 0 means the whole
      * budget went to reasoning, large means the JSON contract was too long. */
     readonly partialChars = 0,
+    /** The provider's own terminal message, kept in the failed row. */
+    readonly providerDetail?: string,
   ) {
     super(
       `historian call truncated at the ${String(maxTokens)}-token output cap `
-      + `(incomplete digest, ${String(partialChars)} chars streamed)`,
+      + `(incomplete digest, ${String(partialChars)} chars streamed)`
+      + (providerDetail === undefined ? '' : `; provider: ${providerDetail}`),
     )
     this.name = 'HistorianTruncatedError'
   }
@@ -114,7 +129,7 @@ export interface HistorianDeps {
   readonly llm: HistorianLlm
   readonly logger: HistorianLogger
   /** Explicit route override; default is the session's last routed model. */
-  readonly route?: { provider: string; model: string }
+  readonly route?: HistorianRoute
   /** Validation-period activity journal (optional). */
   readonly journal?: Journal
   /** Explicit wall-clock cap; default is `policy.historianTimeoutMs`, else 60s. */
@@ -331,9 +346,14 @@ async function collectText(
         break
       }
       case 'finish': {
-        const reason = (chunk as { reason: { kind: string; failure?: { message?: string } } }).reason
+        const reason = (chunk as { reason: { kind: string; failure?: { message?: string; code?: string } } }).reason
         finishReason = reason.kind
         if (reason.kind === 'error' || reason.kind === 'aborted') {
+          // The host turns a provider throw into a terminal error chunk; the
+          // code survives on `reason.failure.code`, not on the thrown Error.
+          if (isOutputLimitCode(reason.failure?.code)) {
+            throw new HistorianTruncatedError(maxTokens, 0, reason.failure?.message)
+          }
           throw new Error(`historian call failed: ${reason.failure?.message ?? reason.kind}`)
         }
         if (reason.kind === 'max-tokens') {
@@ -369,6 +389,22 @@ export function historianInFlight(sessionId: string): Promise<Compartment | unde
 }
 
 /**
+ * A provider can reject an empty, token-limited completion before the host
+ * emits a `finish` chunk (measured on commandcode: `OUTPUT_TOKEN_LIMIT`). When
+ * the throw reaches us directly the code is on the Error; when the host catches
+ * the adapter throw first, the code is on `finish.reason.failure.code`. Both
+ * paths must normalize to truncation, otherwise the designed cap-escalation
+ * retry never fires.
+ */
+function isOutputLimitCode(code: unknown): boolean {
+  return code === 'OUTPUT_TOKEN_LIMIT'
+}
+
+function isOutputLimitFailure(error: unknown): boolean {
+  return error instanceof Error && isOutputLimitCode((error as { code?: unknown }).code)
+}
+
+/**
  * One attempt's stream, bounded by the run's remaining wall-clock budget.
  *
  * The budget is enforced twice on purpose: the abort signal tells a compliant
@@ -399,10 +435,24 @@ async function collectAttempt(
     ;(timer as { unref?: () => void }).unref?.()
   })
   try {
-    return await Promise.race([
-      collectText(deps.llm.stream({ ...options, signal: controller.signal }), options.maxTokens),
-      expiry,
-    ])
+    try {
+      return await Promise.race([
+        collectText(deps.llm.stream({ ...options, signal: controller.signal }), options.maxTokens),
+        expiry,
+      ])
+    } catch (error) {
+      // Normalise the provider's pre-finish token-limit rejection into the
+      // truncation path so the next attempt doubles the cap and asks for a
+      // shorter JSON object.
+      if (isOutputLimitFailure(error)) {
+        throw new HistorianTruncatedError(
+          options.maxTokens,
+          0,
+          error instanceof Error ? error.message : String(error),
+        )
+      }
+      throw error
+    }
   } finally {
     if (timer !== undefined) clearTimeout(timer)
     outerSignal?.removeEventListener('abort', relayAbort)
@@ -529,7 +579,7 @@ export async function callHistorian(
     readonly sessionId: string
     readonly session: Parameters<typeof spanRequestMessages>[0]
     readonly nodes: readonly SurfaceNode[]
-    readonly route?: { provider: string; model: string }
+    readonly route?: HistorianRoute
     readonly signal?: AbortSignal
     /** The system head seq, replayed first for prefix-cache fidelity. */
     readonly systemSeq?: SessionSeq
@@ -548,6 +598,7 @@ export async function callHistorian(
   if (route === undefined || route.provider.length === 0 || route.model.length === 0) {
     throw new Error('no routed provider/model available for the historian call')
   }
+  const reasoningEffort = route.reasoningEffort?.trim() === '' ? undefined : route.reasoningEffort?.trim()
   const trigger = input.trigger ?? 'automatic'
   const spanTokens = input.nodes.reduce(
     (total, node) => total + Math.max(1, Math.ceil(node.text.length / 4)),
@@ -600,6 +651,7 @@ export async function callHistorian(
     nodes: input.nodes.length,
     tokens: spanTokens,
     route: `${route.provider}/${route.model}`,
+    ...reasoningEffort === undefined ? {} : { reasoningEffort },
     maxTokens: effectiveMaxTokens,
     ...effectiveMaxTokens === configuredMaxTokens ? {} : { configuredMaxTokens },
     timeoutMs,
@@ -611,6 +663,7 @@ export async function callHistorian(
     nodes: input.nodes.length,
     tokens: spanTokens,
     route: `${route.provider}/${route.model}`,
+    ...reasoningEffort === undefined ? {} : { reasoningEffort },
     maxTokens: effectiveMaxTokens,
     ...effectiveMaxTokens === configuredMaxTokens ? {} : { configuredMaxTokens },
     timeoutMs,
@@ -698,6 +751,7 @@ export async function callHistorian(
           const collected = await collectAttempt(deps, {
             provider: route.provider,
             model: route.model,
+            ...reasoningEffort === undefined ? {} : { reasoningEffort },
             messages,
             maxTokens,
             sessionId: input.sessionId,
@@ -884,7 +938,7 @@ export function runHistorian(
     readonly nodes: readonly SurfaceNode[]
     readonly baselineNodeSeq?: number
     readonly contextWindow?: number
-    readonly route?: { provider: string; model: string }
+    readonly route?: HistorianRoute
     readonly signal?: AbortSignal
     readonly session: Parameters<typeof spanRequestMessages>[0]
     /** Explicit span (the manual/region path); default is the eligibility scan. */
@@ -907,7 +961,7 @@ async function runHistorianExclusive(
     readonly nodes: readonly SurfaceNode[]
     readonly baselineNodeSeq?: number
     readonly contextWindow?: number
-    readonly route?: { provider: string; model: string }
+    readonly route?: HistorianRoute
     readonly signal?: AbortSignal
     readonly session: Parameters<typeof spanRequestMessages>[0]
     readonly forcedRange?: readonly SurfaceNode[]

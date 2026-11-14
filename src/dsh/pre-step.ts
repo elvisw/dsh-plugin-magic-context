@@ -46,7 +46,7 @@ import { appendSessionNotice } from './session-notice.ts'
 import { detectProjectDrift } from './project-drift.ts'
 import type { MagicContextDshConfig } from './config.ts'
 import type { MemoryLane } from './memory-lane.ts'
-import { liveBoolean, liveRoute } from './volatile.ts'
+import { liveBoolean, liveRoute, liveString } from './volatile.ts'
 import { planSearchHint, type SearchHintTracker } from './search-hint.ts'
 
 /** Identities shared by the preStep, the maintenance sweep and the panel. */
@@ -526,6 +526,19 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
         // The generation pin is a live settings-form field: re-read it every
         // pass, and treat a half-filled pair as "follow the session route".
         const generationRoute = liveRoute(config.historian?.provider, config.historian?.model)
+        const generationEffort = liveString(config.historian?.reasoningEffort, '').trim()
+        // Auto follows the session route; the effort still applies. Only when
+        // neither a pin nor a live session route exists is there nothing to
+        // attach it to.
+        const sessionRoute = context.provider === undefined || context.model === undefined
+          ? undefined
+          : { provider: context.provider, model: context.model }
+        const historianBaseRoute = generationRoute ?? sessionRoute
+        const historianRoute = historianBaseRoute === undefined
+          ? undefined
+          : generationEffort === ''
+            ? historianBaseRoute
+            : { ...historianBaseRoute, reasoningEffort: generationEffort }
         const outcome = runManagementPass({
           session: payload.agent.session,
           sessionId,
@@ -545,7 +558,7 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
             : {
               historian: {
                 llm,
-                ...generationRoute === undefined ? {} : { route: generationRoute },
+                ...historianRoute === undefined ? {} : { route: historianRoute },
               },
             },
           ...memoryRecall === undefined

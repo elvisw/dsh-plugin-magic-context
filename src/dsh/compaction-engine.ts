@@ -27,7 +27,7 @@ import type { Journal } from '../core/journal.ts'
 import type { PressurePolicy } from '../core/policy.ts'
 import type { AdapterStores } from '../core/stores.ts'
 import { errText } from '../core/types.ts'
-import { callHistorian, type HistorianLlm } from './historian.ts'
+import { callHistorian, type HistorianLlm, type HistorianRoute } from './historian.ts'
 import { runManagementPass } from './management-pass.ts'
 import {
   compactCheckpointSource,
@@ -60,13 +60,15 @@ export interface CompactionEngineDeps {
    * settings-form field, and a report opened before a remount must not keep
    * the mount-time value.
    */
-  readonly route?: { provider: string; model: string }
+  readonly route?: HistorianRoute
   /**
    * Live generation route: the out-of-band historian and `/compact` summaries.
    * `undefined` means "follow the session route" (the historian falls back to
    * the request's own route when no pin is set).
    */
-  readonly activeRoute?: () => { provider: string; model: string } | undefined
+  readonly activeRoute?: () => HistorianRoute | undefined
+  /** Live effort leaf; merged with the active/fallback route when non-empty. */
+  readonly activeEffort?: () => string | undefined
   /** Validation-period activity journal (optional). */
   readonly journal?: Journal
   /**
@@ -138,7 +140,13 @@ export async function registerMagicCompactionEngine(
   /** The live policy at the use point (snapshot fallback: see deps). */
   const policyNow = (): PressurePolicy => deps.activePolicy?.() ?? deps.policy
   /** The live generation route at the use point (snapshot fallback: see deps). */
-  const routeNow = (): { provider: string; model: string } | undefined => deps.activeRoute?.() ?? deps.route
+  const routeNow = (): HistorianRoute | undefined => {
+    const route = deps.activeRoute?.() ?? deps.route
+    if (route === undefined) return undefined
+    const effort = deps.activeEffort?.()?.trim()
+    if (effort === undefined || effort === '' || route.reasoningEffort !== undefined) return route
+    return { ...route, reasoningEffort: effort }
+  }
 
   const sessionOf = (agent: unknown): Session => {
     const session = (agent as { session?: Session }).session

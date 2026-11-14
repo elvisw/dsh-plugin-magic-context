@@ -25,6 +25,7 @@ import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
 import LlmRuntime, {
+  LlmError,
   createUserMessage,
   type GenerateOptions,
   type LlmResolvedModelInfo,
@@ -105,7 +106,19 @@ const NODES = [
 const SESSION_STUB = {
   snapshotEvents: () => [
     { seq: 1, type: 'user/message', data: { id: 'msg-1', role: 'user', content: [{ type: 'text', text: 'hello there' }] } },
-    { seq: 2, type: 'assistant/message', data: { message: { role: 'assistant', content: [{ type: 'text', text: 'working on it' }] } } },
+    {
+      seq: 2,
+      type: 'assistant/message',
+      data: {
+        message: {
+          role: 'assistant',
+          content: [{ type: 'text', text: 'working on it' }],
+          // The real runtime's forAdapter() reads every assistant source; a
+          // stub without it fails before the adapter sees the request.
+          source: { kind: 'model', provider: 'mock', model: 'mock' },
+        },
+      },
+    },
   ],
 } as unknown as Parameters<typeof spanRequestMessages>[0]
 
@@ -501,6 +514,49 @@ describe('historian span edges are tool-pairing safe', () => {
       node('tool'),
     ]
     expect(selectHistorianRange({ nodes, covered: new Set(), protectedNodes: 0, minNodes: 1 })).toBeUndefined()
+  })
+})
+
+describe('historian provider token limit (real LlmRuntime)', () => {
+  class LimitOnceAdapter extends MockAdapter {
+    private limited = false
+
+    override async * stream(options: GenerateOptions): AsyncIterable<StreamChunk> {
+      if (!this.limited) {
+        this.limited = true
+        this.requests.push(options)
+        throw new LlmError('Command Code returned no answer text', 'OUTPUT_TOKEN_LIMIT')
+      }
+      yield* super.stream(options)
+    }
+  }
+
+  it('retries the host error-finish with code OUTPUT_TOKEN_LIMIT at the doubled cap', async () => {
+    const ctx = new Context()
+    try {
+      await ctx.plugin(LlmRuntime)
+      const adapter = new LimitOnceAdapter([textResponse(digest())])
+      ctx.llm.registerAdapter(['limit-once'], adapter)
+      const calls: Call[] = []
+      const result = await callHistorian({
+        llm: ctx.llm as never,
+        logger: { info: () => {}, warn: () => {} },
+        route: { provider: 'limit-once', model: 'limit-once' },
+        journal: recordingJournal(calls),
+        timeoutMs: 10_000,
+        policy: { ...DEFAULT_POLICY, historianTimeoutMs: 10_000 },
+      } as never, {
+        sessionId: SESSION,
+        session: SESSION_STUB,
+        nodes: NODES,
+      })
+      expect(result.importance).toBe(77)
+      expect(adapter.requests.length).toBe(2)
+      expect(adapter.requests[1]?.maxTokens).toBe(16_384)
+      expect(historianCalls(calls).find(call => call.data?.phase === 'done')?.data?.attempts).toBe(2)
+    } finally {
+      await ctx.fiber.dispose()
+    }
   })
 })
 

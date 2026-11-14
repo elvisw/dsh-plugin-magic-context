@@ -8,11 +8,10 @@
  */
 import type { Journal } from '../core/journal.ts'
 import type { AdapterStores } from '../core/stores.ts'
-import { estimateTokens } from '../core/compartments.ts'
+import { estimateTokensFromLength } from '../core/compartments.ts'
 import {
   type Session,
   dropPlaceholderContent,
-  enumerateSurfaceNodes,
   enumerateSurfaceToolResults,
   replaceToolResultContent,
 } from './seams.ts'
@@ -50,6 +49,12 @@ export function landPendingDrops(input: DropLandingInput): DropLandingResult {
   const landed: number[] = []
   const already: number[] = []
   const skipped: number[] = []
+  // Capture the original length BEFORE replacement: after
+  // `replaceToolResultContent` the node is the placeholder, so a
+  // post-replacement scan estimates 0 tokens for every landed row. The
+  // `SurfaceToolNode` already carries `textLength`, so no extra surface walk
+  // is needed (the old code walked the whole surface after replacing).
+  const originalLength = new Map<number, number>()
 
   for (const tag of wanted) {
     const node = toolNodes.find(candidate => candidate.tagNumber === tag)
@@ -62,6 +67,7 @@ export function landPendingDrops(input: DropLandingInput): DropLandingResult {
       already.push(tag)
       continue
     }
+    originalLength.set(tag, node.textLength)
     const landedSeq = replaceToolResultContent(input.session, node.seq, dropPlaceholderContent(tag))
     input.onReplaced?.(tag)
     input.stores.markDropLanded(input.sessionId, tag, landedSeq)
@@ -69,18 +75,13 @@ export function landPendingDrops(input: DropLandingInput): DropLandingResult {
   }
 
   if (landed.length > 0) {
-    const textBySeq = new Map(enumerateSurfaceNodes(input.session).map(node => [node.seq, node.text]))
     input.journal?.info(
       'drop-landed',
       `landed ${String(landed.length)} drop(s): ${landed.map(tag => `§${String(tag)}§`).join(', ')}`,
       {
         tags: landed,
         count: landed.length,
-        estTokens: landed.reduce((total, tag) => {
-          const node = toolNodes.find(candidate => candidate.tagNumber === tag)
-          const text = node === undefined ? undefined : textBySeq.get(node.seq)
-          return total + (text === undefined ? 0 : estimateTokens(text))
-        }, 0),
+        estTokens: landed.reduce((total, tag) => total + estimateTokensFromLength(originalLength.get(tag) ?? 0), 0),
       },
       input.sessionId,
     )

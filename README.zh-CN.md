@@ -18,7 +18,7 @@
 > 桌面端：以 bundle 形态装进 profile，出现在 GUI"插件"页，在运行中的应用里即时开始工作。
 >
 > 上游跟进已核到 **v0.49.30**（适配器对齐面 0 变动）· 宿主 **0.2.2-rc.1** 实测运行正常 ·
-> 状态：**已在真实 DSH Desktop 日常运行**，838 测试用例门禁。仓库历史与出处见
+> 状态：**已在真实 DSH Desktop 日常运行**，849 测试用例门禁。仓库历史与出处见
 > [NOTICE](NOTICE)；数据目录见[观测与运维](#观测与运维)。
 
 需要 **Node ≥ 22.19** 与 **DSH 0.2.x** 桌面宿主。包内自带编译产物，直接从 npm registry
@@ -145,7 +145,7 @@ bundle 自带配置只有一行：`registerCompactionEngine: false`——保守�
 | 总开关 | `enabled` (true) · `registerTools` (true) · `registerStatusCommand` (true) · `sessionNotices` (true) · `reduceGuidance` (true) · `searchHint` (true) | `enabled: false` 保持加载但完全惰性；`sessionNotices` 控制会话流内的管理提示行 |
 | 压缩接缝 | `registerCompactionEngine`（代码默认可解析即挂；**bundle 随发 false**）· `compactionBase`（宿主注入基类） | 接管需同时禁用 compaction-basic；pre-step 每步 `reconcileEngine` 动态挂/卸 |
 | 压力策略 | `policy.*`：`executeThreshold` (65) · `forceThreshold` (85) · `ttlMs` (5 min) · `assumedContextWindow` (256k) · `protectedToolResults` (8) · `historianTimeoutMs` (120 s) · `historianMaxTokens` (8192，低于会被抬到 8192) · `historianMaxTokensCeiling` (32768) · `baselineTokens` (2000) · `memoryBudgetTokens` (8000) · `memoryLimit` (40) · `forceWaitReadyMs` (0) | 阈值在下一个决策点生效（含 `/ctx-status` 与 compaction engine 路径）。`compartmentGuardMode` / `compartmentEntrantTokens`（发布护栏）已退役，不再是可配置项 |
-| historian | `historianEnabled` (true) · `historian.{provider, model}`（**成对钉住**；空 = 跟随会话最后路由） | 带外摘要与 `/compact` 摘要的生成路由；GUI 卡片有「Historian provider/model」下拉（Auto = 跟随会话，推荐）。verify 之外的唯一 LLM 消耗点 |
+| historian | `historianEnabled` (true) · `historian.{provider, model}`（**成对钉住**；空 = 跟随会话最后路由）· `historian.reasoningEffort`（可选，留空 = 模型默认） | 带外摘要与 `/compact` 摘要的生成路由；GUI 卡片有「Historian provider/model」下拉（Auto = 跟随会话，推荐）和自由文本 reasoning effort 字段（仅对暴露 effort id 的模型有效，Auto 路由下同样生效）。provider 级 `OUTPUT_TOKEN_LIMIT` 空补全会走正常的预算翻倍重试。verify 之外的唯一 LLM 消耗点 |
 | 项目记忆 | `memory.{}`：`enabled`（true，0.9.0 起默认开启——`enabled: false` 退出）· `dbPath` · `project`（省略用会话 cwd）· `domainProjects` · `shareCategories` · `autoPromote` (true) · `write` (true) | `write: false` 让 `ctx_memory` 退回只读 |
 | 检索 / 向量 | `memory.embedBackfill` (true，查询侧内嵌补分) · `memory.vectorBackfill` (true，维护 tick 回填) · `memory.vectorBackfillLimit` (24 行/tick) | 向量车道任何失败 fail-open 降级 FTS |
 | S(t) 衰减 | `memory.scoring.{enabled (true)，alpha (0.4)，beta (0.2)，archiveThreshold (2)，halfLives}` | 统计恒收集；分发缺省 enabled=true 接管排序；profile-JSON only，不进设置卡片 |

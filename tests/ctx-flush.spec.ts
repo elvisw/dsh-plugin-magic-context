@@ -15,6 +15,7 @@ import { ToolCallId, createToolResultMessage } from '@deepseek-ai/dsh-llm'
 import { openStores } from '../src/index.ts'
 import type { AdapterStores } from '../src/core/stores.ts'
 import { tagPrefix } from '../src/core/tagger.ts'
+import { estimateTokens } from '../src/core/compartments.ts'
 import { tagToolResultContent } from '../src/dsh/seams.ts'
 import { landPendingDrops } from '../src/dsh/drop-landing.ts'
 import { planFlushCommand } from '../src/dsh/flush-command.ts'
@@ -345,6 +346,34 @@ describe('flush landing helper', () => {
       const visible = ctx.session.surface.nodes.map(seq => textAt(ctx, seq))
       expect(visible).toContain(`[dropped §${String(one)}§]`)
       expect(visible).toContain('§2§ body two')
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('estimates the landed token count from the original text, not the placeholder', () => {
+    const ctx = context()
+    try {
+      const one = seedResult(ctx, 'call-1', 'body one with enough text to estimate')
+      ctx.stores.queueDrop('s1', one, NOW)
+      ctx.stores.requestFlush('s1')
+      const rows: Array<{ readonly data?: Record<string, unknown> }> = []
+      const journal = {
+        info: (_kind: string, _summary: string, data?: Record<string, unknown>) => {
+          rows.push({ data })
+        },
+      } as never
+      const landing = landPendingDrops({
+        session: ctx.session,
+        sessionId: 's1',
+        stores: ctx.stores,
+        tags: [one],
+        journal,
+      })
+      expect(landing.landed).toEqual([one])
+      // The placeholder is shorter, so `> 0` would not prove the original was
+      // sampled; pin the exact estimate of the tagged body.
+      expect(rows[0]?.data?.estTokens).toBe(estimateTokens(`${tagPrefix(one)}body one with enough text to estimate`))
     } finally {
       dispose(ctx)
     }

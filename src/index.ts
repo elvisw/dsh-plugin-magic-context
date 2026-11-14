@@ -168,6 +168,16 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
    */
   const historianRouteOf = (): { provider: string; model: string } | undefined =>
     liveRoute(config.historian?.provider, config.historian?.model)
+  /**
+   * Effort is independent of the route pin: it must also apply when the
+   * historian follows the session route. Each lane merges it with the route it
+   * actually resolved (the pre-step has the live session route; the engine and
+   * /ctx-recomp merge it into their active/fallback route).
+   */
+  const historianEffortOf = (): string | undefined => {
+    const effort = liveString(config.historian?.reasoningEffort, '').trim()
+    return effort === '' ? undefined : effort
+  }
   /** Process start, for the telemetry uptime readout. */
   const startedAt = Date.now()
   const storeDir = config.dataDir ?? defaultDataDir()
@@ -276,6 +286,7 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
             ...llm === undefined ? {} : { llm },
             ...journal === undefined ? {} : { journal },
             activeRoute: historianRouteOf,
+            activeEffort: historianEffortOf,
             ...memoryRecall === undefined ? {} : { recall: memoryRecall },
             isDisposed: () => adapterDisposed,
           })
@@ -664,6 +675,7 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
       ...journal === undefined ? {} : { journal },
       ...llm === undefined ? {} : { llm },
       activeRoute: historianRouteOf,
+      activeEffort: historianEffortOf,
     })
     ctx.logger.info('magic-context dsh adapter: /ctx-status, /ctx-flush and /ctx-recomp registered')
     // The global-domain surface rides the same gate: with Magic Context's
@@ -885,6 +897,7 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
       route: historianRouteOf() === undefined
         ? 'follow-session'
         : `${historianRouteOf()!.provider}/${historianRouteOf()!.model}`,
+      reasoningEffort: historianEffortOf() ?? 'default',
     },
     journal: { enabled: journal !== undefined, mirror: journal?.mirrorPath, retentionDays: liveNumber(config.journal?.retentionDays, 30) },
     // 融合 v7 的待观察翻转（boot 行可见，巡检核对配置漂移）。
@@ -992,6 +1005,8 @@ export const Config = z.object({
   historian: z.object({
     provider: z.string().default('').volatile(),
     model: z.string().default('').volatile(),
+    /** Optional provider/model-specific reasoning effort; blank = host default. */
+    reasoningEffort: z.string().default('').volatile(),
   }),
 
   journal: z.object({

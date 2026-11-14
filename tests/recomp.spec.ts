@@ -314,6 +314,43 @@ describe('recompactCompartments', () => {
     }
   })
 
+  it('merges a live reasoning effort into the fallback route', async () => {
+    const dataDir = tempDir('mc-recomp-live-effort-')
+    const stores = openStores(dataDir)
+    const sessionId = 'session-recomp-live-effort'
+    try {
+      const created = stores.allocateCompartment(
+        sessionId,
+        oldDraft(),
+        { startSeq: 1, endSeq: 3, seqs: [1, 2, 3], tokens: 30 },
+        1,
+        Date.now(),
+      )
+      stores.markCompartmentLanded(sessionId, created.compartmentId, 99)
+      const fake = scriptLlm([DIGEST])
+      await recompactCompartments(
+        {
+          stores,
+          policy: DEFAULT_POLICY,
+          logger: noopLogger,
+          llm: fake.llm,
+          route: { provider: 'snapshot', model: 'snapshot' },
+          activeRoute: () => undefined,
+          activeEffort: () => 'low',
+        },
+        {
+          sessionId,
+          session: stubSession(sessionId),
+          contextWindow: 100_000,
+          targets: selectRecompTargets(stores, sessionId, { kind: 'all' }),
+        },
+      )
+      expect(fake.calls[0]?.request).toMatchObject({ reasoningEffort: 'low' })
+    } finally {
+      stores.close()
+    }
+  })
+
   it('selects the newest landed compartments for last:<n>', () => {
     const dataDir = tempDir('mc-recomp-last-')
     const stores = openStores(dataDir)

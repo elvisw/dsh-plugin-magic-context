@@ -116,11 +116,15 @@ function usageFrame(text: string, usage: Record<string, number>): () => AsyncIte
   }
 }
 
-const deps = (llm: HistorianLlm, calls: Call[]): unknown => ({
+const deps = (llm: HistorianLlm, calls: Call[], reasoningEffort?: string): unknown => ({
   policy: { ...DEFAULT_POLICY, historianTimeoutMs: 60_000 },
   llm,
   logger: { info: () => {}, warn: () => {} },
-  route: { provider: 'mock-historian', model: 'mock' },
+  route: {
+    provider: 'mock-historian',
+    model: 'mock',
+    ...reasoningEffort === undefined ? {} : { reasoningEffort },
+  },
   journal: recordingJournal(calls),
   timeoutMs: 60_000,
 })
@@ -341,6 +345,55 @@ describe('usage landing on the done row', () => {
     })
     const done = historianFirst(calls, 'done')!
     expect(done.data).not.toHaveProperty('usage')
+  })
+})
+
+describe('reasoning effort and provider token-limit failures', () => {
+  it('passes the configured reasoning effort through to the LLM seam', async () => {
+    const calls: Call[] = []
+    const fake = scriptLlm([frame(digest('effort'))])
+    await callHistorian(deps(fake.llm as HistorianLlm, calls, 'low') as never, {
+      sessionId: SESSION,
+      session: SESSION_STUB,
+      nodes: [node(1, 'hello')],
+    })
+    expect(fake.calls[0]?.request).toMatchObject({ reasoningEffort: 'low' })
+    expect(historianFirst(calls, 'start')?.data?.reasoningEffort).toBe('low')
+  })
+
+  it('treats a thrown OUTPUT_TOKEN_LIMIT as truncation and escalates the retry cap', async () => {
+    const calls: Call[] = []
+    const limit = Object.assign(new Error('completed without content'), { code: 'OUTPUT_TOKEN_LIMIT' })
+    const fake = scriptLlm([limit, frame(digest('retry'))])
+    await callHistorian(deps(fake.llm as HistorianLlm, calls) as never, {
+      sessionId: SESSION,
+      session: SESSION_STUB,
+      nodes: [node(1, 'hello')],
+    })
+    expect(fake.maxTokens).toEqual([8_192, 16_384])
+    expect(fake.texts[1]).toContain('cut off at the 8192-token output cap')
+    expect(historianFirst(calls, 'done')?.data?.attempts).toBe(2)
+  })
+
+  it('preserves OUTPUT_TOKEN_LIMIT from the host error finish chunk', async () => {
+    const calls: Call[] = []
+    const limitFrame = (): (() => AsyncIterable<unknown>) => async function* () {
+      yield {
+        type: 'finish',
+        reason: {
+          kind: 'error',
+          failure: { message: 'Command Code returned no answer text', code: 'OUTPUT_TOKEN_LIMIT' },
+        },
+      }
+    }
+    const fake = scriptLlm([limitFrame(), frame(digest('retry'))])
+    await callHistorian(deps(fake.llm as HistorianLlm, calls) as never, {
+      sessionId: SESSION,
+      session: SESSION_STUB,
+      nodes: [node(1, 'hello')],
+    })
+    expect(fake.maxTokens).toEqual([8_192, 16_384])
+    expect(historianFirst(calls, 'done')?.data?.attempts).toBe(2)
   })
 })
 

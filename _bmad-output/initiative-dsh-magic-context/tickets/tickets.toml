@@ -96,3 +96,15 @@ after = [6]
 hitl = false
 risk = "low"
 refine = true
+
+[[entry]]
+id = 9
+type = "story"
+title = "Historian provider token-limit retry and reasoning effort"
+description = "Makes the historian recognize the provider's pre-finish OUTPUT_TOKEN_LIMIT rejection as a truncation (so the designed 8192→16384 retry runs) and exposes historian.reasoningEffort in the settings card/config so a reasoning-heavy route can be lowered without editing the profile by hand."
+verify = "A provider failure with code OUTPUT_TOKEN_LIMIT causes a second historian attempt at double the cap and a visible failed/done pair; a configured reasoningEffort reaches the LLM seam and is journaled; blank effort is omitted and uses the host default; config schema and settings-card text field round-trip; typecheck and the full test suite pass."
+covers = []
+after = [8]
+hitl = false
+risk = "medium"
+refine = true

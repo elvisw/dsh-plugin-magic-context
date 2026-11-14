@@ -27,8 +27,11 @@ export interface MagicContextDshConfig {
    * pair. Both halves non-empty = pinned; anything else = follow the session's
    * routed model. The schema always materialises this block (empty halves by
    * default), so a `historian: {}` override is equivalent to leaving it unset.
+   * `reasoningEffort` is optional and provider/model-specific; blank means the
+   * host applies the model's default. It is trimmed, omitted when blank, and
+   * merged with whichever route the lane actually resolved (pinned or Auto).
    */
-  historian?: { provider: string; model: string }
+  historian?: { provider: string; model: string; reasoningEffort?: string }
   /** Turn the historian's out-of-band digests off (default: on). */
   historianEnabled?: boolean
   /**

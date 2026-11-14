@@ -8,6 +8,18 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
+## [Unreleased]
+
+### Added
+
+- `historian.reasoningEffort`（可选，留空 = 模型默认）与设置卡片中的自由文本字段；对暴露 effort id 的 provider/model 生效，覆盖 historian、`/compact` 与 `/ctx-recomp`。
+
+### Fixed
+
+- Historian 在 provider 于 `finish` 之前抛出 `OUTPUT_TOKEN_LIMIT` 时不再误判为 `stream-error`：现在进入正常的 truncation 重试（默认 8192 → 16384），并保留一次 run 的单个 terminal journal 行。
+- `drop-landed` 的 `estTokens` 改为在替换前采样原文，不再恒为 0。
+- `memoryStats.total` 只统计 `active`/`permanent` 行，归档行不再造成 “total 1 / verified 0 / unverified 0” 的矛盾读数。
+
 ## [0.12.1] - 2026-11-14
 
 ### Changed

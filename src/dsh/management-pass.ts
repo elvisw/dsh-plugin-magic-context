@@ -31,7 +31,7 @@ import type { PassDecision, PressurePolicy } from '../core/policy.ts'
 import type { AdapterStores, BaselineState } from '../core/stores.ts'
 import { errText } from '../core/types.ts'
 import { reclaimForEmergency } from './emergency.ts'
-import { runHistorian, type HistorianDeps, type HistorianLlm } from './historian.ts'
+import { runHistorian, type HistorianDeps, type HistorianLlm, type HistorianRoute } from './historian.ts'
 import { landPendingDrops } from './drop-landing.ts'
 import {
   enumerateSurfaceNodes,
@@ -74,10 +74,10 @@ export interface ManagementPassInput {
    */
   readonly pressureStale?: boolean
   /** Route + window facts for the historian's auxiliary call. */
-  readonly route?: { provider: string; model: string }
+  readonly route?: HistorianRoute
   readonly contextWindow?: number
   /** The historian's seam; omitted disables historian firing (tests, hosts). */
-  readonly historian?: { readonly llm: HistorianLlm; readonly now?: () => number; readonly route?: { provider: string; model: string } }
+  readonly historian?: { readonly llm: HistorianLlm; readonly now?: () => number; readonly route?: HistorianRoute }
   /** Validation-period activity journal (optional). */
   readonly journal?: Journal
   /** Project memories to inject (already rendered, in MC render order). */

@@ -82,7 +82,12 @@ export function compactedPlaceholder(compartmentId: number): string {
 
 /** Rough token estimate used for triggering and budgets (chars/4, min 1). */
 export function estimateTokens(text: string): number {
-  return Math.max(1, Math.ceil(text.length / 4))
+  return estimateTokensFromLength(text.length)
+}
+
+/** Length-only form for a surface node that already carries `textLength`. */
+export function estimateTokensFromLength(length: number): number {
+  return Math.max(1, Math.ceil(length / 4))
 }
 
 /**
