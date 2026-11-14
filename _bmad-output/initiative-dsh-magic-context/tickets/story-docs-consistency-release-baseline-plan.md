@@ -1,7 +1,7 @@
 ---
 title: "Docs consistency: release guide and upstream baseline — implementation plan"
 ticket: 7
-status: in-progress
+status: done
 ---
 
 # Docs consistency: release guide and upstream baseline — implementation plan
