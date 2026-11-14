@@ -12,7 +12,7 @@ This document records the **effective-behavior contract** between the DSH adapte
 | Magic Context | **v0.49.30** (`v0.49.30-0-g47bcd71a2`, released 2026-10-29; the alignment core is unchanged since v0.46.0 — inject-compartments/storage-memory/workspaces/search/emergency-drop/agents all 0 commits) |
 | MC store contract | shape inherited at the v95 cutover, **own lineage since 2026-10-13** (`src/core/memory-bridge.ts:45`; `MEMORY_SCHEMA_MAX_VERSION = 95`) |
 | DeepSeek Harness | **Desktop 0.2.1-rc.1** (host paths below are relative to the DSH checkout) |
-| Adapter | `dsh-plugin-magic-context` 0.11.2, own store **schema v11** (`src/core/stores.ts`) |
+| Adapter | `dsh-plugin-magic-context` 0.12.0, own store **schema v11** (`src/core/stores.ts`) |
 
 Scope split: `docs/dsh-plugin-upgrade-followup.md` says **how** to follow an
 upgrade; this file says **where we differ**. Three verdicts are used below:

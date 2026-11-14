@@ -8,11 +8,29 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
-## [Unreleased]
+## [0.12.0] - 2026-11-14
+
+**恢复语义与原版对齐。** 这个版本把上下文恢复从 fork 的“原位改写”改成原版 Magic Context 的“读取持久历史、作为新的工具结果返回”，补齐 Historian 覆盖后的原始 seq 读取与手动 `/ctx-flush`，并移除按时间删除 tag 的 fork 私有保留策略。`ctx_expand` 的行为变更是 breaking：旧 tag 不会被复活；需要继续缩减时，对新结果重新 `ctx_reduce`。
+
+### Added
+
+- `ctx_expand` 的 `message` 定位：接受当前会话的 DSH log event seq（含被 Historian shadow 的原始 `tool/result`），与 `tag`/`tags` 互斥；`[compacted §C…§]` 节点被拒。
+- `/ctx-flush` 斜杠命令：把当前会话已 pending 的 drop 标记为下一次 preStep 落地，回执区分本次新标记、此前已标记与 `pendingNext` 上界；不启动 Historian、recomp、摘要或模型调用。
+- `pending_drops.flush_requested`（schema v11）；v10 库自动迁移。
 
 ### Changed
 
-- **§N§ tag 注册表不再按时间删除**：移除了挂载时的 30 天 `pruneTags`，以及 `tags.retentionDays` 配置与 boot 快照字段。tag 行不再因为“太旧”而消失；旧 profile 里的 `tags.retentionDays` 仍可被解析但会被忽略，并每进程最多告警一次，建议从 profile 中删除该块。`journal.retentionDays` 不受影响。当前适配器没有自动的消息/会话删除路径，消息/会话删除与 compaction 状态保留仍是契约目标，不是现状。
+- **Breaking:** `ctx_expand` 不再原地恢复占位符，也不再改写旧事件；它读取持久化的原始 `tool/result`，作为新的工具结果返回并分配新 tag。旧 tag 保持 dropped；再次 reduce 旧 tag 是 no-op（`already dropped`）。
+- `ctx_expand` 正式参数为单值 `tag`；旧 `tags` 逗号/区间多 tag 形式保留为 deprecated 别名，下一 major 移除。多 tag 结果用 `\n\n---\n\n` 合并，并按请求顺序返回。
+- `ctx_expand` 成功返回 `{ok:true, restored:[tag], refused:[], content}`；失败返回 `{ok:false, restored:[], refused:[], reason}`，不再显示 “restored 0”。
+- §N§ tag 注册表不再按 30 天 TTL 删除；删除 `tags.retentionDays` 与 `AdapterStores.pruneTags`。旧 profile 中的 `tags.retentionDays` 会被忽略，且每进程最多告警一次；`journal.retentionDays` 不变。当前适配器没有自动的消息/会话删除路径，消息/会话删除与 compaction 状态保留仍是契约目标，不是现状。
+- `/ctx-flush` 在 `pre-step` 的独立 flush lane 落地，不在管理拍；同轮 execute 的 force band 会看到 flush 后的 stale 压力读数，避免按旧读数二次回收未标记内容。
+
+### Fixed
+
+- 旧 tag 在 restore 后再次 `ctx_reduce` 不再显示 “Queued” 假回执：drop 状态以持久化 `pending_drops` 为准，历史占位符离开 surface 后仍能判定 `already dropped` / `already queued`。
+- Historian 发布 `[compacted §C…§]` 覆盖占位符后，仍可通过 `message` 从原始日志读取原文；不重跑原工具、不改写摘要或 compartment。
+- `ctx_expand` 的多 tag 别名按请求顺序拼接，不再被范围解析的升序排序打乱。
 
 ## [0.11.2] - 2026-11-11
 
@@ -173,7 +191,11 @@ npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布�
 - 插件数据目录沿用上游命名空间（`~/.local/share/cortexkit/magic-context-dsh-poc/`）以保持出处
   连续，自 2026-10-13 起与上游 MC 数据库分家，插件自有 `memories.db` 无共享兼容义务。
 
-[Unreleased]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.10.1...HEAD
+[Unreleased]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.11.2...v0.12.0
+[0.11.2]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.11.1...v0.11.2
+[0.11.1]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.11.0...v0.11.1
+[0.11.0]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.10.1...v0.11.0
 [0.10.1]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/wk544863858/dsh-plugin-magic-context/releases/tag/v0.9.0
