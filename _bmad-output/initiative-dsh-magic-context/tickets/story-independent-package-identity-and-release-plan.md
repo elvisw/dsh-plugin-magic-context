@@ -6,6 +6,11 @@ status: in-progress
 
 # Independent package identity and release — implementation plan
 
+## Progress
+
+- 2026-11-14: Phase 1–3 complete. Identity sweep, build, scoped tarball, extracted-tarball grep, isolated DSH `plugin add`, and real-model smoke (`PACKAGE_IDENTITY_OK`) pass. Commit `b5e8cd2`.
+- Phase 4–5 blocked on npm authentication: `npm whoami` returns `ENEEDAUTH`, and `@elvisw/dsh-plugin-magic-context` is still unpublished. No bootstrap, trust binding, tag, or publish has been performed.
+
 ## Goal
 
 Ship the fork as `@elvisw/dsh-plugin-magic-context@0.12.0` without changing the loader row id (`magic-context-dsh`), settings namespace, plugin data directory, or T2–T5 behavior. The existing `dsh-plugin-magic-context` package is not modified.
