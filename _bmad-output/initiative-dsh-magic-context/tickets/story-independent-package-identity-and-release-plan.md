@@ -9,7 +9,8 @@ status: in-progress
 ## Progress
 
 - 2026-11-14: Phase 1–3 complete. Identity sweep, build, scoped tarball, extracted-tarball grep, isolated DSH `plugin add`, and real-model smoke (`PACKAGE_IDENTITY_OK`) pass. Commit `b5e8cd2`.
-- Phase 4–5 blocked on npm authentication: `npm whoami` returns `ENEEDAUTH`, and `@elvisw/dsh-plugin-magic-context` is still unpublished. No bootstrap, trust binding, tag, or publish has been performed.
+- Phase 4 bootstrap: `0.0.0-bootstrap.0` published to npm on 2026-11-14 (tag `bootstrap`; `latest` temporarily points at it until 0.12.0 ships). `npm view` confirms the version. Local version restored to `0.12.0`.
+- Trusted Publisher binding is blocked on npm 2FA: `npm trust github ...` and `npm trust list ...` both return `EOTP` in this non-interactive shell. The trust relationship is not yet created.
 
 ## Goal
 
