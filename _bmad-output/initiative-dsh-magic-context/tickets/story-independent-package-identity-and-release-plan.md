@@ -9,9 +9,12 @@ status: in-progress
 ## Progress
 
 - 2026-11-14: Phase 1–3 complete. Identity sweep, build, scoped tarball, extracted-tarball grep, isolated DSH `plugin add`, and real-model smoke (`PACKAGE_IDENTITY_OK`) pass. Commit `b5e8cd2`.
-- Phase 4 bootstrap: `0.0.0-bootstrap.0` published to npm on 2026-11-14 (tag `bootstrap`; `latest` temporarily points at it until 0.12.0 ships). `npm view` confirms the version. Local version restored to `0.12.0`.
+- Phase 4 bootstrap: `0.0.0-bootstrap.0` published to npm on 2026-11-14 (tag `bootstrap`; `latest` temporarily pointed at it until 0.12.0 shipped). The operator used npm web authentication/2FA; no temporary token was created, so no token needed revocation. Local version restored to `0.12.0`.
 - Trusted Publisher binding is complete: `npm trust list @elvisw/dsh-plugin-magic-context` shows `type: github`, `file: release.yml`, `repository: elvisw/dsh-plugin-magic-context`, `permissions: publish, stage publish`.
-- `v0.12.0` tag has not been created. HEAD `3833837` is on `main`, `package.json` is `0.12.0`, and `release.yml` guards tag/version match, ancestor-of-main, and not-already-published before OIDC publish.
+- `v0.12.0` released: tag peeled to `99ab6b7`, Release run `43593315877` succeeded through typecheck/test/build/i18n/pack/publish, `npm view` shows `0.12.0` with `latest: 0.12.0`, provenance predicate `https://slsa.dev/provenance/v1`, and `gitHead` `99ab6b7`.
+- Registry tarball verified: release-tree local pack and registry tarball are byte-identical (same SHA-256/SHA-1, 65/65 files); all 55 `lib/*.js` hashes and `cordis.patch.yml` match the local build. A fresh isolated DSH profile installed `@elvisw/dsh-plugin-magic-context@0.12.0` from the registry and completed a real-model smoke (`REGISTRY_PACKAGE_OK`).
+- Fork Actions incident: the first tag push created no run; repository Actions were enabled and the tag was re-pushed (same commit). Run `43593315877` is the only 0.12.0 release run.
+- 0.12.1 docs-only patch: tag `v0.12.1` → `d35a3bc`, run `43594965868` succeeded, `latest: 0.12.1`, shasum `46ef2590…`; local and registry tarballs byte-identical (SHA-256 `341e92c8…`).
 
 ## Goal
 
@@ -65,6 +68,8 @@ Ship the fork as `@elvisw/dsh-plugin-magic-context@0.12.0` without changing the 
 
 ## Phase 4 — Bootstrap and trust (HITL, authorized)
 
+> Execution note (supersedes steps 2 and 4): the operator published via npm web authentication/2FA. No temporary granular token was created and none was revoked. The original token steps are retained below as plan history only.
+
 1. Confirm npm login identity owns `@elvisw`; confirm account-level 2FA.
 2. Create a temporary granular token with publish permission for `@elvisw`; store it only in the shell environment.
 3. `npm publish --provenance=false --tag bootstrap` from a tree whose version is `0.0.0-bootstrap.0` (temporary version edit, not committed).
@@ -77,7 +82,7 @@ Ship the fork as `@elvisw/dsh-plugin-magic-context@0.12.0` without changing the 
 1. Restore `0.12.0` in `package.json`/lock (if the bootstrap edit was local).
 2. Ensure `main` is clean and green: `npm test`, `npm run typecheck`, `npm run build`, `npm run check:i18n`.
 3. Commit the identity changes; push `main`.
-4. Create and push `v0.12.0` only after explicit authorization.
+4. Create and push `v0.12.0` only after explicit authorization. (Actual execution also shipped a docs-only `v0.12.1` patch through the same workflow.)
 5. Wait for `.github/workflows/release.yml`; verify publish + provenance.
 6. Verify registry:
    - `npm view @elvisw/dsh-plugin-magic-context@0.12.0 version dist.integrity`

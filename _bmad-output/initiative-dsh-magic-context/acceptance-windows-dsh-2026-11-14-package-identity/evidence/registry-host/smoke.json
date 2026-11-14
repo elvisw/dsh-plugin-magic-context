@@ -1,0 +1,21 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-pkgreg-20261114-201343\\overlays\\base-control.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "This is an isolated registry-package smoke test. Reply with exactly REGISTRY_PACKAGE_OK and nothing else."
+  ],
+  "exit_code": 0,
+  "seconds": 36.643,
+  "session_id": "session-528f658c-b50c-413b-9a36-c1d9f14f0fb8",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "REGISTRY_PACKAGE_OK"
+}

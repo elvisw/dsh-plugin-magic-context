@@ -1,0 +1,9 @@
+repo HEAD: d35a3bcd883b96ebb75f2bec27af92d13a34ddd1
+command: rg -n --pcre2 "(?<!@elvisw/)dsh-plugin-magic-context" lib cordis.patch.yml
+
+exit=1
+note: tools/install-magic-context.bat intentionally contains the tarball prefix elvisw-dsh-plugin-magic-context (npm pack filename), not a runtime specifier.
+
+command: rg -n --pcre2 "(?<!@elvisw/)dsh-plugin-magic-context" package/lib package/cordis.patch.yml
+
+exit=1

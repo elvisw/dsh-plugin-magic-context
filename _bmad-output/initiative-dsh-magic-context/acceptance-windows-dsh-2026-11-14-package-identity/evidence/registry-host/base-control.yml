@@ -1,0 +1,33 @@
+[
+  {
+    "id": "magic-context-dsh",
+    "name": "@elvisw/dsh-plugin-magic-context",
+    "config": {
+      "dataDir": "C:/Users/elvis/AppData/Local/Temp/opencode/dsh-mc-pkgreg-20261114-201343/plugin-data",
+      "registerCompactionEngine": false,
+      "historianEnabled": false,
+      "maintenance": {
+        "enabled": false
+      },
+      "memory": {
+        "embedBackfill": false,
+        "vectorBackfill": false,
+        "global": {
+          "machine": {
+            "enabled": false
+          },
+          "user": {
+            "render": false,
+            "collect": false,
+            "review": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "session-title-llm",
+    "name": "@deepseek-ai/dsh-session-title-first-prompt-llm",
+    "disabled": true
+  }
+]

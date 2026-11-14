@@ -1,0 +1,20 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-pkgreg-20261114-201343",
+  "spec": "@elvisw/dsh-plugin-magic-context@0.12.0",
+  "bootstrap_exit_code": 0,
+  "add_exit_code": 0,
+  "dump_exit_code": 0,
+  "profile_dependencies": {
+    "@elvisw/dsh-plugin-magic-context": "0.12.0"
+  },
+  "profile_bundles": [
+    "@deepseek-ai/dsh-base",
+    "@deepseek-ai/dsh-headless",
+    "@elvisw/dsh-plugin-magic-context"
+  ],
+  "new_installed": true,
+  "new_installed_package_name": "@elvisw/dsh-plugin-magic-context",
+  "new_installed_version": "0.12.0",
+  "dump_has_new_name": true,
+  "deepseek_key_present": true
+}

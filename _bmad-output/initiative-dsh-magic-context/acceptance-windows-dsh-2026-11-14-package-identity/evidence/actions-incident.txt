@@ -1,0 +1,11 @@
+Operator statement (2026-11-14): "因为之前这个仓库的github action没有启用，我后面启用了。"
+
+Observed sequence:
+1. `git push origin v0.12.0` created the tag but no workflow run existed.
+2. Repository Actions permissions were then enabled; current API state:
+   {"enabled":true,"allowed_actions":"all","sha_pinning_required":false}
+3. The same tag was deleted and re-pushed (same peeled commit 99ab6b7);
+   run 43593315877 was created and published successfully.
+
+No release was produced by the first tag push. The tag's final peeled commit is
+unchanged.

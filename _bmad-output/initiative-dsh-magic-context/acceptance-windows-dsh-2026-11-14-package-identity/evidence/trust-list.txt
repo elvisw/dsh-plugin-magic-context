@@ -1,0 +1,11 @@
+Source: operator-supplied `npm trust list @elvisw/dsh-plugin-magic-context` output,
+2026-11-14. In this non-interactive shell the same command returns EOTP, so the
+listing cannot be re-read here. The successful OIDC publish (run 43593315877)
+independently proves a trusted publisher matching this repository and
+`release.yml` exists.
+
+type: github
+id: 3fc60ccd-836d-4f73-9495-421084b2a181
+file: release.yml
+repository: elvisw/dsh-plugin-magic-context
+permissions: publish, stage publish

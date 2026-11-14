@@ -1,0 +1,20 @@
+{
+  "registry_tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\registry-012\\elvisw-dsh-plugin-magic-context-0.12.0.tgz",
+  "local_release_tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\local-release-012\\elvisw-dsh-plugin-magic-context-0.12.0.tgz",
+  "registry_tarball_sha256": "7667c6074e496070c762712e7c55a269c3b062ebd2ece683423a01143e2ed16b",
+  "local_release_tarball_sha256": "7667c6074e496070c762712e7c55a269c3b062ebd2ece683423a01143e2ed16b",
+  "tarballs_byte_identical": true,
+  "registry_tarball_shasum": "c919131f768099f2b6477a034bb1f73b76c6c61f",
+  "local_release_tarball_shasum": "c919131f768099f2b6477a034bb1f73b76c6c61f",
+  "expected_shasum": "c919131f768099f2b6477a034bb1f73b76c6c61f",
+  "shasum_matches": true,
+  "expected_integrity": "sha512-ICGZVB1xVREDwjFokMzZT+7v2RCkBxkyk4uyjKMy7Ybg8bSMJ8WTU6NyvN44Pum9GPn1W+vsnGuUM6X1etO4qA==",
+  "package_name": "@elvisw/dsh-plugin-magic-context",
+  "package_version": "0.12.0",
+  "file_count": 65,
+  "lib_file_count": 55,
+  "lib_mismatches": [],
+  "cordis_patch_identical": true,
+  "registry_lib_sha256_tool_bridge": "7bd3d7a1bfcf51eb6b793a69e5bb64efed21c12857dee1570f470a0efb03564d",
+  "repo_lib_sha256_tool_bridge": "7bd3d7a1bfcf51eb6b793a69e5bb64efed21c12857dee1570f470a0efb03564d"
+}

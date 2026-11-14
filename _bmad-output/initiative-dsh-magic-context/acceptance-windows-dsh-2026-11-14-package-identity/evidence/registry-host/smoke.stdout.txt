@@ -1,0 +1,8 @@
+{"type":"session","sessionId":"session-528f658c-b50c-413b-9a36-c1d9f14f0fb8","cwd":"C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-pkgreg-20261114-201343\\workspace"}
+{"type":"status","phase":"turn_start","turn":1}
+{"type":"status","phase":"step_start","turn":1,"step":1}
+{"type":"thinking","text":"The user wants exactly \"REGISTRY_PACKAGE_OK\" and nothing else. This is a smoke test. No tools needed. Just reply."}
+{"type":"text","text":"REGISTRY_PACKAGE_OK"}
+{"type":"status","phase":"step_end","turn":1,"step":1,"usage":{"inputTokens":559,"outputTokens":38,"cacheReadTokens":7680,"cacheWriteTokens":0,"totalTokens":8277}}
+{"type":"status","phase":"turn_end","turn":1,"reason":{"kind":"completed"}}
+{"type":"final","sessionId":"session-528f658c-b50c-413b-9a36-c1d9f14f0fb8","reason":{"kind":"completed"},"text":"REGISTRY_PACKAGE_OK"}

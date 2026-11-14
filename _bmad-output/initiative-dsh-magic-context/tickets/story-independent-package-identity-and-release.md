@@ -84,7 +84,7 @@ This ticket changes package identity and release plumbing. It does **not** renam
 1. **Identity sweep (no model):** `git grep` for the old name, update only current runtime/user-facing files, leave historical evidence and old acceptance reports untouched.
 2. **Package inspection (no model):** `npm run build`, `npm pack --dry-run`, inspect `package.json` and runtime files inside the tarball.
 3. **Isolated host install (real model):** temp DSH home/profile, install the tarball by path, verify boot/loader/settings namespace, run one smoke prompt. Record the model route and sentinel.
-4. **Bootstrap (authorized):** log in/confirm scope and 2FA; publish `0.0.0-bootstrap.0` with a temporary granular token, `--provenance=false`, and `--tag bootstrap`; revoke the token.
+4. **Bootstrap (authorized):** log in/confirm scope and 2FA; publish `0.0.0-bootstrap.0` with `--provenance=false` and `--tag bootstrap`. *(Execution note: the operator published via npm web authentication/2FA; no temporary granular token was created or revoked. The original token wording is retained as plan history.)*
 5. **Bind trusted publisher (authorized):** `npm trust github @elvisw/dsh-plugin-magic-context --file release.yml --repo elvisw/dsh-plugin-magic-context --allow-publish`; verify with `npm trust list` that the repo/workflow and publish permission are present.
 6. **Release (authorized):** push `v0.12.0` only after `main` is green; wait for Release; verify registry, unpacked hashes, and provenance.
 7. **Regression:** run full test/typecheck/build/i18n and compare artifact identity before/after.
