@@ -1,6 +1,6 @@
 # 独立包名与发布
 
-本仓库从 `0.12.0` 起使用 npm 包名 **`@elvisw/dsh-plugin-magic-context`**。上游包 `dsh-plugin-magic-context` 属于另一位维护者，本 fork 不修改、不覆盖它。
+本仓库从 `0.12.0` 起使用 npm 包名 **`@elvisw/dsh-plugin-magic-context`**；`0.12.1` 是同一代码线的 docs-only patch。上游包 `dsh-plugin-magic-context` 属于另一位维护者，本 fork 不修改、不覆盖它。
 
 ## 用户迁移
 
@@ -24,15 +24,15 @@ dsh plugin --profile desktop add @elvisw/dsh-plugin-magic-context
 npm 的 Trusted Publishing 只能绑定到已经存在的包，因此首次发布需要一次性的 bootstrap：
 
 1. 确认 npm 账号拥有 `@elvisw` scope，并已开启 2FA。
-2. 在**不提交**的临时版本上执行：
+2. 在**不提交**的临时版本上，于交互式终端执行：
 
    ```bash
    npm version 0.0.0-bootstrap.0 --no-git-tag-version
    npm publish --provenance=false --tag bootstrap
    ```
 
-   `--provenance=false` 是必要的：本地 token 发布不满足 provenance 的 CI 条件；`--tag bootstrap` 确保它不会成为 `latest`。
-3. 立即吊销临时 token。
+   `--provenance=false` 是必要的：本地发布不满足 provenance 的 CI 条件；`--tag bootstrap` 确保它不会成为 `latest`。本次首次发布使用 npm 网页认证/2FA 完成，没有创建临时 token；npm 会提示作者在浏览器中确认。
+3. 只有在无法交互、必须使用临时 granular token（需要 `@elvisw` 的 publish 权限）时，才在发布后立即吊销该 token。不要把“吊销 token”当成每次 bootstrap 的固定步骤。
 4. 绑定 Trusted Publisher：
 
    ```bash
@@ -43,18 +43,19 @@ npm 的 Trusted Publishing 只能绑定到已经存在的包，因此首次发�
    ```
 
 5. 用 `npm trust list @elvisw/dsh-plugin-magic-context` 确认 repo、workflow 与 publish 权限。
-6. 恢复仓库内的 `0.12.0`，提交并推送 `main`；只有确认 `main` 全绿后才创建并推送 `v0.12.0`。
+6. 恢复仓库内 `package.json` 的正式版本（当前 `0.12.1`，以仓库为准），提交并推送 `main`；只有确认 `main` 全绿后才创建并推送对应的 `v<version>` tag。
 
-正式发布必须由 tag 触发 `.github/workflows/release.yml` 的 OIDC 流程；不要手工 `npm publish` `0.12.0`，否则会消耗版本号且没有 provenance，release workflow 的“already published”守卫会拒绝再次发布。
+正式发布必须由 tag 触发 `.github/workflows/release.yml` 的 OIDC 流程；不要手工 `npm publish <version>`，否则会消耗版本号且没有 provenance，release workflow 的“already published”守卫会拒绝再次发布。
 
 ## 发布后核对
 
 ```bash
-npm view @elvisw/dsh-plugin-magic-context@0.12.0 version dist.integrity
+npm view @elvisw/dsh-plugin-magic-context@0.12.1 version dist.integrity
+npm view @elvisw/dsh-plugin-magic-context dist-tags
 npm trust list @elvisw/dsh-plugin-magic-context
 ```
 
-`dist.integrity` 只作记录；真正的内容一致性要解包 registry tarball，与本地 `npm pack` 产物逐文件比较 SHA-256。还要确认 `npm view ... dist.attestations` 存在，并且上游 `dsh-plugin-magic-context` 未被修改。
+`dist.integrity` 只作记录；真正的内容一致性要解包 registry tarball，与本地 `npm pack` 产物逐文件比较 SHA-256。还要确认 `dist-tags.latest` 指向正式版本、`dist.attestations` 存在，并且上游 `dsh-plugin-magic-context` 未被修改。
 
 ## 不改变的东西
 

@@ -72,3 +72,15 @@ after = [5]
 hitl = true
 risk = "high"
 refine = true
+
+[[entry]]
+id = 7
+type = "story"
+title = "Docs consistency: release guide and upstream baseline"
+description = "Aligns the release guide with the actual web-auth bootstrap and 0.12.1 release, and separates the last line-verified upstream target (v0.49.30) from the decision baseline (v0.49.55, not swept). Documentation only; no code, package version, or npm publish."
+verify = "The release guide no longer requires a token revocation unconditionally and no longer presents 0.12.0 as current; PARITY.md states both v0.49.30 (last verified) and v0.49.55 (decision baseline, unswept) without claiming parity; historical upgrade/handoff docs carry baseline notes; packaged README, package.json, lib, and acceptance evidence are unchanged."
+covers = []
+after = [6]
+hitl = false
+risk = "low"
+refine = true
