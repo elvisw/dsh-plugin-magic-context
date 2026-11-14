@@ -10,7 +10,8 @@ status: in-progress
 
 - 2026-11-14: Phase 1–3 complete. Identity sweep, build, scoped tarball, extracted-tarball grep, isolated DSH `plugin add`, and real-model smoke (`PACKAGE_IDENTITY_OK`) pass. Commit `b5e8cd2`.
 - Phase 4 bootstrap: `0.0.0-bootstrap.0` published to npm on 2026-11-14 (tag `bootstrap`; `latest` temporarily points at it until 0.12.0 ships). `npm view` confirms the version. Local version restored to `0.12.0`.
-- Trusted Publisher binding is blocked on npm 2FA: `npm trust github ...` and `npm trust list ...` both return `EOTP` in this non-interactive shell. The trust relationship is not yet created.
+- Trusted Publisher binding is complete: `npm trust list @elvisw/dsh-plugin-magic-context` shows `type: github`, `file: release.yml`, `repository: elvisw/dsh-plugin-magic-context`, `permissions: publish, stage publish`.
+- `v0.12.0` tag has not been created. HEAD `3833837` is on `main`, `package.json` is `0.12.0`, and `release.yml` guards tag/version match, ancestor-of-main, and not-already-published before OIDC publish.
 
 ## Goal
 
