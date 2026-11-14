@@ -41,7 +41,7 @@ interface TagVerdict {
   readonly reason?: string
 }
 
-type ExpandArgs = { readonly tag?: string; readonly tags?: string }
+type ExpandArgs = { readonly tag?: string; readonly tags?: string; readonly message?: string }
 type ReduceArgs = { readonly drop: string }
 
 interface TestContext {
@@ -98,6 +98,24 @@ async function expand(
     text: textOf(content),
     refused: (result as { refused?: TagVerdict[] }).refused ?? [],
   }
+}
+
+function expectMessageFailure(
+  expanded: { readonly result: unknown },
+  reason: string,
+): void {
+  const payload = expanded.result as {
+    readonly ok?: boolean
+    readonly restored?: number[]
+    readonly refused?: TagVerdict[]
+    readonly content?: unknown
+    readonly reason?: string
+  }
+  expect(payload.ok).toBe(false)
+  expect(payload.restored).toEqual([])
+  expect(payload.refused).toEqual([])
+  expect(payload.content).toBeUndefined()
+  expect(payload.reason).toBe(reason)
 }
 
 async function reduce(
@@ -295,6 +313,204 @@ describe('result-return expand', () => {
       const expanded = await expand(ctx.stores, ctx.session, { tag: '1' })
       expect(expanded.refused).toEqual([])
       expect(expanded.text).toBe('§1§ emergency payload')
+    } finally {
+      dispose(ctx)
+    }
+  })
+})
+
+describe('message locator', () => {
+  it('resolves the original and placeholder seqs after a simulated publish', async () => {
+    const ctx = context('mc-expand-message-publish')
+    try {
+      const seeded = seedResult(ctx, 'call-1', 'message payload')
+      expect(seeded.seq).toBe(0)
+      const placeholderSeq = landDrop(ctx, 'call-1', seeded.tag, seeded.seq)
+      // Simulate the publish replacement; the original and placeholder events
+      // stay in the log, but neither is a live surface node.
+      const compactedSeq = ctx.session.append('user/message', {
+        id: 'mc-message-compacted',
+        role: 'user',
+        content: [{ type: 'text', text: '[compacted §C1§]' }],
+        source: { kind: 'magic-context', form: 'notice', summary: 'compacted' },
+      } as never, {
+        surfaceOp: { op: 'replace', startSeq: placeholderSeq, endSeq: placeholderSeq },
+        sourceEventSeqs: [placeholderSeq],
+      }).seq
+
+      const byOriginal = await expand(ctx.stores, ctx.session, { message: String(seeded.seq) })
+      expect(byOriginal.refused).toEqual([])
+      expect((byOriginal.result as { restored?: number[] }).restored).toEqual([1])
+      expect(byOriginal.text).toBe('§1§ message payload')
+
+      const byPlaceholder = await expand(ctx.stores, ctx.session, { message: String(placeholderSeq) })
+      expect(byPlaceholder.refused).toEqual([])
+      expect((byPlaceholder.result as { restored?: number[] }).restored).toEqual([1])
+      expect(byPlaceholder.text).toBe('§1§ message payload')
+
+      const byCompactedNode = await expand(ctx.stores, ctx.session, { message: String(compactedSeq) })
+      expectMessageFailure(byCompactedNode, 'not a tool-result message')
+
+      expect(ctx.stores.dropState(ctx.session.id, 1)).toBe('landed')
+      expect(ctx.stores.listPendingDrops(ctx.session.id)).toEqual([])
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('refuses active and pending items through the same drop gate', async () => {
+    const ctx = context('mc-expand-message-state')
+    try {
+      const active = seedResult(ctx, 'call-active', 'active payload')
+      const activeExpand = await expand(ctx.stores, ctx.session, { message: String(active.seq) })
+      expectMessageFailure(activeExpand, 'not dropped')
+
+      ctx.stores.queueDrop(ctx.session.id, active.tag, Date.now())
+      const pendingExpand = await expand(ctx.stores, ctx.session, { message: String(active.seq) })
+      expectMessageFailure(pendingExpand, 'not dropped yet')
+      expect(ctx.stores.dropState(ctx.session.id, active.tag)).toBe('pending')
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('expands an emergency drop through its call-level placeholder evidence', async () => {
+    const ctx = context('mc-expand-message-emergency')
+    try {
+      const seeded = seedResult(ctx, 'call-emergency', 'emergency message payload')
+      replaceToolResultContent(ctx.session, seeded.seq, dropPlaceholderContent(seeded.tag))
+      expect(ctx.stores.dropState(ctx.session.id, seeded.tag)).toBe('none')
+
+      const expanded = await expand(ctx.stores, ctx.session, { message: String(seeded.seq) })
+      expect(expanded.refused).toEqual([])
+      expect(expanded.text).toBe('§1§ emergency message payload')
+      expect(ctx.stores.dropState(ctx.session.id, seeded.tag)).toBe('none')
+      expect(ctx.stores.listPendingDrops(ctx.session.id)).toEqual([])
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('names unknown, non-tool, untagged, deleted-tag, and missing-source failures', async () => {
+    const unknownCtx = context('mc-expand-message-unknown')
+    try {
+      const unknown = await expand(unknownCtx.stores, unknownCtx.session, { message: '999' })
+      expectMessageFailure(unknown, 'no such message')
+
+      const other = Session.create(SessionId('mc-expand-message-other'))
+      other.append('user/message', {
+        id: 'mc-other',
+        role: 'user',
+        content: [{ type: 'text', text: 'other session event' }],
+        source: { kind: 'user' },
+      } as never, { surfaceOp: 'append' })
+      const foreign = await expand(unknownCtx.stores, unknownCtx.session, { message: '0' })
+      expectMessageFailure(foreign, 'no such message')
+    } finally {
+      dispose(unknownCtx)
+    }
+
+    const nonToolCtx = context('mc-expand-message-non-tool')
+    try {
+      const seq = nonToolCtx.session.append('user/message', {
+        id: 'mc-not-tool',
+        role: 'user',
+        content: [{ type: 'text', text: 'not a tool result' }],
+        source: { kind: 'user' },
+      } as never, { surfaceOp: 'append' }).seq
+      const nonTool = await expand(nonToolCtx.stores, nonToolCtx.session, { message: String(seq) })
+      expectMessageFailure(nonTool, 'not a tool-result message')
+    } finally {
+      dispose(nonToolCtx)
+    }
+
+    const untaggedCtx = context('mc-expand-message-untagged')
+    try {
+      const seq = untaggedCtx.session.append('tool/result', {
+        turn: 1,
+        step: 1,
+        message: createToolResultMessage({
+          callId: ToolCallId('call-untagged'),
+          content: [{ type: 'text', text: 'no tag row' }],
+          isError: false,
+        }),
+      }, { surfaceOp: 'append' }).seq
+      const untagged = await expand(untaggedCtx.stores, untaggedCtx.session, { message: String(seq) })
+      expectMessageFailure(untagged, 'not a tool-result tag')
+    } finally {
+      dispose(untaggedCtx)
+    }
+
+    const deletedCtx = context('mc-expand-message-deleted-tag')
+    try {
+      const seeded = seedResult(deletedCtx, 'call-deleted', 'deleted tag payload')
+      landDrop(deletedCtx, 'call-deleted', seeded.tag, seeded.seq)
+      deletedCtx.stores.pruneTags(Date.now() + 1_000)
+      expect(deletedCtx.stores.getTag(deletedCtx.session.id, {
+        kind: 'tool-result',
+        callId: 'call-deleted',
+      })).toBeUndefined()
+      const deleted = await expand(deletedCtx.stores, deletedCtx.session, { message: String(seeded.seq) })
+      expectMessageFailure(deleted, 'tag no longer available')
+    } finally {
+      dispose(deletedCtx)
+    }
+
+    const noSourceCtx = context('mc-expand-message-no-source')
+    try {
+      const source = noSourceCtx.session.append('user/message', {
+        id: 'mc-message-source',
+        role: 'user',
+        content: [{ type: 'text', text: 'not a tool result' }],
+        source: { kind: 'user' },
+      } as never, { surfaceOp: 'append' }).seq
+      const placeholderSeq = noSourceCtx.session.append('tool/result', {
+        turn: 1,
+        step: 1,
+        message: createToolResultMessage({
+          callId: ToolCallId('call-message-lost'),
+          content: dropPlaceholderContent(1),
+          isError: false,
+        }),
+      }, { surfaceOp: 'append', sourceEventSeqs: [source] }).seq
+      noSourceCtx.stores.allocateTag(noSourceCtx.session.id, {
+        kind: 'tool-result',
+        callId: 'call-message-lost',
+      }, Date.now())
+      noSourceCtx.stores.queueDrop(noSourceCtx.session.id, 1, Date.now())
+      noSourceCtx.stores.markDropLanded(noSourceCtx.session.id, 1, placeholderSeq)
+      const noSource = await expand(noSourceCtx.stores, noSourceCtx.session, { message: String(placeholderSeq) })
+      expectMessageFailure(noSource, 'raw source unavailable')
+    } finally {
+      dispose(noSourceCtx)
+    }
+  })
+
+  it('validates message syntax and locator exclusivity', async () => {
+    const ctx = context('mc-expand-message-shape')
+    try {
+      for (const message of ['', '-1', '1,2', '1-2', ' 1', '1 ', '01', '+1', 'abc']) {
+        const expanded = await expand(ctx.stores, ctx.session, { message })
+        expect(expanded.text).toContain('message must be a non-negative decimal integer string')
+      }
+      const zero = await expand(ctx.stores, ctx.session, { message: '0' })
+      expectMessageFailure(zero, 'no such message')
+      const unsafe = await expand(ctx.stores, ctx.session, { message: '999999999999999999999999' })
+      expect(unsafe.text).toContain('outside the safe integer range')
+
+      const withTag = await expand(ctx.stores, ctx.session, { tag: '1', message: '1' })
+      expect(withTag.text).toContain('pass either tag, tags, or message')
+      const withTags = await expand(ctx.stores, ctx.session, { tags: '1', message: '1' })
+      expect(withTags.text).toContain('pass either tag, tags, or message')
+      const bothTags = await expand(ctx.stores, ctx.session, { tag: '1', tags: '1', message: '1' })
+      expect(bothTags.text).toContain('pass either tag or tags, not both')
+
+      // An empty optional string is "unset" when another locator is present.
+      const emptyWithTag = await expand(ctx.stores, ctx.session, { tag: '1', message: '' })
+      expect(emptyWithTag.text).toContain('no such tag')
+      expect(emptyWithTag.text).not.toContain('not more than one')
+      const emptyWithTags = await expand(ctx.stores, ctx.session, { tags: '1', message: '' })
+      expect(emptyWithTags.text).toContain('no such tag')
     } finally {
       dispose(ctx)
     }
@@ -541,6 +757,9 @@ describe('refusals are named and never fabricate content', () => {
       expect(expanded.refused).toEqual([])
       expect((expanded.result as { reason?: string }).reason).toBe('no-session')
       expect(expanded.text).toBe('ctx_expand refused: no-session.')
+
+      const byMessage = await expand(ctx.stores, undefined, { message: '1' })
+      expectMessageFailure(byMessage, 'no-session')
     } finally {
       dispose(ctx)
     }
@@ -569,10 +788,11 @@ describe('a unit-level restart reads the same original', () => {
     const session = Session.create(SessionId('mc-expand-restart'))
     try {
       const first = openStores(dataDir)
+      let originalSeq: SessionSeq
       let placeholderSeq: SessionSeq
       try {
         const tag = first.allocateTag(session.id, { kind: 'tool-result', callId: 'call-1' }, Date.now())
-        const seq = session.append('tool/result', {
+        originalSeq = session.append('tool/result', {
           turn: 1,
           step: 1,
           message: createToolResultMessage({
@@ -581,7 +801,7 @@ describe('a unit-level restart reads the same original', () => {
             isError: false,
           }),
         }, { surfaceOp: 'append' }).seq
-        placeholderSeq = replaceToolResultContent(session, seq, dropPlaceholderContent(tag))
+        placeholderSeq = replaceToolResultContent(session, originalSeq, dropPlaceholderContent(tag))
         first.queueDrop(session.id, tag, Date.now())
         first.markDropLanded(session.id, tag, placeholderSeq)
       } finally {
@@ -597,6 +817,13 @@ describe('a unit-level restart reads the same original', () => {
         expect(expanded.refused).toEqual([])
         expect(expanded.text).toBe('§1§ restart payload')
         expect(second.dropState(session.id, 1)).toBe('landed')
+
+        const byOriginal = await expand(second, replayed, { message: String(originalSeq) })
+        expect(byOriginal.text).toBe('§1§ restart payload')
+        const byPlaceholder = await expand(second, replayed, { message: String(placeholderSeq) })
+        expect(byPlaceholder.text).toBe('§1§ restart payload')
+        expect(second.dropState(session.id, 1)).toBe('landed')
+        expect(second.listPendingDrops(session.id)).toEqual([])
       } finally {
         second.close()
       }

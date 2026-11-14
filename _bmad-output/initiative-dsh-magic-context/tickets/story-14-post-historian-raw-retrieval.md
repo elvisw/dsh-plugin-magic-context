@@ -44,7 +44,7 @@ Verify: In a fresh session, drop a small tool result, let a real Historian publi
 4. **Message is the DSH log event seq, including shadowed events**
    **Given** the caller supplies `message`
    **When** the argument is parsed
-   **Then** only a positive decimal integer string matching `/^[1-9]\d*$/` is accepted; zero, negatives, comma lists, ranges, empty strings, surrounding whitespace, and non-numeric values are refused with a diagnostic
+   **Then** only a non-negative decimal integer string matching `/^(?:0|[1-9]\d*)$/` is accepted (DSH log seq can be 0); negatives, comma lists, ranges, surrounding whitespace, `01`, `+1`, non-numeric values, and unsafe integers are refused with a diagnostic; an empty `message` alone is refused, while an empty `message` alongside a non-empty `tag`/`tags` is treated as absent (the tag path proceeds)
    **And** docs state explicitly that `message` is the DSH log event seq, not the original `cortexkit/magic-context` message number
    **And** docs state that it may name a shadowed event (for example the original `tool/result` after Historian), but the `[compacted §C1§]` node itself is not a `tool/result` and must not be passed
    **And** docs state the seq is supplied by the harness/UI/journal; the model normally sees only tags.
@@ -78,7 +78,7 @@ Verify: In a fresh session, drop a small tool result, let a real Historian publi
    **And** before the pre-expand snapshot, the gate stops the next pre-step/model request; if that cannot be stopped, it must block publish and prove no ready compartment is publishable. Disabling Historian alone is insufficient because `publishCompartments` does not depend on the Historian run
    **And** the post-expand snapshot is taken immediately after the `ctx_expand` result and before any next pre-step, so no publish can race the comparison
    **And** the host gate records the accelerated test parameters (context window, `executeThreshold`, Historian thresholds, driver waits, and the disabled host `tool-result-pruner`); no production Historian selection, threshold, or publish schedule is changed
-   **And** between the pre-expand and post-expand snapshots it records: original `callId` has exactly one `tool/call` event and no new `tool/result` for that call, the fixture nonce/SHA is unchanged, and Historian journal rows / compartment rows / usage do not increase during the expand step
+   **And** between the pre-expand and post-expand snapshots it records: original `callId` has exactly one `tool/call` event and no new `tool/result` for that call, the fixture nonce/SHA is unchanged, no new `historian` or `compartment-published` journal rows appear, and Historian usage does not increase. Agent model-step usage is recorded separately and is not attributed to the Historian
    **And** if either the tag or the message host evidence is missing, the ticket is `blocked`, with the reason written to the ticket and report; unit evidence cannot substitute.
 
 9. **Summary invariant is falsifiable**

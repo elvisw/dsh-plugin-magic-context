@@ -204,7 +204,11 @@ earlier "add promote-primers next" reading).
 
 - `ctx_expand` returns the persisted original as a new tool result; the old
   placeholder and its spent tag stay (contract D1, A-only). This deliberately
-  replaces upstream's in-place restore from the cited event.
+  replaces upstream's in-place restore from the cited event. `tag` is primary;
+  `message` is a fallback keyed by the **DSH log event seq in the current
+  session** (including a shadowed event), not the upstream message number, and
+  only for an already dropped item. `[compacted §C…§]` is not a tool result and is refused; no
+  recovery is promised once the raw event is gone.
 - `recordRetrieval` does **not** write `updated_at` (MC does), keeping the m[0]
   digest `id:updatedAt` stable.
 - Above v94 the write path degrades to read-only; `seen_count` uses `COALESCE`;

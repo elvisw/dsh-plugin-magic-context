@@ -160,7 +160,7 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
 | 工具 | 作用 |
 |---|---|
 | `ctx_reduce` | 解析 MC 范围语法（`"3-5,8"`）→ **只入队**；落地是有价 bust，等待回收带，绝不自发 |
-| `ctx_expand` | 按 `tag`（单个，正式）或已弃用的 `tags` 别名，从持久化日志**把原文作为新结果返回**；旧占位符及其已用尽的 tag 保持原位 |
+| `ctx_expand` | 按 `tag`（单个，正式）、已弃用的 `tags` 别名，或 `message`（当前会话中已 drop 项的 DSH 日志事件 seq；不接受 `[compacted §C…§]` 节点），从持久化日志**把原文作为新结果返回**；旧占位符及其已用尽的 tag 保持原位。tag 是主入口，message 是备用定位，不是通用历史浏览器；原始事件已不存在时不承诺恢复 |
 | `ctx_memory` | 共享记忆库的读写口。读：`list` / `search` / `get`；写：`write` / `update` / `archive` / `merge`（与 MC 相同的规范化内容哈希、mutation log 与 authority 守卫全程在环）；`review_global`（把机器/组织域候选逐条弹成审批卡，批准才发布）；`promote`（单条项目记忆即时入池弹卡，无复现门槛的人工通道）。每个动作可带 `project`（绝对路径或 git 根）操作其它项目 |
 
 斜杠命令（`registerStatusCommand: false` 只关 `ctx-status`）：

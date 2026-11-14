@@ -195,7 +195,7 @@ Agent tools (registered at mount; `registerTools: false` turns them off):
 | Tool | What it does |
 |---|---|
 | `ctx_reduce` | Parses MC range syntax (`"3-5,8"`) → **queues only**; landing is a priced bust that waits for the reclaim band, never spontaneous |
-| `ctx_expand` | **Returns the original text as a new result**, read from the persisted log by `tag` (single) or the deprecated `tags` alias — the old placeholder and its spent tag stay in place |
+| `ctx_expand` | **Returns the original text as a new result**, read from the persisted log by `tag` (single), the deprecated `tags` alias, or `message` (a DSH log event seq in the current session for an already dropped item; `[compacted §C…§]` nodes are not accepted) — the old placeholder and its spent tag stay in place. Tag is primary; message is a fallback, not a general history browser. No recovery is promised once the raw event is gone |
 | `ctx_memory` | The shared memory store's read/write port. Reads: `list` / `search` / `get`; writes: `write` / `update` / `archive` / `merge` (with MC's normalized content hashing, mutation log and authority guards in the loop throughout); `review_global` (surfaces machine/org domain candidates one by one as approval cards; publishes only on approval); `promote` (stages a single project memory instantly — a manual lane with no recurrence gate). Every action accepts `project` (absolute path or git root) to operate on another project |
 
 Slash commands (`registerStatusCommand: false` disables only `ctx-status`):

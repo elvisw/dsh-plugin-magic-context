@@ -29,7 +29,9 @@ import type { AdapterStores } from '../core/stores.ts'
 import {
   enumerateSurfaceToolResults,
   originalContentOfToolCall,
+  toolResultAt,
   type SurfaceToolNode,
+  type ToolCallOriginal,
 } from './seams.ts'
 
 /** One authored tool parameter: the JSON-schema keywords this package uses. */
@@ -115,18 +117,48 @@ function ackText(lines: string[]): ContentBlock[] {
 }
 
 /** One `ctx_expand` request after argument validation (contract Q3/D4). */
-type ExpandRequest = { readonly tags: readonly number[] } | { readonly reason: string }
+type ExpandRequest =
+  | { readonly kind: 'tags'; readonly tags: readonly number[] }
+  | { readonly kind: 'message'; readonly message: number }
+  | { readonly reason: string }
 
 /**
- * Resolve `tag` (canonical, single) or `tags` (deprecated multi-tag alias).
- * A pair where either side is empty counts as absent, so `{tag: ''}` reads as
- * "nothing asked" rather than as tag 0. `message` is T3, not this path.
+ * Resolve `tag` (canonical, single), `tags` (deprecated multi-tag alias), or
+ * `message` (DSH log event seq; T3). A tag pair where either side is empty
+ * counts as absent, so `{tag: ''}` reads as "nothing asked" rather than as
+ * tag 0. `message` is present whenever the host supplied the field; invalid
+ * values are refused, never trimmed into a valid number.
  */
-function expandRequest(args: { readonly tag?: string; readonly tags?: string }): ExpandRequest {
+function expandRequest(args: {
+  readonly tag?: string
+  readonly tags?: string
+  readonly message?: string
+}): ExpandRequest {
   const tag = typeof args.tag === 'string' ? args.tag.trim() : ''
   const tags = typeof args.tags === 'string' ? args.tags.trim() : ''
   if (tag !== '' && tags !== '') return { reason: 'pass either tag or tags, not both' }
-  if (tag === '' && tags === '') return { reason: 'no tag given (pass tag: "N")' }
+  // An empty optional string is how a host often spells "unset" (tag/tags do
+  // the same above). Ignore it only when another locator is present; alone it
+  // is still an invalid `message`, not a silent fall-through to "no tag".
+  if (args.message !== undefined && args.message !== '') {
+    if (tag !== '' || tags !== '') {
+      return { reason: 'pass either tag, tags, or message, not more than one' }
+    }
+    if (typeof args.message !== 'string' || !/^(?:0|[1-9]\d*)$/.test(args.message)) {
+      return { reason: 'message must be a non-negative decimal integer string' }
+    }
+    const seq = Number(args.message)
+    if (!Number.isSafeInteger(seq)) {
+      return { reason: `"${args.message}" is outside the safe integer range` }
+    }
+    return { kind: 'message', message: seq }
+  }
+  if (tag === '' && tags === '') {
+    if (args.message !== undefined) {
+      return { reason: 'message must be a non-negative decimal integer string' }
+    }
+    return { reason: 'no tag given (pass tag: "N")' }
+  }
   const source = tag !== '' ? tag : tags
   // Request order is the payload order (contract D4/Q3): "9,2" restores 9
   // first. Only this path keeps it; `ctx_reduce` stays ascending.
@@ -135,7 +167,28 @@ function expandRequest(args: { readonly tag?: string; readonly tags?: string }):
   if (tag !== '' && parsed.length !== 1) {
     return { reason: `"${source}" is not a single tag number (use tags for several)` }
   }
-  return { tags: parsed }
+  return { kind: 'tags', tags: parsed }
+}
+
+/** The post-`getTag` gate shared by the tag and message locators. */
+function restoreResolvedTag(
+  deps: ToolBridgeDeps,
+  sessionId: string,
+  tag: number,
+  original: ToolCallOriginal,
+): { readonly content: ContentBlock[] } | { readonly reason: string } {
+  const state = deps.stores.dropState(sessionId, tag)
+  if (state === 'pending') return { reason: 'not dropped yet' }
+  if (original.kind === 'missing-event') return { reason: 'tag no longer available' }
+  // A landed drop has a placeholder event in the log; an emergency drop
+  // bypassed the queue but left the same placeholder behind. The guard is
+  // sound because the post-execute hook prefixes EVERY tagged tool result, so
+  // an unprefixed, placeholder-shaped event can only be a drop.
+  if (state !== 'landed' && original.droppedTag === undefined) {
+    return { reason: 'not dropped' }
+  }
+  if (original.kind === 'missing-source') return { reason: 'raw source unavailable' }
+  return { content: original.content }
 }
 
 /** One payload per restored tag, in request order (contract D4/Q3). */
@@ -234,13 +287,25 @@ export function defineCtxReduceTool(deps: ToolBridgeDeps): unknown {
 
 export function defineCtxExpandTool(deps: ToolBridgeDeps): unknown {
   const defineTool = deps.defineTool
-  return defineTool<{ readonly tag?: string; readonly tags?: string }>({
+  return defineTool<{ readonly tag?: string; readonly tags?: string; readonly message?: string }>({
     name: 'ctx_expand',
     description:
       'Restore previously dropped items in full. Pass tag: "3" — or the deprecated tags: "3, 7" alias. '
+        + 'For a dropped item whose DSH log event seq is known, pass message: "21" (the original tool/result '
+        + 'event or its `[dropped §N§]` placeholder; a `[compacted §C…§]` node is not accepted). The seq comes '
+        + 'from the harness/UI/journal; the model normally sees only tags. '
         + 'The original content returns as this tool result; the old `[dropped §N§]` placeholder stays in place '
         + 'and its tag stays spent (drop the new result if you no longer need it).',
-    parameters: { tag: { type: 'string' }, tags: { type: 'string' } },
+    parameters: {
+      tag: { type: 'string', description: 'Canonical single tag, e.g. "3".' },
+      tags: { type: 'string', description: 'Deprecated multi-tag alias, e.g. "3, 7".' },
+      message: {
+        type: 'string',
+        description:
+          'DSH log event seq of a dropped tool/result or its `[dropped §N§]` placeholder; '
+            + 'not the original Magic Context message number; `[compacted §C…§]` is not accepted.',
+      },
+    },
     output: {
       schema: { type: 'json' },
       render: (_args, value) => {
@@ -285,6 +350,86 @@ export function defineCtxExpandTool(deps: ToolBridgeDeps): unknown {
         return { ok: false, restored: [], refused: [], reason: request.reason }
       }
       const session = exec.agent!.session
+      if (request.kind === 'message') {
+        const lookup = toolResultAt(session, request.message)
+        if (lookup.kind === 'unknown') {
+          deps.journal?.info('tool-call', 'ctx_expand: restored 0, refused 0', {
+            tool: 'ctx_expand',
+            requested: [],
+            message: request.message,
+            restored: [],
+            refused: [],
+            reason: 'no such message',
+            ms: Date.now() - startedAt,
+          }, sessionId)
+          return { ok: false, restored: [], refused: [], reason: 'no such message' }
+        }
+        if (lookup.kind === 'not-tool-result') {
+          deps.journal?.info('tool-call', 'ctx_expand: restored 0, refused 0', {
+            tool: 'ctx_expand',
+            requested: [],
+            message: request.message,
+            restored: [],
+            refused: [],
+            reason: 'not a tool-result message',
+            ms: Date.now() - startedAt,
+          }, sessionId)
+          return { ok: false, restored: [], refused: [], reason: 'not a tool-result message' }
+        }
+        const original = originalContentOfToolCall(session, lookup.callId)
+        const registeredTag = deps.stores.getTag(sessionId, { kind: 'tool-result', callId: lookup.callId })
+        // A message may point at the original event while the same call also
+        // has a placeholder; the call-level droppedTag is the evidence, not the
+        // shape of the event the caller named.
+        const callDroppedTag = original.kind === 'missing-event' ? undefined : original.droppedTag
+        const tag = registeredTag ?? callDroppedTag
+        if (tag === undefined) {
+          deps.journal?.info('tool-call', 'ctx_expand: restored 0, refused 0', {
+            tool: 'ctx_expand',
+            requested: [],
+            message: request.message,
+            restored: [],
+            refused: [],
+            reason: 'not a tool-result tag',
+            ms: Date.now() - startedAt,
+          }, sessionId)
+          return { ok: false, restored: [], refused: [], reason: 'not a tool-result tag' }
+        }
+        if (registeredTag === undefined) {
+          deps.journal?.info('tool-call', 'ctx_expand: restored 0, refused 0', {
+            tool: 'ctx_expand',
+            requested: [],
+            message: request.message,
+            restored: [],
+            refused: [],
+            reason: 'tag no longer available',
+            ms: Date.now() - startedAt,
+          }, sessionId)
+          return { ok: false, restored: [], refused: [], reason: 'tag no longer available' }
+        }
+        const outcome = restoreResolvedTag(deps, sessionId, tag, original)
+        if ('reason' in outcome) {
+          deps.journal?.info('tool-call', 'ctx_expand: restored 0, refused 0', {
+            tool: 'ctx_expand',
+            requested: [],
+            message: request.message,
+            restored: [],
+            refused: [],
+            reason: outcome.reason,
+            ms: Date.now() - startedAt,
+          }, sessionId)
+          return { ok: false, restored: [], refused: [], reason: outcome.reason }
+        }
+        deps.journal?.info('tool-call', 'ctx_expand: restored 1, refused 0', {
+          tool: 'ctx_expand',
+          requested: [],
+          message: request.message,
+          restored: [tag],
+          refused: [],
+          ms: Date.now() - startedAt,
+        }, sessionId)
+        return { ok: true, restored: [tag], refused: [], content: outcome.content }
+      }
       // Resolve the tag's persisted call identity — no live placeholder is
       // required, so a historian-published or restarted session reads the same
       // original from the log (contract D1.4, E4).
@@ -308,30 +453,13 @@ export function defineCtxExpandTool(deps: ToolBridgeDeps): unknown {
           refused.push({ tag, ok: false, reason: 'not a tool-result tag' })
           continue
         }
-        const state = deps.stores.dropState(sessionId, tag)
-        if (state === 'pending') {
-          refused.push({ tag, ok: false, reason: 'not dropped yet' })
-          continue
-        }
         const original = originalContentOfToolCall(session, record.target.callId)
-        if (original.kind === 'missing-event') {
-          refused.push({ tag, ok: false, reason: 'tag no longer available' })
+        const outcome = restoreResolvedTag(deps, sessionId, tag, original)
+        if ('reason' in outcome) {
+          refused.push({ tag, ok: false, reason: outcome.reason })
           continue
         }
-        // A landed drop has a placeholder event in the log; an emergency drop
-        // bypassed the queue but left the same placeholder behind.
-        // The guard below is sound because the post-execute hook prefixes EVERY
-        // tagged tool result, so an unprefixed, placeholder-shaped event can
-        // only be a drop — never an original that merely looks like one.
-        if (state !== 'landed' && original.droppedTag === undefined) {
-          refused.push({ tag, ok: false, reason: 'not dropped' })
-          continue
-        }
-        if (original.kind === 'missing-source') {
-          refused.push({ tag, ok: false, reason: 'raw source unavailable' })
-          continue
-        }
-        payloads.push(original.content)
+        payloads.push(outcome.content)
         restored.push(tag)
       }
       const content = joinExpandPayloads(payloads)

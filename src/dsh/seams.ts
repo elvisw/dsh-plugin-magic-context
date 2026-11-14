@@ -286,6 +286,25 @@ export function originalContentOfToolCall(session: Session, callId: string): Too
   return { kind: 'missing-source', ...withDrop }
 }
 
+/** One persisted log event addressed by its DSH seq (T3 `message` locator). */
+export type ToolResultAt =
+  | { readonly kind: 'tool-result'; readonly seq: SessionSeq; readonly callId: string }
+  | { readonly kind: 'not-tool-result'; readonly seq: SessionSeq }
+  | { readonly kind: 'unknown' }
+
+/**
+ * Resolve a DSH log event seq to a persisted `tool/result` identity without
+ * reading its content. The three-way result keeps "no such seq" distinct from
+ * "seq exists but is not a tool/result" for the `ctx_expand` message locator;
+ * call-level placeholder evidence comes from `originalContentOfToolCall`.
+ */
+export function toolResultAt(session: Session, seq: number): ToolResultAt {
+  const event = session.snapshotEvents().find(candidate => candidate.seq === seq)
+  if (event === undefined) return { kind: 'unknown' }
+  if (event.type !== 'tool/result') return { kind: 'not-tool-result', seq: event.seq }
+  return { kind: 'tool-result', seq: event.seq, callId: event.data.message.toolCallId }
+}
+
 /** The logged request envelope facts pressure math needs. */
 export function requestContextOf(session: Session): {
   provider?: string

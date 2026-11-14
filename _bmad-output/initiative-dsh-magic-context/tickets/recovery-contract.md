@@ -70,7 +70,7 @@
 
 **2026-11-13 交付拆分（签收后修正）：** Q2/Q3 的目标不变，但拆成 V1a（T2：`tag` + `tags` 别名）、V1b（T3：`message` 回退定位）、V1c（T5：保留期对齐）。拆分只改交付顺序，不改变“V1 做 `tag` + `message`”的决定。
 
-**T3 补充（2026-11-14，签收后澄清）：** `message` 是 `tag` 的**备用定位**，不是通用历史浏览器。它只读取**已经被 drop** 的 tool result，并复用 tag → call identity → 原始 `tool/result` 的读取路径；不改变 drop 状态，不新增 pending，不跨会话。`message` 的值是当前会话的 **DSH log event seq**，可以指向原始 `tool/result`，也可以指向 landed 的 `[dropped §N§]` 占位符；它不要求占位符仍在 surface 上。`[compacted §C1§]` 不是 `tool/result`，必须拒绝，调用方应传原始 `tool/result` 的 seq。`message` 的 seq 由 harness/UI/journal 提供，模型通常只看到 tag。`message` 与 `tag`/`tags` 互斥；只用正整数（`/^[1-9]\d*$/`）。未 drop 的项与 tag 路径一样按 `not dropped`/`not dropped yet` 拒绝。若 message 指向的 call 有持久化占位符暴露了 tag 号、但 tag 行已不存在，返回 `tag no longer available`；若既无 tag 行也无任何持久化占位符 tag 号，返回 `not a tool-result tag`。判断按 call 级进行，因此 message 指向原始 `tool/result`、同一 call 另有占位符时也适用。
+**T3 补充（2026-11-14，签收后澄清）：** `message` 是 `tag` 的**备用定位**，不是通用历史浏览器。它只读取**已经被 drop** 的 tool result，并复用 tag → call identity → 原始 `tool/result` 的读取路径；不改变 drop 状态，不新增 pending，不跨会话。`message` 的值是当前会话的 **DSH log event seq**，可以指向原始 `tool/result`，也可以指向 landed 的 `[dropped §N§]` 占位符；它不要求占位符仍在 surface 上。`[compacted §C1§]` 不是 `tool/result`，必须拒绝，调用方应传原始 `tool/result` 的 seq。`message` 的 seq 由 harness/UI/journal 提供，模型通常只看到 tag。`message` 与 `tag`/`tags` 互斥；只用非负安全整数（`/^(?:0|[1-9]\d*)$/` 且 `Number.isSafeInteger`；DSH 日志 seq 可以为 0）。空 `message` 单独出现按非法值拒绝；空 `message` 与有效 `tag`/`tags` 同时出现时按未提供处理，让 tag 路径继续。未 drop 的项与 tag 路径一样按 `not dropped`/`not dropped yet` 拒绝。若 message 指向的 call 有持久化占位符暴露了 tag 号、但 tag 行已不存在，返回 `tag no longer available`；若既无 tag 行也无任何持久化占位符 tag 号，返回 `not a tool-result tag`。判断按 call 级进行，因此 message 指向原始 `tool/result`、同一 call 另有占位符时也适用。
 
 ## D5. 失败、降级与保留期
 

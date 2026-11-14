@@ -176,6 +176,20 @@ describe('tool-call records — the reclamation lane the panel used to drop', ()
     expect(row!.detail).not.toContain('被拒')
   })
 
+  it('records a message-locator restore with the resolved tag', () => {
+    const row = recordOf({
+      at: 2,
+      level: 'info',
+      kind: 'tool-call',
+      summary: 'ctx_expand: restored 1, refused 0',
+      data: { tool: 'ctx_expand', requested: [], message: 21, restored: [1], refused: [], ms: 5 },
+    })
+    expect(row).not.toBeNull()
+    expect(row!.category).toBe('archive')
+    expect(row!.detail).toContain('恢复 1')
+    expect(row!.detail).not.toContain('被拒')
+  })
+
   it('ctx_memory search reads as a read row with its hit count', () => {
     const row = recordOf({
       at: 3,

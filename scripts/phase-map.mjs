@@ -123,12 +123,12 @@ const PHASE_D = [
 export const PHASES = [
   {
     id: '0',
-    title: '0 核心回归（既有行为 + #13 A 恢复车道）',
+    title: '0 核心回归（既有行为 + #13 A/#14 message 恢复车道）',
     specs: PHASE_BASE,
     checks: [],
     blind: [
       '不含接管新增的域/画像/命令车道——那四条见 A–D',
-      '#13 A 的宿主级真实模型验收仍由 T0 报告承担，本相位只覆盖单元/集成套件',
+      '#13 A 的宿主级真实模型验收由 T0 报告承担；#14 的真实 Historian 验收单独由 T3 acceptance window 承担，本相位只覆盖单元/集成套件',
     ],
   },
   {
