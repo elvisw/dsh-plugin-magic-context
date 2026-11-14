@@ -1,6 +1,6 @@
 # 独立包名与发布
 
-本仓库从 `0.12.0` 起使用 npm 包名 **`@elvisw/dsh-plugin-magic-context`**；`0.12.1` 是同一代码线的 docs-only patch。上游包 `dsh-plugin-magic-context` 属于另一位维护者，本 fork 不修改、不覆盖它。
+本仓库从 `0.12.0` 起使用 npm 包名 **`@elvisw/dsh-plugin-magic-context`**；`0.12.1` 是同一代码线的 docs-only patch，`0.12.2` 是 historian 重试、reasoning effort 与两处观测口径的修复版（仓库版本；尚未发布时 registry 的 `latest` 仍是 `0.12.1`）。上游包 `dsh-plugin-magic-context` 属于另一位维护者，本 fork 不修改、不覆盖它。
 
 ## 用户迁移
 
@@ -43,14 +43,14 @@ npm 的 Trusted Publishing 只能绑定到已经存在的包，因此首次发�
    ```
 
 5. 用 `npm trust list @elvisw/dsh-plugin-magic-context` 确认 repo、workflow 与 publish 权限。
-6. 恢复仓库内 `package.json` 与 `package-lock.json` 的正式版本（当前 `0.12.1`，以仓库为准），提交并推送 `main`；只有确认 `main` 全绿后才创建并推送对应的 `v<version>` tag。
+6. 恢复仓库内 `package.json` 与 `package-lock.json` 的正式版本（当前 `0.12.2`，以仓库为准），提交并推送 `main`；只有确认 `main` 全绿后才创建并推送对应的 `v<version>` tag。
 
 正式发布必须由 tag 触发 `.github/workflows/release.yml` 的 OIDC 流程；不要手工 `npm publish <version>`，否则会消耗版本号且没有 provenance，release workflow 的“already published”守卫会拒绝再次发布。
 
 ## 发布后核对
 
 ```bash
-npm view @elvisw/dsh-plugin-magic-context@0.12.1 version dist.integrity
+npm view @elvisw/dsh-plugin-magic-context@0.12.2 version dist.integrity
 npm view @elvisw/dsh-plugin-magic-context dist-tags
 npm trust list @elvisw/dsh-plugin-magic-context
 ```
