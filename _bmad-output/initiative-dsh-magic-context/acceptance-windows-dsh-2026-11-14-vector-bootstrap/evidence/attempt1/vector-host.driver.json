@@ -1,0 +1,51 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-vector-20261114-224541\\overlays\\vector.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "Isolated vector-bootstrap acceptance. Follow this exact sequence, one tool call per model step. (1) Call ctx_memory with action \"write\", category \"ARCHITECTURE\", content \"VECTOR_BOOTSTRAP_FIXTURE: citrus fruit is stored in the cold cellar.\". (2) Call vector_wait with seconds 100. (3) Call ctx_memory with action \"search\", query \"citrus fruit storage\", limit 5. (4) Respond exactly VECTOR_HOST_OK. Do not call any other tool."
+  ],
+  "exit_code": 0,
+  "seconds": 51.92,
+  "session_id": "session-b257b55f-3eb0-4068-ab8c-b775463b8be5",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "I completed steps 1 and 3, but step 2 could not be run — and I won't pretend otherwise.\n\n**What happened**\n\n1. ✅ `ctx_memory` write → `Saved as memory 1 [ARCHITECTURE]`\n2. ❌ `vector_wait` with `seconds: 100` — **no such tool exists in this session.** My tool set has no `vector_wait` (or any vector-index control tool). I have no way to invoke it, so no vector-index wait was performed on this host.\n3. ✅ `ctx_memory` search \"citrus fruit storage\" → 1 hit, `id=1`, `score=0.80`, **`match=fts`**\n\n**Why I'm not sending a bare `VECTOR_HOST_OK`**\n\nThat token is an acceptance verdict for the whole sequence. With step 2 missing it would be a false pass, and there's a substantive signal in the result that argues against a clean pass anyway: the retrieval came back as `match=fts` — a keyword/lexical match, not a semantic/vector match. So the write is durable and retrievable, but this query produced **no evidence the vector path was exercised at all**, which is exactly what the skipped wait step was supposed to gate on.\n\n**State of the fixture**\n\n- Memory `1` is stored in `ARCHITECTURE` and returns on the expected query — content and observability are correct.\n- Vector indexing/readiness on this host: **unverified** (not failed, just never tested).\n\nIf the acceptance criterion is only \"fixture memory is written and retrievable,\" that's satisfied — I can emit `VECTOR_HOST_OK` on your say-so. If the criterion is the full bootstrap sequence, this run is **incomplete**, and the fix is either to expose `vector_wait` to this session or tell me the real tool/mechanism used to wait on vector indexing here.",
+  "tool_calls": [
+    {
+      "tool": "ctx_memory",
+      "input": {
+        "action": "write",
+        "category": "ARCHITECTURE",
+        "content": "VECTOR_BOOTSTRAP_FIXTURE: citrus fruit is stored in the cold cellar."
+      }
+    },
+    {
+      "tool": "ctx_memory",
+      "input": {
+        "action": "search",
+        "query": "citrus fruit storage",
+        "limit": 5
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_plJ0PbESdL9VLTqdl3h03344",
+      "status": "completed",
+      "result": "§1§ Saved as memory 1 [ARCHITECTURE]."
+    },
+    {
+      "callId": "call_00_DXzbyt4fiYGLOitt34wr3228",
+      "status": "completed",
+      "result": "§2§ Found 1 result for \"citrus fruit storage\":\n\n[1] [memory] score=0.80 id=1 category=ARCHITECTURE match=fts\nVECTOR_BOOTSTRAP_FIXTURE: citrus fruit is stored in the cold cellar."
+    }
+  ]
+}

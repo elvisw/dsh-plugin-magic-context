@@ -1,0 +1,15 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-vector-20261114-230111",
+  "tarball_sha256": "7ce3c456681fb602cd54d738a7dededb7ca18c4c7292d08959a70a19544c12b1",
+  "bootstrap_exit_code": 0,
+  "add_exit_code": 0,
+  "dump_exit_code": 0,
+  "profile_dependencies": {
+    "@elvisw/dsh-plugin-magic-context": "file:C:/Users/elvis/AppData/Local/Temp/opencode/vector-host-pack/elvisw-dsh-plugin-magic-context-0.12.1.tgz"
+  },
+  "new_installed": true,
+  "new_installed_package_name": "@elvisw/dsh-plugin-magic-context",
+  "dump_has_new_name": true,
+  "dump_has_maintenance": true,
+  "deepseek_key_present": true
+}

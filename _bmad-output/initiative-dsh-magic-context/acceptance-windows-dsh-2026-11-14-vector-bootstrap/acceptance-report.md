@@ -10,7 +10,7 @@ restart.
 Host: isolated DSH `0.2.2-rc.1` profile; plugin tarball built from this working
 tree (`@elvisw/dsh-plugin-magic-context@0.12.1`,
 `tarball_sha256=7ce3c456681fb602cd54d738a7dededb7ca18c4c7292d08959a70a19544c12b1`);
-model route `commandcode/deepseek/deepseek-v4.1-flash`; maintenance interval
+model route `deepseek-official/deepseek-flash` (the route recorded by `evidence/dump-config.txt:59-60`); maintenance interval
 60 s; historian and compaction engine disabled; memory corpus and plugin DB
 under the isolated root only.
 
@@ -18,7 +18,7 @@ under the isolated root only.
 
 | Check | Evidence | Result |
 |---|---|---|
-| Empty store starts with no embedding space | `vector-db.json` `memory_embeddings: 0`; `vector-journal` id 14 `gate-closed` with `bootstrapModelId` | pass (expected pre-fix state) |
+| Empty store starts with no embedding space | journal id 14 `gate-closed` with `bootstrapModelId` (the gate only closes when `dominantEmbeddingModel()` finds no space); the post-run table is `memory_embeddings: 1` | pass for the first tick; no pre-run DB snapshot was captured in the final root (attempt 2's `evidence/attempt2/vector-db.json` is the retained zero-row snapshot) |
 | First maintenance tick creates the space | journal id 15 `backfill-bootstrap`, `total: 1` | pass |
 | One vector is stored in that space | journal id 16 `backfill`, `created: 1`; `memory_embeddings: 1`; `spaces[0].rows: 1` | pass |
 | Same process re-resolves parity | journal id 17 `parity-pass`, `parity: 1` | pass |
@@ -43,16 +43,29 @@ reads or mutates history.
 
 ## Attempts and boundaries
 
-- Attempt 1 failed before any plugin logic: the test driver at the experiment
-  root could not resolve `@deepseek-ai/dsh-tools`; it was moved into the
-  isolated profile so the host package resolves normally.
-- Attempt 2 passed the first-writer path but the verifier archived the fixture
-  memory (`citrus fruit…` judged `wrong`), leaving no active candidate. The
-  final run used a plausible, verifier-stable `PROJECT_RULES` fixture.
+- Attempt 1 (`evidence/attempt1/`): the plugin started and wrote one memory, but
+  the test-only driver could not resolve `@deepseek-ai/dsh-tools` from the
+  experiment root; the resulting search stayed `match=fts`, so the first-writer
+  path was not exercised. The driver was moved into the isolated profile.
+- Attempt 2 (`evidence/attempt2/`): the verifier archived the `citrus fruit…`
+  fixture as `wrong` before the maintenance tick could run the backfill, so the
+  table still had 0 embeddings and no `backfill-bootstrap`; this attempt did not
+  execute the first-writer path. The final run used a plausible
+  `PROJECT_RULES` fixture and did reach `backfill-bootstrap` → `backfill` →
+  `parity-pass`.
 - This gate proves the empty-store first-writer path and same-process parity
   switch with a real host and real embedding model. It does not prove a
   multi-process race between two first writers, nor semantic quality of the
-  local MiniLM model.
-- No daily profile, session store or plugin database was touched. Evidence is
-  copied from the isolated root; the root pointer files for attempts 1 and 2
-  are retained only as provenance.
+  local MiniLM model. `final_text=VECTOR_HOST_OK` is a scripted token, not an
+  independent verdict; the DB rows and journal are the authority.
+- The harness redirects `DSH_HOME`/`HOME`/`APPDATA` and uses an isolated
+  `dataDir` (`prepare_vector_host.py:38-62`, `evidence/dump-config.txt:399-411`);
+  the evidence contains no daily profile path. A before/after comparison of the
+  daily profile was not captured, so this is an absence-of-evidence statement,
+  not a proof that no unrelated process wrote elsewhere.
+- Evidence is copied from the isolated root, including the attempt 1 and 2
+  directories; those attempts are provenance, not passes.
+- The installed tarball (`7ce3c456…12b1`) was built from this working tree at
+  `@elvisw/dsh-plugin-magic-context@0.12.1`; no source-commit or build-log
+  provenance was captured with it. The vector-journal and code paths quoted
+  above are the evidence for the behavior, not the tarball hash alone.

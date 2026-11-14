@@ -1,0 +1,27 @@
+{
+  "memory_db": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-vector-20261114-224541\\plugin-data\\memories.db",
+  "memories": 1,
+  "memory_embeddings": 0,
+  "spaces": [],
+  "active": [
+    {
+      "id": 1,
+      "status": "active",
+      "content": "VECTOR_BOOTSTRAP_FIXTURE: citrus fruit is stored in the cold cellar."
+    }
+  ],
+  "vector_journal": [
+    {
+      "id": 11,
+      "level": "info",
+      "summary": "shared-space gate: gate-closed",
+      "data": {
+        "outcome": "gate-closed",
+        "reason": "no dominant embedding space",
+        "bootstrapModelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea"
+      }
+    }
+  ],
+  "model_cache": [],
+  "final_ok": false
+}
