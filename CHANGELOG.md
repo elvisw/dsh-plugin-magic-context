@@ -8,6 +8,12 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
+## [0.12.1] - 2026-11-14
+
+### Changed
+
+- 文档：README（中英文）新增本 fork 与上游 `wk544863858/dsh-plugin-magic-context` 的差异说明，并在“出处与许可 / Provenance & license”补充上游 `wukai` 与 `magic-context` 的版权；`NOTICE`、`LICENSE` 同步。无代码、schema 或运行时行为变更。
+
 ## [0.12.0] - 2026-11-14
 
 **恢复语义与原版对齐。** 这个版本把上下文恢复从 fork 的“原位改写”改成原版 Magic Context 的“读取持久历史、作为新的工具结果返回”，补齐 Historian 覆盖后的原始 seq 读取与手动 `/ctx-flush`，并移除按时间删除 tag 的 fork 私有保留策略。`ctx_expand` 的行为变更是 breaking：旧 tag 不会被复活；需要继续缩减时，对新结果重新 `ctx_reduce`。
@@ -194,7 +200,8 @@ npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布�
 
 0.12.0 之前的 tag 位于上游仓库 `wk544863858/dsh-plugin-magic-context`；从 0.12.0 起，版本与 tag 属于本 fork。
 
-[Unreleased]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.12.1...HEAD
+[0.12.1]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.11.2...v0.12.0
 [0.11.2]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.11.1...v0.11.2
 [0.11.1]: https://github.com/wk544863858/dsh-plugin-magic-context/compare/v0.11.0...v0.11.1
