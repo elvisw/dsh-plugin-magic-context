@@ -198,11 +198,12 @@ Agent tools (registered at mount; `registerTools: false` turns them off):
 | `ctx_expand` | **Returns the original text as a new result**, read from the persisted log by `tag` (single), the deprecated `tags` alias, or `message` (a DSH log event seq in the current session for an already dropped item; `[compacted §C…§]` nodes are not accepted) — the old placeholder and its spent tag stay in place. Tag is primary; message is a fallback, not a general history browser. No recovery is promised once the raw event is gone |
 | `ctx_memory` | The shared memory store's read/write port. Reads: `list` / `search` / `get`; writes: `write` / `update` / `archive` / `merge` (with MC's normalized content hashing, mutation log and authority guards in the loop throughout); `review_global` (surfaces machine/org domain candidates one by one as approval cards; publishes only on approval); `promote` (stages a single project memory instantly — a manual lane with no recurrence gate). Every action accepts `project` (absolute path or git root) to operate on another project |
 
-Slash commands (`registerStatusCommand: false` disables only `ctx-status`):
+Slash commands (`registerStatusCommand: false` disables this command surface):
 
 | Command | What it does |
 |---|---|
 | `/ctx-status` | pressure / decisions / reclaim ledger / compartments / baseline / policy |
+| `/ctx-flush` | mark this session's pending `ctx_reduce` drops for landing on the next message; reports requested/already/pending counts; starts no historian, recomp, summary, or model call |
 | `/ctx-recomp` `all` \| `last:<n>` \| `<startSeq>-<endSeq>` | re-runs the historian and **replaces the stored digest in place** (ranges snap to compartments, never split; identity and landed placeholders unchanged, the next pre-step rebuilds the baseline) |
 | `/ctx-profile` `confirm` \| `reject` \| `retire` | confirm / reject / retire user-profile candidates; promotion into the shared profile happens at the next maintenance tick |
 | `/ctx-global` `add` \| `remove` \| `status` \| `promote` \| `approve` \| `reject` | the manual lane for global-domain membership and candidate approval (same gate→publish path as the approval cards, `source_type=user`) |
@@ -310,7 +311,7 @@ package's structural answer):
 
 - **Fail-loud capability probing**: `probeDshSeams` validates seam availability at boot and
   throws when absent — never silently pretends to manage context;
-- **Version fences**: the adapter DB schema chain is at **v10** (forward migrations; a
+- **Version fences**: the adapter DB schema chain is at **v11** (forward migrations; a
   newer DB refuses to open); the **own corpus** `memories.db` inherits the **v95** starting
   point (switched 2026-10-13, numbering owned by this plugin; `MEMORY_SCHEMA_MAX_VERSION`
   guards the migration line) — beyond it, reads refuse and writes degrade to read-only
@@ -320,7 +321,7 @@ package's structural answer):
 - **Two-database layout**:
   - **Adapter DB** `~/.local/share/cortexkit/magic-context-dsh-poc/dsh-magic-context.db`
     (tags / usage / pending_drops / compartments / baseline / domains / queues / journal…,
-    schema v10);
+    schema v11);
   - **Own corpus** `~/.local/share/cortexkit/magic-context-dsh-poc/memories.db` (project
     memories + global-domain rows + profile + vectors; the legacy `context.db` is sealed
     and unread — the 2026-10-13 hard split; the upstream relationship is feature-following

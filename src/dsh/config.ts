@@ -13,7 +13,7 @@ export interface MagicContextDshConfig {
   enabled?: boolean
   /** Register the ctx_reduce / ctx_expand agent tools (default true). */
   registerTools?: boolean
-  /** Register the /ctx-status command (default true). */
+  /** Register the slash-command surface: /ctx-status, /ctx-flush, /ctx-recomp, /ctx-profile, /ctx-global (default true). */
   registerStatusCommand?: boolean
   /**
    * Host-supplied tool constructor. In-tree glue (which resolves

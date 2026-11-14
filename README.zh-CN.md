@@ -163,11 +163,12 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
 | `ctx_expand` | 按 `tag`（单个，正式）、已弃用的 `tags` 别名，或 `message`（当前会话中已 drop 项的 DSH 日志事件 seq；不接受 `[compacted §C…§]` 节点），从持久化日志**把原文作为新结果返回**；旧占位符及其已用尽的 tag 保持原位。tag 是主入口，message 是备用定位，不是通用历史浏览器；原始事件已不存在时不承诺恢复 |
 | `ctx_memory` | 共享记忆库的读写口。读：`list` / `search` / `get`；写：`write` / `update` / `archive` / `merge`（与 MC 相同的规范化内容哈希、mutation log 与 authority 守卫全程在环）；`review_global`（把机器/组织域候选逐条弹成审批卡，批准才发布）；`promote`（单条项目记忆即时入池弹卡，无复现门槛的人工通道）。每个动作可带 `project`（绝对路径或 git 根）操作其它项目 |
 
-斜杠命令（`registerStatusCommand: false` 只关 `ctx-status`）：
+斜杠命令（`registerStatusCommand: false` 关闭整个斜杠命令面）：
 
 | 命令 | 作用 |
 |---|---|
 | `/ctx-status` | 压力 / 决策 / 回收台账 / compartments / 基线 / 策略 |
+| `/ctx-flush` | 把当前会话已排队的 `ctx_reduce` 标记为下一次消息强制落地；回执 requested / already marked / pendingNext；不启动 historian、recomp、摘要或模型调用 |
 | `/ctx-recomp` `all` \| `last:<n>` \| `<startSeq>-<endSeq>` | 重跑 historian 并**原地替换** store 里的摘要（区间按 compartment 吸附、绝不切分；身份与已落地占位符不变，下一趟 pre-step 重建基线） |
 | `/ctx-profile` `confirm` \| `reject` \| `retire` | 用户画像候选的确认 / 拒绝 / 退休；晋升进共享 profile 在下一维护 tick 发生 |
 | `/ctx-global` `add` \| `remove` \| `status` \| `promote` \| `approve` \| `reject` | 全域成员管理与候选审批的人工通道（与审批卡走同一 gate→publish 路径，`source_type=user`） |
@@ -257,14 +258,14 @@ src/
 
 - **能力探测 fail-loud**：`probeDshSeams` 启动期校验接缝可用性，不可用即抛错，绝不静默假装
   在管理上下文；
-- **版本 fence**：适配器库 schema 链当前 **v10**（前向迁移，库比新即拒开）；**自有语料库**
+- **版本 fence**：适配器库 schema 链当前 **v11**（前向迁移，库比新即拒开）；**自有语料库**
   `memories.db` 版本线继承 **v95** 起点（2026-10-13 切换，续号归本插件；`MEMORY_SCHEMA_MAX_VERSION`
   守自有迁移线），超出即读路径拒绝、写路径转只读并响亮告警；
 - **测试即探针**：集成测试同时是接缝契约测试——DSH 升级后重跑，破坏点精确定位到 `src/dsh/`；
 - **双库结构**：
   - **适配器库** `~/.local/share/cortexkit/magic-context-dsh-poc/dsh-magic-context.db`
     （tags / usage / pending_drops / compartments / baseline / domains / queues / journal…，
-    schema v10）；
+    schema v11）；
   - **自有语料库** `~/.local/share/cortexkit/magic-context-dsh-poc/memories.db`
     （项目记忆 + 全域行 + 画像 + 向量；legacy `context.db` 已封存不读——2026-10-13 硬切换，
     与上游只做功能跟进、无存储兼容义务）；

@@ -1,0 +1,17 @@
+{
+  "sessionId": "session-9516b1fe-6f99-4c17-955a-f100963c86fe",
+  "rows": [
+    {
+      "id": 60,
+      "at": 1794649518444,
+      "kind": "emergency-reclaim",
+      "summary": "force band: skipped — the 0.8% reading predates a surface change; no reclaim against a stale measurement",
+      "data": {
+        "dropped": 0,
+        "reason": "stale-reading",
+        "tier": "skipped-stale-reading",
+        "pressure": 0.8256912231445312
+      }
+    }
+  ]
+}

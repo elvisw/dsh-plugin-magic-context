@@ -1,0 +1,31 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t4-20261114-174313",
+  "nonce": "1c0ad0a4275f50d1c6fdb6aff8c4e177",
+  "fixture_sha256": "566097732436d0dedae3d944dfd44856a912252e654f68489f21130c9d289889",
+  "plugin_package": "0.11.2",
+  "tarball_sha256": "91d45e81fe5834a8b537a36605b808b2b9686d735448f9bbce5bbb2145ee3ec1",
+  "hashes": {
+    "dsh/flush-command.js": {
+      "built": "e605f4f1abcc7f9b37684e38c8f907b3a948ba120f97d7d790ce4588e1644cab",
+      "installed": "e605f4f1abcc7f9b37684e38c8f907b3a948ba120f97d7d790ce4588e1644cab"
+    },
+    "dsh/drop-landing.js": {
+      "built": "6aea4b65d0f1cbfd86e748ab680fec400cc85f2a6b31e5108529572471aef0d2",
+      "installed": "6aea4b65d0f1cbfd86e748ab680fec400cc85f2a6b31e5108529572471aef0d2"
+    },
+    "core/stores.js": {
+      "built": "b7b05067f5e73f03b847cc54cad1d1b31b1bff9de88145de6ac02afd18aa76ab",
+      "installed": "b7b05067f5e73f03b847cc54cad1d1b31b1bff9de88145de6ac02afd18aa76ab"
+    },
+    "dsh/pre-step.js": {
+      "built": "6bbfeb1ef993c0cd97130cef647e55bfff8b18523d97330caa9ae8d9ba5f3cf0",
+      "installed": "6bbfeb1ef993c0cd97130cef647e55bfff8b18523d97330caa9ae8d9ba5f3cf0"
+    }
+  },
+  "flush_command_has_name": true,
+  "drop_landing_has_helper": true,
+  "git_head": "d69a7dfb7dfdd12bf36c2501130fe850dd43dd33",
+  "git_status_sha256": "6e9543600e1ae6a48808b1c11838cb13a765028ee1756f4871fe33df3d4e30ad",
+  "git_diff_sha256": "594dad1510a7e4f139aa3e9e53130a3eae4a50d6e4ac309e4806af1c18a15ea2",
+  "deepseek_key_present": true
+}

@@ -32,6 +32,7 @@ import {
   wireStrandedResults,
 } from './seams.ts'
 import { runManagementPass } from './management-pass.ts'
+import { landPendingDrops } from './drop-landing.ts'
 import { syncMachineDomain } from '../core/machine-domain.ts'
 import type { HistorianLlm } from './historian.ts'
 import {
@@ -161,6 +162,52 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
     // `§1§ …` -> seq 15 `title: "§1§ 一个新的问题：现在会话"`). Only tool
     // results carry handles; the stream is untouched.
     const messages = decision.messages
+    // Manual `/ctx-flush`: the command only persisted markers. Land them here,
+    // before the pressure decision, so the NEXT request sees the placeholders
+    // even when the ordinary execute band would defer. This is the same landing
+    // helper the automatic pass uses; it never starts a Historian or a summary.
+    // `flushLanded` also makes the pressure reading stale: the surface changed
+    // after that reading, so the same turn's force band must not reclaim a
+    // second batch against it.
+    let flushLanded = false
+    const replacedTags: number[] = []
+    const generationBeforeFlush = payload.agent.session.surface?.replaceGeneration
+    try {
+      const flushTags = deps.stores.listFlushRequestedDrops(sessionId)
+      if (flushTags.length > 0) {
+        const landing = landPendingDrops({
+          session: payload.agent.session,
+          sessionId,
+          stores: deps.stores,
+          tags: flushTags,
+          journal: deps.journal,
+          onReplaced: tag => {
+            flushLanded = true
+            replacedTags.push(tag)
+          },
+        })
+        flushLanded = flushLanded || landing.landed.length > 0
+        deps.stores.clearFlushRequests(sessionId, flushTags)
+      }
+    } catch (error) {
+      // Keep the markers so a later preStep can retry; the command already
+      // told the user the change is pending, not applied. No session notice is
+      // appended: the flush lane must not mutate the surface outside landing.
+      deps.journal?.warn(
+        'error',
+        `flush landing failed: ${errText(error)}`,
+        { scope: 'flush', replacedTags },
+        sessionId,
+      )
+    } finally {
+      // A partial landing can throw after replacing a node but before the
+      // caller sees `landing`; the surface generation is the authoritative
+      // signal that this turn's pressure reading is stale.
+      if (generationBeforeFlush !== undefined
+        && payload.agent.session.surface.replaceGeneration !== generationBeforeFlush) {
+        flushLanded = true
+      }
+    }
     // Reduce guidance (desk section + Channel 1/2) is wired through the
     // SystemPrompt service below — a static section and a dynamic context —
     // not by rewriting messages here. The only preStep duty is the REAL USER
@@ -255,9 +302,10 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
     }
 
     // ── Pressure decision + the execute-band management pass (Phase 1 + 2) ──
-    // The session surface is only mutated inside the execute band: that is
-    // the one permission under which a priced bust buys reclaim (MC's
-    // "drops land on the next bust cycle", translated to durable surface).
+    // The session surface is mutated only inside the execute band or the
+    // explicit `/ctx-flush` lane above: the execute band is where a priced
+    // bust buys reclaim (MC's "drops land on the next bust cycle", translated
+    // to durable surface); flush is the user's explicit exception.
     try {
       if (!seenSessions.has(sessionId)) {
         seenSessions.add(sessionId)
@@ -281,8 +329,8 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
       // decision, but the force band must not reclaim against it — that is how
       // compaction ends up dropping a second batch of content for nothing.
       const historyChangedAt = stores.latestHistoryChangeAt(sessionId)
-      const pressureStale = latest !== undefined && historyChangedAt !== undefined
-        && historyChangedAt > latest.recordedAt
+      const pressureStale = flushLanded || (latest !== undefined && historyChangedAt !== undefined
+        && historyChangedAt > latest.recordedAt)
       const pass = decidePass({
         latest,
         pressure,

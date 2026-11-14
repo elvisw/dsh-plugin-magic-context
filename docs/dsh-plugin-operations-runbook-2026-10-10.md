@@ -17,7 +17,7 @@
 | 库 | 路径 | 谁写 |
 |---|---|---|
 | 自有语料库 | `~/.local/share/cortexkit/magic-context-dsh-poc/memories.db` | 只有本适配器（版本线继承 v95 起点，续号归本插件） |
-| 适配器自有库 | `~/.local/share/cortexkit/magic-context-dsh-poc/dsh-magic-context.db` | 只有本适配器（schema v10） |
+| 适配器自有库 | `~/.local/share/cortexkit/magic-context-dsh-poc/dsh-magic-context.db` | 只有本适配器（schema v11） |
 
 legacy `~/.local/share/cortexkit/magic-context/context.db` 已**封存不读**（2026-10-13
 硬切换；上游 MC 若仍在用它，与本项目无关）。

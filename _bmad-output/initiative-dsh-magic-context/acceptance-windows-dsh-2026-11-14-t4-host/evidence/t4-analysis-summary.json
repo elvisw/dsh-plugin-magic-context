@@ -1,0 +1,116 @@
+{
+  "ok": true,
+  "normal": {
+    "label": "t4-normal",
+    "sessionId": "session-372c4a1b-3d5a-4188-bd22-1c117868f872",
+    "command": {
+      "commandId": "cmd-3bd229fa-1",
+      "kind": "success",
+      "text": "Magic Context: flush queued for 1 new drop(s) (new §1§): requested 1, already marked 0, processed 0, pendingNext 1 (upper bound). Changes take effect on the next message; the current request is unchanged."
+    },
+    "commandSeqs": [
+      34,
+      35
+    ],
+    "placeholderSeq": 42,
+    "originalSeq": 20,
+    "passes": [
+      {
+        "decision": "defer",
+        "reason": "no-usage",
+        "contextWindow": 256000,
+        "contextWindowAssumed": true,
+        "consecutive": 1
+      },
+      {
+        "decision": "defer",
+        "reason": "below-threshold",
+        "pressure": 0.8,
+        "contextWindow": 1048576,
+        "route": "deepseek-official/deepseek-flash",
+        "usage": {
+          "input": 254,
+          "cacheRead": 8064,
+          "cacheWrite": 0
+        },
+        "consecutive": 1
+      },
+      {
+        "decision": "defer",
+        "reason": "below-threshold",
+        "pressure": 0.8,
+        "pressureStale": true,
+        "contextWindow": 1048576,
+        "route": "deepseek-official/deepseek-flash",
+        "usage": {
+          "input": 239,
+          "cacheRead": 8448,
+          "cacheWrite": 0
+        },
+        "consecutive": 1
+      }
+    ],
+    "hasExecute": false
+  },
+  "force": {
+    "label": "t4-force",
+    "sessionId": "session-9516b1fe-6f99-4c17-955a-f100963c86fe",
+    "command": {
+      "commandId": "cmd-a6f39246-1",
+      "kind": "success",
+      "text": "Magic Context: flush queued for 1 new drop(s) (new §1§): requested 1, already marked 0, processed 0, pendingNext 1 (upper bound). Changes take effect on the next message; the current request is unchanged."
+    },
+    "commandSeqs": [
+      34,
+      35
+    ],
+    "placeholderSeq": 42,
+    "originalSeq": 20,
+    "passes": [
+      {
+        "decision": "defer",
+        "reason": "no-usage",
+        "contextWindow": 256000,
+        "contextWindowAssumed": true,
+        "consecutive": 1
+      },
+      {
+        "decision": "defer",
+        "reason": "below-threshold",
+        "pressure": 0.8,
+        "contextWindow": 1048576,
+        "route": "deepseek-official/deepseek-flash",
+        "usage": {
+          "input": 254,
+          "cacheRead": 8064,
+          "cacheWrite": 0
+        },
+        "consecutive": 1
+      },
+      {
+        "decision": "execute",
+        "reason": "execute-threshold",
+        "pressure": 0.8,
+        "pressureStale": true,
+        "contextWindow": 1048576,
+        "route": "deepseek-official/deepseek-flash",
+        "usage": {
+          "input": 210,
+          "cacheRead": 8448,
+          "cacheWrite": 0
+        },
+        "landed": [],
+        "published": [],
+        "forceDropped": 0,
+        "baseline": "unchanged",
+        "historianStarted": false,
+        "tokensBefore": 2538,
+        "tokensAfter": 2538,
+        "tokensDelta": 0,
+        "factsPromoted": 0,
+        "factsSeenAgain": 0
+      }
+    ],
+    "hasExecute": true
+  }
+}

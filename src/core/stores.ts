@@ -20,7 +20,7 @@ import type { DomainKind } from './domains.ts'
 import { parseShareCategories, serializeShareCategories } from './domains.ts'
 import type { DropState, TagRecord, TagTarget, UsageRecord } from './types.ts'
 
-export const SCHEMA_VERSION = 10
+export const SCHEMA_VERSION = 11
 
 /** The m[0]/m[1] baseline identity for one session. */
 export interface BaselineState {
@@ -206,6 +206,16 @@ export interface AdapterStores {
   queueDrop(sessionId: string, tagNumber: number, now: number): void
   /** Pending (not yet landed) drop tag numbers, oldest first. */
   listPendingDrops(sessionId: string): number[]
+  /**
+   * Manual `/ctx-flush`: mark every still-pending drop of one session for
+   * forced landing on the next preStep. Returns the number newly marked;
+   * repeated calls report zero rather than re-counting the same rows.
+   */
+  requestFlush(sessionId: string): number
+  /** Pending drops whose flush marker is set, oldest first. */
+  listFlushRequestedDrops(sessionId: string): number[]
+  /** Clear markers after a flush landing attempt (landed or skipped). */
+  clearFlushRequests(sessionId: string, tags: readonly number[]): void
   markDropLanded(sessionId: string, tagNumber: number, landedEventSeq: number): void
   /**
    * Durable drop lifecycle for one tag (#13 A): `landed` and `pending` are
@@ -681,6 +691,17 @@ const MIGRATIONS: readonly Migration[] = [
       `)
     },
   },
+  {
+    // v11: the manual `/ctx-flush` marker. It is deliberately on the queue
+    // row, not on a tag: only an already-pending drop can be forced, and the
+    // marker must survive a process restart until the next preStep.
+    version: 11,
+    up: (db) => {
+      db.exec(`
+        ALTER TABLE pending_drops ADD COLUMN flush_requested INTEGER NOT NULL DEFAULT 0;
+      `)
+    },
+  },
 ]
 
 export class StoreAheadOfAdapterError extends Error {
@@ -890,7 +911,7 @@ export function openStores(dataDir: string): AdapterStores {
   const queueDrop = (sessionId: string, tagNumber: number, now: number): void => {
     db.prepare(
       'INSERT INTO pending_drops(session_id, tag_number, queued_at) VALUES(?, ?, ?) '
-        + 'ON CONFLICT(session_id, tag_number) DO UPDATE SET queued_at = excluded.queued_at '
+        + 'ON CONFLICT(session_id, tag_number) DO UPDATE SET queued_at = excluded.queued_at, flush_requested = 0 '
         + 'WHERE landed_event_seq IS NOT NULL',
     ).run(sessionId, tagNumber, now)
   }
@@ -900,9 +921,38 @@ export function openStores(dataDir: string): AdapterStores {
       'SELECT tag_number FROM pending_drops WHERE session_id = ? AND landed_event_seq IS NULL ORDER BY queued_at, tag_number',
     ).all(sessionId) as Array<{ tag_number: number }>).map(row => row.tag_number)
 
+  const requestFlush = (sessionId: string): number => {
+    const result = db.prepare(
+      'UPDATE pending_drops SET flush_requested = 1 '
+        + 'WHERE session_id = ? AND landed_event_seq IS NULL AND flush_requested = 0',
+    ).run(sessionId) as { changes?: number }
+    return result.changes ?? 0
+  }
+
+  const listFlushRequestedDrops = (sessionId: string): number[] =>
+    (db.prepare(
+      'SELECT tag_number FROM pending_drops WHERE session_id = ? AND landed_event_seq IS NULL AND flush_requested = 1 '
+        + 'ORDER BY queued_at, tag_number',
+    ).all(sessionId) as Array<{ tag_number: number }>).map(row => row.tag_number)
+
+  const clearFlushRequests = (sessionId: string, tags: readonly number[]): void => {
+    if (tags.length === 0) return
+    const clear = db.prepare(
+      'UPDATE pending_drops SET flush_requested = 0 WHERE session_id = ? AND tag_number = ?',
+    )
+    db.exec('BEGIN')
+    try {
+      for (const tag of tags) clear.run(sessionId, tag)
+      db.exec('COMMIT')
+    } catch (error) {
+      db.exec('ROLLBACK')
+      throw error
+    }
+  }
+
   const markDropLanded = (sessionId: string, tagNumber: number, landedEventSeq: number): void => {
     db.prepare(
-      'UPDATE pending_drops SET landed_event_seq = ? WHERE session_id = ? AND tag_number = ?',
+      'UPDATE pending_drops SET landed_event_seq = ?, flush_requested = 0 WHERE session_id = ? AND tag_number = ?',
     ).run(landedEventSeq, sessionId, tagNumber)
   }
 
@@ -1460,6 +1510,9 @@ export function openStores(dataDir: string): AdapterStores {
     latestHistoryChangeAt,
     queueDrop,
     listPendingDrops,
+    requestFlush,
+    listFlushRequestedDrops,
+    clearFlushRequests,
     markDropLanded,
     dropState,
     tagSessions,

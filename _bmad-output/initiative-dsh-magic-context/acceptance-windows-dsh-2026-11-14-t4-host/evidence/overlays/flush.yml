@@ -1,0 +1,56 @@
+[
+  {
+    "id": "magic-context-dsh",
+    "name": "dsh-plugin-magic-context",
+    "config": {
+      "dataDir": "C:/Users/elvis/AppData/Local/Temp/opencode/dsh-mc-t4-20261114-174313/plugin-data",
+      "registerCompactionEngine": false,
+      "historianEnabled": false,
+      "policy": {
+        "executeThreshold": 100,
+        "ttlMs": 999999999
+      },
+      "maintenance": {
+        "enabled": false
+      },
+      "memory": {
+        "embedBackfill": false,
+        "vectorBackfill": false,
+        "global": {
+          "machine": {
+            "enabled": false
+          },
+          "user": {
+            "render": false,
+            "collect": false,
+            "review": false
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "session-title-llm",
+    "name": "@deepseek-ai/dsh-session-title-first-prompt-llm",
+    "disabled": true
+  },
+  {
+    "insert": [
+      {
+        "id": "acceptance-observer",
+        "name": "file:///C:/Users/elvis/AppData/Local/Temp/opencode/dsh-mc-t4-20261114-174313/observer.mjs",
+        "config": {
+          "outDir": "C:/Users/elvis/AppData/Local/Temp/opencode/dsh-mc-t4-20261114-174313/evidence/session-observer"
+        }
+      }
+    ]
+  },
+  {
+    "insert": [
+      {
+        "id": "acceptance-flush-driver",
+        "name": "file:///C:/Users/elvis/AppData/Local/Temp/opencode/dsh-mc-t4-20261114-174313/driver-flush.mjs"
+      }
+    ]
+  }
+]

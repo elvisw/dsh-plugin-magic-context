@@ -32,14 +32,13 @@ import type { AdapterStores, BaselineState } from '../core/stores.ts'
 import { errText } from '../core/types.ts'
 import { reclaimForEmergency } from './emergency.ts'
 import { runHistorian, type HistorianDeps, type HistorianLlm } from './historian.ts'
+import { landPendingDrops } from './drop-landing.ts'
 import {
-  dropPlaceholderContent,
   enumerateSurfaceNodes,
   enumerateSurfaceToolResults,
   magicContextSource,
   pairingClosedWindow,
   replaceSurfaceRange,
-  replaceToolResultContent,
   syntheticNodeId,
   wireStrandedResults,
   type ContentBlock,
@@ -657,37 +656,32 @@ export function runManagementPass(input: ManagementPassInput): ManagementPassRes
   }
 
   // 1. Queued ctx_reduce marks.
+  let forceToolNodes: ReturnType<typeof enumerateSurfaceToolResults> = []
   try {
-    const toolNodes = enumerateSurfaceToolResults(input.session, callId =>
+    // Snapshot before landing: the force band historically reclaims from the
+    // pre-landing surface (and must not start dropping the placeholders it
+    // just created). Flush has already landed before this pass, so the
+    // snapshot is naturally post-flush for that path.
+    forceToolNodes = enumerateSurfaceToolResults(input.session, callId =>
       input.stores.getTag(input.sessionId, { kind: 'tool-result', callId }))
-    for (const tag of input.stores.listPendingDrops(input.sessionId)) {
-      const node = toolNodes.find(candidate => candidate.tagNumber === tag)
-      if (node === undefined) continue
-      if (node.isPlaceholder) {
-        input.stores.markDropLanded(input.sessionId, tag, node.seq)
-        continue
-      }
-      const landedSeq = replaceToolResultContent(input.session, node.seq, dropPlaceholderContent(tag))
-      input.stores.markDropLanded(input.sessionId, tag, landedSeq)
-      landedDrops.push(tag)
-    }
-    if (landedDrops.length > 0) {
-      const textBySeq = new Map(enumerateSurfaceNodes(input.session).map(node => [node.seq, node.text]))
-      input.journal?.info(
-        'drop-landed',
-        `landed ${String(landedDrops.length)} drop(s): ${landedDrops.map(tag => `§${String(tag)}§`).join(', ')}`,
-        {
-          tags: landedDrops,
-          count: landedDrops.length,
-          estTokens: landedDrops.reduce((total, tag) => {
-            const node = toolNodes.find(candidate => candidate.tagNumber === tag)
-            const text = node === undefined ? undefined : textBySeq.get(node.seq)
-            return total + (text === undefined ? 0 : estimateTokens(text))
-          }, 0),
-        },
-        input.sessionId,
-      )
-    }
+    const landing = landPendingDrops({
+      session: input.session,
+      sessionId: input.sessionId,
+      stores: input.stores,
+      tags: input.stores.listPendingDrops(input.sessionId),
+      journal: input.journal,
+      // Record each replacement before the durable write. If a later tag
+      // throws, the pass result and error logs still name what the surface
+      // already lost.
+      onReplaced: tag => {
+        landedDrops.push(tag)
+      },
+    })
+    // Filter the force-band snapshot by the tags this pass touched; their old
+    // seqs are shadowed by the placeholder replacement and must not be handed
+    // to reclaimForEmergency.
+    const touched = new Set([...landing.landed, ...landing.already])
+    forceToolNodes = forceToolNodes.filter(node => node.tagNumber === undefined || !touched.has(node.tagNumber))
 
     // 1.5 Wire-pairing repair (the iron rule): sweep stranded results off the
     // wire before anything else reads the surface.
@@ -715,9 +709,11 @@ export function runManagementPass(input: ManagementPassInput): ManagementPassRes
     } else if (input.pressure !== undefined && input.pressure >= input.policy.forceThreshold) {
       const generationBefore = input.session.surface.replaceGeneration
       // #731: pass the whole-surface estimate so the drop lane can refuse a
-      // reclaim that cannot fit the request even at zero tool results.
+      // reclaim that cannot fit the request even at zero tool results. The
+      // node snapshot is the pre-landing one from step 1, preserving the
+      // historical force-band set.
       const reclaim = reclaimForEmergency(
-        input.session, toolNodes, input.policy, input.contextWindow, surfaceTokens(input.session))
+        input.session, forceToolNodes, input.policy, input.contextWindow, surfaceTokens(input.session))
       forceDropped = reclaim.dropped.length
       if (forceDropped > 0) {
         input.journal?.warn(

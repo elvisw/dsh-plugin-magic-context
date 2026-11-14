@@ -1,0 +1,68 @@
+{
+  "pendingDrops": [
+    {
+      "session_id": "session-9516b1fe-6f99-4c17-955a-f100963c86fe",
+      "tag_number": 1,
+      "queued_at": 1794649507251,
+      "landed_event_seq": null,
+      "flush_requested": 0
+    }
+  ],
+  "tags": [
+    {
+      "tag_number": 1,
+      "target_kind": "tool-result",
+      "target_id": "call_00_ET_GWpIpTJ9NTeTZY1raLbv8528"
+    },
+    {
+      "tag_number": 2,
+      "target_kind": "tool-result",
+      "target_id": "call_00_knnAergeHAKfWqJHCzzd7532"
+    }
+  ],
+  "journal": {
+    "drop-landed": {
+      "count": 0,
+      "maxId": null,
+      "rows": []
+    },
+    "pass": {
+      "count": 2,
+      "maxId": 53,
+      "rows": [
+        {
+          "id": 49,
+          "at": 1794649504765,
+          "kind": "pass",
+          "summary": "defer (no-usage) at ?%",
+          "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+        },
+        {
+          "id": 53,
+          "at": 1794649506364,
+          "kind": "pass",
+          "summary": "defer (below-threshold) at 0.8%",
+          "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":0.8,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":254,\"cacheRead\":8064,\"cacheWrite\":0},\"consecutive\":1}"
+        }
+      ]
+    },
+    "emergency-reclaim": {
+      "count": 0,
+      "maxId": null,
+      "rows": []
+    },
+    "historian": {
+      "count": 0,
+      "maxId": null,
+      "rows": []
+    },
+    "compartment-published": {
+      "count": 0,
+      "maxId": null,
+      "rows": []
+    }
+  },
+  "usage": {
+    "usage_records": 14
+  }
+}

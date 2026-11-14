@@ -1,0 +1,26 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t4-20261114-174313\\overlays\\flush.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "--session-id",
+    "session-372c4a1b-3d5a-4188-bd22-1c117868f872",
+    "This is a NEW host process resuming the T4 acceptance session. Do NOT read any file and do NOT call tools. The /ctx-flush command has already run through the host command registry. Report exactly T4_FLUSH_OK followed by the exact current text of the fixture tool result, including any [dropped §N§] marker you see. Do not reconstruct missing content."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 4.783,
+  "session_id": "session-372c4a1b-3d5a-4188-bd22-1c117868f872",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "T4_FLUSH_OK\n[dropped §1§]",
+  "tool_calls": [],
+  "tool_results": []
+}

@@ -81,7 +81,7 @@ describe('schema v8 migration', () => {
   it('is the current version and upgrades a v7 store without losing rows', () => {
     const dir = tempDir()
     const store = openStore(dir)
-    expect(SCHEMA_VERSION).toBe(10)
+    expect(SCHEMA_VERSION).toBe(11)
     store.allocateTag('s1', { kind: 'user-message', messageId: 'm1' }, NOW)
     store.saveBaselineState({
       sessionId: 's1',
@@ -103,6 +103,7 @@ describe('schema v8 migration', () => {
       DROP TABLE domains;
       ALTER TABLE baseline_state DROP COLUMN profile_watermark;
       ALTER TABLE baseline_state DROP COLUMN profile_m0_digest;
+      ALTER TABLE pending_drops DROP COLUMN flush_requested;
       UPDATE meta SET value = '7' WHERE key = 'schema_version';
     `)
     raw.close()
@@ -119,6 +120,28 @@ describe('schema v8 migration', () => {
     upgraded.saveBaselineState({ ...baseline!, profileWatermark: 7, profileM0Digest: 'digest' })
     expect(upgraded.baselineState('s1')?.profileWatermark).toBe(7)
     expect(upgraded.baselineState('s1')?.profileM0Digest).toBe('digest')
+    upgraded.close()
+  })
+
+  it('upgrades a v10 pending queue without losing drops or pre-marking them', () => {
+    const dir = tempDir()
+    const store = openStore(dir)
+    store.queueDrop('s1', 7, NOW)
+    store.close()
+
+    const dbPath = join(dir, 'dsh-magic-context.db')
+    const raw = new DatabaseSync(dbPath)
+    raw.exec(`
+      ALTER TABLE pending_drops DROP COLUMN flush_requested;
+      UPDATE meta SET value = '10' WHERE key = 'schema_version';
+    `)
+    raw.close()
+
+    const upgraded = openStore(dir)
+    expect(upgraded.listPendingDrops('s1')).toEqual([7])
+    expect(upgraded.listFlushRequestedDrops('s1')).toEqual([])
+    expect(upgraded.requestFlush('s1')).toBe(1)
+    expect(upgraded.listFlushRequestedDrops('s1')).toEqual([7])
     upgraded.close()
   })
 

@@ -1,0 +1,10 @@
+{
+  "tag": 1,
+  "callId": "call_00_ET_VEZ8FPMU1VkYoyOEHXsC1898",
+  "tool": "read",
+  "originalSeq": 20,
+  "originalText": "\u00a71\u00a7 <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t4-20261114-174313\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: \u5408\u6210\u9a8c\u6536\u6570\u636e\uff1a\u8fd9\u4e0d\u662f\u7528\u6237\u771f\u5b9e\u9879\u76ee\u8d44\u6599\u3002\n2: nonce=1c0ad0a4275f50d1c6fdb6aff8c4e177\n3: JSON={\"status\":\"\u5f85\u6838\u9a8c\",\"path\":\"C:\\\\synthetic\\\\\u5b9e\u9a8c\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ \u00a7 \ud83e\uddea \u96f6\u4e00\u4e8c\u4e09\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>",
+  "originalSha256": "af329e74bd1669c0277a2d4d8c67e87ba6e586fe426439ea038e581e9efeacb7",
+  "sourceFile": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t4-20261114-174313\\evidence\\session-observer\\session-372c4a1b-3d5a-4188-bd22-1c117868f872.jsonl",
+  "sourceLine": 8
+}

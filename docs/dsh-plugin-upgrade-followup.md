@@ -31,7 +31,7 @@
 | MC 版本 | **v0.49.30**（tag `47bcd71a2`，2026-10-29 发布；2026-10-30 完成 v0.46.0→v0.49.30 跟进，见 `docs/upstream-followup-2026-10-30.md`） | MC 升级 → `git -C .upstream/magic-context fetch --tags` 后按 §4 对齐命令 diff |
 | MC 存储契约 | 形状继承自 v95 停切点，**2026-10-13 起自有谱系**（`MEMORY_SCHEMA_MAX_VERSION = 95`，`memory-bridge.ts`） | 自有库新迁移 >95 → fence 只读降级（见 §3.3）；上游 schema 变化不再产生兼容义务 |
 | DSH Desktop | **0.2.1-rc.1**（packaged app，checkout `1600d8a1e`；2026-10-17 起） | DSH 升级 → 查 §3 接缝 |
-| 适配器自有库 | schema **v10**（adapter store，`stores.ts` SCHEMA_VERSION；#802 水位走 meta kv，无 schema 变更） | 适配器内部，自洽 |
+| 适配器自有库 | schema **v11**（adapter store，`stores.ts` SCHEMA_VERSION；#802 水位走 meta kv） | 适配器内部，自洽 |
 | 测试基线 | **`mc-test --quick` 全绿**（typecheck + 73 文件 / 770 测试，2026-10-30 实测）；`--full` 另含 build/acceptance/audit/records | 每次跟进的终验标准 |
 
 > **2026-10-17 复核（0.2.0-rc.2 → 0.2.1-rc.1）**：把 `@deepseek-ai/*` 映射到

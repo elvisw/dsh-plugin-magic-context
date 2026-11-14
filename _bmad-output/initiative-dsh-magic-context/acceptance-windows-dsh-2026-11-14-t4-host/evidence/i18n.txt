@@ -1,0 +1,35 @@
+
+> dsh-plugin-magic-context@0.11.2 check:i18n
+> node scripts/mc-i18n-check.mjs
+
+=== 宿主 notice（英文 + 长度上限）===
+  ✓ published 区段 + 净回收: Magic Context · compacted 1 compartment §C2§ · reclaimed 104,146 tok
+  ✓ 复数形式: Magic Context · compacted 2 compartments §C1§ §C2§ · reclaimed 1,000 tok
+  ✓ 记忆提升 + 已知条数: Magic Context · promoted 9 memories (2 already known)
+  ✓ force-band 丢弃: Magic Context · emergency-dropped 3 tool outputs · reclaimed 12,000 tok
+  ✓ 无中文残留
+  ✓ baseline-only 仍然静默
+  ✓ 120 字符上限: 120 ≤ 120
+  ✓ notice 追加成功且文案为英文: Magic Context · compacted 1 compartment §C3§ · reclaimed 500 tok
+Baseline refreshed (m[0] frozen point advanced)
+
+=== 客户端字典与接线 ===
+  ✓ zh/en 键集合一致: 81 keys
+  ✓ 源码引用的键全部已定义: 51 keys
+  ✓ 动态键族 detail.verb.* 全部已定义: detail.verb.
+  ✓ 字典之外没有硬编码中文: 0 处
+  ✓ 插值生效
+  ✓ 未知键回退为键名
+  ✓ 每个分支都有记录（boot 为噪声）: 11 行
+  ✓ 英文渲染无中文残留: 11 行
+  ✓ 中文渲染与旧文案一致
+  ✓ 英文标题正确: Reclaim pass | Memory promotion | Memory written | Context compacted | Baseline rebuild (HARD) | Emergency drop | Wire repair | Drop landed | Compartment stored | Historian failed | Maintenance sweep
+  ✓ 噪声行英文 + 只数 soft 基线: memories loaded ×2 · baseline refreshed ×1
+  ✓ 分类计数标签跟随语言: 🧠Memory written 2  ✂️Context reclaimed 3  🗑️Context dropped 2  🧰Maintenance 2  🧭Archived 1  ⚠️Failed 1
+  ✓ 注入 locale 服务: slots,locale
+  ✓ 注册 magic-context 命名空间（zh+en）
+  ✓ 每个槽位注册项都声明 locale: conversation.composer.dock, plugins.item, plugins.row.config
+  ✓ 槽位 label 为跟随语言的 thunk: Magic Context telemetry | Magic Context
+  ✓ 两个渲染槽位都拿到组件
+
+ALL PASS

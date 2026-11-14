@@ -45,13 +45,13 @@
 
 ## D3. `/ctx-flush`（#15）
 
-1. 命令名 `/ctx-flush`（假设；实现时核实命令注册拼写），只处理**当前会话**的 pending drops；不跨会话。
-2. 命令本身只登记“强制处理”标记并返回状态；真正的 surface 改写由下一次 `preStep` 的管理拍执行，最迟在下一次模型请求生效。
-3. **缓存刷新：** flush 必须使受影响的上下文注入缓存失效或刷新，确保下一次请求不继续复用旧注入内容；若只设置下一拍标记，回执必须明确“尚待下一次请求落地”（`issue-ctx-flush.md:27`）。
-4. 不启动 Historian、不调用 recomp、不生成摘要；已有后台任务按各自策略运行。已有 ready compartment 是否随下一拍发布，不在本契约内，由 T4 明确并记录。
-5. 不额外回收用户未标记的内容；不改变保护窗口、tag 保留期或阈值。
-6. 返回真实状态：`processed`、`pendingNext`、`noop`、`refused`（含原因）；空队列、重复调用、无活动会话、功能关闭、存储失败都必须可诊断。
-7. 幂等：同一会话重复 flush 不重复处理；已落地项不再入队。
+1. 命令名 `/ctx-flush`（实现为小写注册名 `ctx-flush`），只处理**当前会话**的 pending drops；不跨会话。
+2. 命令本身只登记“强制处理”标记并返回状态；真正的 surface 改写由**下一次 `preStep` 的独立 flush lane**执行，最迟在下一次模型请求生效。它不是 execute-band 管理拍：不调用 Historian、recomp、force reclaim、compartment publish 或 baseline rebuild；landing 与自动回收共用同一个 helper。
+3. **缓存刷新：** DSH 没有原版那种独立的注入缓存对象；下一次请求从被改写的 session surface 重新组装，因此标记落地就是刷新边界。回执必须明确“尚待下一次请求落地”（`issue-ctx-flush.md:27`）。
+4. 不启动 Historian、不调用 recomp、不生成摘要；已有后台任务按各自策略运行。已有 ready compartment 是否随下一拍发布，不在本契约内；flush lane 不发布它。
+5. 不额外回收用户未标记的内容；不改变保护窗口、tag 保留期或阈值。flush 落地（包括部分落地后抛错、surface generation 已变化的情形）使同一轮 pressure 读数变旧，同一轮 execute 的 force band 必须被抑制。
+6. 返回真实状态：`requested`、`alreadyRequested`、`pendingNext`（上界）、`noop`、`refused`（含原因）；命令自身 `processed=0`。空队列、重复调用、无活动会话、功能关闭、存储失败都必须可诊断；存储失败时 `pendingNext` 未知，不得报 0。
+7. 幂等：同一会话重复 flush 不重复处理；已落地项不再入队；skip（tag 不在 live surface）只由 landing helper 返回、由 flush lane 读取，不新写 journal 行，命令不伪造 skip。
 
 ## D4. 工具 API 形状
 

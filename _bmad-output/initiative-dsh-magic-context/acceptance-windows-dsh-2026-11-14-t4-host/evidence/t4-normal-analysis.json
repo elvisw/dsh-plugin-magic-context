@@ -1,0 +1,263 @@
+{
+  "variant": "normal",
+  "sessionId": "session-372c4a1b-3d5a-4188-bd22-1c117868f872",
+  "host": {
+    "args": [
+      "--profile",
+      "headless",
+      "--patch",
+      "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t4-20261114-174313\\overlays\\flush.yml",
+      "--json",
+      "--permission-mode",
+      "read-only",
+      "--approval-policy",
+      "never",
+      "--session-id",
+      "session-372c4a1b-3d5a-4188-bd22-1c117868f872",
+      "This is a NEW host process resuming the T4 acceptance session. Do NOT read any file and do NOT call tools. The /ctx-flush command has already run through the host command registry. Report exactly T4_FLUSH_OK followed by the exact current text of the fixture tool result, including any [dropped §N§] marker you see. Do not reconstruct missing content."
+    ],
+    "exit_code": 0,
+    "mode": "real-host",
+    "seconds": 4.783,
+    "session_id": "session-372c4a1b-3d5a-4188-bd22-1c117868f872",
+    "final_reason": {
+      "kind": "completed"
+    },
+    "final_text": "T4_FLUSH_OK\n[dropped §1§]",
+    "tool_calls": [],
+    "tool_results": []
+  },
+  "commandEvidence": [
+    {
+      "processId": 17760,
+      "sessionId": "session-d6483c61-18c1-459e-9bad-b60d9a65b2d3",
+      "target": "session-d6483c61-18c1-459e-9bad-b60d9a65b2d3",
+      "definition": {
+        "name": "ctx-flush",
+        "description": "Force this session's pending ctx_reduce drops to land on the next message (no summary or model call)."
+      },
+      "execution": {
+        "commandId": "cmd-b1cc3c76-1",
+        "kind": "success",
+        "text": "Magic Context: flush queued for 1 new drop(s) (new §1§): requested 1, already marked 0, processed 0, pendingNext 1 (upper bound). Changes take effect on the next message; the current request is unchanged."
+      }
+    },
+    {
+      "processId": 3260,
+      "sessionId": "session-372c4a1b-3d5a-4188-bd22-1c117868f872",
+      "target": "session-372c4a1b-3d5a-4188-bd22-1c117868f872",
+      "definition": {
+        "name": "ctx-flush",
+        "description": "Force this session's pending ctx_reduce drops to land on the next message (no summary or model call)."
+      },
+      "execution": {
+        "commandId": "cmd-3bd229fa-1",
+        "kind": "success",
+        "text": "Magic Context: flush queued for 1 new drop(s) (new §1§): requested 1, already marked 0, processed 0, pendingNext 1 (upper bound). Changes take effect on the next message; the current request is unchanged."
+      }
+    }
+  ],
+  "commandEvents": [
+    {
+      "seq": 34,
+      "type": "command/run",
+      "data": {
+        "commandId": "cmd-3bd229fa-1",
+        "name": "ctx-flush",
+        "args": "",
+        "source": {
+          "kind": "user"
+        }
+      }
+    },
+    {
+      "seq": 35,
+      "type": "command/done",
+      "data": {
+        "commandId": "cmd-3bd229fa-1",
+        "kind": "success",
+        "text": "Magic Context: flush queued for 1 new drop(s) (new §1§): requested 1, already marked 0, processed 0, pendingNext 1 (upper bound). Changes take effect on the next message; the current request is unchanged."
+      }
+    }
+  ],
+  "placeholder": [
+    {
+      "type": "tool/result",
+      "seq": 42,
+      "time": 1794649474533,
+      "data": {
+        "turn": 1,
+        "step": 1,
+        "message": {
+          "role": "tool",
+          "source": {
+            "kind": "tool",
+            "callId": "call_00_ET_VEZ8FPMU1VkYoyOEHXsC1898"
+          },
+          "toolCallId": "call_00_ET_VEZ8FPMU1VkYoyOEHXsC1898",
+          "isError": false,
+          "id": "91a2fcd2-6fa8-4af0-84e9-d637675aa9d2",
+          "content": [
+            {
+              "type": "text",
+              "text": "[dropped §1§]"
+            }
+          ]
+        },
+        "meta": {
+          "path": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t4-20261114-174313\\workspace\\fixture.txt",
+          "offset": 1,
+          "lines": [
+            {
+              "number": 1,
+              "text": "合成验收数据：这不是用户真实项目资料。"
+            },
+            {
+              "number": 2,
+              "text": "nonce=1c0ad0a4275f50d1c6fdb6aff8c4e177"
+            },
+            {
+              "number": 3,
+              "text": "JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}"
+            },
+            {
+              "number": 4,
+              "text": "Symbols: <>&\"' / \\ § 🧪 零一二三"
+            },
+            {
+              "number": 5,
+              "text": "Whitespace:  keep  two  spaces."
+            },
+            {
+              "number": 6,
+              "text": "END=ef4c2dc934cc4fdaa263f350fbb1ca61"
+            }
+          ],
+          "totalLines": 6
+        }
+      },
+      "sourceEventSeqs": [
+        20
+      ],
+      "surfaceOp": {
+        "op": "replace",
+        "startSeq": 20,
+        "endSeq": 20
+      }
+    }
+  ],
+  "db": {
+    "pendingDrops": [
+      {
+        "session_id": "session-372c4a1b-3d5a-4188-bd22-1c117868f872",
+        "tag_number": 1,
+        "queued_at": 1794649463998,
+        "landed_event_seq": 42,
+        "flush_requested": 0
+      }
+    ],
+    "tags": [
+      {
+        "tag_number": 1,
+        "target_kind": "tool-result",
+        "target_id": "call_00_ET_VEZ8FPMU1VkYoyOEHXsC1898"
+      },
+      {
+        "tag_number": 2,
+        "target_kind": "tool-result",
+        "target_id": "call_00_GBH7nOLoZXeHVMCiyZ3f3393"
+      }
+    ],
+    "journal": {
+      "drop-landed": {
+        "count": 1,
+        "maxId": 40,
+        "rows": [
+          {
+            "id": 40,
+            "at": 1794649474539,
+            "kind": "drop-landed",
+            "summary": "landed 1 drop(s): §1§",
+            "data": "{\"tags\":[1],\"count\":1,\"estTokens\":0}"
+          }
+        ]
+      },
+      "pass": {
+        "count": 3,
+        "maxId": 43,
+        "rows": [
+          {
+            "id": 32,
+            "at": 1794649461986,
+            "kind": "pass",
+            "summary": "defer (no-usage) at ?%",
+            "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+          },
+          {
+            "id": 36,
+            "at": 1794649463203,
+            "kind": "pass",
+            "summary": "defer (below-threshold) at 0.8%",
+            "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":0.8,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":254,\"cacheRead\":8064,\"cacheWrite\":0},\"consecutive\":1}"
+          },
+          {
+            "id": 43,
+            "at": 1794649474780,
+            "kind": "pass",
+            "summary": "defer (below-threshold) at 0.8%",
+            "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":0.8,\"pressureStale\":true,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":239,\"cacheRead\":8448,\"cacheWrite\":0},\"consecutive\":1}"
+          }
+        ]
+      },
+      "emergency-reclaim": {
+        "count": 0,
+        "maxId": null,
+        "rows": []
+      },
+      "historian": {
+        "count": 0,
+        "maxId": null,
+        "rows": []
+      },
+      "compartment-published": {
+        "count": 0,
+        "maxId": null,
+        "rows": []
+      }
+    },
+    "usage": {
+      "usage_records": 11
+    }
+  },
+  "preflight": {
+    "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t4-20261114-174313",
+    "nonce": "1c0ad0a4275f50d1c6fdb6aff8c4e177",
+    "fixture_sha256": "566097732436d0dedae3d944dfd44856a912252e654f68489f21130c9d289889",
+    "plugin_package": "0.11.2",
+    "tarball_sha256": "91d45e81fe5834a8b537a36605b808b2b9686d735448f9bbce5bbb2145ee3ec1",
+    "hashes": {
+      "dsh/flush-command.js": {
+        "built": "e605f4f1abcc7f9b37684e38c8f907b3a948ba120f97d7d790ce4588e1644cab",
+        "installed": "e605f4f1abcc7f9b37684e38c8f907b3a948ba120f97d7d790ce4588e1644cab"
+      },
+      "dsh/drop-landing.js": {
+        "built": "6aea4b65d0f1cbfd86e748ab680fec400cc85f2a6b31e5108529572471aef0d2",
+        "installed": "6aea4b65d0f1cbfd86e748ab680fec400cc85f2a6b31e5108529572471aef0d2"
+      },
+      "core/stores.js": {
+        "built": "b7b05067f5e73f03b847cc54cad1d1b31b1bff9de88145de6ac02afd18aa76ab",
+        "installed": "b7b05067f5e73f03b847cc54cad1d1b31b1bff9de88145de6ac02afd18aa76ab"
+      },
+      "dsh/pre-step.js": {
+        "built": "6bbfeb1ef993c0cd97130cef647e55bfff8b18523d97330caa9ae8d9ba5f3cf0",
+        "installed": "6bbfeb1ef993c0cd97130cef647e55bfff8b18523d97330caa9ae8d9ba5f3cf0"
+      }
+    },
+    "flush_command_has_name": true,
+    "drop_landing_has_helper": true,
+    "git_head": "d69a7dfb7dfdd12bf36c2501130fe850dd43dd33",
+    "git_status_sha256": "6e9543600e1ae6a48808b1c11838cb13a765028ee1756f4871fe33df3d4e30ad",
+    "git_diff_sha256": "594dad1510a7e4f139aa3e9e53130a3eae4a50d6e4ac309e4806af1c18a15ea2",
+    "deepseek_key_present": true
+  }
+}

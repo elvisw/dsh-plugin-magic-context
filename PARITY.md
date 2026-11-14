@@ -12,7 +12,7 @@ This document records the **effective-behavior contract** between the DSH adapte
 | Magic Context | **v0.49.30** (`v0.49.30-0-g47bcd71a2`, released 2026-10-29; the alignment core is unchanged since v0.46.0 — inject-compartments/storage-memory/workspaces/search/emergency-drop/agents all 0 commits) |
 | MC store contract | shape inherited at the v95 cutover, **own lineage since 2026-10-13** (`src/core/memory-bridge.ts:45`; `MEMORY_SCHEMA_MAX_VERSION = 95`) |
 | DeepSeek Harness | **Desktop 0.2.1-rc.1** (host paths below are relative to the DSH checkout) |
-| Adapter | `dsh-plugin-magic-context` 0.9.0, own store **schema v10** (`src/core/stores.ts`) |
+| Adapter | `dsh-plugin-magic-context` 0.11.2, own store **schema v11** (`src/core/stores.ts`) |
 
 Scope split: `docs/dsh-plugin-upgrade-followup.md` says **how** to follow an
 upgrade; this file says **where we differ**. Three verdicts are used below:
@@ -185,6 +185,7 @@ arithmetic.
 | per-request projection seam | absent | it would violate the host's reconstructability rule (`host: packages/core/session/src/surface.ts:85`), which is why §B2 stays host-imposed |
 | `protected_tools` holds (per-tool kept results) | absent | not ported: the lane reached v0.46.0 through introduce → revert → restore → restrict, so it is not yet a stable target. This adapter's emergency model keeps the protection *window* (`clamp(contextWindow × 5%, 8k, 64k)`) plus a count floor (`src/dsh/emergency.ts`), which is what §B's reclaim lane needs |
 | `/ctx-recomp` recompaction | **ported** (different carrier) | `src/dsh/recomp.ts` + the `ctx-recomp` command: it re-runs the historian over the compartment's original span — the shadowed events are still in the log (`seams.nodesForSeqs`) — and replaces the stored digest in place. Upstream's staging promotion, placeholder rewriting and compartment lease are unnecessary here because the digest is rendered from the store, not from the wire; the placeholder node only marks the span |
+| `/ctx-flush` manual queue flush | **ported** (DSH adaptation) | `src/dsh/flush-command.ts` marks current-session pending drops; the next preStep's flush lane lands them through the same helper as the automatic execute band. Upstream's separate cache-refresh/materialization signals have no DSH equivalent: the next request is assembled from the mutated session surface. No Historian, recomp, summary, force reclaim, or compartment publish |
 | watermark age reclaim (`tool-reclaim`) | absent | upstream auto-drops active tool tags at or below a watermark once they are worth `AGE_RECLAIM_MIN_TOKENS`; this adapter reclaims only on model stamps and in the force band |
 | historian calibration anchors (`reference-retrieval` + 60 seeds) | absent | our historian prompt carries instructions but no scored anchors, so importance calibration is guesswork here (and importance drives tier, decay and promotion) |
 | tokenizer calibration, image token estimate, decision calibration | absent | accounting is `chars/4` (`src/core/compartments.ts:59`); image-heavy sessions are underestimated |
