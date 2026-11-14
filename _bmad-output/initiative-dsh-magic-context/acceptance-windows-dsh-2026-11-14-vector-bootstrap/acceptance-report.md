@@ -18,7 +18,7 @@ under the isolated root only.
 
 | Check | Evidence | Result |
 |---|---|---|
-| Empty store starts with no embedding space | journal id 14 `gate-closed` with `bootstrapModelId` (the gate only closes when `dominantEmbeddingModel()` finds no space); the post-run table is `memory_embeddings: 1` | pass for the first tick; no pre-run DB snapshot was captured in the final root (attempt 2's `evidence/attempt2/vector-db.json` is the retained zero-row snapshot) |
+| Empty store starts with no embedding space | journal id 14 `gate-closed` carrying `bootstrapModelId` (that branch means no dominant space; `gate-closed` also covers dims mismatch); the post-run table is `memory_embeddings: 1` | pass for the first tick; no pre-run DB snapshot was captured in the final root (attempt 2's `evidence/attempt2/vector-db.json` is the retained zero-row snapshot) |
 | First maintenance tick creates the space | journal id 15 `backfill-bootstrap`, `total: 1` | pass |
 | One vector is stored in that space | journal id 16 `backfill`, `created: 1`; `memory_embeddings: 1`; `spaces[0].rows: 1` | pass |
 | Same process re-resolves parity | journal id 17 `parity-pass`, `parity: 1` | pass |
@@ -47,10 +47,11 @@ reads or mutates history.
   the test-only driver could not resolve `@deepseek-ai/dsh-tools` from the
   experiment root; the resulting search stayed `match=fts`, so the first-writer
   path was not exercised. The driver was moved into the isolated profile.
-- Attempt 2 (`evidence/attempt2/`): the verifier archived the `citrus fruit…`
-  fixture as `wrong` before the maintenance tick could run the backfill, so the
-  table still had 0 embeddings and no `backfill-bootstrap`; this attempt did not
-  execute the first-writer path. The final run used a plausible
+- Attempt 2 (`evidence/attempt2/`): the fixture was archived before the
+  maintenance tick could run the backfill (the copied DB shows `status:
+  archived`; the retained memory DB records `archive_reason=verify-wrong`), so
+  the table still had 0 embeddings and no `backfill-bootstrap`; this attempt did
+  not execute the first-writer path. The final run used a plausible
   `PROJECT_RULES` fixture and did reach `backfill-bootstrap` → `backfill` →
   `parity-pass`.
 - This gate proves the empty-store first-writer path and same-process parity
