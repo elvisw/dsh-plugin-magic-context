@@ -385,12 +385,52 @@ typecheck → test → build → check:i18n on Node 22.x / 24.x.
 
 ## Provenance & license
 
-- **magic-context** (MIT © 2025 Ufuk Altinok): the derivative origin of this repo.
-  Extracted from upstream tag v0.46.0 (`651c105a9`); the adapter's own commits were
-  replayed verbatim from `e34eda955` (2026-10-08) on the local `dsh` branch.
-- **DeepSeek Harness** (MIT): consumed as a dependency, not vendored. Code written against
-  0.2.1-rc.1 (checkout `1600d8a1e`, npm dist-tag `next`; note their `latest` tag trails a
-  release line — exact pins are the devDependencies).
+### Difference from the upstream DSH adapter
+
+This repository is a fork of [`wk544863858/dsh-plugin-magic-context`](https://github.com/wk544863858/dsh-plugin-magic-context)
+(npm `dsh-plugin-magic-context`). The upstream's last public release is `dsh-plugin-magic-context@0.11.2`
+(2026-11-11); this fork publishes as `@elvisw/dsh-plugin-magic-context` from `0.12.0`, and its versions
+and tags belong to the fork. The upstream repository and npm package remain under their original
+maintainer; this fork does not modify them.
+
+Differences from upstream `0.11.2` in `0.12.0`:
+
+- **Recovery semantics**: `ctx_expand` no longer rewrites placeholders in place. It reads the persisted
+  original `tool/result`, returns it as a new tool result, and assigns a new tag. The old placeholder is
+  unchanged, the old tag stays dropped, and reducing it again is a no-op (`already dropped`). This is a
+  breaking change.
+- **Raw reads after Historian**: `ctx_expand` accepts a `message` locator (the current session's DSH log
+  event seq, including an original `tool/result` shadowed by a Historian compartment). It does not rerun
+  the original tool and does not rewrite summaries or compartments.
+- **Manual flush**: `/ctx-flush` marks the current session's pending drops for the next pre-step to land;
+  it does not start Historian, recomp, summarization, or a model call.
+- **Durable drop state**: `ctx_reduce`/`ctx_expand` decide from the `pending_drops` `none`/`pending`/
+  `landed` state instead of whether a placeholder is still on the current surface; a restored old tag no
+  longer produces a fake “Queued” receipt.
+- **Tag retention**: the mount-time 30-day tag prune, the `tags.retentionDays` config, and
+  `AdapterStores.pruneTags` are removed. An old profile's key is kept but ignored, with at most one warning
+  per process.
+- **Schema and package name**: the plugin DB moves to v11 (`pending_drops.flush_requested`, automatic v10
+  migration), and the npm package becomes `@elvisw/dsh-plugin-magic-context`. The loader row id
+  `magic-context-dsh`, the settings namespace, and the plugin data directory `magic-context-dsh-poc` stay
+  unchanged.
+
+Because the row id is shared, upstream `dsh-plugin-magic-context` and this fork **cannot be installed side
+by side**; remove the old package before installing the fork. This fork guarantees its own plugin behavior
+and data migration, not long-term UX/API compatibility with upstream 0.11.x; compatibility semantics target
+the original `cortexkit/magic-context`, with DSH as the host.
+
+### Copyright and third parties
+
+- **Upstream DSH adapter** (`wk544863858/dsh-plugin-magic-context`, npm `dsh-plugin-magic-context@0.11.2`,
+  MIT, Copyright (c) 2026 wukai — the DeepSeek Harness adapter in this repository): the direct upstream of
+  this fork. Fork modifications are Copyright (c) 2026 elvisw, also under MIT.
+- **magic-context** (MIT, Copyright (c) 2025 Ufuk Altinok — magic-context): the derivative origin of this
+  repo. Extracted from upstream tag v0.46.0 (`651c105a9`); the adapter's own commits were replayed verbatim
+  from `e34eda955` (2026-10-08) on the local `dsh` branch.
+- **DeepSeek Harness** (MIT): consumed as a dependency, not vendored. Code written against 0.2.1-rc.1
+  (checkout `1600d8a1e`, npm dist-tag `next`; note their `latest` tag trails a release line — exact pins are
+  the devDependencies).
 - Vendored third-party: `vendor/onnx/` (onnxruntime-web WASM subset, MIT © Microsoft),
   `tests/helpers/mock-adapter.ts` (DSH test tree, verbatim). Details in [NOTICE](NOTICE);
   license in [LICENSE](LICENSE).

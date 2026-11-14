@@ -320,7 +320,30 @@ typecheck → test → build → check:i18n。
 
 ## 出处与许可
 
-- **magic-context**（MIT © 2025 Ufuk Altinok）：本仓库的衍生来源。抽取自上游 tag
+### 与上游 DSH 适配器的差异
+
+本仓库是 [`wk544863858/dsh-plugin-magic-context`](https://github.com/wk544863858/dsh-plugin-magic-context)
+（npm 包 `dsh-plugin-magic-context`）的 fork。上游最后一个公开发布是 `dsh-plugin-magic-context@0.11.2`
+（2026-11-11）；本 fork 自 `0.12.0` 起以 `@elvisw/dsh-plugin-magic-context` 发布，版本与 tag 归本 fork。
+上游仓库和上游 npm 包仍由原维护者维护，本 fork 不修改它们。
+
+相对上游 `0.11.2`，`0.12.0` 的主要差异：
+
+- **恢复语义**：`ctx_expand` 不再原地改写占位符，而是读取持久化的原始 `tool/result`，作为新的工具结果返回并分配新 tag；旧占位符保持不变，旧 tag 仍是 dropped，再次 `ctx_reduce` 是 no-op（`already dropped`）。这是 breaking change。
+- **Historian 之后仍可读原文**：`ctx_expand` 新增 `message` 定位，接受当前会话的 DSH log event seq（包括被 Historian shadow 的原始 `tool/result`）；不重跑原工具、不改写摘要或 compartment。
+- **手动 flush**：新增 `/ctx-flush`，只把当前会话已 pending 的 drop 标记为下一次 preStep 落地；不启动 Historian、recomp、摘要或模型调用。
+- **持久 drop 状态**：`ctx_reduce`/`ctx_expand` 以 `pending_drops` 的 `none`/`pending`/`landed` 状态判定，而不是依赖当前 surface 上是否还有占位符；旧 tag 在 restore 后不会再显示假的 “Queued”。
+- **tag 保留策略**：移除挂载时的 30 天 tag prune、`tags.retentionDays` 配置与 `AdapterStores.pruneTags`；旧 profile 里的该键保留但被忽略，且每进程最多告警一次。
+- **schema 与包名**：插件数据库升到 v11（`pending_drops.flush_requested`，v10 自动迁移）；npm 包名改为 `@elvisw/dsh-plugin-magic-context`，但 loader row id `magic-context-dsh`、settings namespace 与插件数据目录 `magic-context-dsh-poc` 不变。
+
+因为 row id 相同，上游 `dsh-plugin-magic-context` 与本 fork **不能并排安装**；升级前先移除旧包。本 fork 只保证自己的插件行为与数据迁移，不承诺与上游 0.11.x 的 UX/API 长期兼容；兼容语义以原版 `cortexkit/magic-context` 为参照，DSH 仍是宿主。
+
+### 版权与第三方
+
+- **上游 DSH 适配器**（`wk544863858/dsh-plugin-magic-context`，npm `dsh-plugin-magic-context@0.11.2`，MIT，
+  Copyright (c) 2026 wukai — the DeepSeek Harness adapter in this repository）：本 fork 的直接上游。
+  本 fork 的修改部分 Copyright (c) 2026 elvisw，同样以 MIT 发布。
+- **magic-context**（MIT，Copyright (c) 2025 Ufuk Altinok — magic-context）：本仓库的衍生来源。抽取自上游 tag
   v0.46.0（`651c105a9`）；适配器自有提交从本地 checkout `dsh` 分支的 `e34eda955`
   （2026-10-08）原样重放。
 - **DeepSeek Harness**（MIT）：以依赖消费，不含在内。代码针对 0.2.1-rc.1 编写
