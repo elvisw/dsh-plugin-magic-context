@@ -1,7 +1,7 @@
 ---
 title: "Tag retention alignment"
 ticket: 5
-status: built
+status: done
 ---
 
 # Tag retention alignment — implementation plan
