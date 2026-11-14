@@ -1,0 +1,37 @@
+{
+  "source": "plugin-data/activity.log",
+  "matches": 1,
+  "value": 500,
+  "lines": [
+    "2026-11-14T08:27:24.369Z INFO  boot adapter booted (tools: dynamic-import, historian: on) {\"version\":\"phase2\",\"dbPath\":\"C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\dsh-mc-t3-20261114-161041\\\\plugin-data\\\\dsh-magic-context.db\",\"schemaVersion\":10,\"recoveredHistorianRuns\":0,\"switches\":{\"write\":true,\"autoPromote\":true,\"embedBackfill\":false,\"vectorBackfill\":false,\"scoring\":true,\"userRender\":false,\"userCollect\":false,\"userReview\":false,\"machine\":false,\"machineAutoStage\":true,\"forceWaitMs\":0},\"tools\":{\"mode\":\"dynamic-import\",\"registered\":true},\"engine\":\"disabled-by-config\",\"memory\":\"ok schema v95\",\"memoryWrite\":\"read-write auto-promote\",\"telemetry\":\"pending (registers with webServer)\",\"maintenance\":{\"enabled\":false,\"intervalMs\":1800000,\"verify\":\"follow-session\"},\"historian\":{\"enabled\":true,\"route\":\"follow-session\"},\"journal\":{\"enabled\":true,\"mirror\":\"C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\dsh-mc-t3-20261114-161041\\\\plugin-data\\\\activity.log\",\"retentionDays\":30},\"tagsRetentionDays\":30,\"forceWaitReadyMs\":0,\"memoryScoringEnabled\":true,\"policy\":{\"executeThreshold\":0,\"forceThreshold\":85,\"assumedContextWindow\":256000,\"ttlMs\":300000,\"protectedToolResults\":8,\"historianProtectedNodes\":1,\"historianMinNodes\":1,\"historianTimeoutMs\":120000,\"historianMaxTokens\":8192,\"historianMaxTokensCeiling\":32768,\"historianMinBudgetTokens\":500,\"baselineTokens\":2000,\"memoryLimit\":40}}"
+  ],
+  "valuesSeen": [
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "5000",
+    "500",
+    "5000",
+    "5000",
+    "5000"
+  ]
+}
