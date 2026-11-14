@@ -7,16 +7,20 @@ This document records the **effective-behavior contract** between the DSH adapte
 0.2.1-rc.1 desktop line on 2026-10-17): see
 `docs/upstream-followup-2026-10-30.md` for the v0.46.0→v0.49.30 sweep.
 
-> **Baseline note (2026-11-14):** `v0.49.30` is the last line-by-line verified
-> comparison target. Fork decisions use `v0.49.55` as the upstream baseline
-> (D1), but the `v0.49.30 → v0.49.55` delta has not been swept. The rows below
-> describe the verified v0.49.30 behavior and are **not** a v0.49.55 parity
-> claim; a later upgrade must re-walk §B/§C/§D before treating them as current.
+> **Baseline note (2026-11-14):** The rows below were last **fully re-verified**
+> to `v0.49.30` (2026-10-30). Release `0.11.2` separately followed the
+> `v0.49.30 → v0.49.50` interval (375 non-merge commits) for three
+> background-lane defects (see `CHANGELOG.md` 0.11.2); that was a targeted
+> follow-up, not a re-walk of every row here. The decision baseline is
+> `v0.49.55`; `v0.49.50 → v0.49.55` is unswept. Treat these rows as
+> `v0.49.30`-level evidence, **not** a full `v0.49.55` parity claim; a later
+> upgrade must re-walk §B/§C/§D before treating them as current.
 
 | Item | Value |
 |---|---|
-| Magic Context (last verified) | **v0.49.30** (`v0.49.30-0-g47bcd71a2`, released 2026-10-29; the alignment core is unchanged since v0.46.0 — inject-compartments/storage-memory/workspaces/search/emergency-drop/agents all 0 commits) |
-| Decision baseline | **v0.49.55** — not line-swept; see the baseline note above |
+| Magic Context (table last verified) | **v0.49.30** (`v0.49.30-0-g47bcd71a2`, released 2026-10-29; the alignment core is unchanged since v0.46.0 — inject-compartments/storage-memory/workspaces/search/emergency-drop/agents all 0 commits) |
+| Targeted follow-up reviewed | **v0.49.50** (`v0.49.30 → v0.49.50`, 375 non-merge commits; three background-lane defects, not a full table re-walk) |
+| Decision baseline | **v0.49.55** — `v0.49.50 → v0.49.55` not swept; see the baseline note above |
 | MC store contract | shape inherited at the v95 cutover, **own lineage since 2026-10-13** (`src/core/memory-bridge.ts:45`; `MEMORY_SCHEMA_MAX_VERSION = 95`) |
 | DeepSeek Harness | **Desktop 0.2.1-rc.1** (host paths below are relative to the DSH checkout) |
 | Adapter | `@elvisw/dsh-plugin-magic-context` 0.12.1, own store **schema v11** (`src/core/stores.ts`) |

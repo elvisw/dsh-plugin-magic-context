@@ -9,6 +9,7 @@ status: in-progress
 ## Progress
 
 - 2026-11-14: Ticket created from the post-T6 backlog review. Scope is active operational docs only; no code, package version, tag, or publish.
+- 2026-11-14: Edits applied. Ticket validation caught a false premise: `0.11.2` already followed `v0.49.30 → v0.49.50` for the three background-lane defects, so the docs now distinguish full-table verification (`v0.49.30`), targeted follow-up (`v0.49.50`), and decision baseline (`v0.49.55`, `v0.49.50 → v0.49.55` unswept). Also corrected the README scope to `README.zh-CN.md` only and strengthened the #15 handoff note.
 
 ## Steps
 
@@ -18,13 +19,19 @@ status: in-progress
    - current release references `0.12.1` / generic `v<version>`;
    - post-publish checks include `dist-tags` and `latest`.
 2. Add the baseline note to `PARITY.md`:
-   - `v0.49.30` remains the last line-by-line verified target;
-   - `v0.49.55` is the decision baseline, delta unswept;
-   - no runtime-parity claim.
-3. Add historical-baseline notes to:
-   - `docs/dsh-plugin-upgrade-followup.md`;
-   - `docs/research-handoff-ctx-flush-2026-11-11.md`.
-4. Leave `README.md` / `README.zh-CN.md` unchanged: their “verified to v0.49.30” is factual, and changing packaged docs would create another npm snapshot mismatch before the next release.
+   - `v0.49.30` remains the last full table verification;
+   - `0.11.2` followed `v0.49.30 → v0.49.50` for three background-lane
+     defects, without a full table re-walk;
+   - `v0.49.55` is the decision baseline and `v0.49.50 → v0.49.55` is unswept;
+   - no full `v0.49.55` runtime-parity claim.
+3. Add baseline notes to:
+   - `docs/dsh-plugin-upgrade-followup.md` (active runbook; not “historical”);
+   - `docs/research-handoff-ctx-flush-2026-11-11.md` (state that the #15 gap
+     is closed in `0.12.0`).
+4. Leave the packaged READMEs unchanged: only `README.zh-CN.md:20` has the
+   “已核到 v0.49.30” line, and it is accurate as the last full table
+   verification; changing packaged docs would create another npm snapshot
+   mismatch before the next release. This is an explicit scope decision.
 5. Verify:
    - `git diff --check`;
    - grep for the old unconditional token-revocation sentence and old current-version examples (`恢复仓库内的 0.12.0`, `publish 0.12.0`, `@0.12.0 version`) in the release guide;

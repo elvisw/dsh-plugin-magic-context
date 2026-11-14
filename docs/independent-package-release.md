@@ -31,7 +31,7 @@ npm 的 Trusted Publishing 只能绑定到已经存在的包，因此首次发�
    npm publish --provenance=false --tag bootstrap
    ```
 
-   `--provenance=false` 是必要的：本地发布不满足 provenance 的 CI 条件；`--tag bootstrap` 确保它不会成为 `latest`。本次首次发布使用 npm 网页认证/2FA 完成，没有创建临时 token；npm 会提示作者在浏览器中确认。
+   `--provenance=false` 是必要的：非 CI 的本地交互发布不满足 provenance 的 CI 条件；`--tag bootstrap` 确保它不会成为 `latest`。本次首次发布使用 npm 网页认证/2FA 完成，没有创建临时 token；npm 会提示作者在浏览器中确认。
 3. 只有在无法交互、必须使用临时 granular token（需要 `@elvisw` 的 publish 权限）时，才在发布后立即吊销该 token。不要把“吊销 token”当成每次 bootstrap 的固定步骤。
 4. 绑定 Trusted Publisher：
 

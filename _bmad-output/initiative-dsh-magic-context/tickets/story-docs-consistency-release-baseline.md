@@ -23,9 +23,12 @@ The two concrete drifts are:
   temporary-token publish that must be followed by token revocation, and uses
   `0.12.0` as the current release. The actual bootstrap used npm web
   authentication/2FA and created no token; the current release is `0.12.1`.
-- `PARITY.md` says the comparison was last re-verified to `v0.49.30`, while the
-  project decision baseline is `v0.49.55`. The `v0.49.30 → v0.49.55` delta has
-  not been swept line by line, so the document must not imply that it has.
+- `PARITY.md` says its table was last fully re-verified to `v0.49.30`, while
+  `0.11.2` separately followed `v0.49.30 → v0.49.50` (375 non-merge commits)
+  for three background-lane defects. The current decision baseline is
+  `v0.49.55`; `v0.49.50 → v0.49.55` is not swept, and the table must not be
+  read as a full `v0.49.55` parity claim. The existing note must distinguish
+  “table last verified” from “targeted follow-up reviewed”.
 
 ## Why now
 
@@ -46,30 +49,40 @@ not a new feature.
      changelog entries.
    - The post-publish check must include `dist-tags` and the `latest` version.
 
-2. **Parity document separates verified target from decision baseline.**
-   - `PARITY.md` still records `v0.49.30` as the last line-by-line verified
-     target; that is accurate and stays.
-   - Add an explicit note and table row that the decision baseline is
-     `v0.49.55`, and that the delta between the two has not been swept; the
-     existing rows are not a `v0.49.55` parity claim.
+2. **Parity document separates full verification, targeted follow-up, and
+   decision baseline.**
+   - `PARITY.md` still records `v0.49.30` as the last **full table**
+     verification; that is accurate and stays.
+   - Record that `0.11.2` followed `v0.49.30 → v0.49.50` for the three
+     background-lane defects (`CHANGELOG.md` 0.11.2) without re-walking every
+     table row.
+   - Record the decision baseline as `v0.49.55`, with
+     `v0.49.50 → v0.49.55` unswept; the existing rows are not a full
+     `v0.49.55` parity claim.
    - Do not claim runtime parity or rewrite the historical
      `docs/upstream-followup-2026-10-30.md` report.
 
-3. **Historical baseline documents are labelled, not rewritten.**
-   - Add a short note to `docs/dsh-plugin-upgrade-followup.md` that its
-     `v0.49.30` runbook is historical and the current decision baseline is
-     `v0.49.55`, unswept.
-   - Add a short note to `docs/research-handoff-ctx-flush-2026-11-11.md` that
-     its `dsh-plugin-magic-context@0.11.1` baseline predates the `0.12.0`
-     flush/recovery changes.
+3. **Baseline documents are labelled, not rewritten.**
+   - `docs/dsh-plugin-upgrade-followup.md` is an active upgrade runbook, not a
+     historical record. Add a note that its `v0.49.30` anchor is the last full
+     table verification, `0.11.2` reviewed `v0.49.30 → v0.49.50` for the
+     background lanes, and `v0.49.50 → v0.49.55` must be re-walked before using
+     the runbook at `v0.49.55`.
+   - Add a note to `docs/research-handoff-ctx-flush-2026-11-11.md` that the
+     `dsh-plugin-magic-context@0.11.1` gap it describes is **closed** in
+     `0.12.0` (implementation plus host acceptance), so the file is historical
+     research only.
    - Do not edit files under `_bmad-output/.../acceptance-windows-*` or any
      historical evidence.
 
 4. **Packaged docs are not churned for this ticket.**
-   - `README.md` / `README.zh-CN.md` say “verified to v0.49.30”, which remains
-     factually the last line-by-line verification. Leave the packaged README
-     files unchanged so the npm `0.12.1` snapshot still matches the repository;
-     the next functional release can add the baseline clarification.
+   - Only `README.zh-CN.md:20` has the “已核到 v0.49.30” status line;
+     `README.md` does not. That line is accurate as the last full table
+     verification, but it does not name the decision baseline. Leave the
+     packaged READMEs unchanged so the npm `0.12.1` snapshot still matches the
+     repository; record that the next functional release can expand the line
+     into the three-level baseline. This is an explicit scope decision, not a
+     claim that the line is already complete.
    - No `package.json` version bump, no build, no npm publish, and no new tag.
 
 5. **No behavior or data change.**
@@ -85,12 +98,14 @@ not a new feature.
   the package line; that is historical context, not a current-version example.
 - The guide contains the conditional fallback (“只有在无法交互...才...吊销”), the
   interactive web-auth sentence, `@0.12.1`, and `dist-tags.latest`.
-- `PARITY.md` contains both `v0.49.30` (last verified) and `v0.49.55`
-  (decision baseline), plus the no-sweep note.
-- The two historical documents carry the new notes and keep their original
-  dates/revisions.
-- `git diff --stat` shows only documentation files, and a packaged-file check
-  shows `README.md`, `README.zh-CN.md`, `package.json`, and `lib/` are unchanged.
+- `PARITY.md` contains `v0.49.30` (full table last verified), `v0.49.50`
+  (targeted follow-up), and `v0.49.55` (decision baseline), plus the note that
+  `v0.49.50 → v0.49.55` is unswept.
+- The upgrade runbook carries the three-level note and is not called
+  historical; the research handoff note says the #15 gap is closed in `0.12.0`.
+- `git diff --stat` shows only documentation and ticket 7 bookkeeping, and a
+  packaged-file check shows `README.md`, `README.zh-CN.md`, `package.json`, and
+  `lib/` are unchanged.
 - An independent review confirms the notes do not overclaim a `v0.49.55` sweep
   and the release guide matches the evidence in
   `acceptance-windows-dsh-2026-11-14-package-identity/`.
