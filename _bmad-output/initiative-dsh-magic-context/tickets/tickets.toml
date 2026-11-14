@@ -60,3 +60,15 @@ after = [2]
 hitl = false
 risk = "medium"
 refine = true
+
+[[entry]]
+id = 6
+type = "story"
+title = "Independent package identity and release"
+description = "Moves the fork off the upstream-owned package name to @elvisw/dsh-plugin-magic-context, updates every runtime and user-facing reference (including the sanitized npm tarball filename), bootstraps the empty package with a throwaway 0.0.0-bootstrap.0 token publish, binds Trusted Publishing, and only then releases 0.12.0 by tag. Publishing remains gated on the publisher owning the @elvisw npm scope and explicitly authorizing both publishes."
+verify = "A package built from this repo carries only the new name (package.json, cordis.patch.yml, client bundle, install commands and docs), and the tarball is elvisw-dsh-plugin-magic-context-<version>.tgz; an isolated DSH profile installs it and loads the plugin; after authorized bootstrap and trust binding, npm view @elvisw/dsh-plugin-magic-context@0.12.0 resolves with provenance, unpacked hashes match the local artifact, and npm trust list shows the release workflow with publish permission; the upstream package is untouched."
+covers = []
+after = [5]
+hitl = true
+risk = "high"
+refine = true
