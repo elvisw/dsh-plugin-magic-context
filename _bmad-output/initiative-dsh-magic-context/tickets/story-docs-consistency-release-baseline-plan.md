@@ -27,7 +27,7 @@ status: in-progress
 4. Leave `README.md` / `README.zh-CN.md` unchanged: their “verified to v0.49.30” is factual, and changing packaged docs would create another npm snapshot mismatch before the next release.
 5. Verify:
    - `git diff --check`;
-   - grep for unconditional token revocation and `0.12.0` as current in the release guide;
+   - grep for the old unconditional token-revocation sentence and old current-version examples (`恢复仓库内的 0.12.0`, `publish 0.12.0`, `@0.12.0 version`) in the release guide;
    - `PARITY.md` contains both versions and the no-sweep note;
    - `git diff --stat` only docs;
    - packaged files unchanged (`README*`, `package.json`, `lib/`).

@@ -80,9 +80,11 @@ not a new feature.
 ## Verification
 
 - `git diff --check` is clean.
-- `rg -n "临时 token|token.*吊销|0\\.12\\.0" docs/independent-package-release.md`
-  shows no unconditional token-revocation instruction and no current-version
-  example still pinned to `0.12.0`.
+- `rg -n "立即吊销临时 token|恢复仓库内的 `0\\.12\\.0`|publish `0\\.12\\.0`|@0\\.12\\.0 version" docs/independent-package-release.md`
+  returns no matches. The guide may still mention `0.12.0` once as the start of
+  the package line; that is historical context, not a current-version example.
+- The guide contains the conditional fallback (“只有在无法交互...才...吊销”), the
+  interactive web-auth sentence, `@0.12.1`, and `dist-tags.latest`.
 - `PARITY.md` contains both `v0.49.30` (last verified) and `v0.49.55`
   (decision baseline), plus the no-sweep note.
 - The two historical documents carry the new notes and keep their original
