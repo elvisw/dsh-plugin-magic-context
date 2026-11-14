@@ -1,0 +1,147 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\overlays\\base-control.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "This is an isolated T2 alias/failure acceptance test. Follow this exact sequence, one tool call per model step. (1) read fixture.txt once and note the actual §N§ tag A on its result. (2) read fixture.txt again and note the actual §N§ tag B on the second result. (3) call ctx_reduce with drop set to ONLY A. (4) call ctx_reduce with drop set to ONLY B. (5) in a NEW step, call ctx_expand with the deprecated tags parameter set to A,B in that order. (6) the expand result begins with a NEW §M§ marker; note M, then call ctx_reduce with drop set to M. (7) in a NEW step, call ctx_expand with tag set to M and note the nonce. (8) call ctx_expand with tag set to 999 and report the exact refusal receipt. (9) read fixture.txt once more and note its actual tag D; do NOT drop D. Then call ctx_expand with tag set to D and report the exact refusal receipt. (10) call ctx_expand with the deprecated tags parameter set to A,999 and report the exact receipt. (11) respond exactly T2_ALIAS_FAILURES_OK with A, B, M, D and the three exact refusal receipts. Do not batch calls, do not use other tools, and do not read more than the three specified times."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 60.067,
+  "session_id": "session-d8f87512-083e-47b2-a406-8d7ae005c08f",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "T2_ALIAS_FAILURES_OK A=1 B=2 M=5 D=9\n1. §999§ not restored: no such tag.\n2. §9§ not restored: not dropped.\n3. §999§ not restored: no such tag.",
+  "tool_calls": [
+    {
+      "tool": "read",
+      "input": {
+        "file_path": "fixture.txt"
+      }
+    },
+    {
+      "tool": "read",
+      "input": {
+        "file_path": "fixture.txt"
+      }
+    },
+    {
+      "tool": "ctx_reduce",
+      "input": {
+        "drop": "1"
+      }
+    },
+    {
+      "tool": "ctx_reduce",
+      "input": {
+        "drop": "2"
+      }
+    },
+    {
+      "tool": "ctx_expand",
+      "input": {
+        "tags": "1,2"
+      }
+    },
+    {
+      "tool": "ctx_reduce",
+      "input": {
+        "drop": "5"
+      }
+    },
+    {
+      "tool": "ctx_expand",
+      "input": {
+        "tag": "5"
+      }
+    },
+    {
+      "tool": "ctx_expand",
+      "input": {
+        "tag": "999"
+      }
+    },
+    {
+      "tool": "read",
+      "input": {
+        "file_path": "fixture.txt"
+      }
+    },
+    {
+      "tool": "ctx_expand",
+      "input": {
+        "tag": "9"
+      }
+    },
+    {
+      "tool": "ctx_expand",
+      "input": {
+        "tags": "1,999"
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_RAwREHjQGhrSnacz25XT8204",
+      "status": "completed",
+      "result": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=22cf05939b5455da87940b9f52b07872\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>"
+    },
+    {
+      "callId": "call_00_Y6jj02IRl4OpwQeupoOV8723",
+      "status": "completed",
+      "result": "§2§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=22cf05939b5455da87940b9f52b07872\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>"
+    },
+    {
+      "callId": "call_00_GMVi9d7j6N4Fa2JItdix4681",
+      "status": "completed",
+      "result": "§3§ Queued 1 tag for reclaim."
+    },
+    {
+      "callId": "call_00_xmjfOzzHiyLcfYKU6YtA8031",
+      "status": "completed",
+      "result": "§4§ Queued 1 tag for reclaim."
+    },
+    {
+      "callId": "call_00_jHXue9xdzBn9zP45RZe53808",
+      "status": "completed",
+      "result": "§5§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=22cf05939b5455da87940b9f52b07872\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>\n\n---\n\n§2§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=22cf05939b5455da87940b9f52b07872\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>"
+    },
+    {
+      "callId": "call_00_JdRGJXKJghYZLDB9S1PF6560",
+      "status": "completed",
+      "result": "§6§ Queued 1 tag for reclaim."
+    },
+    {
+      "callId": "call_00_pGvFwFAEFdPhDDFnsJ182071",
+      "status": "completed",
+      "result": "§7§ §5§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=22cf05939b5455da87940b9f52b07872\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>\n\n---\n\n§2§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=22cf05939b5455da87940b9f52b07872\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>"
+    },
+    {
+      "callId": "call_00_CLulYj09Xme3p55w0eIm1283",
+      "status": "completed",
+      "result": "§8§ §999§ not restored: no such tag."
+    },
+    {
+      "callId": "call_00_Sa4yyVBhcswyxrwT6kLV9151",
+      "status": "completed",
+      "result": "§9§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=22cf05939b5455da87940b9f52b07872\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>"
+    },
+    {
+      "callId": "call_00_OWAwZQZ61AytyZERSLx48052",
+      "status": "completed",
+      "result": "§10§ §9§ not restored: not dropped."
+    },
+    {
+      "callId": "call_00_hWdpD2nDohtx4N26jKhE4316",
+      "status": "completed",
+      "result": "§11§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=22cf05939b5455da87940b9f52b07872\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>\n\n§999§ not restored: no such tag."
+    }
+  ]
+}

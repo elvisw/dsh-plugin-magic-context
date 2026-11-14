@@ -1,0 +1,52 @@
+{
+  "session": "session-d8f87512-083e-47b2-a406-8d7ae005c08f",
+  "exit_code": 0,
+  "final_text": "T2_ALIAS_FAILURES_OK A=1 B=2 M=5 D=9\n1. §999§ not restored: no such tag.\n2. §9§ not restored: not dropped.\n3. §999§ not restored: no such tag.",
+  "chars": {
+    "A=1": "first read result",
+    "B=2": "second read result",
+    "M=5": "new tag created by tags alias",
+    "D=9": "third read result, left active"
+  },
+  "alias": {
+    "requested": "1,2",
+    "new_tag": 5,
+    "contains_separator": true,
+    "contains_original_1": true,
+    "contains_original_2": true,
+    "old_placeholders_on_surface": {
+      "1": true,
+      "2": true
+    }
+  },
+  "new_tag_cycle": {
+    "tag": 5,
+    "landed_event_seq": 56,
+    "placeholder_on_surface": true,
+    "expand_outer_tag": 7,
+    "expand_contains_original_1": true
+  },
+  "failures": {
+    "unknown_tag": "§8§ §999§ not restored: no such tag.",
+    "active_tag": "§10§ §9§ not restored: not dropped.",
+    "partial_tags_1_999": {
+      "restored_original_1": true,
+      "refused_999": true,
+      "raw": "§11§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t2-20261114-010407\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=22cf05939b5455da87940b9f52b07872\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>\n\n§999§ not restored: no such tag."
+    }
+  },
+  "drops": {
+    "1": {
+      "queued_at": 1794625203828,
+      "landed_event_seq": 34
+    },
+    "2": {
+      "queued_at": 1794625205060,
+      "landed_event_seq": 42
+    },
+    "5": {
+      "queued_at": 1794625207571,
+      "landed_event_seq": 56
+    }
+  }
+}

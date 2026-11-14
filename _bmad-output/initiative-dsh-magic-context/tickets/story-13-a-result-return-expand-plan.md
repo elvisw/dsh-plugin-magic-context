@@ -3,7 +3,7 @@ title: '#13 A: result-return expand'
 type: feature
 ticket: '2'
 created: '2026-11-14'
-status: done
+status: in-progress
 baseline_revision: 'f2e1f7a2c317fe60d3a0265a4dceedb476e2637e'
 route: full
 route_source: auto
@@ -123,6 +123,8 @@ The new result is the original stored `tool/result` content, including its old `
 
 **Results (2026-11-14):** targeted specs 4 files / 37 tests pass; `npm run typecheck` clean; full suite 76 files / 818 tests pass; `npm run check:i18n` ALL PASS. Review patches: request-order alias, conservative cross-session refusal, replayed-session restart test, canonical `tag` in the host test, phase-map identity, and stale docs/comments.
 
-**Host acceptance (2026-11-14):** host-observable 1/2/3a/4/6 passed in an isolated DSH `0.2.2-rc.1` profile with the real `deepseek-official/deepseek-flash` model. `ctx_expand` returned a new tool result, the old `[dropped §1§]` stayed on the surface, old-tag reduce returned `already dropped`, the new tag reduced/expanded, and a restart after changing the fixture nonce restored the old original. 3b/5/7 remain unit/integration only; 9/10 are outside T2. Report: `_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-14-t2-host/acceptance-report.md`.
+**Host acceptance (2026-11-14):** host-observable 1/2/3a/4/5(`tags`)/6/7(partial) passed in an isolated DSH `0.2.2-rc.1` profile with the real `deepseek-official/deepseek-flash` model. `ctx_expand` returned a new tool result, the old `[dropped §1§]` stayed on the surface, old-tag reduce returned `already dropped`, the new tag reduced/expanded, `tags:"1,2"` returned both originals, representative failures returned named refusals, and a restart after changing the fixture nonce restored the old original. 3b and the remaining 7 failure names remain unit/integration only; 9/10 are outside T2. Report: `_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-14-t2-host/acceptance-report.md`.
+
+**Supplemental alias/failure run (2026-11-14):** session `session-d8f87512-083e-47b2-a406-8d7ae005c08f` exercised `tags:"1,2"`, new-tag reduce/expand, `tag:"999"`, an active tag, and `tags:"1,999"` partial failure. Evidence: `t2-alias-failures.driver.json`, `t2-alias-failures.analysis.json`, `t2-db-proof.json`.
 
 **Independent evidence audit (2026-11-14):** PASS WITH CAVEATS; no host re-run required. The audit confirmed A1–A3 against raw driver/observer/DB, found the report understated the T0-B contamination (DB + `activity.log` + observer directory), and required the conclusion scope to be limited to host-observable 1/2/3a/4/6. Report and T0-B disclosure were corrected; `t2-hash-pair.json`, `queued_at` in `t2-db-proof.json`, and `unit-test.txt`/`typecheck.txt` were added as direct evidence.

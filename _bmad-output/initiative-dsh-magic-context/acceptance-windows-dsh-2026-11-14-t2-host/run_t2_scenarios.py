@@ -151,12 +151,40 @@ def scenario_restart() -> dict:
     return {"first": first, "second": second, "fixture_disk_nonce": nonce}
 
 
+def scenario_alias_failures() -> dict:
+    prompt = (
+        "This is an isolated T2 alias/failure acceptance test. Follow this exact sequence, one tool call per model step. "
+        "(1) read fixture.txt once and note the actual §N§ tag A on its result. "
+        "(2) read fixture.txt again and note the actual §N§ tag B on the second result. "
+        "(3) call ctx_reduce with drop set to ONLY A. "
+        "(4) call ctx_reduce with drop set to ONLY B. "
+        "(5) in a NEW step, call ctx_expand with the deprecated tags parameter set to A,B in that order. "
+        "(6) the expand result begins with a NEW §M§ marker; note M, then call ctx_reduce with drop set to M. "
+        "(7) in a NEW step, call ctx_expand with tag set to M and note the nonce. "
+        "(8) call ctx_expand with tag set to 999 and report the exact refusal receipt. "
+        "(9) read fixture.txt once more and note its actual tag D; do NOT drop D. Then call ctx_expand with tag set to D and report the exact refusal receipt. "
+        "(10) call ctx_expand with the deprecated tags parameter set to A,999 and report the exact receipt. "
+        "(11) respond exactly T2_ALIAS_FAILURES_OK with A, B, M, D and the three exact refusal receipts. "
+        "Do not batch calls, do not use other tools, and do not read more than the three specified times."
+    )
+    return run_host("t2-alias-failures", common(prompt), timeout=300)
+
+
 def main() -> None:
     parser = __import__("argparse").ArgumentParser()
-    parser.add_argument("--only", choices=["roundtrip", "lifecycle", "restart"], action="append")
+    parser.add_argument(
+        "--only",
+        choices=["roundtrip", "lifecycle", "restart", "alias-failures"],
+        action="append",
+    )
     options = parser.parse_args()
     selected = options.only or ["roundtrip", "lifecycle", "restart"]
-    scenarios = {"roundtrip": scenario_roundtrip, "lifecycle": scenario_lifecycle, "restart": scenario_restart}
+    scenarios = {
+        "roundtrip": scenario_roundtrip,
+        "lifecycle": scenario_lifecycle,
+        "restart": scenario_restart,
+        "alias-failures": scenario_alias_failures,
+    }
     summary = {}
     for name in selected:
         summary[name] = scenarios[name]()
