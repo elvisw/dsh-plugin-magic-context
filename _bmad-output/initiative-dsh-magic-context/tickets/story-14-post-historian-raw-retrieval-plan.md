@@ -3,7 +3,7 @@ title: '#14: post-Historian raw retrieval'
 type: feature
 ticket: '3'
 created: '2026-11-14'
-status: built
+status: done
 baseline_revision: '3efa8da8f24ea258d007b0a3b21fa4c77c9a9315'
 route: full
 route_source: auto
