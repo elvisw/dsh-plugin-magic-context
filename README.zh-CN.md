@@ -315,10 +315,6 @@ src/
 本仓库以 npm 为唯一包管理器（`package-lock.json` 为准），CI 在 Node 22.x / 24.x 上跑
 typecheck → test → build → check:i18n。
 
-## 相关项目
-
-- [Academic Research Skills — OpenCode V2 适配器中文说明](https://github.com/elvisw/academic-research-skills/blob/main/opencode/README.zh-CN.md)
-
 ## 出处与许可
 
 - **magic-context**（MIT © 2025 Ufuk Altinok）：本仓库的衍生来源。抽取自上游 tag
