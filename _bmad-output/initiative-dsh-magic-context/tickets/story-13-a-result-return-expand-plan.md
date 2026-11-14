@@ -3,7 +3,7 @@ title: '#13 A: result-return expand'
 type: feature
 ticket: '2'
 created: '2026-11-14'
-status: in-progress
+status: done
 baseline_revision: 'f2e1f7a2c317fe60d3a0265a4dceedb476e2637e'
 route: full
 route_source: auto
