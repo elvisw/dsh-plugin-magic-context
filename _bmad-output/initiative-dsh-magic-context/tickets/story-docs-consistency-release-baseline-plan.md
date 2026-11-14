@@ -1,7 +1,7 @@
 ---
 title: "Docs consistency: release guide and upstream baseline — implementation plan"
 ticket: 7
-status: in-progress
+status: done
 ---
 
 # Docs consistency: release guide and upstream baseline — implementation plan
@@ -10,6 +10,7 @@ status: in-progress
 
 - 2026-11-14: Ticket created from the post-T6 backlog review. Scope is active operational docs only; no code, package version, tag, or publish.
 - 2026-11-14: Edits applied. Ticket validation caught a false premise: `0.11.2` already followed `v0.49.30 → v0.49.50` for the three background-lane defects, so the docs now distinguish full-table verification (`v0.49.30`), targeted follow-up (`v0.49.50`), and decision baseline (`v0.49.55`, `v0.49.50 → v0.49.55` unswept). Also corrected the README scope to `README.zh-CN.md` only and strengthened the #15 handoff note.
+- 2026-11-14: Verified `git diff --check`, exact stale-release-example grep (no matches), three-level baseline grep, and that only docs/ticket files changed. Packaged `README*`, `package.json`, and `lib/` are unchanged. Commits `435a67c`, `e004286`, `7e23a2f`.
 
 ## Steps
 
