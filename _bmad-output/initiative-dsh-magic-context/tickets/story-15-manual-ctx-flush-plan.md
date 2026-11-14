@@ -3,7 +3,7 @@ title: '#15: manual ctx-flush'
 type: feature
 ticket: '4'
 created: '2026-11-14'
-status: built
+status: done
 route: full
 risk: medium
 review: quick
