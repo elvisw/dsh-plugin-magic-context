@@ -1,7 +1,7 @@
 ---
 title: "Docs consistency: release guide and upstream baseline — implementation plan"
 ticket: 7
-status: done
+status: in-progress
 ---
 
 # Docs consistency: release guide and upstream baseline — implementation plan
@@ -11,6 +11,7 @@ status: done
 - 2026-11-14: Ticket created from the post-T6 backlog review. Scope is active operational docs only; no code, package version, tag, or publish.
 - 2026-11-14: Edits applied. Ticket validation caught a false premise: `0.11.2` already followed `v0.49.30 → v0.49.50` for the three background-lane defects, so the docs now distinguish full-table verification (`v0.49.30`), targeted follow-up (`v0.49.50`), and decision baseline (`v0.49.55`, `v0.49.50 → v0.49.55` unswept). Also corrected the README scope to `README.zh-CN.md` only and strengthened the #15 handoff note.
 - 2026-11-14: Verified `git diff --check`, exact stale-release-example grep (no matches), three-level baseline grep, and that only docs/ticket files changed. Packaged `README*`, `package.json`, and `lib/` are unchanged. Commits `435a67c`, `e004286`, `7e23a2f`.
+- 2026-11-14: Quick review returned NEEDS CHANGES. Fixed the false `--tag bootstrap`/`latest` guarantee (the actual bootstrap left both tags on `0.0.0-bootstrap.0`), restored `package-lock.json` to step 6, attributed the T4 host gate to the local `0.11.2` build and the `0.12.0` ship, fixed the recovery-contract link, made the ticket verification `rg` command shell-safe, and marked ticket 6's token wording superseded.
 
 ## Steps
 
@@ -28,7 +29,8 @@ status: done
 3. Add baseline notes to:
    - `docs/dsh-plugin-upgrade-followup.md` (active runbook; not “historical”);
    - `docs/research-handoff-ctx-flush-2026-11-11.md` (state that the #15 gap
-     is closed in `0.12.0`).
+     is closed: the T4 host gate passed on the local `0.11.2` build and the
+     code shipped in `0.12.0`, with the T4 report's limits).
 4. Leave the packaged READMEs unchanged: only `README.zh-CN.md:20` has the
    “已核到 v0.49.30” line, and it is accurate as the last full table
    verification; changing packaged docs would create another npm snapshot

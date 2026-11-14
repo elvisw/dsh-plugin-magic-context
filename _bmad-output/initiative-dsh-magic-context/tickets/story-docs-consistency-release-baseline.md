@@ -69,9 +69,10 @@ not a new feature.
      background lanes, and `v0.49.50 → v0.49.55` must be re-walked before using
      the runbook at `v0.49.55`.
    - Add a note to `docs/research-handoff-ctx-flush-2026-11-11.md` that the
-     `dsh-plugin-magic-context@0.11.1` gap it describes is **closed** in
-     `0.12.0` (implementation plus host acceptance), so the file is historical
-     research only.
+     `dsh-plugin-magic-context@0.11.1` gap it describes is **closed**: the T4
+     host gate passed on the locally built `0.11.2` package (with T4 code), and
+     that code shipped in `0.12.0`. The note must point to the T4 report for
+     its uncovered cases, so the file remains historical research only.
    - Do not edit files under `_bmad-output/.../acceptance-windows-*` or any
      historical evidence.
 
@@ -93,7 +94,7 @@ not a new feature.
 ## Verification
 
 - `git diff --check` is clean.
-- `rg -n "立即吊销临时 token|恢复仓库内的 `0\\.12\\.0`|publish `0\\.12\\.0`|@0\\.12\\.0 version" docs/independent-package-release.md`
+- `rg -n '立即吊销临时 token|恢复仓库内的 0\.12\.0|publish 0\.12\.0|@0\.12\.0 version' docs/independent-package-release.md`
   returns no matches. The guide may still mention `0.12.0` once as the start of
   the package line; that is historical context, not a current-version example.
 - The guide contains the conditional fallback (“只有在无法交互...才...吊销”), the

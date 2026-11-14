@@ -31,7 +31,7 @@ npm 的 Trusted Publishing 只能绑定到已经存在的包，因此首次发�
    npm publish --provenance=false --tag bootstrap
    ```
 
-   `--provenance=false` 是必要的：非 CI 的本地交互发布不满足 provenance 的 CI 条件；`--tag bootstrap` 确保它不会成为 `latest`。本次首次发布使用 npm 网页认证/2FA 完成，没有创建临时 token；npm 会提示作者在浏览器中确认。
+   `--provenance=false` 是必要的：非 CI 的本地交互发布不满足 provenance 的 CI 条件。`--tag bootstrap` 给 bootstrap 版本一个独立 tag，但**不能单独保证 `latest` 不被改写**：本次首次发布时 `latest` 与 `bootstrap` 都指向了 `0.0.0-bootstrap.0`。正式发布前要用 `npm view ... dist-tags` 核对，正式版发布后 `latest` 应切到正式版。本次首次发布使用 npm 网页认证/2FA 完成，没有创建临时 token；npm 会提示作者在浏览器中确认。
 3. 只有在无法交互、必须使用临时 granular token（需要 `@elvisw` 的 publish 权限）时，才在发布后立即吊销该 token。不要把“吊销 token”当成每次 bootstrap 的固定步骤。
 4. 绑定 Trusted Publisher：
 
@@ -43,7 +43,7 @@ npm 的 Trusted Publishing 只能绑定到已经存在的包，因此首次发�
    ```
 
 5. 用 `npm trust list @elvisw/dsh-plugin-magic-context` 确认 repo、workflow 与 publish 权限。
-6. 恢复仓库内 `package.json` 的正式版本（当前 `0.12.1`，以仓库为准），提交并推送 `main`；只有确认 `main` 全绿后才创建并推送对应的 `v<version>` tag。
+6. 恢复仓库内 `package.json` 与 `package-lock.json` 的正式版本（当前 `0.12.1`，以仓库为准），提交并推送 `main`；只有确认 `main` 全绿后才创建并推送对应的 `v<version>` tag。
 
 正式发布必须由 tag 触发 `.github/workflows/release.yml` 的 OIDC 流程；不要手工 `npm publish <version>`，否则会消耗版本号且没有 provenance，release workflow 的“already published”守卫会拒绝再次发布。
 

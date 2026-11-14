@@ -2,7 +2,7 @@
 
 日期：2026-11-11；2026-11-13 随 BMad 部署更新资料路径。**本文件仅交接新增研究，不授权实现、安装、实验、提交或发布，也不表示维护者已接受方案。** 已在进行的任务继续遵守其原有授权；不要自动把 #15 合并进 #13/#14 的工作范围。
 
-> **历史基线说明（2026-11-14）**：本文对象是 `dsh-plugin-magic-context@0.11.1`，其中的“拟议契约”和“未实现”描述属于当时状态。**本文描述的 #15 缺口已经关闭：`/ctx-flush` 在 `0.12.0` 实现并通过真实宿主验收**；当前行为以 `_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-14-t4-host/acceptance-report.md` 和 `tickets/recovery-contract.md` 为准。本文保留为研究留档，不再作为当前实现状态。
+> **历史基线说明（2026-11-14）**：本文对象是 `dsh-plugin-magic-context@0.11.1`，其中的“拟议契约”和“未实现”描述属于当时状态。**本文描述的 #15 缺口已经关闭：T4 宿主门禁在本地 `0.11.2` 构建（含 T4 代码）上通过，随后随 `0.12.0` 首次发布**；未覆盖项以 [T4 报告](../_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-14-t4-host/acceptance-report.md) 和 [recovery-contract](../_bmad-output/initiative-dsh-magic-context/tickets/recovery-contract.md) 为准。本文保留为研究留档，不再作为当前实现状态。
 
 ## 1. 资料来源与阅读顺序
 
