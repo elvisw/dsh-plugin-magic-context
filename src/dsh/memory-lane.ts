@@ -265,12 +265,20 @@ export function openMemoryLane(
    * (embedding-identity.ts) and the store's dominant identity is whichever
    * configuration produced most rows — parity is verified, never assumed.
    */
-  let sharedSpacePromise: Promise<{ modelId: string | null }> | undefined
+  interface SharedSpace {
+    readonly modelId: string | null
+    /**
+     * Set only when the store has no embedding space at all. The first writer
+     * may create it; every other closure stays closed.
+     */
+    readonly bootstrapModelId?: string
+  }
+  let sharedSpacePromise: Promise<SharedSpace> | undefined
   // Captured when the tool registration hands over the journal (this closure is
   // only ever reached through the tool, so that always happens first). Keeping
   // it here avoids widening openMemoryLane's signature for one log line.
   let laneJournal: Journal | undefined
-  const resolveSharedSpace = (): Promise<{ modelId: string | null }> => {
+  const resolveSharedSpace = (): Promise<SharedSpace> => {
     if (memorySearch === undefined || embedder === undefined) return Promise.resolve({ modelId: null })
     if (sharedSpacePromise === undefined) {
       sharedSpacePromise = (async () => {
@@ -284,15 +292,26 @@ export function openMemoryLane(
           outcome: string,
           modelId: string | null,
           detail: Record<string, unknown> = {},
-        ): { modelId: string | null } => {
-          laneJournal?.info('vector-lane', `shared-space gate: ${outcome}`, { outcome, ...detail })
-          return { modelId }
+          bootstrapModelId?: string,
+        ): SharedSpace => {
+          laneJournal?.info('vector-lane', `shared-space gate: ${outcome}`, {
+            outcome,
+            ...detail,
+            ...bootstrapModelId === undefined ? {} : { bootstrapModelId },
+          })
+          return bootstrapModelId === undefined ? { modelId } : { modelId, bootstrapModelId }
         }
         const dominant = memorySearch.dominantEmbeddingModel()
-        if (dominant === undefined || dominant.dims !== embedder.dims) {
+        if (dominant === undefined) {
+          // No space exists yet. This is the ONLY case where the embedder may
+          // create one; dims mismatch and parity failure below stay closed.
+          return record('gate-closed', null, { reason: 'no dominant embedding space' }, embedder.modelId)
+        }
+        if (dominant.dims !== embedder.dims) {
           return record('gate-closed', null, {
-            reason: dominant === undefined ? 'no dominant embedding space' : 'dims mismatch',
-            ...dominant === undefined ? {} : { dominantDims: dominant.dims, embedderDims: embedder.dims },
+            reason: 'dims mismatch',
+            dominantDims: dominant.dims,
+            embedderDims: embedder.dims,
           })
         }
         const sample = memorySearch.paritySample(dominant.modelId)
@@ -342,9 +361,12 @@ export function openMemoryLane(
     if (memoryWriter === undefined || memoryWriter.status.ok !== true) return undefined
     laneJournal = journal
     const space = await resolveSharedSpace()
-    return runVectorBackfill({
+    const outcome = await runVectorBackfill({
       plan: () => {
-        const plan = planBackfill(memoryRecall.dbPath, { limit })
+        const plan = planBackfill(memoryRecall.dbPath, {
+          limit,
+          ...space.bootstrapModelId === undefined ? {} : { bootstrapModelId: space.bootstrapModelId },
+        })
         return plan === undefined
           ? undefined
           : { modelId: plan.modelId, candidates: plan.candidates, total: plan.total }
@@ -356,7 +378,13 @@ export function openMemoryLane(
       journal,
       limit,
       parityModelId: space.modelId,
+      ...space.bootstrapModelId === undefined ? {} : { bootstrapModelId: space.bootstrapModelId },
     })
+    // The memo was `gate-closed / no space` for this process. Once the first
+    // rows exist, re-resolve so the query side can measure parity and read
+    // them; without this the write succeeds but only a restart uses it.
+    if (space.bootstrapModelId !== undefined && outcome.created > 0) sharedSpacePromise = undefined
+    return outcome
   }
 
   /** The ctx_memory `search` closure: bridge space + shared-space gate. */

@@ -181,16 +181,28 @@ export interface BackfillPlan {
  * space" — the second case is how a space migration happens without creating a
  * third space.
  *
+ * `bootstrapModelId` is used only when the store has no space at all: it is the
+ * first-writer path for an empty corpus. It never overrides an existing
+ * dominant space.
+ *
  * Writes nothing. The contract write is still ahead.
  */
-export function planBackfill(corpusDbPath: string, options: { limit?: number } = {}): BackfillPlan | undefined {
+export function planBackfill(
+  corpusDbPath: string,
+  options: { limit?: number; bootstrapModelId?: string } = {},
+): BackfillPlan | undefined {
   const report = measureVectorLane(corpusDbPath)
   if (report === undefined) return undefined
   const limit = options.limit ?? 64
 
   const db = new DatabaseSync(corpusDbPath, { readOnly: true })
   try {
-    const dominant = report.dominantModelId
+    const bootstrap = options.bootstrapModelId?.trim() ?? ''
+    // A bootstrap id may only be used when no space exists at all. Once any
+    // embedding row is present, the dominant space is the only legal target;
+    // accepting a bootstrap id here would be the third-space bug this module
+    // exists to prevent.
+    const dominant = report.dominantModelId ?? (bootstrap === '' ? undefined : bootstrap)
     if (dominant === undefined) {
       return { modelId: '', candidates: [], total: 0, reason: 'no embedding space exists yet — the first writer decides the space' }
     }
@@ -211,7 +223,13 @@ export function planBackfill(corpusDbPath: string, options: { limit?: number } =
       modelId: dominant,
       candidates: ids.slice(0, limit),
       total: ids.length,
-      ...ids.length === 0 ? { reason: 'every active memory already has a row in the dominant space' } : {},
+      ...ids.length === 0
+        ? {
+            reason: report.active === 0
+              ? 'no active memories to embed'
+              : 'every active memory already has a row in the dominant space',
+          }
+        : {},
     }
   } catch {
     return undefined

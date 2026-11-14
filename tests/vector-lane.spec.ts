@@ -201,11 +201,42 @@ describe('planning the backfill', () => {
     expect(plan.total).toBe(2)
   })
 
-  it('refuses to invent a space when none exists yet', () => {
+  it('refuses to invent a space when none exists yet and no bootstrap id is supplied', () => {
     const plan = planBackfill(makeStore([{ id: 1 }, { id: 2 }]))!
     expect(plan.modelId).toBe('')
     expect(plan.candidates).toEqual([])
     expect(plan.reason).toContain('first writer decides the space')
+  })
+
+  it('lets the first writer name the space when the store has no embeddings', () => {
+    const plan = planBackfill(makeStore([
+      { id: 1 },
+      { id: 2, status: 'archived' },
+      { id: 3 },
+    ]), { limit: 1, bootstrapModelId: MODEL_B })!
+    expect(plan.modelId).toBe(MODEL_B)
+    // Newest active first, archived excluded, and the total is not hidden by
+    // the bound.
+    expect(plan.candidates).toEqual([3])
+    expect(plan.total).toBe(2)
+  })
+
+  it('does not use a bootstrap id once any space exists', () => {
+    const plan = planBackfill(makeStore([
+      { id: 1, spaces: [MODEL_A] },
+      { id: 2 },
+    ]), { bootstrapModelId: MODEL_B })!
+    expect(plan.modelId).toBe(MODEL_A)
+    expect(plan.candidates).toEqual([2])
+  })
+
+  it('reports an empty active corpus plainly', () => {
+    const plan = planBackfill(makeStore([
+      { id: 1, status: 'archived' },
+    ]), { bootstrapModelId: MODEL_B })!
+    expect(plan.modelId).toBe(MODEL_B)
+    expect(plan.total).toBe(0)
+    expect(plan.reason).toBe('no active memories to embed')
   })
 
   it('says so plainly when there is nothing to do', () => {

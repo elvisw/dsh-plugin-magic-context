@@ -1,0 +1,80 @@
+{
+  "memory_db": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-vector-20261114-230505\\plugin-data\\memories.db",
+  "memories": 1,
+  "memory_embeddings": 1,
+  "spaces": [
+    {
+      "model_id": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+      "rows": 1
+    }
+  ],
+  "active": [
+    {
+      "id": 1,
+      "status": "active",
+      "content": "Always run npm test before committing changes."
+    }
+  ],
+  "vector_journal": [
+    {
+      "id": 14,
+      "level": "info",
+      "summary": "shared-space gate: gate-closed",
+      "data": {
+        "outcome": "gate-closed",
+        "reason": "no dominant embedding space",
+        "bootstrapModelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea"
+      }
+    },
+    {
+      "id": 15,
+      "level": "info",
+      "summary": "backfill: creating the first embedding space",
+      "data": {
+        "outcome": "backfill-bootstrap",
+        "modelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+        "total": 1
+      }
+    },
+    {
+      "id": 16,
+      "level": "info",
+      "summary": "backfill: +1 vector(s) in the new space",
+      "data": {
+        "outcome": "backfill",
+        "created": 1,
+        "present": 0,
+        "skipped": 0,
+        "failed": 0,
+        "total": 1,
+        "modelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+        "batch": 1
+      }
+    },
+    {
+      "id": 17,
+      "level": "info",
+      "summary": "shared-space gate: parity-pass",
+      "data": {
+        "outcome": "parity-pass",
+        "modelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+        "parity": 1
+      }
+    }
+  ],
+  "model_cache": [
+    {
+      "name": "model.onnx",
+      "bytes": 90387606
+    },
+    {
+      "name": "tokenizer.json",
+      "bytes": 711661
+    },
+    {
+      "name": "tokenizer_config.json",
+      "bytes": 366
+    }
+  ],
+  "final_ok": true
+}

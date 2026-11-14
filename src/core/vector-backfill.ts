@@ -57,6 +57,12 @@ export interface VectorBackfillDeps {
    * gate closed. Writing requires this to equal the plan's model id.
    */
   readonly parityModelId: string | null
+  /**
+   * The embedder's space id. It is used only when `parityModelId` is `null`
+   * because the store has no space yet — the first-writer bootstrap. It never
+   * overrides a proven space.
+   */
+  readonly bootstrapModelId?: string
 }
 
 export type VectorBackfillReason =
@@ -101,8 +107,10 @@ export function isUsableVector(vector: Float32Array | undefined, dims: number): 
 export async function runVectorBackfill(deps: VectorBackfillDeps): Promise<VectorBackfillOutcome> {
   const empty = { created: 0, present: 0, skipped: 0, failed: 0, total: 0 } as const
 
-  // (1) Parity first, for the whole batch.
-  if (deps.parityModelId === null) {
+  // (1) Parity first, for the whole batch. The one exception is the first-writer
+  // bootstrap: an empty store has no space to prove parity against, so the
+  // embedder's space becomes the target only when the caller supplies it.
+  if (deps.parityModelId === null && deps.bootstrapModelId === undefined) {
     deps.journal.info('vector-lane', 'backfill skipped: shared-space parity is unproven', {
       outcome: 'backfill-parity-unproven',
       ...empty,
@@ -115,14 +123,24 @@ export async function runVectorBackfill(deps: VectorBackfillDeps): Promise<Vecto
   if (plan.candidates.length === 0) {
     return { ...empty, total: plan.total, reason: 'no-candidates' }
   }
-  // (2) The plan's space is re-read from the store; it must be the one we proved.
-  if (plan.modelId !== deps.parityModelId) {
+  // (2) The plan's space is re-read from the store; it must be the one we proved,
+  // or the bootstrap space when there was nothing to prove yet.
+  const targetModelId = deps.parityModelId ?? deps.bootstrapModelId
+  if (targetModelId === undefined || plan.modelId !== targetModelId) {
     deps.journal.warn('vector-lane', 'backfill skipped: planned space is not the parity-proven space', {
       outcome: 'backfill-parity-mismatch',
       planned: plan.modelId,
-      proven: deps.parityModelId,
+      ...deps.parityModelId === null ? { bootstrap: targetModelId } : { proven: targetModelId },
     })
     return { ...empty, total: plan.total, reason: 'parity-mismatch' }
+  }
+  const bootstrap = deps.parityModelId === null
+  if (bootstrap) {
+    deps.journal.info('vector-lane', 'backfill: creating the first embedding space', {
+      outcome: 'backfill-bootstrap',
+      modelId: targetModelId,
+      total: plan.total,
+    })
   }
 
   const batch = plan.candidates.slice(0, Math.max(1, deps.limit))
@@ -168,7 +186,7 @@ export async function runVectorBackfill(deps: VectorBackfillDeps): Promise<Vecto
   }
   deps.journal.info(
     'vector-lane',
-    `backfill: +${String(created)} vector(s) in the dominant space`
+    `backfill: +${String(created)} vector(s) in the ${bootstrap ? 'new' : 'dominant'} space`
       + `${plan.total > batch.length ? ` (${String(plan.total - batch.length)} still missing)` : ''}`,
     {
       outcome: 'backfill',

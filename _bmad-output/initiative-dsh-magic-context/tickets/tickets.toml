@@ -74,6 +74,18 @@ risk = "high"
 refine = true
 
 [[entry]]
+id = 8
+type = "story"
+title = "Vector backfill first-writer bootstrap"
+description = "Fixes the empty-corpus deadlock: when memories exist but memory_embeddings is empty, let the first backfill create the embedder's space instead of treating the missing dominant space as unproven parity. Normal parity, dims mismatch, and embed failures remain closed; the query-side memo is invalidated after a successful bootstrap."
+verify = "On an empty embedding table, planBackfill with bootstrapModelId returns newest-first active candidates, runVectorBackfill writes them under the embedder model id, the journal shows backfill-bootstrap then parity-pass, and a subsequent search uses semantic vectors; without bootstrapModelId the old parity-unproven abort is unchanged."
+covers = []
+after = [7]
+hitl = false
+risk = "high"
+refine = true
+
+[[entry]]
 id = 7
 type = "story"
 title = "Docs consistency: release guide and upstream baseline"

@@ -1,0 +1,62 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-vector-20261114-230505\\overlays\\vector.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "Isolated vector-bootstrap acceptance. Follow this exact sequence, one tool call per model step. (1) Call ctx_memory with action \"write\", category \"PROJECT_RULES\", content \"Always run npm test before committing changes.\". (2) Call vector_wait with seconds 100. (3) Call ctx_memory with action \"search\", query \"npm test before committing\", limit 5. (4) Respond exactly VECTOR_HOST_OK. Do not call any other tool."
+  ],
+  "exit_code": 0,
+  "seconds": 109.867,
+  "session_id": "session-49f90695-9672-4f6c-835c-1716b23ce6ab",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "VECTOR_HOST_OK",
+  "tool_calls": [
+    {
+      "tool": "ctx_memory",
+      "input": {
+        "action": "write",
+        "category": "PROJECT_RULES",
+        "content": "Always run npm test before committing changes."
+      }
+    },
+    {
+      "tool": "vector_wait",
+      "input": {
+        "seconds": 100
+      }
+    },
+    {
+      "tool": "ctx_memory",
+      "input": {
+        "action": "search",
+        "query": "npm test before committing",
+        "limit": 5
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_ET_PU0MBi76j2IBhhdOmZdH6311",
+      "status": "completed",
+      "result": "§1§ Saved as memory 1 [PROJECT_RULES]."
+    },
+    {
+      "callId": "call_00_ET_jLwut3H43gFAB194q8Rq1622",
+      "status": "completed",
+      "result": "§2§ Waited 100 seconds."
+    },
+    {
+      "callId": "call_00_2cChIovct0JhRik6iq8E0006",
+      "status": "completed",
+      "result": "§3§ Found 1 result for \"npm test before committing\":\n\n[1] [memory] score=0.91 id=1 category=PROJECT_RULES match=hybrid\nAlways run npm test before committing changes."
+    }
+  ]
+}

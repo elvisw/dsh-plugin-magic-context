@@ -94,6 +94,7 @@ function harness(overrides: Partial<{
   storeOk: (memoryId: number) => boolean
   modelId: string
   parityModelId: string | null
+  bootstrapModelId: string
   limit: number
 }> = {}) {
   const state: Harness = {
@@ -127,6 +128,7 @@ function harness(overrides: Partial<{
     journal: log,
     limit: overrides.limit ?? 64,
     parityModelId: overrides.parityModelId === undefined ? DOMINANT : overrides.parityModelId,
+    ...overrides.bootstrapModelId === undefined ? {} : { bootstrapModelId: overrides.bootstrapModelId },
   }
   return { state, deps, calls }
 }
@@ -192,6 +194,32 @@ describe('runVectorBackfill — the guards', () => {
     expect(outcome.reason).toBe('parity-mismatch')
     expect(state.stored).toHaveLength(0)
     expect(calls.some(call => call.level === 'warn')).toBe(true)
+  })
+
+  it('writes the first space when parity is null and the bootstrap id matches the plan', async () => {
+    const { state, deps, calls } = harness({
+      parityModelId: null,
+      bootstrapModelId: DOMINANT,
+      plan: { modelId: DOMINANT, candidates: [1, 2], total: 2 },
+    })
+    const outcome = await runVectorBackfill(deps)
+    expect(outcome.created).toBe(2)
+    expect(outcome.reason).toBeUndefined()
+    expect(state.stored.map(row => row.modelId)).toEqual([DOMINANT, DOMINANT])
+    expect(calls.find(call => call.data?.outcome === 'backfill-bootstrap')?.data?.modelId).toBe(DOMINANT)
+    expect(calls.find(call => call.data?.outcome === 'backfill')?.summary).toContain('new space')
+  })
+
+  it('refuses a bootstrap plan whose model id is not the supplied bootstrap id', async () => {
+    const { state, deps, calls } = harness({
+      parityModelId: null,
+      bootstrapModelId: DOMINANT,
+      plan: { modelId: OTHER, candidates: [1], total: 1 },
+    })
+    const outcome = await runVectorBackfill(deps)
+    expect(outcome.reason).toBe('parity-mismatch')
+    expect(state.stored).toHaveLength(0)
+    expect(calls.find(call => call.data?.outcome === 'backfill-parity-mismatch')?.data?.bootstrap).toBe(DOMINANT)
   })
 
   it('never writes more rows than the configured batch limit', async () => {
