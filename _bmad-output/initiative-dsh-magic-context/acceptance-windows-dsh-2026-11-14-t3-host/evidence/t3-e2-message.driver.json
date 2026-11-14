@@ -1,0 +1,39 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t3-20261114-161041\\overlays\\settle.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "--session-id",
+    "session-e078955b-c5bf-47aa-b982-279af0d1f13e",
+    "Resume the persisted T3 session. Call ONLY ctx_expand with message set to the decimal string \"24\". Do not pass tag or tags, do not call any other tool, and do not read any file. Respond E2_OK plus the nonce from the restored original if it is available; otherwise report the exact refusal."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 5.21,
+  "session_id": "session-e078955b-c5bf-47aa-b982-279af0d1f13e",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "E2_OK nonce=25e70b25cddd9818aa8ef353dfa218ea",
+  "tool_calls": [
+    {
+      "tool": "ctx_expand",
+      "input": {
+        "message": "24"
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_fca3KlvAzqJUSHNQOWTM6338",
+      "status": "completed",
+      "result": "§31§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t3-20261114-161041\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=25e70b25cddd9818aa8ef353dfa218ea\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>"
+    }
+  ]
+}

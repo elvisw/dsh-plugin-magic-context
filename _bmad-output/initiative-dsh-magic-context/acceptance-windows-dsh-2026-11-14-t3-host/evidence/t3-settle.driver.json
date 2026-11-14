@@ -1,0 +1,39 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t3-20261114-161041\\overlays\\settle.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "--session-id",
+    "session-e078955b-c5bf-47aa-b982-279af0d1f13e",
+    "Call acceptance_wait with seconds 5, then respond only SETTLE_DONE. Do not use any other tool."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 10.594,
+  "session_id": "session-e078955b-c5bf-47aa-b982-279af0d1f13e",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "SETTLE_DONE",
+  "tool_calls": [
+    {
+      "tool": "acceptance_wait",
+      "input": {
+        "seconds": 5
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_mtu4wQTC9gvFWWRj6kBU2231",
+      "status": "completed",
+      "result": "§29§ Waited 5 seconds."
+    }
+  ]
+}

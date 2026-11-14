@@ -1,0 +1,16 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t3-20261114-161041",
+  "nonce": "25e70b25cddd9818aa8ef353dfa218ea",
+  "fixture_sha256": "e6a8e3e043df4b0ed95067ffd8c0911ba29aad69f3cf98068fee137a3c30170e",
+  "plugin_package": "0.11.2",
+  "installed_tool_bridge_sha256": "7bd3d7a1bfcf51eb6b793a69e5bb64efed21c12857dee1570f470a0efb03564d",
+  "built_tool_bridge_sha256": "7bd3d7a1bfcf51eb6b793a69e5bb64efed21c12857dee1570f470a0efb03564d",
+  "installed_seams_sha256": "ee7221756c12492117402b012f3d3ed21c6cce14f9707e73d8e2ecca25cf9de4",
+  "built_seams_sha256": "ee7221756c12492117402b012f3d3ed21c6cce14f9707e73d8e2ecca25cf9de4",
+  "tarball_sha256": "de0ed8a9d7c8d0528c6ce2e9258986b24203f889b873bcda66f210e845efea2d",
+  "git_head": "05871a2004d72bc2b63a9612f12115e77247ac5c",
+  "git_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "tool_bridge_has_message": true,
+  "seams_has_tool_result_at": true,
+  "deepseek_key_present": true
+}

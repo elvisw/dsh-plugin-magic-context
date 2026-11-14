@@ -153,3 +153,11 @@ context: []
 - **Evidence:** both E1/E2 return the original; target `compartments` row fields (`tier_p1..p4`, `facts`, `events`, `importance`, covered fields, `baseline_epoch`, `landed_event_seq`, `landed_reason`, `superseded`) are unchanged; no new `compartment-published` event; no new `historian` journal rows; no Historian usage increase (agent model-step usage is recorded separately and attributed to the agent); original `callId` has one `tool/call` and no new `tool/result` inside each pre/post window; fixture nonce/SHA and returned-content-vs-original-event SHA match; old tag stays `landed` and no pending row appears.
 - **Parameters:** record context window, `executeThreshold`, `ttlMs`, `forceThreshold`, `historianMinNodes`, `historianMinBudgetTokens`, `historianTimeoutMs`, `registerCompactionEngine`, `maintenance.enabled`, memory switches, permission/approval mode, driver waits, and the disabled host `tool-result-pruner`.
 - Any missing evidence (target publish, pass row, empty unlanded set, tag/message host result): `blocked`, with the reason in the ticket and report.
+
+## Host acceptance result (2026-11-14)
+
+- Real isolated DSH `0.2.2-rc.1` + `deepseek-official/deepseek-flash` + real Historian; fresh root `dsh-mc-t3-20261114-161041`.
+- Target: tag `1`, original seq `24`, placeholder seq `34`, publish seq `383` (`C1`), `landed_event_seq=383`; `pass` journal id `304` has `published:[1]`; zero unlanded compartments before E1.
+- E1 `tag:"1"` → result seq `429`; E2 `message:"24"` → result seq `450`; both exit `0`/`completed`, byte-identical to the original after stripping the outer new tag.
+- No new compartment row or `compartment-published` event, no new `historian` journal row, no new original-call result, old tag still landed, no new pending row, fixture unchanged.
+- Test-only acceleration: `historianMinBudgetTokens=500` (default 5000), `executeThreshold=0` for seed, Historian off + `executeThreshold=100` for E1/E2, host pruner disabled. The seed/grow model made extra `ctx_reduce` calls; target identity was taken from the observer. Details and evidence index: `_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-14-t3-host/acceptance-report.md`.

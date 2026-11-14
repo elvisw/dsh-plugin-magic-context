@@ -1,0 +1,39 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t3-20261114-161041\\overlays\\historian.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "--session-id",
+    "session-e078955b-c5bf-47aa-b982-279af0d1f13e",
+    "Call acceptance_wait with seconds 20, then respond only WAIT_DONE. Do not use any other tool."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 26.024,
+  "session_id": "session-e078955b-c5bf-47aa-b982-279af0d1f13e",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "WAIT_DONE",
+  "tool_calls": [
+    {
+      "tool": "acceptance_wait",
+      "input": {
+        "seconds": 20
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_KVWStY0Cwf9lydEUp2eE0358",
+      "status": "completed",
+      "result": "§28§ Waited 20 seconds."
+    }
+  ]
+}

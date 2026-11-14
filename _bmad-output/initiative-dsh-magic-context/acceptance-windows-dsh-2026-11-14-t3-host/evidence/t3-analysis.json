@@ -1,0 +1,352 @@
+{
+  "sessionId": "session-e078955b-c5bf-47aa-b982-279af0d1f13e",
+  "preflight": {
+    "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t3-20261114-161041",
+    "nonce": "25e70b25cddd9818aa8ef353dfa218ea",
+    "fixture_sha256": "e6a8e3e043df4b0ed95067ffd8c0911ba29aad69f3cf98068fee137a3c30170e",
+    "plugin_package": "0.11.2",
+    "installed_tool_bridge_sha256": "7bd3d7a1bfcf51eb6b793a69e5bb64efed21c12857dee1570f470a0efb03564d",
+    "built_tool_bridge_sha256": "7bd3d7a1bfcf51eb6b793a69e5bb64efed21c12857dee1570f470a0efb03564d",
+    "installed_seams_sha256": "ee7221756c12492117402b012f3d3ed21c6cce14f9707e73d8e2ecca25cf9de4",
+    "built_seams_sha256": "ee7221756c12492117402b012f3d3ed21c6cce14f9707e73d8e2ecca25cf9de4",
+    "tarball_sha256": "de0ed8a9d7c8d0528c6ce2e9258986b24203f889b873bcda66f210e845efea2d",
+    "git_head": "05871a2004d72bc2b63a9612f12115e77247ac5c",
+    "git_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tool_bridge_has_message": true,
+    "seams_has_tool_result_at": true,
+    "deepseek_key_present": true
+  },
+  "fixtureSha256": "e6a8e3e043df4b0ed95067ffd8c0911ba29aad69f3cf98068fee137a3c30170e",
+  "fixtureUnchanged": true,
+  "bootDbPaths": [
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t3-20261114-161041\\plugin-data\\dsh-magic-context.db"
+  ],
+  "bootDbPathInRoot": true,
+  "identity": {
+    "tag": 1,
+    "callId": "call_00_3LLTV3uBx9EEMxiwnQVs2175",
+    "tool": "read",
+    "originalSeq": 24,
+    "placeholderSeq": 34,
+    "originalText": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t3-20261114-161041\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: 合成验收数据：这不是用户真实项目资料。\n2: nonce=25e70b25cddd9818aa8ef353dfa218ea\n3: JSON={\"status\":\"待核验\",\"path\":\"C:\\\\synthetic\\\\实验\",\"number\":3.141592653589793,\"empty\":\"\"}\n4: Symbols: <>&\"' / \\ § 🧪 零一二三\n5: Whitespace:  keep  two  spaces.\n6: END=ef4c2dc934cc4fdaa263f350fbb1ca61\n\n(End of file - total 6 lines)\n</content>",
+    "originalSha256": "bf353467bcffb920a26fdb7ce878fe4ef0482ed7f3a9b1bd25ae8a0c29536a52",
+    "sourceFile": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t3-20261114-161041\\evidence\\session-observer\\session-e078955b-c5bf-47aa-b982-279af0d1f13e.jsonl",
+    "sourceLine": 121,
+    "originalFirstSeen": {
+      "file": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t3-20261114-161041\\evidence\\session-observer\\session-e078955b-c5bf-47aa-b982-279af0d1f13e.jsonl",
+      "line": 6,
+      "eventSha256": "b9f06f65f1c4c448cf75831e9f01d82aa659b79b872f9aea19966d36a8ae0f90"
+    },
+    "placeholderFirstSeen": {
+      "file": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t3-20261114-161041\\evidence\\session-observer\\session-e078955b-c5bf-47aa-b982-279af0d1f13e.jsonl",
+      "line": 10,
+      "eventSha256": "4c3125f3ae306647dfba50d82b39afd259146b7db65e7600e21af9f5e5a7593d"
+    },
+    "originalStableAcrossSnapshots": true,
+    "placeholderStableAcrossSnapshots": true
+  },
+  "target": {
+    "ok": true,
+    "compartmentId": 1,
+    "publishSeq": 383,
+    "sourceEventSeqs": [
+      12,
+      13,
+      14,
+      22,
+      34,
+      30,
+      56,
+      38,
+      48,
+      44,
+      57,
+      52,
+      86,
+      61,
+      72,
+      73,
+      76,
+      87,
+      82,
+      116,
+      91,
+      102,
+      103,
+      106,
+      117,
+      112,
+      146,
+      121,
+      132,
+      133,
+      136,
+      147,
+      142,
+      155,
+      151,
+      184,
+      159,
+      170,
+      171,
+      174,
+      185,
+      180,
+      182,
+      189,
+      200,
+      201,
+      204,
+      214,
+      210,
+      251,
+      218,
+      228,
+      224,
+      252,
+      232,
+      243,
+      244,
+      247,
+      266,
+      256,
+      267,
+      262,
+      296,
+      271,
+      282,
+      283,
+      286,
+      297,
+      292,
+      326,
+      301,
+      312,
+      313,
+      316,
+      327,
+      322,
+      356,
+      331,
+      342,
+      343,
+      346,
+      357,
+      352,
+      354
+    ],
+    "text": "[compacted §C1§]",
+    "sourceFile": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t3-20261114-161041\\evidence\\session-observer\\session-e078955b-c5bf-47aa-b982-279af0d1f13e.jsonl",
+    "sourceLine": 121,
+    "publishFirstSeen": {
+      "file": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t3-20261114-161041\\evidence\\session-observer\\session-e078955b-c5bf-47aa-b982-279af0d1f13e.jsonl",
+      "line": 117,
+      "eventSha256": "6a8b84a816a9d08b4fde28320cf921d14bdd7e09068ac3155876c0058322f2c1"
+    },
+    "publishStableAcrossSnapshots": true,
+    "rowLandedAtPublishSeq": true,
+    "passRow": {
+      "id": 304,
+      "at": 1794644866221,
+      "data": {
+        "decision": "execute",
+        "reason": "execute-threshold",
+        "pressure": 36.7,
+        "contextWindow": 32768,
+        "route": "deepseek-official/deepseek-flash",
+        "usage": {
+          "input": 245,
+          "cacheRead": 11776,
+          "cacheWrite": 0
+        },
+        "landed": [],
+        "published": [
+          1
+        ],
+        "forceDropped": 0,
+        "baseline": "refreshed",
+        "historianStarted": true,
+        "tokensBefore": 4488,
+        "tokensAfter": 2916,
+        "tokensDelta": -1572,
+        "factsPromoted": 5,
+        "factsSeenAgain": 0
+      }
+    }
+  },
+  "precondition": {
+    "unlanded": [],
+    "emptyUnlanded": true,
+    "targetRow": {
+      "compartment_id": 1,
+      "tier_p1": "In the acceptance-test workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t3-20261114-161041\\workspace, the seed step read fixture.txt and historian-fixture.txt, stamped each desk item via ctx_reduce (drop 1, drop 3, then drop 2,4, then 5,6, 7,8), and replied SEED_READY 1. Then came repeated fixed protocol turns: 'Call acceptance_wait with seconds 20, then respond only WAIT_DONE. Do not use any other tool.' — each was handled by calling acceptance_wait(seconds: 20) and replying only WAIT_DONE; ctx_reduce of leftover tags (§6§, §8§) followed the first two waits. One turn required reading historian-fixture.txt once with the file read tool, then in a NEW model step reading it once more, then replying only GROW_READY without touching fixture.txt — done, answering GROW_READY. Two more identical acceptance_wait(seconds 20) → WAIT_DONE turns followed. Between calls, served desk items were stamped with ctx_reduce (e.g. §10-§13, §15-§18, §19-§22, §23-§26), yielding 'Queued 2 tags for reclaim.' confirmations. Standing constraints: DSH file policy is read-only; approval prompts are disabled, so sandbox escalation requests are auto-rejected and must not be made; fixture contents must not be quoted. No project code was changed. At span end, the final acceptance_wait(seconds:20) output §27§ is on the desk, unstamped.",
+      "tier_p2": "Pure MC T3 acceptance protocol: repeated acceptance_wait(seconds: 20) → WAIT_DONE turns, plus a double read of historian-fixture.txt in separate model steps answered GROW_READY. Read-only session with approvals disabled; no file edits.",
+      "tier_p3": "Everything was acceptance-protocol traffic — 20-second waits answered WAIT_DONE and the double fixture read answered GROW_READY; only cleanup left is stamping §27§.",
+      "tier_p4": "Acceptance-test spans only: repeated 20-second acceptance waits answered WAIT_DONE and a double read of historian-fixture.txt answered GROW_READY.",
+      "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Session DSH file policy is read-only and approval prompts are disabled; actions needing approval are auto-rejected and sandbox escalation must not be requested.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Acceptance fixture workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\dsh-mc-t3-20261114-161041\\\\workspace (contains fixture.txt and historian-fixture.txt).\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Acceptance protocol requires exact reply tokens: WAIT_DONE after acceptance_wait(seconds: 20) and GROW_READY after two sequential reads of historian-fixture.txt in separate model steps; no other tools on those turns.\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Do not quote the contents of fixture.txt or historian-fixture.txt; just read them and respond with the expected markers.\"},{\"category\":\"PROJECT_RULES\",\"content\":\"Stamp served desk items with ctx_reduce after each tool output; reductions return confirmations like 'Queued 2 tags for reclaim.' and are housekeeping, not a wrap-up signal.\"}]",
+      "events": "[\"Read fixture.txt, reduced its desk tag, and answered SEED_READY 1.\",\"Read historian-fixture.txt and reduced its desk tag.\",\"Called acceptance_wait(seconds: 20), reduced leftover tags (§6§, §8§), and answered WAIT_DONE.\",\"Subsequent identical acceptance_wait(seconds 20) turns were executed and WAIT_DONE returned.\",\"Read historian-fixture.txt twice in separate model steps and replied GROW_READY.\",\"ctx_reduce calls on numbered outputs returned reclaim confirmations — housekeeping only.\",\"Final acceptance_wait(seconds:20) output §27§ remains on the desk, unstamped.\"]",
+      "importance": 10,
+      "covered_start_seq": 12,
+      "covered_end_seq": 354,
+      "covered_seqs": "[12,13,14,22,34,30,56,38,48,44,57,52,86,61,72,73,76,87,82,116,91,102,103,106,117,112,146,121,132,133,136,147,142,155,151,184,159,170,171,174,185,180,182,189,200,201,204,214,210,251,218,228,224,252,232,243,244,247,266,256,267,262,296,271,282,283,286,297,292,326,301,312,313,316,327,322,356,331,342,343,346,357,352,354]",
+      "covered_tokens": 2053,
+      "baseline_epoch": 1,
+      "landed_event_seq": 383,
+      "landed_reason": null,
+      "superseded": 0
+    },
+    "passRow": {
+      "id": 304,
+      "at": 1794644866221,
+      "data": {
+        "decision": "execute",
+        "reason": "execute-threshold",
+        "pressure": 36.7,
+        "contextWindow": 32768,
+        "route": "deepseek-official/deepseek-flash",
+        "usage": {
+          "input": 245,
+          "cacheRead": 11776,
+          "cacheWrite": 0
+        },
+        "landed": [],
+        "published": [
+          1
+        ],
+        "forceDropped": 0,
+        "baseline": "refreshed",
+        "historianStarted": true,
+        "tokensBefore": 4488,
+        "tokensAfter": 2916,
+        "tokensDelta": -1572,
+        "factsPromoted": 5,
+        "factsSeenAgain": 0
+      }
+    }
+  },
+  "e1Tag": {
+    "hostExit": 0,
+    "finalReason": {
+      "kind": "completed"
+    },
+    "toolCalls": [
+      {
+        "tool": "ctx_expand",
+        "input": {
+          "tag": "1"
+        }
+      }
+    ],
+    "locatorOk": true,
+    "resultSeq": 429,
+    "eventsAfterResult": [
+      "step/end",
+      "step/start",
+      "session-log-deepseek/delivery-accepted",
+      "assistant/message"
+    ],
+    "resultSha256": "28f6928219d434819a97b63aabffde2d9fa8b4031d36d7dde50d0e888e6dafe0",
+    "strippedSha256": "bf353467bcffb920a26fdb7ce878fe4ef0482ed7f3a9b1bd25ae8a0c29536a52",
+    "originalSha256": "bf353467bcffb920a26fdb7ce878fe4ef0482ed7f3a9b1bd25ae8a0c29536a52",
+    "byteEqual": true,
+    "windowOk": true,
+    "windowErrors": [],
+    "agentUsageDelta": {
+      "usage_records": 2
+    }
+  },
+  "e2Message": {
+    "hostExit": 0,
+    "finalReason": {
+      "kind": "completed"
+    },
+    "toolCalls": [
+      {
+        "tool": "ctx_expand",
+        "input": {
+          "message": "24"
+        }
+      }
+    ],
+    "locatorOk": true,
+    "resultSeq": 450,
+    "eventsAfterResult": [
+      "step/end",
+      "step/start",
+      "session-log-deepseek/delivery-accepted",
+      "assistant/message"
+    ],
+    "resultSha256": "70a0d673048020153509eb18d8db10354dc859f8fe4f25e9ce934f88db014516",
+    "strippedSha256": "bf353467bcffb920a26fdb7ce878fe4ef0482ed7f3a9b1bd25ae8a0c29536a52",
+    "originalSha256": "bf353467bcffb920a26fdb7ce878fe4ef0482ed7f3a9b1bd25ae8a0c29536a52",
+    "byteEqual": true,
+    "windowOk": true,
+    "windowErrors": [],
+    "agentUsageDelta": {
+      "usage_records": 2
+    }
+  },
+  "originalCall": {
+    "calls": 1,
+    "results": 2,
+    "resultSeqs": [
+      24,
+      34
+    ]
+  },
+  "windowEvents": {
+    "e1": {
+      "eventsAfterCount": 4,
+      "compactedAfter": 0
+    },
+    "e2": {
+      "eventsAfterCount": 4,
+      "compactedAfter": 0
+    }
+  },
+  "dropState": {
+    "tag": {
+      "tag_number": 1,
+      "target_kind": "tool-result",
+      "target_id": "call_00_3LLTV3uBx9EEMxiwnQVs2175"
+    },
+    "pendingRowsForTag": [
+      {
+        "tag_number": 1,
+        "queued_at": 1794644488262,
+        "landed_event_seq": 34
+      }
+    ],
+    "landedEventSeq": 34,
+    "noNewPendingRow": true
+  },
+  "historianUsageScoped": {
+    "historianRows": 6,
+    "publishedRows": 1
+  },
+  "checks": {
+    "buildHashesMatch": true,
+    "targetPublishedOnce": true,
+    "targetLandedAtPublishSeq": true,
+    "passRowFound": true,
+    "emptyUnlandedBeforeExpand": true,
+    "emptyUnlandedAfterE1": true,
+    "emptyUnlandedAfterE2": true,
+    "e1ByteEqual": true,
+    "e2ByteEqual": true,
+    "e1WindowOk": true,
+    "e2WindowOk": true,
+    "e1LocatorOnlyTag": true,
+    "e2LocatorOnlyMessage": true,
+    "oneOriginalCall": true,
+    "twoOriginalResults": true,
+    "noCompactedAfterExpand": true,
+    "tagStaysLanded": true,
+    "noNewPendingRow": true,
+    "fixtureUnchanged": true,
+    "bootDbPathInRoot": true,
+    "eventsStable": true,
+    "memoryDoesNotLeaveT3": true
+  },
+  "ok": true
+}

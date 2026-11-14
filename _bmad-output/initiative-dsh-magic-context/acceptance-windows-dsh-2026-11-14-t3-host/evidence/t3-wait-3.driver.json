@@ -1,0 +1,50 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t3-20261114-161041\\overlays\\historian.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "--session-id",
+    "session-e078955b-c5bf-47aa-b982-279af0d1f13e",
+    "Call acceptance_wait with seconds 20, then respond only WAIT_DONE. Do not use any other tool."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 26.44,
+  "session_id": "session-e078955b-c5bf-47aa-b982-279af0d1f13e",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "WAIT_DONE",
+  "tool_calls": [
+    {
+      "tool": "acceptance_wait",
+      "input": {
+        "seconds": 20
+      }
+    },
+    {
+      "tool": "ctx_reduce",
+      "input": {
+        "drop": "23, 24"
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_XixqjtHbY3vc3UFjemo71158",
+      "status": "completed",
+      "result": "§24§ Waited 20 seconds."
+    },
+    {
+      "callId": "call_00_z7DmPEZJMtfrGMS9GE222184",
+      "status": "completed",
+      "result": "§25§ Queued 2 tags for reclaim."
+    }
+  ]
+}
