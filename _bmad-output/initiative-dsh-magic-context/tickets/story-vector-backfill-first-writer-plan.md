@@ -1,7 +1,7 @@
 ---
 title: "Vector backfill first-writer bootstrap — implementation plan"
 ticket: 8
-status: built
+status: done
 ---
 
 # Vector backfill first-writer bootstrap — implementation plan

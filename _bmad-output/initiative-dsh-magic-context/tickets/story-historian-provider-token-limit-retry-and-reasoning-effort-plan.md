@@ -1,6 +1,6 @@
 ---
 ticket: 9
-status: built
+status: done
 ---
 
 # Plan — historian provider token-limit retry and reasoning effort
