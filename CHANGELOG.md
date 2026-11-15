@@ -8,6 +8,12 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
+## [Unreleased]
+
+### Changed
+
+- README 与发布文档明确包名边界：npm 上无 scope 的 `dsh-magic-context` 是另一位维护者的独立实现，不是本 fork 或它的上游；本 fork 只以 `@elvisw/dsh-magic-context` 发布，安装命令必须保留 scope。
+
 ## [0.13.0] - 2026-11-15
 
 ### Changed

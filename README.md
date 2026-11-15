@@ -41,6 +41,11 @@ a `web` profile). The package ships compiled — install straight from the npm r
 dsh plugin --profile web add @elvisw/dsh-magic-context
 ```
 
+> Package identity: the unscoped `dsh-magic-context` on npm is an unrelated
+> implementation by another maintainer, not this fork or its upstream. This fork
+> is published only as `@elvisw/dsh-magic-context`; keep the `@elvisw/` scope in
+> every install command.
+
 `0.13.0` is the first release under this package name. If you installed
 `@elvisw/dsh-plugin-magic-context` (0.12.x) or the upstream
 `dsh-plugin-magic-context`, remove it first: all three use the same loader row id

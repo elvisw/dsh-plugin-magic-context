@@ -28,6 +28,8 @@
 dsh plugin --profile web add @elvisw/dsh-magic-context
 ```
 
+> 包名说明：npm 上无 scope 的 `dsh-magic-context` 是另一位维护者的独立实现，不是本 fork，也不是它的上游；本 fork 只以 `@elvisw/dsh-magic-context` 发布。所有安装命令都必须保留 `@elvisw/` scope。
+
 `0.13.0` 是本包名下的首个版本。如果之前装过 `@elvisw/dsh-plugin-magic-context`（0.12.x）或上游
 `dsh-plugin-magic-context`，请先移除旧包：三者使用同一个 loader row id（`magic-context-dsh`），不支持共装；共装时只会加载一行，设置页可能消失。
 从 0.12.x 升级还需要一次性迁移 profile patch 的包名，见

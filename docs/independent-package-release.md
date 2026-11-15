@@ -37,6 +37,7 @@ node "<profile>/node_modules/@elvisw/dsh-magic-context/tools/migrate-profile-pac
 ## 包名与安装脚本
 
 - npm 包名：`@elvisw/dsh-magic-context`
+- npm 上还存在无 scope 的 `dsh-magic-context`（维护者 `mon3stera`，仓库 `mon3stera/dsh-dotfile` 下的独立插件）。它是另一个实现，不是本 fork 的旧版本或上游；两者 row id 也不同（本插件 `magic-context-dsh`，对方 `dsh-magic-context-*`）。安装、文档与排障时必须写全 scope。
 - tarball 文件名由 npm 自动清理为：`elvisw-dsh-magic-context-<version>.tgz`
 - `tools/install-magic-context.bat` 用 `PKG` 做 `dsh plugin add/remove` 的 specifier，用 `TGZ_PREFIX`
   查找 tarball；两者不能混用。安装脚本会先尝试移除两个旧 specifier，再装新包，并打印迁移命令。
