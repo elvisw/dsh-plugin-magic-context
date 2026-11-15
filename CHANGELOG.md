@@ -10,9 +10,19 @@
 
 ## [Unreleased]
 
+### Added
+
+- 顶层「设置 → Magic Context」页（`settings.section`，order 30），与宿主「内置插件」导航项同级；旧「插件」页卡片保留为同一组件的旧位置/回退。
+- 设置卡片全部自有文案（22 个字段的 label/hint、`Auto` 路由占位、摘要、表单框架、effort 选择器说明）进入 `magic-context` zh/en 字典，跟随 DSH 语言即时切换；宿主 catalog 的 provider/model/effort 名称保持原文。
+- Historian 推理强度改为 catalog-backed 选择器：`默认` + 当前 Historian 路由模型公布的 effort id + 始终可用的 `自定义…`；Auto 路由、无 catalog 或无 reasoning 元数据时保留文本输入；未知旧值以 `Custom` 保留，不会被静默清空、改写或夹取。
+
 ### Changed
 
 - README 与发布文档明确包名边界：npm 上无 scope 的 `dsh-magic-context` 是另一位维护者的独立实现，不是本 fork 或它的上游；本 fork 只以 `@elvisw/dsh-magic-context` 发布，安装命令必须保留 scope。
+
+### Fixed
+
+- 设置卡片在 `snapshot.status !== 'ready'` 时不再硬编码英文 `Magic Context adapter settings`，中文界面不会漏出英文。
 
 ## [0.13.0] - 2026-11-15
 

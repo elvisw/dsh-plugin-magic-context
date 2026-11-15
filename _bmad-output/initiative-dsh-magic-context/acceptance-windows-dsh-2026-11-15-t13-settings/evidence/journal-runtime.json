@@ -1,0 +1,1200 @@
+[
+  {
+    "id": 20,
+    "at": 1794754211201,
+    "level": "info",
+    "kind": "boot",
+    "sessionId": null,
+    "summary": "telemetry route attached for the browser half",
+    "data": {
+      "telemetry": "/mc-telemetry",
+      "routes": [
+        "/mc-telemetry/summary",
+        "/mc-telemetry/events"
+      ]
+    }
+  },
+  {
+    "id": 21,
+    "at": 1794754252672,
+    "level": "info",
+    "kind": "search-hint",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "auto-search hint: no-hits",
+    "data": {
+      "action": "quiet",
+      "reason": "no-hits",
+      "ms": 66,
+      "trigger": "pre-step"
+    }
+  },
+  {
+    "id": 22,
+    "at": 1794754252733,
+    "level": "info",
+    "kind": "session-first-seen",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "session first seen by the adapter",
+    "data": {
+      "turn": 3,
+      "step": 1
+    }
+  },
+  {
+    "id": 23,
+    "at": 1794754252742,
+    "level": "info",
+    "kind": "pass",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "execute (execute-threshold) at 1.8%",
+    "data": {
+      "decision": "execute",
+      "reason": "execute-threshold",
+      "pressure": 1.8,
+      "contextWindow": 1048576,
+      "route": "deepseek-official/deepseek-flash",
+      "usage": {
+        "input": 205,
+        "cacheRead": 18688,
+        "cacheWrite": 0
+      },
+      "landed": [],
+      "published": [],
+      "forceDropped": 0,
+      "baseline": "unchanged",
+      "historianStarted": true,
+      "tokensBefore": 11290,
+      "tokensAfter": 11290,
+      "tokensDelta": 0,
+      "factsPromoted": 0,
+      "factsSeenAgain": 0
+    }
+  },
+  {
+    "id": 24,
+    "at": 1794754252749,
+    "level": "info",
+    "kind": "context-pressure",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "context pressure reading: 18934 / 1048576 tok",
+    "data": {
+      "projectedTokens": 18934,
+      "pressureTokens": 18893,
+      "contextWindow": 1048576
+    }
+  },
+  {
+    "id": 25,
+    "at": 1794754432523,
+    "level": "info",
+    "kind": "search-hint",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "auto-search hint: no-hits",
+    "data": {
+      "action": "quiet",
+      "reason": "no-hits",
+      "ms": 0,
+      "trigger": "pre-step"
+    }
+  },
+  {
+    "id": 26,
+    "at": 1794754432529,
+    "level": "info",
+    "kind": "pass",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "execute (execute-threshold) at 1.8%",
+    "data": {
+      "decision": "execute",
+      "reason": "execute-threshold",
+      "pressure": 1.8,
+      "contextWindow": 1048576,
+      "route": "deepseek-official/deepseek-flash",
+      "usage": {
+        "input": 367,
+        "cacheRead": 18816,
+        "cacheWrite": 0
+      },
+      "landed": [],
+      "published": [],
+      "forceDropped": 0,
+      "baseline": "unchanged",
+      "historianStarted": true,
+      "tokensBefore": 11553,
+      "tokensAfter": 11553,
+      "tokensDelta": 0,
+      "factsPromoted": 0,
+      "factsSeenAgain": 0
+    }
+  },
+  {
+    "id": 27,
+    "at": 1794754432537,
+    "level": "info",
+    "kind": "context-pressure",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "context pressure reading: 86729 / 1048576 tok",
+    "data": {
+      "projectedTokens": 86729,
+      "pressureTokens": 19183,
+      "contextWindow": 1048576
+    }
+  },
+  {
+    "id": 28,
+    "at": 1794754434441,
+    "level": "info",
+    "kind": "context-pressure",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "context pressure reading: 79314 / 1048576 tok",
+    "data": {
+      "projectedTokens": 79314,
+      "pressureTokens": 79297,
+      "contextWindow": 1048576
+    }
+  },
+  {
+    "id": 29,
+    "at": 1794754560817,
+    "level": "info",
+    "kind": "search-hint",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "auto-search hint: no-hits",
+    "data": {
+      "action": "quiet",
+      "reason": "no-hits",
+      "ms": 0,
+      "trigger": "pre-step"
+    }
+  },
+  {
+    "id": 30,
+    "at": 1794754560824,
+    "level": "info",
+    "kind": "historian",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "historian automatic run started over 13 nodes in 2 chunks",
+    "data": {
+      "phase": "start",
+      "trigger": "automatic",
+      "nodes": 13,
+      "tokens": 76362,
+      "route": "deepseek-official/deepseek-flash",
+      "reasoningEffort": "low",
+      "maxTokens": 8192,
+      "timeoutMs": 120000,
+      "chunks": 2
+    }
+  },
+  {
+    "id": 31,
+    "at": 1794754560827,
+    "level": "info",
+    "kind": "pass",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "execute (execute-threshold) at 7.6%",
+    "data": {
+      "decision": "execute",
+      "reason": "execute-threshold",
+      "pressure": 7.6,
+      "contextWindow": 1048576,
+      "route": "deepseek-official/deepseek-flash",
+      "usage": {
+        "input": 60225,
+        "cacheRead": 19072,
+        "cacheWrite": 0
+      },
+      "landed": [],
+      "published": [],
+      "forceDropped": 0,
+      "baseline": "unchanged",
+      "historianStarted": true,
+      "tokensBefore": 79144,
+      "tokensAfter": 79144,
+      "tokensDelta": 0,
+      "factsPromoted": 0,
+      "factsSeenAgain": 0
+    }
+  },
+  {
+    "id": 32,
+    "at": 1794754567328,
+    "level": "info",
+    "kind": "historian",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "historian chunk 1/2 digested (importance 5)",
+    "data": {
+      "phase": "chunk",
+      "index": 1,
+      "of": 2,
+      "nodes": 11,
+      "importance": 5,
+      "facts": 5,
+      "events": 4,
+      "attempts": 1
+    }
+  },
+  {
+    "id": 33,
+    "at": 1794754570251,
+    "level": "info",
+    "kind": "historian",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "historian chunk 2/2 digested (importance 2)",
+    "data": {
+      "phase": "chunk",
+      "index": 2,
+      "of": 2,
+      "nodes": 2,
+      "importance": 2,
+      "facts": 1,
+      "events": 1,
+      "attempts": 2
+    }
+  },
+  {
+    "id": 34,
+    "at": 1794754570255,
+    "level": "info",
+    "kind": "historian",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "historian merging 2 partial digest(s)",
+    "data": {
+      "phase": "merge",
+      "partials": 2,
+      "trigger": "automatic",
+      "nodes": 13,
+      "tokens": 76362,
+      "route": "deepseek-official/deepseek-flash",
+      "reasoningEffort": "low",
+      "maxTokens": 8192,
+      "timeoutMs": 120000,
+      "chunks": 2
+    }
+  },
+  {
+    "id": 35,
+    "at": 1794754589421,
+    "level": "info",
+    "kind": "historian",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "historian digest ready (importance 2, 13 nodes)",
+    "data": {
+      "phase": "done",
+      "trigger": "automatic",
+      "nodes": 13,
+      "tokens": 76362,
+      "route": "deepseek-official/deepseek-flash",
+      "reasoningEffort": "low",
+      "maxTokens": 8192,
+      "timeoutMs": 120000,
+      "chunks": 2,
+      "importance": 2,
+      "facts": 5,
+      "events": 4,
+      "attempts": 3,
+      "durationMs": 28598,
+      "usage": {
+        "inputTokens": 76030,
+        "outputTokens": 5782,
+        "cacheReadTokens": 2176,
+        "cacheWriteTokens": 0,
+        "totalTokens": 83988
+      },
+      "finishReason": "stop"
+    }
+  },
+  {
+    "id": 36,
+    "at": 1794754589429,
+    "level": "info",
+    "kind": "historian",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "compartment \u00a7C1\u00a7 stored (~76362 tokens, importance 2)",
+    "data": {
+      "phase": "stored",
+      "compartmentId": 1,
+      "nodes": 13,
+      "tokens": 76362,
+      "importance": 2,
+      "userObservations": 0,
+      "profileCollect": "off",
+      "coveredStartSeq": 8,
+      "coveredEndSeq": 47
+    }
+  },
+  {
+    "id": 37,
+    "at": 1794756360524,
+    "level": "info",
+    "kind": "engine",
+    "sessionId": null,
+    "summary": "CompactionEngine disabled by configuration",
+    "data": {
+      "action": "disabled-by-config"
+    }
+  },
+  {
+    "id": 38,
+    "at": 1794756361935,
+    "level": "info",
+    "kind": "boot",
+    "sessionId": null,
+    "summary": "adapter booted (tools: dynamic-import, historian: on)",
+    "data": {
+      "version": "phase2",
+      "dbPath": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649\\plugin-data\\dsh-magic-context.db",
+      "schemaVersion": 11,
+      "recoveredHistorianRuns": 0,
+      "switches": {
+        "write": true,
+        "autoPromote": true,
+        "embedBackfill": false,
+        "vectorBackfill": false,
+        "scoring": true,
+        "userRender": false,
+        "userCollect": false,
+        "userReview": false,
+        "machine": false,
+        "machineAutoStage": true,
+        "forceWaitMs": 0
+      },
+      "tools": {
+        "mode": "dynamic-import",
+        "registered": true
+      },
+      "engine": "disabled-by-config",
+      "memory": "ok schema v95",
+      "memoryWrite": "read-write auto-promote",
+      "telemetry": "pending (registers with webServer)",
+      "maintenance": {
+        "enabled": false,
+        "intervalMs": 1800000,
+        "verify": "follow-session"
+      },
+      "historian": {
+        "enabled": true,
+        "route": "deepseek-official/deepseek-flash",
+        "reasoningEffort": "low"
+      },
+      "journal": {
+        "enabled": true,
+        "mirror": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649\\plugin-data\\activity.log",
+        "retentionDays": 30
+      },
+      "forceWaitReadyMs": 0,
+      "memoryScoringEnabled": true,
+      "policy": {
+        "executeThreshold": 0,
+        "forceThreshold": 85,
+        "assumedContextWindow": 256000,
+        "ttlMs": 999999999,
+        "protectedToolResults": 8,
+        "historianProtectedNodes": 0,
+        "historianMinNodes": 0,
+        "historianTimeoutMs": 120000,
+        "historianMaxTokens": 8192,
+        "historianMaxTokensCeiling": 32768,
+        "historianMinBudgetTokens": 0,
+        "baselineTokens": 2000,
+        "memoryLimit": 40
+      }
+    }
+  },
+  {
+    "id": 39,
+    "at": 1794756363706,
+    "level": "info",
+    "kind": "boot",
+    "sessionId": null,
+    "summary": "telemetry route attached for the browser half",
+    "data": {
+      "telemetry": "/mc-telemetry",
+      "routes": [
+        "/mc-telemetry/summary",
+        "/mc-telemetry/events"
+      ]
+    }
+  },
+  {
+    "id": 40,
+    "at": 1794756536842,
+    "level": "info",
+    "kind": "engine",
+    "sessionId": null,
+    "summary": "CompactionEngine disabled by configuration",
+    "data": {
+      "action": "disabled-by-config"
+    }
+  },
+  {
+    "id": 41,
+    "at": 1794756537578,
+    "level": "info",
+    "kind": "boot",
+    "sessionId": null,
+    "summary": "adapter booted (tools: dynamic-import, historian: on)",
+    "data": {
+      "version": "phase2",
+      "dbPath": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649\\plugin-data\\dsh-magic-context.db",
+      "schemaVersion": 11,
+      "recoveredHistorianRuns": 0,
+      "switches": {
+        "write": true,
+        "autoPromote": true,
+        "embedBackfill": false,
+        "vectorBackfill": false,
+        "scoring": true,
+        "userRender": false,
+        "userCollect": false,
+        "userReview": false,
+        "machine": false,
+        "machineAutoStage": true,
+        "forceWaitMs": 0
+      },
+      "tools": {
+        "mode": "dynamic-import",
+        "registered": true
+      },
+      "engine": "disabled-by-config",
+      "memory": "ok schema v95",
+      "memoryWrite": "read-write auto-promote",
+      "telemetry": "pending (registers with webServer)",
+      "maintenance": {
+        "enabled": false,
+        "intervalMs": 1800000,
+        "verify": "follow-session"
+      },
+      "historian": {
+        "enabled": true,
+        "route": "deepseek-official/deepseek-flash",
+        "reasoningEffort": "low"
+      },
+      "journal": {
+        "enabled": true,
+        "mirror": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649\\plugin-data\\activity.log",
+        "retentionDays": 30
+      },
+      "forceWaitReadyMs": 0,
+      "memoryScoringEnabled": true,
+      "policy": {
+        "executeThreshold": 0,
+        "forceThreshold": 85,
+        "assumedContextWindow": 256000,
+        "ttlMs": 999999999,
+        "protectedToolResults": 8,
+        "historianProtectedNodes": 0,
+        "historianMinNodes": 0,
+        "historianTimeoutMs": 120000,
+        "historianMaxTokens": 8192,
+        "historianMaxTokensCeiling": 32768,
+        "historianMinBudgetTokens": 0,
+        "baselineTokens": 2000,
+        "memoryLimit": 40
+      }
+    }
+  },
+  {
+    "id": 42,
+    "at": 1794756538127,
+    "level": "info",
+    "kind": "boot",
+    "sessionId": null,
+    "summary": "telemetry route attached for the browser half",
+    "data": {
+      "telemetry": "/mc-telemetry",
+      "routes": [
+        "/mc-telemetry/summary",
+        "/mc-telemetry/events"
+      ]
+    }
+  },
+  {
+    "id": 43,
+    "at": 1794756559968,
+    "level": "info",
+    "kind": "search-hint",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "auto-search hint: no-hits",
+    "data": {
+      "action": "quiet",
+      "reason": "no-hits",
+      "ms": 66,
+      "trigger": "pre-step"
+    }
+  },
+  {
+    "id": 44,
+    "at": 1794756560038,
+    "level": "info",
+    "kind": "session-first-seen",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "session first seen by the adapter",
+    "data": {
+      "turn": 6,
+      "step": 1
+    }
+  },
+  {
+    "id": 45,
+    "at": 1794756560049,
+    "level": "info",
+    "kind": "compartment-published",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "compartment \u00a7C1\u00a7 replaced 13 nodes on the wire",
+    "data": {
+      "compartmentId": 1,
+      "nodes": 13,
+      "coveredTokens": 76362,
+      "estTokensReclaimed": 76362,
+      "nodeSeq": 66,
+      "importance": 2
+    }
+  },
+  {
+    "id": 46,
+    "at": 1794756560063,
+    "level": "info",
+    "kind": "memory-promote",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "promoted 5 fact(s) into project memory",
+    "data": {
+      "compartmentId": 1,
+      "identity": "dir:dad259209c69",
+      "inserted": [
+        {
+          "id": 1,
+          "category": "CONSTRAINTS"
+        },
+        {
+          "id": 2,
+          "category": "CONFIG_VALUES"
+        },
+        {
+          "id": 3,
+          "category": "CONFIG_VALUES"
+        },
+        {
+          "id": 4,
+          "category": "CONFIG_VALUES"
+        },
+        {
+          "id": 5,
+          "category": "NAMING"
+        }
+      ],
+      "seenAgain": [],
+      "skipped": []
+    }
+  },
+  {
+    "id": 47,
+    "at": 1794756560072,
+    "level": "info",
+    "kind": "baseline",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "baseline HARD rebuild (epoch 1)",
+    "data": {
+      "mode": "hard",
+      "epoch": 1,
+      "nodeSeq": 67,
+      "compartments": {
+        "baseline": 1,
+        "delta": 0
+      },
+      "memories": {
+        "rows": 0,
+        "digest": ""
+      },
+      "profile": {
+        "rows": 0,
+        "newRows": 0
+      },
+      "memoryUpdates": {
+        "pending": 0,
+        "rendered": 0,
+        "cursor": 0,
+        "epochFingerprint": "0124644b98e500e7"
+      },
+      "bytes": 1690,
+      "estTokens": 423,
+      "reason": "first-baseline"
+    }
+  },
+  {
+    "id": 48,
+    "at": 1794756560077,
+    "level": "info",
+    "kind": "pass",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "execute (execute-threshold) at 7.6%",
+    "data": {
+      "decision": "execute",
+      "reason": "execute-threshold",
+      "pressure": 7.6,
+      "contextWindow": 1048576,
+      "route": "deepseek-official/deepseek-flash",
+      "usage": {
+        "input": 229,
+        "cacheRead": 79104,
+        "cacheWrite": 0
+      },
+      "landed": [],
+      "published": [
+        1
+      ],
+      "forceDropped": 0,
+      "baseline": "refreshed",
+      "historianStarted": true,
+      "tokensBefore": 79165,
+      "tokensAfter": 3230,
+      "tokensDelta": -75935,
+      "factsPromoted": 5,
+      "factsSeenAgain": 0
+    }
+  },
+  {
+    "id": 49,
+    "at": 1794756560101,
+    "level": "info",
+    "kind": "context-pressure",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "context pressure reading: 79393 / 1048576 tok",
+    "data": {
+      "projectedTokens": 79393,
+      "pressureTokens": 79333,
+      "contextWindow": 1048576
+    }
+  },
+  {
+    "id": 50,
+    "at": 1794756560105,
+    "level": "info",
+    "kind": "session-notice",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "Magic Context \u00b7 compacted 1 compartment \u00a7C1\u00a7 \u00b7 reclaimed 75,935 tok \u00b7 promoted 5 memories",
+    "data": {
+      "seq": {
+        "type": "user/message",
+        "seq": 68,
+        "time": 1794756560101,
+        "data": {
+          "id": "140998cf-85d3-4e74-ab0d-87e7cff3e778",
+          "role": "user",
+          "content": "[depth]",
+          "source": "[depth]"
+        },
+        "surfaceOp": "append"
+      }
+    }
+  },
+  {
+    "id": 51,
+    "at": 1794756561006,
+    "level": "info",
+    "kind": "context-pressure",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "context pressure reading: 12193 / 1048576 tok",
+    "data": {
+      "projectedTokens": 12193,
+      "pressureTokens": 12176,
+      "contextWindow": 1048576
+    }
+  },
+  {
+    "id": 52,
+    "at": 1794756626745,
+    "level": "info",
+    "kind": "historian",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "historian manual run started over 13 nodes in 2 chunks",
+    "data": {
+      "phase": "start",
+      "trigger": "manual",
+      "nodes": 13,
+      "tokens": 76362,
+      "route": "deepseek-official/deepseek-flash",
+      "reasoningEffort": "low",
+      "maxTokens": 8192,
+      "timeoutMs": 120000,
+      "chunks": 2
+    }
+  },
+  {
+    "id": 53,
+    "at": 1794756631260,
+    "level": "info",
+    "kind": "historian",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "historian chunk 1/2 digested (importance 5)",
+    "data": {
+      "phase": "chunk",
+      "index": 1,
+      "of": 2,
+      "nodes": 11,
+      "importance": 5,
+      "facts": 5,
+      "events": 4,
+      "attempts": 1
+    }
+  },
+  {
+    "id": 54,
+    "at": 1794756633676,
+    "level": "info",
+    "kind": "historian",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "historian chunk 2/2 digested (importance 2)",
+    "data": {
+      "phase": "chunk",
+      "index": 2,
+      "of": 2,
+      "nodes": 2,
+      "importance": 2,
+      "facts": 1,
+      "events": 1,
+      "attempts": 2
+    }
+  },
+  {
+    "id": 55,
+    "at": 1794756633679,
+    "level": "info",
+    "kind": "historian",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "historian merging 2 partial digest(s)",
+    "data": {
+      "phase": "merge",
+      "partials": 2,
+      "trigger": "manual",
+      "nodes": 13,
+      "tokens": 76362,
+      "route": "deepseek-official/deepseek-flash",
+      "reasoningEffort": "low",
+      "maxTokens": 8192,
+      "timeoutMs": 120000,
+      "chunks": 2
+    }
+  },
+  {
+    "id": 56,
+    "at": 1794756642571,
+    "level": "info",
+    "kind": "historian",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "historian digest ready (importance 3, 13 nodes)",
+    "data": {
+      "phase": "done",
+      "trigger": "manual",
+      "nodes": 13,
+      "tokens": 76362,
+      "route": "deepseek-official/deepseek-flash",
+      "reasoningEffort": "low",
+      "maxTokens": 8192,
+      "timeoutMs": 120000,
+      "chunks": 2,
+      "importance": 3,
+      "facts": 6,
+      "events": 4,
+      "attempts": 3,
+      "durationMs": 15826,
+      "usage": {
+        "inputTokens": 73003,
+        "outputTokens": 3051,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 0,
+        "totalTokens": 76054
+      },
+      "finishReason": "stop"
+    }
+  },
+  {
+    "id": 57,
+    "at": 1794756642577,
+    "level": "info",
+    "kind": "compartment-recomp",
+    "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+    "summary": "compartment \u00a7C1\u00a7 re-digested 13 node(s) on request",
+    "data": {
+      "compartmentId": 1,
+      "nodes": 13,
+      "tokens": 76362,
+      "importanceBefore": 2,
+      "importanceAfter": 3,
+      "p1Changed": true,
+      "trigger": "manual"
+    }
+  },
+  {
+    "id": 58,
+    "at": 1794756945956,
+    "level": "info",
+    "kind": "engine",
+    "sessionId": null,
+    "summary": "CompactionEngine disabled by configuration",
+    "data": {
+      "action": "disabled-by-config"
+    }
+  },
+  {
+    "id": 59,
+    "at": 1794756946700,
+    "level": "info",
+    "kind": "boot",
+    "sessionId": null,
+    "summary": "adapter booted (tools: dynamic-import, historian: on)",
+    "data": {
+      "version": "phase2",
+      "dbPath": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649\\plugin-data\\dsh-magic-context.db",
+      "schemaVersion": 11,
+      "recoveredHistorianRuns": 0,
+      "switches": {
+        "write": true,
+        "autoPromote": true,
+        "embedBackfill": false,
+        "vectorBackfill": false,
+        "scoring": true,
+        "userRender": false,
+        "userCollect": false,
+        "userReview": false,
+        "machine": false,
+        "machineAutoStage": true,
+        "forceWaitMs": 0
+      },
+      "tools": {
+        "mode": "dynamic-import",
+        "registered": true
+      },
+      "engine": "disabled-by-config",
+      "memory": "ok schema v95",
+      "memoryWrite": "read-write auto-promote",
+      "telemetry": "pending (registers with webServer)",
+      "maintenance": {
+        "enabled": false,
+        "intervalMs": 1800000,
+        "verify": "follow-session"
+      },
+      "historian": {
+        "enabled": true,
+        "route": "deepseek-official/deepseek-flash",
+        "reasoningEffort": "low"
+      },
+      "journal": {
+        "enabled": true,
+        "mirror": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649\\plugin-data\\activity.log",
+        "retentionDays": 30
+      },
+      "forceWaitReadyMs": 0,
+      "memoryScoringEnabled": true,
+      "policy": {
+        "executeThreshold": 0,
+        "forceThreshold": 85,
+        "assumedContextWindow": 256000,
+        "ttlMs": 999999999,
+        "protectedToolResults": 8,
+        "historianProtectedNodes": 0,
+        "historianMinNodes": 0,
+        "historianTimeoutMs": 120000,
+        "historianMaxTokens": 8192,
+        "historianMaxTokensCeiling": 32768,
+        "historianMinBudgetTokens": 0,
+        "baselineTokens": 2000,
+        "memoryLimit": 40
+      }
+    }
+  },
+  {
+    "id": 60,
+    "at": 1794756947264,
+    "level": "info",
+    "kind": "boot",
+    "sessionId": null,
+    "summary": "telemetry route attached for the browser half",
+    "data": {
+      "telemetry": "/mc-telemetry",
+      "routes": [
+        "/mc-telemetry/summary",
+        "/mc-telemetry/events"
+      ]
+    }
+  },
+  {
+    "id": 61,
+    "at": 1794757026731,
+    "level": "info",
+    "kind": "engine",
+    "sessionId": null,
+    "summary": "CompactionEngine disabled by configuration",
+    "data": {
+      "action": "disabled-by-config"
+    }
+  },
+  {
+    "id": 62,
+    "at": 1794757027440,
+    "level": "info",
+    "kind": "boot",
+    "sessionId": null,
+    "summary": "adapter booted (tools: dynamic-import, historian: on)",
+    "data": {
+      "version": "phase2",
+      "dbPath": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649\\plugin-data\\dsh-magic-context.db",
+      "schemaVersion": 11,
+      "recoveredHistorianRuns": 0,
+      "switches": {
+        "write": true,
+        "autoPromote": true,
+        "embedBackfill": false,
+        "vectorBackfill": false,
+        "scoring": true,
+        "userRender": false,
+        "userCollect": false,
+        "userReview": false,
+        "machine": false,
+        "machineAutoStage": true,
+        "forceWaitMs": 0
+      },
+      "tools": {
+        "mode": "dynamic-import",
+        "registered": true
+      },
+      "engine": "disabled-by-config",
+      "memory": "ok schema v95",
+      "memoryWrite": "read-write auto-promote",
+      "telemetry": "pending (registers with webServer)",
+      "maintenance": {
+        "enabled": false,
+        "intervalMs": 1800000,
+        "verify": "follow-session"
+      },
+      "historian": {
+        "enabled": true,
+        "route": "deepseek-official/deepseek-flash",
+        "reasoningEffort": "low"
+      },
+      "journal": {
+        "enabled": true,
+        "mirror": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649\\plugin-data\\activity.log",
+        "retentionDays": 30
+      },
+      "forceWaitReadyMs": 0,
+      "memoryScoringEnabled": true,
+      "policy": {
+        "executeThreshold": 0,
+        "forceThreshold": 85,
+        "assumedContextWindow": 256000,
+        "ttlMs": 999999999,
+        "protectedToolResults": 8,
+        "historianProtectedNodes": 0,
+        "historianMinNodes": 0,
+        "historianTimeoutMs": 120000,
+        "historianMaxTokens": 8192,
+        "historianMaxTokensCeiling": 32768,
+        "historianMinBudgetTokens": 0,
+        "baselineTokens": 2000,
+        "memoryLimit": 40
+      }
+    }
+  },
+  {
+    "id": 63,
+    "at": 1794757027988,
+    "level": "info",
+    "kind": "boot",
+    "sessionId": null,
+    "summary": "telemetry route attached for the browser half",
+    "data": {
+      "telemetry": "/mc-telemetry",
+      "routes": [
+        "/mc-telemetry/summary",
+        "/mc-telemetry/events"
+      ]
+    }
+  },
+  {
+    "id": 64,
+    "at": 1794757437930,
+    "level": "info",
+    "kind": "engine",
+    "sessionId": null,
+    "summary": "CompactionEngine disabled by configuration",
+    "data": {
+      "action": "disabled-by-config"
+    }
+  },
+  {
+    "id": 65,
+    "at": 1794757438734,
+    "level": "info",
+    "kind": "boot",
+    "sessionId": null,
+    "summary": "adapter booted (tools: dynamic-import, historian: on)",
+    "data": {
+      "version": "phase2",
+      "dbPath": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649\\plugin-data\\dsh-magic-context.db",
+      "schemaVersion": 11,
+      "recoveredHistorianRuns": 0,
+      "switches": {
+        "write": true,
+        "autoPromote": true,
+        "embedBackfill": false,
+        "vectorBackfill": false,
+        "scoring": true,
+        "userRender": false,
+        "userCollect": false,
+        "userReview": false,
+        "machine": false,
+        "machineAutoStage": true,
+        "forceWaitMs": 0
+      },
+      "tools": {
+        "mode": "dynamic-import",
+        "registered": true
+      },
+      "engine": "disabled-by-config",
+      "memory": "ok schema v95",
+      "memoryWrite": "read-write auto-promote",
+      "telemetry": "pending (registers with webServer)",
+      "maintenance": {
+        "enabled": false,
+        "intervalMs": 1800000,
+        "verify": "follow-session"
+      },
+      "historian": {
+        "enabled": true,
+        "route": "deepseek-official/deepseek-flash",
+        "reasoningEffort": "low"
+      },
+      "journal": {
+        "enabled": true,
+        "mirror": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649\\plugin-data\\activity.log",
+        "retentionDays": 30
+      },
+      "forceWaitReadyMs": 0,
+      "memoryScoringEnabled": true,
+      "policy": {
+        "executeThreshold": 0,
+        "forceThreshold": 85,
+        "assumedContextWindow": 256000,
+        "ttlMs": 999999999,
+        "protectedToolResults": 8,
+        "historianProtectedNodes": 0,
+        "historianMinNodes": 0,
+        "historianTimeoutMs": 120000,
+        "historianMaxTokens": 8192,
+        "historianMaxTokensCeiling": 32768,
+        "historianMinBudgetTokens": 0,
+        "baselineTokens": 2000,
+        "memoryLimit": 40
+      }
+    }
+  },
+  {
+    "id": 66,
+    "at": 1794757439294,
+    "level": "info",
+    "kind": "boot",
+    "sessionId": null,
+    "summary": "telemetry route attached for the browser half",
+    "data": {
+      "telemetry": "/mc-telemetry",
+      "routes": [
+        "/mc-telemetry/summary",
+        "/mc-telemetry/events"
+      ]
+    }
+  },
+  {
+    "id": 67,
+    "at": 1794757699312,
+    "level": "info",
+    "kind": "engine",
+    "sessionId": null,
+    "summary": "CompactionEngine disabled by configuration",
+    "data": {
+      "action": "disabled-by-config"
+    }
+  },
+  {
+    "id": 68,
+    "at": 1794757700036,
+    "level": "info",
+    "kind": "boot",
+    "sessionId": null,
+    "summary": "adapter booted (tools: dynamic-import, historian: on)",
+    "data": {
+      "version": "phase2",
+      "dbPath": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649\\plugin-data\\dsh-magic-context.db",
+      "schemaVersion": 11,
+      "recoveredHistorianRuns": 0,
+      "switches": {
+        "write": true,
+        "autoPromote": true,
+        "embedBackfill": false,
+        "vectorBackfill": false,
+        "scoring": true,
+        "userRender": false,
+        "userCollect": false,
+        "userReview": false,
+        "machine": false,
+        "machineAutoStage": true,
+        "forceWaitMs": 0
+      },
+      "tools": {
+        "mode": "dynamic-import",
+        "registered": true
+      },
+      "engine": "disabled-by-config",
+      "memory": "ok schema v95",
+      "memoryWrite": "read-write auto-promote",
+      "telemetry": "pending (registers with webServer)",
+      "maintenance": {
+        "enabled": false,
+        "intervalMs": 1800000,
+        "verify": "follow-session"
+      },
+      "historian": {
+        "enabled": true,
+        "route": "deepseek-official/deepseek-flash",
+        "reasoningEffort": "low"
+      },
+      "journal": {
+        "enabled": true,
+        "mirror": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649\\plugin-data\\activity.log",
+        "retentionDays": 30
+      },
+      "forceWaitReadyMs": 0,
+      "memoryScoringEnabled": true,
+      "policy": {
+        "executeThreshold": 0,
+        "forceThreshold": 85,
+        "assumedContextWindow": 256000,
+        "ttlMs": 999999999,
+        "protectedToolResults": 8,
+        "historianProtectedNodes": 0,
+        "historianMinNodes": 0,
+        "historianTimeoutMs": 120000,
+        "historianMaxTokens": 8192,
+        "historianMaxTokensCeiling": 32768,
+        "historianMinBudgetTokens": 0,
+        "baselineTokens": 2000,
+        "memoryLimit": 40
+      }
+    }
+  },
+  {
+    "id": 69,
+    "at": 1794757700588,
+    "level": "info",
+    "kind": "boot",
+    "sessionId": null,
+    "summary": "telemetry route attached for the browser half",
+    "data": {
+      "telemetry": "/mc-telemetry",
+      "routes": [
+        "/mc-telemetry/summary",
+        "/mc-telemetry/events"
+      ]
+    }
+  }
+]

@@ -43,7 +43,7 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 
 - 工具结果带上 `§N§` 标签；overlay 里出现**遥测徽标**，显示实时上下文占用，点开是
   指标面板与操作记录。
-- GUI「插件」页出现本插件的**设置卡片**。
+- 「设置 → Magic Context」顶层设置页可编辑全部 volatile 选项；同一张卡片仍保留在 GUI「插件」页，作为旧位置与缺少 `settings.section` 槽位时的回退。
 - `ctx_reduce` / `ctx_expand` / `ctx_memory` 三个工具已注册；项目记忆**默认开启**——
   historian 提炼的事实跨会话沉淀，注入模型读取的位置。
 
@@ -76,7 +76,7 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 | **压力调度** | 持久 usage（含 cache 读写）→ 压力分 → execute/defer 决策（65% 阈值、5 min cache TTL、85% 强制带）；`CONTEXT_WINDOW_EXCEEDED` 触发紧急回收 + retry；reduce-guidance 分级引导 |
 | **historian（带外摘要）** | 一次 LLM 调用重放真前缀（保 KV cache）→ 四层摘要 p1–p4 + facts/events，**只写 store 不动线缆**；execute 带内发布为 `[compacted §C<n>§]` 范围替换；`/ctx-recomp` 原地重做已压缩历史 |
 | **压缩接缝** | `registerCompactionEngine` 可接管 `ctx.compaction`（真实 `compaction/start\|summary\|replace\|end` 协议）；**默认关**，宿主 compaction-basic 保持原位 |
-| **界面集成** | 插件页设置卡片（volatile 字段保存即生效）；`shell.overlay` 遥测徽标 + 胶囊面板（实时指标 + 操作记录）；`session-notice` 会话流提示；中英即时切换 |
+| **界面集成** | 顶层「设置 → Magic Context」页 + 旧「插件」页卡片（volatile 字段保存即生效）；catalog-backed Historian 推理强度选择器；`shell.overlay` 遥测徽标 + 胶囊面板（实时指标 + 操作记录）；`session-notice` 会话流提示；卡片自有文案中英即时切换 |
 
 ## 安装
 
@@ -119,13 +119,14 @@ dsh plugin --profile web add <本仓库路径>   # 应用自带 CLI；spec 可�
 
 ## 配置
 
-改配置有两种途径，语义不同（详见[配置界面契约](docs/dsh-plugin-config-ui-contract.md)）：
+改配置有两种途径，语义不同（详见[设置界面契约](docs/dsh-plugin-settings-ui-contract.md)）：
 
-- **GUI 设置卡片**：暴露 `policy.*`（含 historian 生成上限 / 上限抬升 / 超时）、
+- **GUI 设置页（设置 → Magic Context）**：暴露 `policy.*`（含 historian 生成上限 / 上限抬升 / 超时）、
   `historianEnabled`、`registerCompactionEngine`、`journal.*`、`maintenance.*`、`historian.*` 等 volatile 字段。
   两组 provider/model **路由钉**（maintenance 的 verify、historian 的生成）优先从**宿主已配置的模型目录**
   （客户端 `remote.session.modelCatalog()`）下拉选择，并带「Auto = 跟随会话路由」与清空；宿主不提供该
-  RPC 的 shell 退回纯文本输入（值仍可手填）。写回走 settings
+  RPC 的 shell 退回纯文本输入（值仍可手填）。Historian 推理强度字段使用同一个 catalog-backed 选择器：
+  `默认`、路由模型实际公布的 id，以及用于旧值/未知值的 `自定义`；Auto 路由保留文本输入。写回走 settings
   链路：非 volatile 键原样保留、未触碰的字段不会 materialize 进覆盖行——**保存即生效**
   （host 侧读取一律经 `liveNumber/liveBoolean/liveString/liveRoute` 在决策点现取）。
 - **手写 profile 覆盖行**：`config` 是**整体替换**包内 patch 的 config，**不是深合并**。只写
@@ -151,7 +152,7 @@ bundle 自带配置只有一行：`registerCompactionEngine: false`——保守�
 | 总开关 | `enabled` (true) · `registerTools` (true) · `registerStatusCommand` (true) · `sessionNotices` (true) · `reduceGuidance` (true) · `searchHint` (true) | `enabled: false` 保持加载但完全惰性；`sessionNotices` 控制会话流内的管理提示行 |
 | 压缩接缝 | `registerCompactionEngine`（代码默认可解析即挂；**bundle 随发 false**）· `compactionBase`（宿主注入基类） | 接管需同时禁用 compaction-basic；pre-step 每步 `reconcileEngine` 动态挂/卸 |
 | 压力策略 | `policy.*`：`executeThreshold` (65) · `forceThreshold` (85) · `ttlMs` (5 min) · `assumedContextWindow` (256k) · `protectedToolResults` (8) · `historianTimeoutMs` (120 s) · `historianMaxTokens` (8192，低于会被抬到 8192) · `historianMaxTokensCeiling` (32768) · `baselineTokens` (2000) · `memoryBudgetTokens` (8000) · `memoryLimit` (40) · `forceWaitReadyMs` (0) | 阈值在下一个决策点生效（含 `/ctx-status` 与 compaction engine 路径）。`compartmentGuardMode` / `compartmentEntrantTokens`（发布护栏）已退役，不再是可配置项 |
-| historian | `historianEnabled` (true) · `historian.{provider, model}`（**成对钉住**；空 = 跟随会话最后路由）· `historian.reasoningEffort`（可选，留空 = 模型默认） | 带外摘要与 `/compact` 摘要的生成路由；GUI 卡片有「Historian provider/model」下拉（Auto = 跟随会话，推荐）和自由文本 reasoning effort 字段（仅对暴露 effort id 的模型有效，Auto 路由下同样生效）。provider 级 `OUTPUT_TOKEN_LIMIT` 空补全会走正常的预算翻倍重试。verify 之外的唯一 LLM 消耗点 |
+| historian | `historianEnabled` (true) · `historian.{provider, model}`（**成对钉住**；空 = 跟随会话最后路由）· `historian.reasoningEffort`（可选，留空 = 模型默认） | 带外摘要与 `/compact` 摘要的生成路由；GUI 设置页有「Historian provider/model」下拉（Auto = 跟随会话，推荐）和 catalog-backed 推理强度选择器：`默认`、路由模型实际公布的 id，以及用于旧值/未知值的 `自定义`。Auto 路由下仍保留文本输入（此时不知道会话模型）；未公布的 id 不会被静默改写或夹取。provider 级 `OUTPUT_TOKEN_LIMIT` 空补全会走正常的预算翻倍重试。verify 之外的唯一 LLM 消耗点 |
 | 项目记忆 | `memory.{}`：`enabled`（true，0.9.0 起默认开启——`enabled: false` 退出）· `dbPath` · `project`（省略用会话 cwd）· `domainProjects` · `shareCategories` · `autoPromote` (true) · `write` (true) | `write: false` 让 `ctx_memory` 退回只读 |
 | 检索 / 向量 | `memory.embedBackfill` (true，查询侧内嵌补分) · `memory.vectorBackfill` (true，维护 tick 回填) · `memory.vectorBackfillLimit` (24 行/tick) | 向量车道任何失败 fail-open 降级 FTS |
 | S(t) 衰减 | `memory.scoring.{enabled (true)，alpha (0.4)，beta (0.2)，archiveThreshold (2)，halfLives}` | 统计恒收集；分发缺省 enabled=true 接管排序；profile-JSON only，不进设置卡片 |
@@ -185,7 +186,7 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
 
 两个界面能力都靠同一个浏览器半侧（`src/client/index.js`，构建时原样拷为 `lib/client.js`）：
 
-- **插件页设置卡片**：上文 volatile 配置项的可视化编辑，保存即生效（见"配置"一节）。
+- **「设置 → Magic Context」顶层设置页**：上文 volatile 配置项的可视化编辑，保存即生效（见“配置”一节）。同一张卡片保留在「插件」页，作为旧位置与没有 `settings.section` 槽位时的回退。
 
   ![DSH 插件页的 Magic Context 设置卡片——执行/强制阈值、调度窗口、回收 TTL、保护条数、historian 最小节点数](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-card-top.jpg)
 
@@ -203,9 +204,7 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
   - `GET /mc-telemetry/events` — SSE 实时尾
 - **安全**：路由仅 loopback、无 token 鉴权，因此**只输出计数与单行摘要**——不含消息正文、
   不含文件路径、不含凭据。
-- **多语言**：浏览器侧 `magic-context` 命名空间字典（zh/en），设置 → 通用切换即时生效、无需刷新；
-  写进会话流、模型可见的 `session-notice` 保持英文常量（避免同会话中途换语言造成 cached prefix
-  抖动）。机制见[主界面遥测契约](docs/dsh-plugin-ui-telemetry-contract.md)。
+- **多语言**：浏览器侧 `magic-context` 命名空间字典（zh/en）；卡片的全部自有文案——字段 label/hint、路由占位、摘要、表单框架与选择器说明——跟随「设置 → 通用」即时切换、无需刷新。宿主 catalog 的值（provider/model/effort 名称）保持宿主原文。写进会话流、模型可见的 `session-notice` 保持英文常量（避免同会话中途换语言造成 cached prefix 抖动）。机制见[设置界面契约](docs/dsh-plugin-settings-ui-contract.md)与[主界面遥测契约](docs/dsh-plugin-ui-telemetry-contract.md)。
 
 ## 观测与运维
 

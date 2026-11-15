@@ -85,11 +85,19 @@ const api = definition.factory((name) => {
   if (name === 'react') return stubReact
   throw new Error('unexpected require: ' + name)
 })
-const { dictionaryKeys, dictionaryTranslator, recordOf, recordsOf, noiseLine, recordCounts } = api.__diagnostics
+const { dictionaryKeys, dictionaryTranslator, recordOf, recordsOf, noiseLine, recordCounts, settingsCopyKeys } = api.__diagnostics
 
 const keys = dictionaryKeys()
 const drift = keys.zh.filter((k) => !keys.en.includes(k)).concat(keys.en.filter((k) => !keys.zh.includes(k)))
 check('zh/en 键集合一致', drift.length === 0, drift.length ? drift.join(', ') : `${keys.zh.length} keys`)
+
+const settingsKeys = settingsCopyKeys()
+const settingsMissing = settingsKeys.filter((key) => !keys.zh.includes(key) || !keys.en.includes(key))
+check('settingsCopyKeys 全部已定义', settingsMissing.length === 0,
+  settingsMissing.length ? settingsMissing.join(', ') : `${settingsKeys.length} keys`)
+const settingsDuplicates = settingsKeys.filter((key, index) => settingsKeys.indexOf(key) !== index)
+check('settingsCopyKeys 无重复', settingsDuplicates.length === 0,
+  settingsDuplicates.length ? [...new Set(settingsDuplicates)].join(', ') : '')
 
 // Every key the source asks for must exist in both dictionaries. `t('detail.verb.' + action)`
 // is a dynamic family, so a key ending in '.' is resolved against the verb actions instead.
@@ -183,6 +191,10 @@ check('注册 magic-context 命名空间（zh+en）', registered.length === 1 &&
   && registered[0].dicts.zh !== undefined && registered[0].dicts.en !== undefined)
 check('每个槽位注册项都声明 locale', registrations.length >= 3 && registrations.every((entry) => entry.options.locale === 'magic-context'),
   registrations.map((entry) => entry.options.name).join(', '))
+check('顶层 Settings 页与旧插件页入口并存', registrations.some((entry) => entry.options.name === 'settings.section'
+  && entry.options.id === 'magic-context' && entry.options.order === 30)
+  && registrations.some((entry) => entry.options.name === 'plugins.item' && entry.options.id === 'magic-context-dsh')
+  && registrations.some((entry) => entry.options.name === 'plugins.row.config'))
 const labelled = registrations.filter((entry) => typeof entry.options.label === 'function')
 check('槽位 label 为跟随语言的 thunk', labelled.length >= 1 && labelled.every((entry) => !CJK.test(entry.options.label())),
   labelled.map((entry) => entry.options.label()).join(' | '))

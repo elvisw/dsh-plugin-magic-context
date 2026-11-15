@@ -361,6 +361,23 @@ describe('reasoning effort and provider token-limit failures', () => {
     expect(historianFirst(calls, 'start')?.data?.reasoningEffort).toBe('low')
   })
 
+  it('fails explicitly when the provider rejects the configured effort', async () => {
+    const calls: Call[] = []
+    const rejected = Object.assign(new Error('UNSUPPORTED_REASONING_EFFORT: unsupported reasoning effort'), {
+      code: 'UNSUPPORTED_REASONING_EFFORT',
+    })
+    const fake = scriptLlm([rejected])
+    const error = await callHistorian(deps(fake.llm as HistorianLlm, calls, 'turbo-test') as never, {
+      sessionId: SESSION,
+      session: SESSION_STUB,
+      nodes: [node(1, 'hello')],
+    }).catch((caught: unknown) => caught)
+    expect((error as Error).message).toContain('UNSUPPORTED_REASONING_EFFORT')
+    expect(fake.calls[0]?.request).toMatchObject({ reasoningEffort: 'turbo-test' })
+    expect(phases(calls)).toEqual(['start', 'failed'])
+    expect(String(historianFirst(calls, 'failed')?.data?.reason)).toContain('UNSUPPORTED_REASONING_EFFORT')
+  })
+
   it('treats a thrown OUTPUT_TOKEN_LIMIT as truncation and escalates the retry cap', async () => {
     const calls: Call[] = []
     const limit = Object.assign(new Error('completed without content'), { code: 'OUTPUT_TOKEN_LIMIT' })

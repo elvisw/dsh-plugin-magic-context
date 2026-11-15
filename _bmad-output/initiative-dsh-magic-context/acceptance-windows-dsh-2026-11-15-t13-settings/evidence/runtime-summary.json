@@ -1,0 +1,199 @@
+{
+  "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+  "profile": "t13",
+  "package": "@elvisw/dsh-magic-context@0.13.0",
+  "tarball": "a4b6414c17f754612513cef0e46143684cbe8262114af7311d8b634e06886188 (intermediate UI-only pack; artifact no longer retained)",
+  "tarballSha256": "a4b6414c17f754612513cef0e46143684cbe8262114af7311d8b634e06886188",
+  "tarballBytes": 4015038,
+  "pluginConfigFromSettingsPage": {
+    "historian.reasoningEffort": "low"
+  },
+  "runtimeTriggerConfigWrittenByRestartScript": [
+    "policy.executeThreshold: 0",
+    "policy.historianMinNodes: 0",
+    "policy.historianProtectedNodes: 0",
+    "policy.historianMinBudgetTokens: 0"
+  ],
+  "adapterDefaultReasoningEffort": "high",
+  "adapterDefaultSource": "node_modules/@deepseek-ai/dsh-llm-deepseek/lib/index.js:1720",
+  "manualRun": {
+    "start": {
+      "id": 52,
+      "at": 1794756626745,
+      "level": "info",
+      "kind": "historian",
+      "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+      "summary": "historian manual run started over 13 nodes in 2 chunks",
+      "data": {
+        "phase": "start",
+        "trigger": "manual",
+        "nodes": 13,
+        "tokens": 76362,
+        "route": "deepseek-official/deepseek-flash",
+        "reasoningEffort": "low",
+        "maxTokens": 8192,
+        "timeoutMs": 120000,
+        "chunks": 2
+      }
+    },
+    "merge": {
+      "id": 55,
+      "at": 1794756633679,
+      "level": "info",
+      "kind": "historian",
+      "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+      "summary": "historian merging 2 partial digest(s)",
+      "data": {
+        "phase": "merge",
+        "partials": 2,
+        "trigger": "manual",
+        "nodes": 13,
+        "tokens": 76362,
+        "route": "deepseek-official/deepseek-flash",
+        "reasoningEffort": "low",
+        "maxTokens": 8192,
+        "timeoutMs": 120000,
+        "chunks": 2
+      }
+    },
+    "done": {
+      "id": 56,
+      "at": 1794756642571,
+      "level": "info",
+      "kind": "historian",
+      "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+      "summary": "historian digest ready (importance 3, 13 nodes)",
+      "data": {
+        "phase": "done",
+        "trigger": "manual",
+        "nodes": 13,
+        "tokens": 76362,
+        "route": "deepseek-official/deepseek-flash",
+        "reasoningEffort": "low",
+        "maxTokens": 8192,
+        "timeoutMs": 120000,
+        "chunks": 2,
+        "importance": 3,
+        "facts": 6,
+        "events": 4,
+        "attempts": 3,
+        "durationMs": 15826,
+        "usage": {
+          "inputTokens": 73003,
+          "outputTokens": 3051,
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "totalTokens": 76054
+        },
+        "finishReason": "stop"
+      }
+    },
+    "recomp": {
+      "id": 57,
+      "at": 1794756642577,
+      "level": "info",
+      "kind": "compartment-recomp",
+      "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+      "summary": "compartment \u00a7C1\u00a7 re-digested 13 node(s) on request",
+      "data": {
+        "compartmentId": 1,
+        "nodes": 13,
+        "tokens": 76362,
+        "importanceBefore": 2,
+        "importanceAfter": 3,
+        "p1Changed": true,
+        "trigger": "manual"
+      }
+    }
+  },
+  "priorAutomaticRun": [
+    {
+      "id": 30,
+      "at": 1794754560824,
+      "level": "info",
+      "kind": "historian",
+      "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+      "summary": "historian automatic run started over 13 nodes in 2 chunks",
+      "data": {
+        "phase": "start",
+        "trigger": "automatic",
+        "nodes": 13,
+        "tokens": 76362,
+        "route": "deepseek-official/deepseek-flash",
+        "reasoningEffort": "low",
+        "maxTokens": 8192,
+        "timeoutMs": 120000,
+        "chunks": 2
+      }
+    },
+    {
+      "id": 34,
+      "at": 1794754570255,
+      "level": "info",
+      "kind": "historian",
+      "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+      "summary": "historian merging 2 partial digest(s)",
+      "data": {
+        "phase": "merge",
+        "partials": 2,
+        "trigger": "automatic",
+        "nodes": 13,
+        "tokens": 76362,
+        "route": "deepseek-official/deepseek-flash",
+        "reasoningEffort": "low",
+        "maxTokens": 8192,
+        "timeoutMs": 120000,
+        "chunks": 2
+      }
+    },
+    {
+      "id": 35,
+      "at": 1794754589421,
+      "level": "info",
+      "kind": "historian",
+      "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+      "summary": "historian digest ready (importance 2, 13 nodes)",
+      "data": {
+        "phase": "done",
+        "trigger": "automatic",
+        "nodes": 13,
+        "tokens": 76362,
+        "route": "deepseek-official/deepseek-flash",
+        "reasoningEffort": "low",
+        "maxTokens": 8192,
+        "timeoutMs": 120000,
+        "chunks": 2,
+        "importance": 2,
+        "facts": 5,
+        "events": 4,
+        "attempts": 3,
+        "durationMs": 28598,
+        "usage": {
+          "inputTokens": 76030,
+          "outputTokens": 5782,
+          "cacheReadTokens": 2176,
+          "cacheWriteTokens": 0,
+          "totalTokens": 83988
+        },
+        "finishReason": "stop"
+      }
+    }
+  ],
+  "compartments": [
+    {
+      "compartmentId": 1,
+      "sessionId": "session-72810cd9-3b8d-4de4-b118-99a55af03e57",
+      "importance": 3,
+      "startSeq": 8,
+      "endSeq": 47,
+      "tokens": 76362,
+      "superseded": 0,
+      "landedEventSeq": 66
+    }
+  ],
+  "runtimeCandidateSha256": "a4b6414c17f754612513cef0e46143684cbe8262114af7311d8b634e06886188",
+  "runtimeCandidateBytes": 4015038,
+  "finalTarballSha256": "c801ac1ff378d40aaafe1b16aa57737de40cb966dc1c564b5f909d0e132586bb",
+  "finalTarballBytes": 4015116,
+  "runtimeServerModulesIdentical": "a4b6 -> c801 was not compared member-by-member; the recorded c2a72 -> c801 compare differs only in package/lib/client.js, and a4b6 is the UI-only intermediate pack"
+}

@@ -1,0 +1,591 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649",
+  "steps": [
+    {
+      "name": "plugins-page-card",
+      "at": "2026-11-15T15:45:39.620Z",
+      "opened": true,
+      "hasMagicContext": true,
+      "summaryLine": true,
+      "hasSettingsForm": false
+    },
+    {
+      "name": "zh-card",
+      "at": "2026-11-15T15:45:41.873Z",
+      "label": "Historian 推理强度",
+      "value": "low",
+      "options": [
+        "",
+        "off",
+        "low",
+        "high",
+        "max",
+        "__custom__"
+      ],
+      "hasDefault": true,
+      "hasCustom": true,
+      "hasMedium": false,
+      "navHasMagicContext": true,
+      "navSiblings": [
+        "通用设置",
+        "模型",
+        "内置插件",
+        "Agent 预设",
+        "Magic Context"
+      ]
+    },
+    {
+      "name": "settings-builtin-plugins",
+      "at": "2026-11-15T15:45:42.918Z",
+      "hasEffortLabel": false,
+      "hasEffortControl": 0
+    },
+    {
+      "name": "en-card",
+      "at": "2026-11-15T15:45:46.075Z",
+      "label": "Historian reasoning effort",
+      "navHasMagicContext": true,
+      "navSiblings": [
+        "General",
+        "Models",
+        "Built-in plugins",
+        "Agent presets",
+        "Magic Context"
+      ],
+      "options": [
+        "",
+        "off",
+        "low",
+        "high",
+        "max",
+        "__custom__"
+      ]
+    },
+    {
+      "name": "low-staged",
+      "at": "2026-11-15T15:45:46.689Z",
+      "effort": {
+        "present": true,
+        "value": "low",
+        "label": "Historian reasoning effort",
+        "options": [
+          {
+            "value": "",
+            "text": "Default"
+          },
+          {
+            "value": "off",
+            "text": "Off (off)"
+          },
+          {
+            "value": "low",
+            "text": "Low (low)"
+          },
+          {
+            "value": "high",
+            "text": "High (high)"
+          },
+          {
+            "value": "max",
+            "text": "Max (max)"
+          },
+          {
+            "value": "__custom__",
+            "text": "Custom…"
+          }
+        ],
+        "customVisible": false,
+        "customValue": null,
+        "bodyHasUnknownHint": false
+      },
+      "patchEffort": "low"
+    },
+    {
+      "name": "low-save",
+      "at": "2026-11-15T15:45:49.076Z",
+      "patchEffort": "low",
+      "effort": {
+        "present": true,
+        "value": "low",
+        "label": "Historian reasoning effort",
+        "options": [
+          {
+            "value": "",
+            "text": "Default"
+          },
+          {
+            "value": "off",
+            "text": "Off (off)"
+          },
+          {
+            "value": "low",
+            "text": "Low (low)"
+          },
+          {
+            "value": "high",
+            "text": "High (high)"
+          },
+          {
+            "value": "max",
+            "text": "Max (max)"
+          },
+          {
+            "value": "__custom__",
+            "text": "Custom…"
+          }
+        ],
+        "customVisible": false,
+        "customValue": null,
+        "bodyHasUnknownHint": false
+      }
+    },
+    {
+      "name": "low-reload",
+      "at": "2026-11-15T15:45:53.829Z",
+      "patchEffort": "low",
+      "effort": {
+        "present": true,
+        "value": "low",
+        "label": "Historian reasoning effort",
+        "options": [
+          {
+            "value": "",
+            "text": "Default"
+          },
+          {
+            "value": "off",
+            "text": "Off (off)"
+          },
+          {
+            "value": "low",
+            "text": "Low (low)"
+          },
+          {
+            "value": "high",
+            "text": "High (high)"
+          },
+          {
+            "value": "max",
+            "text": "Max (max)"
+          },
+          {
+            "value": "__custom__",
+            "text": "Custom…"
+          }
+        ],
+        "customVisible": false,
+        "customValue": null,
+        "bodyHasUnknownHint": false
+      }
+    },
+    {
+      "name": "custom-open",
+      "at": "2026-11-15T15:45:54.369Z",
+      "effort": {
+        "present": true,
+        "value": "__custom__",
+        "label": "Historian reasoning effort",
+        "options": [
+          {
+            "value": "",
+            "text": "Default"
+          },
+          {
+            "value": "off",
+            "text": "Off (off)"
+          },
+          {
+            "value": "low",
+            "text": "Low (low)"
+          },
+          {
+            "value": "high",
+            "text": "High (high)"
+          },
+          {
+            "value": "max",
+            "text": "Max (max)"
+          },
+          {
+            "value": "__custom__",
+            "text": "Custom…"
+          }
+        ],
+        "customVisible": true,
+        "customValue": "low",
+        "bodyHasUnknownHint": false
+      },
+      "customVisible": true
+    },
+    {
+      "name": "custom-save",
+      "at": "2026-11-15T15:45:57.278Z",
+      "patchEffort": "turbo-test",
+      "effort": {
+        "present": true,
+        "value": "__custom__",
+        "label": "Historian reasoning effort",
+        "options": [
+          {
+            "value": "",
+            "text": "Default"
+          },
+          {
+            "value": "off",
+            "text": "Off (off)"
+          },
+          {
+            "value": "low",
+            "text": "Low (low)"
+          },
+          {
+            "value": "high",
+            "text": "High (high)"
+          },
+          {
+            "value": "max",
+            "text": "Max (max)"
+          },
+          {
+            "value": "__custom__",
+            "text": "Custom (turbo-test)"
+          }
+        ],
+        "customVisible": true,
+        "customValue": "turbo-test",
+        "bodyHasUnknownHint": true
+      }
+    },
+    {
+      "name": "custom-reload",
+      "at": "2026-11-15T15:46:02.027Z",
+      "patchEffort": "turbo-test",
+      "effort": {
+        "present": true,
+        "value": "__custom__",
+        "label": "Historian reasoning effort",
+        "options": [
+          {
+            "value": "",
+            "text": "Default"
+          },
+          {
+            "value": "off",
+            "text": "Off (off)"
+          },
+          {
+            "value": "low",
+            "text": "Low (low)"
+          },
+          {
+            "value": "high",
+            "text": "High (high)"
+          },
+          {
+            "value": "max",
+            "text": "Max (max)"
+          },
+          {
+            "value": "__custom__",
+            "text": "Custom (turbo-test)"
+          }
+        ],
+        "customVisible": true,
+        "customValue": "turbo-test",
+        "bodyHasUnknownHint": true
+      }
+    },
+    {
+      "name": "unknown-save-without-edit",
+      "at": "2026-11-15T15:46:04.388Z",
+      "patchEffort": "turbo-test",
+      "executeThreshold": "99",
+      "mutationRequests": [
+        {
+          "method": "POST",
+          "body": "{\"type\":\"client-request\",\"rpcId\":\"e33a15d6-8851-42d6-8eb7-248f0e1e1f1d\",\"method\":\"settings/mutate\",\"payload\":{\"args\":{\"ns\":\"magic-context-dsh\",\"ops\":[{\"op\":\"set\",\"path\":[\"policy\",\"executeThreshold\"],\"value\":99}],\"expectedRevision\":8}}}"
+        }
+      ],
+      "writesEffort": false
+    },
+    {
+      "name": "model-change",
+      "at": "2026-11-15T15:46:06.738Z",
+      "patchEffort": "turbo-test",
+      "patch": "# T13 isolated Web gate profile layer (settings can edit this row).\n- id: magic-context-dsh\n  name: '@elvisw/dsh-magic-context'\n  config:\n    dataDir: C:/Users/elvis/AppData/Local/Temp/opencode/dsh-mc-t13-20261115-223649/plugin-data\n    historian:\n      provider: deepseek-official\n      model: deepseek-v4-pro\n      reasoningEffort: turbo-test\n    maintenance:\n      enabled: false\n    policy:\n      executeThreshold: 99\n      ttlMs: 999999999\n      historianProtectedNodes: 0\n      historianMinNodes: 0\n      historianMinBudgetTokens: 0\n    memory:\n      embedBackfill: false\n      vectorBackfill: false\n      global:\n        machine:\n          enabled: false\n        user:\n          render: false\n          collect: false\n          review: false\n    historianEnabled: true\n    registerCompactionEngine: false\n- id: ui-settings-general\n  name: \"@deepseek-ai/dsh-client-ui-settings-general\"\n  config:\n    welcomeNoticeVersion: 2026-09-28.1\n- id: locale\n  name: \"@deepseek-ai/dsh-client-locale\"\n  config:\n    preference: en\n"
+    },
+    {
+      "name": "model-change-reload",
+      "at": "2026-11-15T15:46:11.494Z",
+      "patchEffort": "turbo-test",
+      "effort": {
+        "present": true,
+        "value": "__custom__",
+        "label": "Historian reasoning effort",
+        "options": [
+          {
+            "value": "",
+            "text": "Default"
+          },
+          {
+            "value": "off",
+            "text": "Off (off)"
+          },
+          {
+            "value": "low",
+            "text": "Low (low)"
+          },
+          {
+            "value": "high",
+            "text": "High (high)"
+          },
+          {
+            "value": "max",
+            "text": "Max (max)"
+          },
+          {
+            "value": "__custom__",
+            "text": "Custom (turbo-test)"
+          }
+        ],
+        "customVisible": true,
+        "customValue": "turbo-test",
+        "bodyHasUnknownHint": true
+      }
+    },
+    {
+      "name": "model-restore",
+      "at": "2026-11-15T15:46:13.850Z",
+      "patchEffort": "turbo-test",
+      "model": "deepseek-flash"
+    },
+    {
+      "name": "default-save",
+      "at": "2026-11-15T15:46:16.714Z",
+      "patchEffort": null,
+      "patch": "# T13 isolated Web gate profile layer (settings can edit this row).\n- id: magic-context-dsh\n  name: '@elvisw/dsh-magic-context'\n  config:\n    dataDir: C:/Users/elvis/AppData/Local/Temp/opencode/dsh-mc-t13-20261115-223649/plugin-data\n    historian:\n      provider: deepseek-official\n      model: deepseek-flash\n    maintenance:\n      enabled: false\n    policy:\n      executeThreshold: 99\n      ttlMs: 999999999\n      historianProtectedNodes: 0\n      historianMinNodes: 0\n      historianMinBudgetTokens: 0\n    memory:\n      embedBackfill: false\n      vectorBackfill: false\n      global:\n        machine:\n          enabled: false\n        user:\n          render: false\n          collect: false\n          review: false\n    historianEnabled: true\n    registerCompactionEngine: false\n- id: ui-settings-general\n  name: \"@deepseek-ai/dsh-client-ui-settings-general\"\n  config:\n    welcomeNoticeVersion: 2026-09-28.1\n- id: locale\n  name: \"@deepseek-ai/dsh-client-locale\"\n  config:\n    preference: en\n"
+    },
+    {
+      "name": "default-reload",
+      "at": "2026-11-15T15:46:21.471Z",
+      "patchEffort": null,
+      "effort": {
+        "present": true,
+        "value": "",
+        "label": "Historian reasoning effort",
+        "options": [
+          {
+            "value": "",
+            "text": "Default"
+          },
+          {
+            "value": "off",
+            "text": "Off (off)"
+          },
+          {
+            "value": "low",
+            "text": "Low (low)"
+          },
+          {
+            "value": "high",
+            "text": "High (high)"
+          },
+          {
+            "value": "max",
+            "text": "Max (max)"
+          },
+          {
+            "value": "__custom__",
+            "text": "Custom…"
+          }
+        ],
+        "customVisible": false,
+        "customValue": null,
+        "bodyHasUnknownHint": false
+      }
+    },
+    {
+      "name": "default-staged-clear",
+      "at": "2026-11-15T15:46:22.114Z",
+      "effort": {
+        "present": true,
+        "value": "",
+        "label": "Historian reasoning effort",
+        "options": [
+          {
+            "value": "",
+            "text": "Default"
+          },
+          {
+            "value": "off",
+            "text": "Off (off)"
+          },
+          {
+            "value": "low",
+            "text": "Low (low)"
+          },
+          {
+            "value": "high",
+            "text": "High (high)"
+          },
+          {
+            "value": "max",
+            "text": "Max (max)"
+          },
+          {
+            "value": "__custom__",
+            "text": "Custom…"
+          }
+        ],
+        "customVisible": false,
+        "customValue": null,
+        "bodyHasUnknownHint": false
+      },
+      "patchEffort": null
+    },
+    {
+      "name": "custom-after-default",
+      "at": "2026-11-15T15:46:22.647Z",
+      "effort": {
+        "present": true,
+        "value": "__custom__",
+        "label": "Historian reasoning effort",
+        "options": [
+          {
+            "value": "",
+            "text": "Default"
+          },
+          {
+            "value": "off",
+            "text": "Off (off)"
+          },
+          {
+            "value": "low",
+            "text": "Low (low)"
+          },
+          {
+            "value": "high",
+            "text": "High (high)"
+          },
+          {
+            "value": "max",
+            "text": "Max (max)"
+          },
+          {
+            "value": "__custom__",
+            "text": "Custom…"
+          }
+        ],
+        "customVisible": true,
+        "customValue": "",
+        "bodyHasUnknownHint": false
+      },
+      "customVisible": true,
+      "saveDisabled": true
+    },
+    {
+      "name": "low-for-smoke",
+      "at": "2026-11-15T15:46:25.492Z",
+      "patchEffort": "low",
+      "patch": "# T13 isolated Web gate profile layer (settings can edit this row).\n- id: magic-context-dsh\n  name: '@elvisw/dsh-magic-context'\n  config:\n    dataDir: C:/Users/elvis/AppData/Local/Temp/opencode/dsh-mc-t13-20261115-223649/plugin-data\n    historian:\n      provider: deepseek-official\n      model: deepseek-flash\n      reasoningEffort: low\n    maintenance:\n      enabled: false\n    policy:\n      executeThreshold: 99\n      ttlMs: 999999999\n      historianProtectedNodes: 0\n      historianMinNodes: 0\n      historianMinBudgetTokens: 0\n    memory:\n      embedBackfill: false\n      vectorBackfill: false\n      global:\n        machine:\n          enabled: false\n        user:\n          render: false\n          collect: false\n          review: false\n    historianEnabled: true\n    registerCompactionEngine: false\n- id: ui-settings-general\n  name: \"@deepseek-ai/dsh-client-ui-settings-general\"\n  config:\n    welcomeNoticeVersion: 2026-09-28.1\n- id: locale\n  name: \"@deepseek-ai/dsh-client-locale\"\n  config:\n    preference: en\n"
+    },
+    {
+      "name": "unknown-save-without-edit-low",
+      "at": "2026-11-15T15:46:27.851Z",
+      "patchEffort": "low",
+      "executeThreshold": "98",
+      "mutationRequests": [
+        {
+          "method": "POST",
+          "body": "{\"type\":\"client-request\",\"rpcId\":\"e5cfe7e9-e470-49d8-8c58-4c8e8a975028\",\"method\":\"settings/mutate\",\"payload\":{\"args\":{\"ns\":\"magic-context-dsh\",\"ops\":[{\"op\":\"set\",\"path\":[\"policy\",\"executeThreshold\"],\"value\":98}],\"expectedRevision\":13}}}"
+        }
+      ],
+      "writesEffort": false
+    }
+  ],
+  "mutations": [
+    {
+      "status": 200,
+      "body": "{\"type\":\"server-response\",\"rpcId\":\"f1a61afa-de14-4eff-9de3-be42b4214d84\",\"result\":{\"ok\":true,\"value\":{\"ns\":\"locale\",\"autoGenerate\":false,\"schema\":{\"uid\":55537,\"refs\":{\"55536\":{\"type\":\"string\",\"meta\":{\"pattern\":{\"source\":\"^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$\",\"flags\":\"u\"},\"required\":false}},\"55537\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"preference\":55536}}}},\"value\":{\"preference\":\"zh\"},\"base\":{},\"user\":{\"preference\":\"zh\"},\"applies\":\"live\",\"secrets\":[],\"revision\":3}}}"
+    },
+    {
+      "status": 200,
+      "body": "{\"type\":\"server-response\",\"rpcId\":\"7dc4aadc-f59d-498b-b864-114a3a8fa255\",\"result\":{\"ok\":true,\"value\":{\"ns\":\"locale\",\"autoGenerate\":false,\"schema\":{\"uid\":58751,\"refs\":{\"58750\":{\"type\":\"string\",\"meta\":{\"pattern\":{\"source\":\"^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$\",\"flags\":\"u\"},\"required\":false}},\"58751\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"preference\":58750}}}},\"value\":{\"preference\":\"en\"},\"base\":{},\"user\":{\"preference\":\"en\"},\"applies\":\"live\",\"secrets\":[],\"revision\":4}}}"
+    },
+    {
+      "status": 200,
+      "body": "{\"type\":\"server-response\",\"rpcId\":\"260c5eb1-77b4-499a-83a5-57b801013c46\",\"result\":{\"ok\":true,\"value\":{\"ns\":\"magic-context-dsh\",\"autoGenerate\":true,\"schema\":{\"uid\":63171,\"refs\":{\"63137\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"63138\":{\"type\":\"boolean\",\"meta\":{\"default\":false}},\"63139\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"63140\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"63141\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"63142\":{\"type\":\"number\",\"meta\":{\"min\":60000,\"default\":1800000}},\"63143\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"63144\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"63145\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"enabled\":63141,\"intervalMs\":63142,\"verifyProvider\":63143,\"verifyModel\":63144}},\"63146\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"63147\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"63148\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"63149\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"provider\":63146,\"model\":63147,\"reasoningEffort\":63148}},\"63150\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"63151\":{\"type\":\"string\",\"meta\":{\"default\":\"info\"}},\"63152\":{\"type\":\"number\",\"meta\":{\"min\":1,\"default\":30}},\"63153\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"6315"
+    },
+    {
+      "status": 200,
+      "body": "{\"type\":\"server-response\",\"rpcId\":\"5d3e6548-552d-4fe3-93d8-8f685b46d002\",\"result\":{\"ok\":true,\"value\":{\"ns\":\"magic-context-dsh\",\"autoGenerate\":true,\"schema\":{\"uid\":67011,\"refs\":{\"66977\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"66978\":{\"type\":\"boolean\",\"meta\":{\"default\":false}},\"66979\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"66980\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"66981\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"66982\":{\"type\":\"number\",\"meta\":{\"min\":60000,\"default\":1800000}},\"66983\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"66984\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"66985\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"enabled\":66981,\"intervalMs\":66982,\"verifyProvider\":66983,\"verifyModel\":66984}},\"66986\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"66987\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"66988\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"66989\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"provider\":66986,\"model\":66987,\"reasoningEffort\":66988}},\"66990\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"66991\":{\"type\":\"string\",\"meta\":{\"default\":\"info\"}},\"66992\":{\"type\":\"number\",\"meta\":{\"min\":1,\"default\":30}},\"66993\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"6699"
+    },
+    {
+      "status": 200,
+      "body": "{\"type\":\"server-response\",\"rpcId\":\"e33a15d6-8851-42d6-8eb7-248f0e1e1f1d\",\"result\":{\"ok\":true,\"value\":{\"ns\":\"magic-context-dsh\",\"autoGenerate\":true,\"schema\":{\"uid\":72991,\"refs\":{\"72957\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"72958\":{\"type\":\"boolean\",\"meta\":{\"default\":false}},\"72959\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"72960\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"72961\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"72962\":{\"type\":\"number\",\"meta\":{\"min\":60000,\"default\":1800000}},\"72963\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"72964\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"72965\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"enabled\":72961,\"intervalMs\":72962,\"verifyProvider\":72963,\"verifyModel\":72964}},\"72966\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"72967\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"72968\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"72969\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"provider\":72966,\"model\":72967,\"reasoningEffort\":72968}},\"72970\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"72971\":{\"type\":\"string\",\"meta\":{\"default\":\"info\"}},\"72972\":{\"type\":\"number\",\"meta\":{\"min\":1,\"default\":30}},\"72973\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"7297"
+    },
+    {
+      "status": 200,
+      "body": "{\"type\":\"server-response\",\"rpcId\":\"69bf76ad-72e3-49d6-ba00-dc6e7221593f\",\"result\":{\"ok\":true,\"value\":{\"ns\":\"magic-context-dsh\",\"autoGenerate\":true,\"schema\":{\"uid\":76831,\"refs\":{\"76797\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"76798\":{\"type\":\"boolean\",\"meta\":{\"default\":false}},\"76799\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"76800\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"76801\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"76802\":{\"type\":\"number\",\"meta\":{\"min\":60000,\"default\":1800000}},\"76803\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"76804\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"76805\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"enabled\":76801,\"intervalMs\":76802,\"verifyProvider\":76803,\"verifyModel\":76804}},\"76806\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"76807\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"76808\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"76809\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"provider\":76806,\"model\":76807,\"reasoningEffort\":76808}},\"76810\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"76811\":{\"type\":\"string\",\"meta\":{\"default\":\"info\"}},\"76812\":{\"type\":\"number\",\"meta\":{\"min\":1,\"default\":30}},\"76813\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"7681"
+    },
+    {
+      "status": 200,
+      "body": "{\"type\":\"server-response\",\"rpcId\":\"c44a6bcc-4b7b-4d42-83bc-2ec2c871b0a6\",\"result\":{\"ok\":true,\"value\":{\"ns\":\"magic-context-dsh\",\"autoGenerate\":true,\"schema\":{\"uid\":81206,\"refs\":{\"81172\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"81173\":{\"type\":\"boolean\",\"meta\":{\"default\":false}},\"81174\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"81175\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"81176\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"81177\":{\"type\":\"number\",\"meta\":{\"min\":60000,\"default\":1800000}},\"81178\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"81179\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"81180\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"enabled\":81176,\"intervalMs\":81177,\"verifyProvider\":81178,\"verifyModel\":81179}},\"81181\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"81182\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"81183\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"81184\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"provider\":81181,\"model\":81182,\"reasoningEffort\":81183}},\"81185\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"81186\":{\"type\":\"string\",\"meta\":{\"default\":\"info\"}},\"81187\":{\"type\":\"number\",\"meta\":{\"min\":1,\"default\":30}},\"81188\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"8118"
+    },
+    {
+      "status": 200,
+      "body": "{\"type\":\"server-response\",\"rpcId\":\"7768afe8-3f4b-4f2e-b98e-a0e0fa408c88\",\"result\":{\"ok\":true,\"value\":{\"ns\":\"magic-context-dsh\",\"autoGenerate\":true,\"schema\":{\"uid\":85581,\"refs\":{\"85547\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"85548\":{\"type\":\"boolean\",\"meta\":{\"default\":false}},\"85549\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"85550\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"85551\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"85552\":{\"type\":\"number\",\"meta\":{\"min\":60000,\"default\":1800000}},\"85553\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"85554\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"85555\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"enabled\":85551,\"intervalMs\":85552,\"verifyProvider\":85553,\"verifyModel\":85554}},\"85556\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"85557\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"85558\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"85559\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"provider\":85556,\"model\":85557,\"reasoningEffort\":85558}},\"85560\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"85561\":{\"type\":\"string\",\"meta\":{\"default\":\"info\"}},\"85562\":{\"type\":\"number\",\"meta\":{\"min\":1,\"default\":30}},\"85563\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"8556"
+    },
+    {
+      "status": 200,
+      "body": "{\"type\":\"server-response\",\"rpcId\":\"a2278221-a4a8-4eb0-a800-a56b96ed79b8\",\"result\":{\"ok\":true,\"value\":{\"ns\":\"magic-context-dsh\",\"autoGenerate\":true,\"schema\":{\"uid\":91026,\"refs\":{\"90992\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"90993\":{\"type\":\"boolean\",\"meta\":{\"default\":false}},\"90994\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"90995\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"90996\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"90997\":{\"type\":\"number\",\"meta\":{\"min\":60000,\"default\":1800000}},\"90998\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"90999\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"91000\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"enabled\":90996,\"intervalMs\":90997,\"verifyProvider\":90998,\"verifyModel\":90999}},\"91001\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"91002\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"91003\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"91004\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"provider\":91001,\"model\":91002,\"reasoningEffort\":91003}},\"91005\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"91006\":{\"type\":\"string\",\"meta\":{\"default\":\"info\"}},\"91007\":{\"type\":\"number\",\"meta\":{\"min\":1,\"default\":30}},\"91008\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"9100"
+    },
+    {
+      "status": 200,
+      "body": "{\"type\":\"server-response\",\"rpcId\":\"e5cfe7e9-e470-49d8-8c58-4c8e8a975028\",\"result\":{\"ok\":true,\"value\":{\"ns\":\"magic-context-dsh\",\"autoGenerate\":true,\"schema\":{\"uid\":95401,\"refs\":{\"95367\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"95368\":{\"type\":\"boolean\",\"meta\":{\"default\":false}},\"95369\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"95370\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"95371\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"95372\":{\"type\":\"number\",\"meta\":{\"min\":60000,\"default\":1800000}},\"95373\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"95374\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"95375\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"enabled\":95371,\"intervalMs\":95372,\"verifyProvider\":95373,\"verifyModel\":95374}},\"95376\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"95377\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"95378\":{\"type\":\"string\",\"meta\":{\"default\":\"\"}},\"95379\":{\"type\":\"object\",\"meta\":{\"default\":{}},\"dict\":{\"provider\":95376,\"model\":95377,\"reasoningEffort\":95378}},\"95380\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"95381\":{\"type\":\"string\",\"meta\":{\"default\":\"info\"}},\"95382\":{\"type\":\"number\",\"meta\":{\"min\":1,\"default\":30}},\"95383\":{\"type\":\"boolean\",\"meta\":{\"default\":true}},\"9538"
+    }
+  ],
+  "mutationRequests": [
+    {
+      "method": "POST",
+      "body": "{\"type\":\"client-request\",\"rpcId\":\"f1a61afa-de14-4eff-9de3-be42b4214d84\",\"method\":\"settings/mutate\",\"payload\":{\"args\":{\"ns\":\"locale\",\"ops\":[{\"op\":\"set\",\"path\":[\"preference\"],\"value\":\"zh\"}],\"expectedRevision\":2}}}"
+    },
+    {
+      "method": "POST",
+      "body": "{\"type\":\"client-request\",\"rpcId\":\"7dc4aadc-f59d-498b-b864-114a3a8fa255\",\"method\":\"settings/mutate\",\"payload\":{\"args\":{\"ns\":\"locale\",\"ops\":[{\"op\":\"set\",\"path\":[\"preference\"],\"value\":\"en\"}],\"expectedRevision\":3}}}"
+    },
+    {
+      "method": "POST",
+      "body": "{\"type\":\"client-request\",\"rpcId\":\"260c5eb1-77b4-499a-83a5-57b801013c46\",\"method\":\"settings/mutate\",\"payload\":{\"args\":{\"ns\":\"magic-context-dsh\",\"ops\":[{\"op\":\"set\",\"path\":[\"historian\",\"reasoningEffort\"],\"value\":\"low\"}],\"expectedRevision\":7}}}"
+    },
+    {
+      "method": "POST",
+      "body": "{\"type\":\"client-request\",\"rpcId\":\"5d3e6548-552d-4fe3-93d8-8f685b46d002\",\"method\":\"settings/mutate\",\"payload\":{\"args\":{\"ns\":\"magic-context-dsh\",\"ops\":[{\"op\":\"set\",\"path\":[\"historian\",\"reasoningEffort\"],\"value\":\"turbo-test\"}],\"expectedRevision\":7}}}"
+    },
+    {
+      "method": "POST",
+      "body": "{\"type\":\"client-request\",\"rpcId\":\"e33a15d6-8851-42d6-8eb7-248f0e1e1f1d\",\"method\":\"settings/mutate\",\"payload\":{\"args\":{\"ns\":\"magic-context-dsh\",\"ops\":[{\"op\":\"set\",\"path\":[\"policy\",\"executeThreshold\"],\"value\":99}],\"expectedRevision\":8}}}"
+    },
+    {
+      "method": "POST",
+      "body": "{\"type\":\"client-request\",\"rpcId\":\"69bf76ad-72e3-49d6-ba00-dc6e7221593f\",\"method\":\"settings/mutate\",\"payload\":{\"args\":{\"ns\":\"magic-context-dsh\",\"ops\":[{\"op\":\"set\",\"path\":[\"historian\",\"provider\"],\"value\":\"deepseek-official\"},{\"op\":\"set\",\"path\":[\"historian\",\"model\"],\"value\":\"deepseek-v4-pro\"}],\"expectedRevision\":9}}}"
+    },
+    {
+      "method": "POST",
+      "body": "{\"type\":\"client-request\",\"rpcId\":\"c44a6bcc-4b7b-4d42-83bc-2ec2c871b0a6\",\"method\":\"settings/mutate\",\"payload\":{\"args\":{\"ns\":\"magic-context-dsh\",\"ops\":[{\"op\":\"set\",\"path\":[\"historian\",\"provider\"],\"value\":\"deepseek-official\"},{\"op\":\"set\",\"path\":[\"historian\",\"model\"],\"value\":\"deepseek-flash\"}],\"expectedRevision\":10}}}"
+    },
+    {
+      "method": "POST",
+      "body": "{\"type\":\"client-request\",\"rpcId\":\"7768afe8-3f4b-4f2e-b98e-a0e0fa408c88\",\"method\":\"settings/mutate\",\"payload\":{\"args\":{\"ns\":\"magic-context-dsh\",\"ops\":[{\"op\":\"unset\",\"path\":[\"historian\",\"reasoningEffort\"]}],\"expectedRevision\":11}}}"
+    },
+    {
+      "method": "POST",
+      "body": "{\"type\":\"client-request\",\"rpcId\":\"a2278221-a4a8-4eb0-a800-a56b96ed79b8\",\"method\":\"settings/mutate\",\"payload\":{\"args\":{\"ns\":\"magic-context-dsh\",\"ops\":[{\"op\":\"set\",\"path\":[\"historian\",\"reasoningEffort\"],\"value\":\"low\"}],\"expectedRevision\":12}}}"
+    },
+    {
+      "method": "POST",
+      "body": "{\"type\":\"client-request\",\"rpcId\":\"e5cfe7e9-e470-49d8-8c58-4c8e8a975028\",\"method\":\"settings/mutate\",\"payload\":{\"args\":{\"ns\":\"magic-context-dsh\",\"ops\":[{\"op\":\"set\",\"path\":[\"policy\",\"executeThreshold\"],\"value\":98}],\"expectedRevision\":13}}}"
+    }
+  ],
+  "errors": []
+}

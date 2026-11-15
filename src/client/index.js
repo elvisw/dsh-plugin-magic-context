@@ -178,6 +178,128 @@ window.__ModuleLoader__.load({
       ]
     }
 
+    /** Sentinel option value for the always-available Custom branch. */
+    const EFFORT_CUSTOM_SENTINEL = '__custom__'
+
+    /**
+     * Normalize one model's `reasoning` metadata from the host catalog.
+     * Malformed rows and duplicate ids are dropped; host order is kept.
+     */
+    function normalizeModelReasoning(value) {
+      if (value === null || typeof value !== 'object') return undefined
+      const raw = Array.isArray(value.efforts) ? value.efforts : []
+      const efforts = []
+      const seen = new Set()
+      for (const effort of raw) {
+        if (effort === null || typeof effort !== 'object') continue
+        if (typeof effort.id !== 'string') continue
+        const id = effort.id.trim()
+        if (id === '' || id === EFFORT_CUSTOM_SENTINEL || seen.has(id)) continue
+        seen.add(id)
+        const next = { id }
+        if (typeof effort.name === 'string' && effort.name !== '') next.name = effort.name
+        if (typeof effort.description === 'string' && effort.description !== '') next.description = effort.description
+        efforts.push(next)
+      }
+      if (efforts.length === 0) return undefined
+      const defaultEffort = typeof value.defaultEffort === 'string' ? value.defaultEffort.trim() : ''
+      return defaultEffort === ''
+        ? { efforts }
+        : { efforts, defaultEffort }
+    }
+
+    /**
+     * The efforts one routed model advertises, or why the picker cannot list
+     * them. `auto` means the route is unpinned, `missing` means the catalog has
+     * no such provider/model, and `none` means the model advertises no efforts.
+     */
+    function reasoningEffortsOf(groups, provider, model) {
+      const providerId = typeof provider === 'string' ? provider.trim() : ''
+      const modelId = typeof model === 'string' ? model.trim() : ''
+      if (providerId === '' || modelId === '') return { kind: 'auto', efforts: [] }
+      if (!Array.isArray(groups)) return { kind: 'missing', efforts: [] }
+      const group = groups.find((candidate) => candidate !== null && typeof candidate === 'object'
+        && candidate.id === providerId)
+      if (group === undefined || !Array.isArray(group.models)) return { kind: 'missing', efforts: [] }
+      const entry = group.models.find((candidate) => candidate !== null && typeof candidate === 'object'
+        && candidate.id === modelId)
+      if (entry === undefined) return { kind: 'missing', efforts: [] }
+      const reasoning = normalizeModelReasoning(entry.reasoning)
+      return reasoning === undefined
+        ? { kind: 'none', efforts: [] }
+        : { kind: 'ready', efforts: reasoning.efforts, defaultEffort: reasoning.defaultEffort }
+    }
+
+    /** Classify a stored/current effort id against the advertised options. */
+    function effortSelectionOf(options, current) {
+      const value = typeof current === 'string' ? current.trim() : ''
+      if (value === '') return { mode: 'default', value: '' }
+      if (Array.isArray(options) && options.some((option) => option !== null
+        && typeof option === 'object' && option.id === value)) {
+        return { mode: 'value', value }
+      }
+      return { mode: 'custom', value }
+    }
+
+    /** The writes a staged effort draft posts; never blocks the save. */
+    function effortPlanOps(path, draft) {
+      if (draft === undefined) return { ops: [], blocked: false }
+      if (draft.clear === true) return { ops: [{ op: 'unset', path: path.slice() }], blocked: false }
+      const text = String(draft.text ?? '').trim()
+      return {
+        ops: text === ''
+          ? [{ op: 'unset', path: path.slice() }]
+          : [{ op: 'set', path: path.slice(), value: text }],
+        blocked: false,
+      }
+    }
+
+    /**
+     * The effort picker's render state. `draft.clear` wins over any base value;
+     * non-empty draft text wins over the stored value; an opened Custom branch
+     * keeps an empty input instead of snapping back to Default.
+     */
+    function effortDraftOf(input) {
+      const source = input !== null && typeof input === 'object' ? input : {}
+      const options = Array.isArray(source.options) ? source.options : []
+      const customOpen = source.customOpen === true
+      if (source.draft !== null && typeof source.draft === 'object' && source.draft.clear === true) {
+        return { mode: 'default', value: '', displayValue: '', customOpen: false, cleared: true }
+      }
+      const classify = (value, open) => {
+        const text = typeof value === 'string' ? value.trim() : ''
+        if (text === '') {
+          return open
+            ? { mode: 'custom', value: '', displayValue: '', customOpen: true, cleared: false }
+            : { mode: 'default', value: '', displayValue: '', customOpen: false, cleared: false }
+        }
+        if (!open) {
+          const found = options.find((option) => option !== null && typeof option === 'object' && option.id === text)
+          if (found !== undefined) {
+            return {
+              mode: 'value',
+              value: text,
+              displayValue: typeof found.name === 'string' && found.name !== '' ? found.name : text,
+              customOpen: false,
+              cleared: false,
+            }
+          }
+        }
+        return { mode: 'custom', value: text, displayValue: text, customOpen: true, cleared: false }
+      }
+      const draft = source.draft !== null && typeof source.draft === 'object' ? source.draft : undefined
+      if (draft !== undefined && draft.text !== undefined) {
+        const text = String(draft.text).trim()
+        if (text !== '') return classify(text, false)
+        if (customOpen) return classify('', true)
+      }
+      const stored = typeof source.stored === 'string' ? source.stored : ''
+      if (stored.trim() !== '') return classify(stored, customOpen)
+      const base = typeof source.baseValue === 'string' ? source.baseValue : ''
+      if (base.trim() !== '') return classify(base, customOpen)
+      return classify('', customOpen)
+    }
+
     /**
      * One leaf the card edits.
      *
@@ -188,101 +310,148 @@ window.__ModuleLoader__.load({
      * `SettingsFormModel` only models flat fields, which is why this card owns
      * its own small staging model.
      */
+    /**
+     * Dictionary keys for one field are derived from its path, so a new field
+     * cannot acquire copy that lives outside the settings namespace.
+     */
+    function fieldCopy(path) {
+      const prefix = 'settings.field.' + path.join('.')
+      return { labelKey: prefix + '.label', hintKey: prefix + '.hint' }
+    }
+
     const FIELDS = [
       {
-        path: ['policy', 'executeThreshold'], kind: 'number', label: 'Execute threshold (%)',
-        hint: 'Adoption percentage at which the execute band opens (0-100).',
+        path: ['policy', 'executeThreshold'], kind: 'number', ...fieldCopy(['policy', 'executeThreshold']),
       },
       {
-        path: ['policy', 'forceThreshold'], kind: 'number', label: 'Force threshold (%)',
-        hint: 'Adoption percentage at which reclaim becomes unconditional (0-100).',
+        path: ['policy', 'forceThreshold'], kind: 'number', ...fieldCopy(['policy', 'forceThreshold']),
       },
       {
-        path: ['policy', 'assumedContextWindow'], kind: 'number', label: 'Assumed window (tokens)',
-        hint: 'Window used for scheduling when the routed model discloses none.',
+        path: ['policy', 'assumedContextWindow'], kind: 'number', ...fieldCopy(['policy', 'assumedContextWindow']),
       },
       {
-        path: ['policy', 'ttlMs'], kind: 'number', label: 'Reclaim TTL (ms)',
-        hint: 'How long a reclaimed compartment stays reversible.',
+        path: ['policy', 'ttlMs'], kind: 'number', ...fieldCopy(['policy', 'ttlMs']),
       },
       {
-        path: ['policy', 'protectedToolResults'], kind: 'number', label: 'Protected tool results',
-        hint: 'Newest tool results the policy never reclaims.',
+        path: ['policy', 'protectedToolResults'], kind: 'number', ...fieldCopy(['policy', 'protectedToolResults']),
       },
       {
-        path: ['policy', 'historianMinNodes'], kind: 'number', label: 'Historian minimum nodes',
-        hint: 'Assistant/tool nodes required before the historian runs.',
+        path: ['policy', 'historianMinNodes'], kind: 'number', ...fieldCopy(['policy', 'historianMinNodes']),
       },
       {
-        path: ['policy', 'historianMaxTokens'], kind: 'number', label: 'Historian max tokens',
-        hint: 'Generation cap for one historian call; anything below 8192 is raised to 8192.',
+        path: ['policy', 'historianMaxTokens'], kind: 'number', ...fieldCopy(['policy', 'historianMaxTokens']),
       },
       {
-        path: ['policy', 'historianMaxTokensCeiling'], kind: 'number', label: 'Historian retry ceiling',
-        hint: 'Ceiling the historian may escalate to after a token-cap truncation (doubles per attempt).',
+        path: ['policy', 'historianMaxTokensCeiling'], kind: 'number', ...fieldCopy(['policy', 'historianMaxTokensCeiling']),
       },
       {
-        path: ['policy', 'historianTimeoutMs'], kind: 'number', label: 'Historian timeout (ms)',
-        hint: 'Wall-clock budget for one historian run; a spent budget journals a failed run.',
+        path: ['policy', 'historianTimeoutMs'], kind: 'number', ...fieldCopy(['policy', 'historianTimeoutMs']),
       },
       {
-        path: ['policy', 'baselineTokens'], kind: 'number', label: 'Baseline tokens',
-        hint: 'Token budget reserved for the m[0]/m[1] baseline.',
+        path: ['policy', 'baselineTokens'], kind: 'number', ...fieldCopy(['policy', 'baselineTokens']),
       },
       {
-        path: ['policy', 'memoryBudgetTokens'], kind: 'number', label: 'Memory budget tokens',
-        hint: 'Token budget the recalled-memory block may spend.',
+        path: ['policy', 'memoryBudgetTokens'], kind: 'number', ...fieldCopy(['policy', 'memoryBudgetTokens']),
       },
       {
-        path: ['policy', 'memoryLimit'], kind: 'number', label: 'Memory row limit',
-        hint: 'Maximum shared memory rows recalled per pass.',
+        path: ['policy', 'memoryLimit'], kind: 'number', ...fieldCopy(['policy', 'memoryLimit']),
       },
       {
-        path: ['journal', 'retentionDays'], kind: 'number', label: 'Journal retention (days)',
-        hint: 'How long journal rows are kept. Re-prunes once the value changes (minimum 1 day).',
-      },
-      { path: ['historianEnabled'], kind: 'boolean', label: 'Historian enabled', hint: 'Run the out-of-band historian.' },
-      {
-        path: ['registerCompactionEngine'], kind: 'boolean', label: 'Register compaction engine',
-        hint: 'Register the adapter as the compaction engine seam. Mounts or unmounts on the next agent step — disable the host compaction row first.',
+        path: ['journal', 'retentionDays'], kind: 'number', ...fieldCopy(['journal', 'retentionDays']),
       },
       {
-        path: ROUTES[0].providerPath, kind: 'route-provider', routeId: 'maintenance', label: 'Verify provider',
-        hint: 'Provider for the maintenance verify lane. “Auto” leaves the pin off and follows the session route.',
+        path: ['historianEnabled'], kind: 'boolean', ...fieldCopy(['historianEnabled']),
       },
       {
-        path: ROUTES[0].modelPath, kind: 'route-model', routeId: 'maintenance', label: 'Verify model',
-        hint: 'Model for the maintenance verify lane. Set both provider and model to pin; “Auto” follows the session route.',
+        path: ['registerCompactionEngine'], kind: 'boolean', ...fieldCopy(['registerCompactionEngine']),
       },
       {
-        path: ROUTES[1].providerPath, kind: 'route-provider', routeId: 'historian', label: 'Historian provider',
-        hint: 'Provider for the historian and /compact summaries. “Auto” follows the session route (recommended).',
+        path: ROUTES[0].providerPath, kind: 'route-provider', routeId: 'maintenance',
+        ...fieldCopy(ROUTES[0].providerPath),
       },
       {
-        path: ROUTES[1].modelPath, kind: 'route-model', routeId: 'historian', label: 'Historian model',
-        hint: 'Model for the historian and /compact summaries. Set both halves to pin; “Auto” follows the session route.',
+        path: ROUTES[0].modelPath, kind: 'route-model', routeId: 'maintenance',
+        ...fieldCopy(ROUTES[0].modelPath),
       },
       {
-        path: ['historian', 'reasoningEffort'], kind: 'text', label: 'Historian reasoning effort',
-        hint: 'Optional effort id advertised by the routed model (for example low/medium/high). Blank uses the model default.',
+        path: ROUTES[1].providerPath, kind: 'route-provider', routeId: 'historian',
+        ...fieldCopy(ROUTES[1].providerPath),
       },
       {
-        path: ['journal', 'enabled'], kind: 'boolean', label: 'Journal enabled',
-        hint: 'Record adapter activity. Turning off applies immediately; turning on from an off start needs an app restart.',
+        path: ROUTES[1].modelPath, kind: 'route-model', routeId: 'historian',
+        ...fieldCopy(ROUTES[1].modelPath),
       },
       {
-        path: ['journal', 'mirror'], kind: 'boolean', label: 'Journal text mirror',
-        hint: 'Also write the one-line activity mirror file. Applies to entries written after the change.',
+        path: ['historian', 'reasoningEffort'], kind: 'effort', routeId: 'historian',
+        ...fieldCopy(['historian', 'reasoningEffort']),
+      },
+      {
+        path: ['journal', 'enabled'], kind: 'boolean', ...fieldCopy(['journal', 'enabled']),
+      },
+      {
+        path: ['journal', 'mirror'], kind: 'boolean', ...fieldCopy(['journal', 'mirror']),
       },
     ]
 
-    /** Copy the shared settings form frame renders. */
-    const FORM_LABELS = {
-      unavailable: 'Magic Context settings are not served by this deployment.',
-      readOnly: 'This deployment stores settings read-only.',
-      saveFailed: 'The Host did not accept the save; the values below are unsaved.',
-      save: 'Save',
-      saving: 'Saving…',
+    /** Copy owned by the form frame, summary line and effort picker. */
+    const SETTINGS_EXTRA_COPY_KEYS = [
+      'settings.summary.notReady',
+      'settings.summary.line',
+      'settings.summary.route',
+      'settings.summary.on',
+      'settings.summary.off',
+      'settings.summary.verify',
+      'settings.summary.gen',
+      'settings.form.unavailable',
+      'settings.form.readOnly',
+      'settings.form.saveFailed',
+      'settings.form.save',
+      'settings.form.saving',
+      'settings.form.modified',
+      'settings.form.reset',
+      'settings.form.invalid',
+      'settings.form.invalidNumber',
+      'settings.route.autoSession',
+      'settings.route.autoPickProvider',
+      'settings.route.notInCatalog',
+      'settings.route.providerPlaceholder',
+      'settings.route.modelPlaceholder',
+      'settings.effort.default',
+      'settings.effort.custom',
+      'settings.effort.customCurrent',
+      'settings.effort.customPlaceholder',
+      'settings.effort.autoHint',
+      'settings.effort.noneHint',
+      'settings.effort.unknownHint',
+    ]
+
+    /** Every card-owned key; the node-side checks assert zh/en coverage. */
+    function settingsCopyKeys() {
+      const keys = []
+      for (const spec of FIELDS) keys.push(spec.labelKey, spec.hintKey)
+      keys.push(...SETTINGS_EXTRA_COPY_KEYS)
+      return keys
+    }
+
+    /** The labels the shared SettingsForm shell renders. */
+    function formLabels(t) {
+      return {
+        unavailable: t('settings.form.unavailable'),
+        readOnly: t('settings.form.readOnly'),
+        saveFailed: t('settings.form.saveFailed'),
+        save: t('settings.form.save'),
+        saving: t('settings.form.saving'),
+      }
+    }
+
+    /** The labels SettingsValueField/our picker render around one value. */
+    function settingsValueLabels(t) {
+      return {
+        modified: t('settings.form.modified'),
+        reset: t('settings.form.reset'),
+        invalid: t('settings.form.invalid'),
+        invalidNumber: t('settings.form.invalidNumber'),
+      }
     }
 
     /** Read a value along a path inside a nested plain object. */
@@ -409,6 +578,7 @@ window.__ModuleLoader__.load({
                 models.push({
                   id: model.id,
                   name: typeof model.name === 'string' && model.name !== '' ? model.name : model.id,
+                  reasoning: normalizeModelReasoning(model.reasoning),
                 })
               }
               groups.push({ id: group.id, models })
@@ -515,12 +685,16 @@ window.__ModuleLoader__.load({
         const drafts = useRef(new Map())
         const [saving, setSaving] = useState(false)
         const [failed, setFailed] = useState(false)
+        const [effortCustomOpen, setEffortCustomOpen] = useState(false)
         const catalogState = useModelCatalog(catalog)
 
         useEffect(() => scope.subscribe(() => setRevision((value) => value + 1)), [scope])
 
         const snapshot = scope.getSnapshot()
         const staged = drafts.current
+        const t = typeof props.t === 'function' ? props.t : REFERENCE_T
+        const labels = formLabels(t)
+        const valueLabels = settingsValueLabels(t)
 
         // The summary view is the one-liner the Plugins page shows in its list
         // (and as a row's description fallback); it must render without the form.
@@ -528,20 +702,34 @@ window.__ModuleLoader__.load({
           const execute = formatNumber(readPath(snapshot.value, ['policy', 'executeThreshold']))
           const force = formatNumber(readPath(snapshot.value, ['policy', 'forceThreshold']))
           const historian = asBool(readPath(snapshot.value, ['historianEnabled']))
-          if (snapshot.status !== 'ready') return 'Magic Context adapter settings'
+          if (snapshot.status !== 'ready') return t('settings.summary.notReady')
           const pinnedRoutes = ROUTES.flatMap((route) => {
             const provider = formatText(readPath(snapshot.value, route.providerPath))
             const model = formatText(readPath(snapshot.value, route.modelPath))
             if (provider === '' || model === '') return []
-            return [' · ' + (route.id === 'maintenance' ? 'verify ' : 'gen ') + provider + '/' + model]
+            return [t('settings.summary.route', {
+              kind: t(route.id === 'maintenance' ? 'settings.summary.verify' : 'settings.summary.gen'),
+              provider,
+              model,
+            })]
           })
-          return 'execute ' + (execute || '—') + '% · force ' + (force || '—') + '% · historian '
-            + (historian ? 'on' : 'off') + pinnedRoutes.join('')
+          return t('settings.summary.line', {
+            execute: execute || '—',
+            force: force || '—',
+            historian: t(historian ? 'settings.summary.on' : 'settings.summary.off'),
+            routes: pinnedRoutes.join(''),
+          })
         }
 
         /** Stage one field's draft and re-render. */
         const stage = (key, draft) => {
           staged.set(key, draft)
+          setFailed(false)
+          setRevision((value) => value + 1)
+        }
+        /** Drop one draft without leaving a `size > 0` ghost entry. */
+        const unstage = (key) => {
+          if (!staged.delete(key)) return
           setFailed(false)
           setRevision((value) => value + 1)
         }
@@ -618,6 +806,22 @@ window.__ModuleLoader__.load({
           return group === undefined ? [] : group.models
         }
 
+        const effortSpec = FIELDS.find((spec) => spec.kind === 'effort')
+        const historianRoute = routes.find((route) => route.id === 'historian')
+        const effortOptions = reasoningEffortsOf(
+          catalogGroups,
+          historianRoute.providerText,
+          historianRoute.modelText,
+        )
+        const effortDraft = staged.get(fieldKey(effortSpec.path))
+        const effortView = effortDraftOf({
+          baseValue: formatText(readPath(snapshot.base, effortSpec.path)),
+          stored: formatText(readPath(snapshot.value, effortSpec.path)),
+          draft: effortDraft,
+          customOpen: effortCustomOpen,
+          options: effortOptions.efforts,
+        })
+
         /** Stage one side of a pin; a provider switch drops a stale model. */
         const stageRoute = (spec, value) => {
           const route = routeOf(spec)
@@ -647,14 +851,14 @@ window.__ModuleLoader__.load({
           if (catalogReady) {
             const options = []
             if (isProvider) {
-              options.push({ value: '', label: 'Auto — follow the session route' })
+              options.push({ value: '', label: t('settings.route.autoSession') })
               for (const group of catalogGroups) options.push({ value: group.id, label: group.id })
             } else {
               options.push({
                 value: '',
                 label: providerText === ''
-                  ? 'Auto — pick a provider first'
-                  : 'Auto — follow the session route',
+                  ? t('settings.route.autoPickProvider')
+                  : t('settings.route.autoSession'),
               })
               for (const model of modelsOf(providerText)) {
                 options.push({
@@ -664,13 +868,14 @@ window.__ModuleLoader__.load({
               }
             }
             if (currentText !== '' && !options.some((option) => option.value === currentText)) {
-              options.push({ value: currentText, label: currentText + ' (not in catalog)' })
+              options.push({ value: currentText, label: t('settings.route.notInCatalog', { value: currentText }) })
             }
             return el('div', { key: id, style: { display: 'grid', gap: 4, margin: '8px 0' } }, [
-              el('span', { key: 'label', style: { fontSize: 12 } }, spec.label),
+              el('span', { key: 'label', style: { fontSize: 12 } }, t(spec.labelKey)),
               el('select', {
                 key: 'select',
                 id,
+                'aria-label': t(spec.labelKey),
                 value: currentText,
                 disabled,
                 onChange: (event) => stageRoute(spec, event.target.value),
@@ -688,47 +893,161 @@ window.__ModuleLoader__.load({
                   fontSize: 12.5,
                 },
               }, options.map((option) => el('option', { key: option.value, value: option.value }, option.label))),
-              el('span', { key: 'hint', style: { fontSize: 11, opacity: 0.6 } }, spec.hint),
+              el('span', { key: 'hint', style: { fontSize: 11, opacity: 0.6 } }, t(spec.hintKey)),
             ])
           }
           if (usePrimitives && SettingsValueField !== undefined) {
             return el(SettingsValueField, {
               key: id,
               id,
-              label: spec.label,
-              hint: spec.hint,
+              label: t(spec.labelKey),
+              hint: t(spec.hintKey),
               numeric: false,
               text: state.text,
               overridden: state.overridden,
               invalid: false,
-              overriddenLabel: 'Modified',
-              resetLabel: 'Reset',
-              invalidLabel: 'Invalid',
+              overriddenLabel: valueLabels.modified,
+              resetLabel: valueLabels.reset,
+              invalidLabel: valueLabels.invalid,
               disabled: !shell.writable,
               onEdit: (text) => stageRoute(spec, text),
               onReset: () => stage(fieldKey(spec.path), { clear: true }),
             })
           }
           return el('div', { key: id, style: { margin: '8px 0' } }, [
-            el('span', { key: 'label', style: { display: 'block', fontSize: 12 } }, spec.label),
+            el('span', { key: 'label', style: { display: 'block', fontSize: 12 } }, t(spec.labelKey)),
             el('input', {
               key: 'input',
               id,
+              'aria-label': t(spec.labelKey),
               type: 'text',
               value: state.text,
-              placeholder: isProvider ? 'provider id' : 'model id',
+              placeholder: isProvider
+                ? t('settings.route.providerPlaceholder')
+                : t('settings.route.modelPlaceholder'),
               disabled: !shell.writable,
               onChange: (event) => stageRoute(spec, event.target.value),
             }),
-            el('span', { key: 'hint', style: { display: 'block', fontSize: 11, opacity: 0.6 } }, spec.hint),
+            el('span', { key: 'hint', style: { display: 'block', fontSize: 11, opacity: 0.6 } }, t(spec.hintKey)),
           ])
         }
 
         /**
-         * The mutations a save would post, in field order. `blocked` is true when
-         * a staged draft is not a value its field accepts (save refuses rather
-         * than dropping the edit).
+         * One effort field: a catalog-backed select when the routed model
+         * advertises efforts, otherwise the manual text input plus Default.
+         * Values are never validated here; the provider stays authoritative.
          */
+        const renderEffortField = (spec, state) => {
+          const id = 'mc-field-' + fieldKey(spec.path)
+          const label = t(spec.labelKey)
+          const hint = t(spec.hintKey)
+          const disabled = !shell.writable
+          const customUnknown = effortSelectionOf(effortOptions.efforts, effortView.value).mode === 'custom'
+          const customLabel = customUnknown
+            ? t('settings.effort.customCurrent', { value: effortView.value })
+            : t('settings.effort.custom')
+          const reset = () => {
+            setEffortCustomOpen(false)
+            stage(fieldKey(spec.path), { clear: true })
+          }
+          const inputStyle = {
+            width: '100%',
+            maxWidth: 520,
+            boxSizing: 'border-box',
+            height: 32,
+            padding: '0 8px',
+            borderRadius: 'var(--dsw-radius-sm, 6px)',
+            border: '1px solid var(--dsw-alias-border-secondary, rgba(127,127,127,.35))',
+            background: 'var(--dsw-alias-bg-layer-3, transparent)',
+            color: 'var(--dsw-alias-label-primary, inherit)',
+            font: 'inherit',
+            fontSize: 12.5,
+          }
+          if (effortOptions.kind === 'ready') {
+            const options = [{ value: '', label: t('settings.effort.default') }]
+            for (const effort of effortOptions.efforts) {
+              options.push({
+                value: effort.id,
+                label: typeof effort.name === 'string' && effort.name !== effort.id
+                  ? effort.name + ' (' + effort.id + ')'
+                  : effort.id,
+              })
+            }
+            options.push({ value: EFFORT_CUSTOM_SENTINEL, label: customLabel })
+            const selected = effortView.mode === 'custom'
+              ? EFFORT_CUSTOM_SENTINEL
+              : effortView.mode === 'value' ? effortView.value : ''
+            const showCustomInput = effortView.mode === 'custom' || effortView.customOpen
+            return el('div', { key: id, style: { display: 'grid', gap: 4, margin: '8px 0' } }, [
+              el('label', { key: 'label', htmlFor: id, style: { fontSize: 12 } }, label),
+              el('select', {
+                key: 'select',
+                id,
+                'aria-label': label,
+                value: selected,
+                disabled,
+                onChange: (event) => {
+                  const next = event.target.value
+                  if (next === EFFORT_CUSTOM_SENTINEL) {
+                    // Drop any staged clear/listed value: `draft.clear` wins over
+                    // `customOpen` in effortDraftOf and would bounce the select
+                    // straight back to Default.
+                    unstage(fieldKey(spec.path))
+                    setEffortCustomOpen(true)
+                    return
+                  }
+                  setEffortCustomOpen(false)
+                  stage(fieldKey(spec.path), next === '' ? { clear: true } : { clear: false, text: next })
+                },
+                style: inputStyle,
+              }, options.map((option) => el('option', { key: option.value, value: option.value }, option.label))),
+              showCustomInput ? el('input', {
+                key: 'custom',
+                id: id + '-custom',
+                'aria-label': label,
+                type: 'text',
+                value: effortView.mode === 'custom' ? effortView.value : '',
+                placeholder: t('settings.effort.customPlaceholder'),
+                disabled,
+                onChange: (event) => stage(fieldKey(spec.path), { clear: false, text: event.target.value }),
+                style: inputStyle,
+              }) : null,
+              el('span', { key: 'hint', style: { fontSize: 11, opacity: 0.6 } }, hint),
+              customUnknown
+                ? el('span', { key: 'customHint', style: { fontSize: 11, opacity: 0.6 } },
+                  t('settings.effort.unknownHint'))
+                : null,
+              state.overridden
+                ? el('button', { key: 'reset', type: 'button', disabled, onClick: reset }, valueLabels.reset)
+                : null,
+            ])
+          }
+          const textValue = effortView.mode === 'custom' ? effortView.value : ''
+          return el('div', { key: id, style: { display: 'grid', gap: 4, margin: '8px 0' } }, [
+            el('label', { key: 'label', htmlFor: id, style: { fontSize: 12 } }, label),
+            el('input', {
+              key: 'input',
+              id,
+              'aria-label': label,
+              type: 'text',
+              value: textValue,
+              placeholder: t('settings.effort.customPlaceholder'),
+              disabled,
+              onChange: (event) => {
+                setEffortCustomOpen(true)
+                stage(fieldKey(spec.path), { clear: false, text: event.target.value })
+              },
+              style: inputStyle,
+            }),
+            el('span', { key: 'hint', style: { fontSize: 11, opacity: 0.6 } }, hint),
+            el('span', { key: 'routeHint', style: { fontSize: 11, opacity: 0.6 } },
+              t(effortOptions.kind === 'none' ? 'settings.effort.noneHint' : 'settings.effort.autoHint')),
+            textValue !== '' || state.overridden
+              ? el('button', { key: 'default', type: 'button', disabled, onClick: reset }, t('settings.effort.default'))
+              : null,
+          ])
+        }
+
         const plan = () => {
           const ops = []
           let blocked = false
@@ -737,6 +1056,11 @@ window.__ModuleLoader__.load({
             if (spec.kind === 'route-provider' || spec.kind === 'route-model') continue
             const draft = staged.get(fieldKey(spec.path))
             if (draft === undefined) continue
+            if (spec.kind === 'effort') {
+              const planned = effortPlanOps(spec.path, draft)
+              ops.push(...planned.ops)
+              continue
+            }
             if (draft.clear) {
               ops.push({ op: 'unset', path: spec.path.slice() })
               continue
@@ -825,14 +1149,15 @@ window.__ModuleLoader__.load({
                   disabled: !shell.writable,
                   onChange: (event) => stage(fieldKey(spec.path), { clear: false, bool: event.target.checked }),
                 }),
-                el('label', { key: 'label', htmlFor: id, style: { marginLeft: 6, fontSize: 12 } }, spec.label),
+                el('label', { key: 'label', htmlFor: id, style: { marginLeft: 6, fontSize: 12 } }, t(spec.labelKey)),
               ])
             }
             if (spec.kind === 'route-provider' || spec.kind === 'route-model') {
               return renderRouteField(spec, state, false)
             }
+            if (spec.kind === 'effort') return renderEffortField(spec, state)
             return el('div', { key: id, style: { margin: '6px 0' } }, [
-              el('label', { key: 'label', htmlFor: id, style: { display: 'block', fontSize: 12 } }, spec.label),
+              el('label', { key: 'label', htmlFor: id, style: { display: 'block', fontSize: 12 } }, t(spec.labelKey)),
               el('input', {
                 key: 'input',
                 id,
@@ -845,14 +1170,14 @@ window.__ModuleLoader__.load({
           })
           return el('div', { style: { display: 'grid', gap: 4, maxWidth: 520 } }, [
             el('p', { key: 'unavailable', style: { margin: 0, fontSize: 12 } },
-              shell.available ? '' : FORM_LABELS.unavailable),
+              shell.available ? '' : labels.unavailable),
             ...rows,
             el('button', {
               key: 'save', type: 'button', disabled: !shell.dirty || shell.invalid || shell.saving || !shell.writable,
               onClick: save,
-            }, shell.saving ? FORM_LABELS.saving : FORM_LABELS.save),
+            }, shell.saving ? labels.saving : labels.save),
             failed ? el('span', { key: 'failed', style: { color: 'var(--dsw-alias-label-error, #c33)', fontSize: 12 } },
-              FORM_LABELS.saveFailed) : null,
+              labels.saveFailed) : null,
           ])
         }
 
@@ -861,13 +1186,13 @@ window.__ModuleLoader__.load({
           const id = 'mc-field-' + fieldKey(spec.path)
           if (spec.kind === 'boolean') {
             return el('div', { key: id, style: { display: 'flex', alignItems: 'center', gap: 8, margin: '8px 0' } }, [
-              el('span', { key: 'label', style: { fontSize: 12 } }, spec.label),
+              el('span', { key: 'label', style: { fontSize: 12 } }, t(spec.labelKey)),
               Switch !== undefined
                 ? el(Switch, {
                   key: 'switch',
                   checked: state.value,
                   disabled: !shell.writable,
-                  label: spec.label,
+                  label: t(spec.labelKey),
                   onChange: (next) => stage(fieldKey(spec.path), { clear: false, bool: next }),
                 })
                 : el('input', {
@@ -875,7 +1200,7 @@ window.__ModuleLoader__.load({
                   type: 'checkbox',
                   checked: state.value,
                   disabled: !shell.writable,
-                  'aria-label': spec.label,
+                  'aria-label': t(spec.labelKey),
                   onChange: (event) => stage(fieldKey(spec.path), { clear: false, bool: event.target.checked }),
                 }),
               state.overridden
@@ -884,25 +1209,26 @@ window.__ModuleLoader__.load({
                   type: 'button',
                   disabled: !shell.writable,
                   onClick: () => stage(fieldKey(spec.path), { clear: true }),
-                }, 'Reset')
+                }, valueLabels.reset)
                 : null,
             ])
           }
           if (spec.kind === 'route-provider' || spec.kind === 'route-model') {
             return renderRouteField(spec, state, true)
           }
+          if (spec.kind === 'effort') return renderEffortField(spec, state)
           return el(SettingsValueField, {
             key: id,
             id,
-            label: spec.label,
-            hint: spec.hint,
+            label: t(spec.labelKey),
+            hint: t(spec.hintKey),
             numeric: spec.kind === 'number',
             text: state.text,
             overridden: state.overridden,
             invalid: state.invalid,
-            overriddenLabel: 'Modified',
-            resetLabel: 'Reset',
-            invalidLabel: 'Not a number',
+            overriddenLabel: valueLabels.modified,
+            resetLabel: valueLabels.reset,
+            invalidLabel: valueLabels.invalidNumber,
             disabled: !shell.writable,
             onEdit: (text) => stage(fieldKey(spec.path), { clear: false, text }),
             onReset: () => stage(fieldKey(spec.path), { clear: true }),
@@ -910,7 +1236,7 @@ window.__ModuleLoader__.load({
         })
 
         return el(SettingsForm, {
-          labels: FORM_LABELS,
+          labels,
           state: shell,
           onSave: save,
           onDiscard: discard,
@@ -1135,6 +1461,79 @@ window.__ModuleLoader__.load({
         'records.foot': '悬停条目看详情 · /ctx-status 看全量',
         'records.beats': '节拍: {beats}',
         // Slot labels (ledger rows the shell projects).
+        // Settings card copy.
+        'settings.summary.notReady': 'Magic Context 适配器设置',
+        'settings.summary.line': '执行 {execute}% · 强制 {force}% · Historian {historian}{routes}',
+        'settings.summary.route': ' · {kind} {provider}/{model}',
+        'settings.summary.on': '开',
+        'settings.summary.off': '关',
+        'settings.summary.verify': '校验',
+        'settings.summary.gen': '生成',
+        'settings.form.unavailable': '此部署未提供 Magic Context 设置。',
+        'settings.form.readOnly': '此部署以只读方式保存设置。',
+        'settings.form.saveFailed': '宿主没有接受本次保存；下面的值仍未保存。',
+        'settings.form.save': '保存',
+        'settings.form.saving': '保存中…',
+        'settings.form.modified': '已修改',
+        'settings.form.reset': '重置',
+        'settings.form.invalid': '无效',
+        'settings.form.invalidNumber': '不是数字',
+        'settings.route.autoSession': 'Auto — 跟随会话路由',
+        'settings.route.autoPickProvider': 'Auto — 先选择 provider',
+        'settings.route.notInCatalog': '{value}（不在目录中）',
+        'settings.route.providerPlaceholder': 'provider id',
+        'settings.route.modelPlaceholder': 'model id',
+        'settings.effort.default': '默认',
+        'settings.effort.custom': '自定义…',
+        'settings.effort.customCurrent': '自定义（{value}）',
+        'settings.effort.customPlaceholder': '输入 effort id',
+        'settings.effort.autoHint': '固定 Historian provider 与 model 后，可从模型公布的 effort 列表中选择。',
+        'settings.effort.noneHint': '该模型未公布 reasoning effort；留空使用模型默认值。',
+        'settings.effort.unknownHint': '该 id 不在当前模型目录中；在你修改前会保留。',
+        'settings.field.policy.executeThreshold.label': '执行阈值（%）',
+        'settings.field.policy.executeThreshold.hint': '执行回收带开启时的上下文占用百分比（0-100）。',
+        'settings.field.policy.forceThreshold.label': '强制阈值（%）',
+        'settings.field.policy.forceThreshold.hint': '回收变为无条件时的占用百分比（0-100）。',
+        'settings.field.policy.assumedContextWindow.label': '假定窗口（tokens）',
+        'settings.field.policy.assumedContextWindow.hint': '路由模型未披露窗口时用于调度的窗口大小。',
+        'settings.field.policy.ttlMs.label': '回收 TTL（毫秒）',
+        'settings.field.policy.ttlMs.hint': '被回收的区间保持可恢复的时长。',
+        'settings.field.policy.protectedToolResults.label': '保护工具结果数',
+        'settings.field.policy.protectedToolResults.hint': '策略永不回收的最新工具结果数量。',
+        'settings.field.policy.historianMinNodes.label': 'Historian 最小节点数',
+        'settings.field.policy.historianMinNodes.hint': 'Historian 运行前需要的 assistant/tool 节点数。',
+        'settings.field.policy.historianMaxTokens.label': 'Historian 最大 tokens',
+        'settings.field.policy.historianMaxTokens.hint': '单次 Historian 调用的生成上限；低于 8192 会按 8192 处理。',
+        'settings.field.policy.historianMaxTokensCeiling.label': 'Historian 重试上限',
+        'settings.field.policy.historianMaxTokensCeiling.hint': 'token 截断后允许升级到的上限（每次尝试翻倍）。',
+        'settings.field.policy.historianTimeoutMs.label': 'Historian 超时（毫秒）',
+        'settings.field.policy.historianTimeoutMs.hint': '单次 Historian 运行的墙钟预算；超时会记录失败。',
+        'settings.field.policy.baselineTokens.label': '基线 tokens',
+        'settings.field.policy.baselineTokens.hint': '为 m[0]/m[1] 基线预留的 token 预算。',
+        'settings.field.policy.memoryBudgetTokens.label': '记忆预算 tokens',
+        'settings.field.policy.memoryBudgetTokens.hint': '召回记忆块可使用的 token 预算。',
+        'settings.field.policy.memoryLimit.label': '记忆行上限',
+        'settings.field.policy.memoryLimit.hint': '每次 pass 最多召回的共享记忆行数。',
+        'settings.field.journal.retentionDays.label': 'Journal 保留天数',
+        'settings.field.journal.retentionDays.hint': 'Journal 行的保留时长。修改后会重新清理（最少 1 天）。',
+        'settings.field.historianEnabled.label': 'Historian 启用',
+        'settings.field.historianEnabled.hint': '运行带外 Historian。',
+        'settings.field.registerCompactionEngine.label': '注册压缩引擎',
+        'settings.field.registerCompactionEngine.hint': '把适配器注册为压缩引擎 seam；下一次 agent step 挂载或卸载——先禁用宿主压缩行。',
+        'settings.field.maintenance.verifyProvider.label': '校验 provider',
+        'settings.field.maintenance.verifyProvider.hint': '维护校验通道使用的 provider。“Auto” 表示不固定，跟随会话路由。',
+        'settings.field.maintenance.verifyModel.label': '校验模型',
+        'settings.field.maintenance.verifyModel.hint': '维护校验通道使用的模型。同时设置 provider 和 model 才会固定；“Auto” 跟随会话路由。',
+        'settings.field.historian.provider.label': 'Historian provider',
+        'settings.field.historian.provider.hint': 'Historian 与 /compact 摘要使用的 provider。“Auto” 跟随会话路由（推荐）。',
+        'settings.field.historian.model.label': 'Historian 模型',
+        'settings.field.historian.model.hint': 'Historian 与 /compact 摘要使用的模型。两半都设置才会固定；“Auto” 跟随会话路由。',
+        'settings.field.historian.reasoningEffort.label': 'Historian 推理强度',
+        'settings.field.historian.reasoningEffort.hint': '路由模型公布的 effort id（例如 off/low/high/max）；留空使用模型默认值。',
+        'settings.field.journal.enabled.label': 'Journal 启用',
+        'settings.field.journal.enabled.hint': '记录适配器活动。关闭立即生效；从关闭状态开启需要重启应用。',
+        'settings.field.journal.mirror.label': 'Journal 文本镜像',
+        'settings.field.journal.mirror.hint': '同时写单行活动镜像文件。仅对修改后写入的条目生效。',
         'title': 'Magic Context',
         'label.telemetry': 'Magic Context 遥测',
       },
@@ -1221,6 +1620,79 @@ window.__ModuleLoader__.load({
         'records.count': 'last {n}',
         'records.foot': 'Hover a row for detail · /ctx-status for the full ledger',
         'records.beats': 'Beats: {beats}',
+        // Settings card copy.
+        'settings.summary.notReady': 'Magic Context adapter settings',
+        'settings.summary.line': 'execute {execute}% · force {force}% · historian {historian}{routes}',
+        'settings.summary.route': ' · {kind} {provider}/{model}',
+        'settings.summary.on': 'on',
+        'settings.summary.off': 'off',
+        'settings.summary.verify': 'verify',
+        'settings.summary.gen': 'gen',
+        'settings.form.unavailable': 'Magic Context settings are not served by this deployment.',
+        'settings.form.readOnly': 'This deployment stores settings read-only.',
+        'settings.form.saveFailed': 'The Host did not accept the save; the values below are unsaved.',
+        'settings.form.save': 'Save',
+        'settings.form.saving': 'Saving…',
+        'settings.form.modified': 'Modified',
+        'settings.form.reset': 'Reset',
+        'settings.form.invalid': 'Invalid',
+        'settings.form.invalidNumber': 'Not a number',
+        'settings.route.autoSession': 'Auto — follow the session route',
+        'settings.route.autoPickProvider': 'Auto — pick a provider first',
+        'settings.route.notInCatalog': '{value} (not in catalog)',
+        'settings.route.providerPlaceholder': 'provider id',
+        'settings.route.modelPlaceholder': 'model id',
+        'settings.effort.default': 'Default',
+        'settings.effort.custom': 'Custom…',
+        'settings.effort.customCurrent': 'Custom ({value})',
+        'settings.effort.customPlaceholder': 'Enter an effort id',
+        'settings.effort.autoHint': 'Pin the Historian provider and model to pick from the model\'s advertised efforts.',
+        'settings.effort.noneHint': 'This model advertises no reasoning efforts; blank uses the model default.',
+        'settings.effort.unknownHint': 'This id is not in the current model catalog; it is preserved until you change it.',
+        'settings.field.policy.executeThreshold.label': 'Execute threshold (%)',
+        'settings.field.policy.executeThreshold.hint': 'Adoption percentage at which the execute band opens (0-100).',
+        'settings.field.policy.forceThreshold.label': 'Force threshold (%)',
+        'settings.field.policy.forceThreshold.hint': 'Adoption percentage at which reclaim becomes unconditional (0-100).',
+        'settings.field.policy.assumedContextWindow.label': 'Assumed window (tokens)',
+        'settings.field.policy.assumedContextWindow.hint': 'Window used for scheduling when the routed model discloses none.',
+        'settings.field.policy.ttlMs.label': 'Reclaim TTL (ms)',
+        'settings.field.policy.ttlMs.hint': 'How long a reclaimed compartment stays reversible.',
+        'settings.field.policy.protectedToolResults.label': 'Protected tool results',
+        'settings.field.policy.protectedToolResults.hint': 'Newest tool results the policy never reclaims.',
+        'settings.field.policy.historianMinNodes.label': 'Historian minimum nodes',
+        'settings.field.policy.historianMinNodes.hint': 'Assistant/tool nodes required before the historian runs.',
+        'settings.field.policy.historianMaxTokens.label': 'Historian max tokens',
+        'settings.field.policy.historianMaxTokens.hint': 'Generation cap for one historian call; anything below 8192 is raised to 8192.',
+        'settings.field.policy.historianMaxTokensCeiling.label': 'Historian retry ceiling',
+        'settings.field.policy.historianMaxTokensCeiling.hint': 'Ceiling the historian may escalate to after a token-cap truncation (doubles per attempt).',
+        'settings.field.policy.historianTimeoutMs.label': 'Historian timeout (ms)',
+        'settings.field.policy.historianTimeoutMs.hint': 'Wall-clock budget for one historian run; a spent budget journals a failed run.',
+        'settings.field.policy.baselineTokens.label': 'Baseline tokens',
+        'settings.field.policy.baselineTokens.hint': 'Token budget reserved for the m[0]/m[1] baseline.',
+        'settings.field.policy.memoryBudgetTokens.label': 'Memory budget tokens',
+        'settings.field.policy.memoryBudgetTokens.hint': 'Token budget the recalled-memory block may spend.',
+        'settings.field.policy.memoryLimit.label': 'Memory row limit',
+        'settings.field.policy.memoryLimit.hint': 'Maximum shared memory rows recalled per pass.',
+        'settings.field.journal.retentionDays.label': 'Journal retention (days)',
+        'settings.field.journal.retentionDays.hint': 'How long journal rows are kept. Re-prunes once the value changes (minimum 1 day).',
+        'settings.field.historianEnabled.label': 'Historian enabled',
+        'settings.field.historianEnabled.hint': 'Run the out-of-band historian.',
+        'settings.field.registerCompactionEngine.label': 'Register compaction engine',
+        'settings.field.registerCompactionEngine.hint': 'Register the adapter as the compaction engine seam. Mounts or unmounts on the next agent step — disable the host compaction row first.',
+        'settings.field.maintenance.verifyProvider.label': 'Verify provider',
+        'settings.field.maintenance.verifyProvider.hint': 'Provider for the maintenance verify lane. “Auto” leaves the pin off and follows the session route.',
+        'settings.field.maintenance.verifyModel.label': 'Verify model',
+        'settings.field.maintenance.verifyModel.hint': 'Model for the maintenance verify lane. Set both provider and model to pin; “Auto” follows the session route.',
+        'settings.field.historian.provider.label': 'Historian provider',
+        'settings.field.historian.provider.hint': 'Provider for the historian and /compact summaries. “Auto” follows the session route (recommended).',
+        'settings.field.historian.model.label': 'Historian model',
+        'settings.field.historian.model.hint': 'Model for the historian and /compact summaries. Set both halves to pin; “Auto” follows the session route.',
+        'settings.field.historian.reasoningEffort.label': 'Historian reasoning effort',
+        'settings.field.historian.reasoningEffort.hint': 'Optional effort id advertised by the routed model (for example off/low/high/max). Blank uses the model default.',
+        'settings.field.journal.enabled.label': 'Journal enabled',
+        'settings.field.journal.enabled.hint': 'Record adapter activity. Turning off applies immediately; turning on from an off start needs an app restart.',
+        'settings.field.journal.mirror.label': 'Journal text mirror',
+        'settings.field.journal.mirror.hint': 'Also write the one-line activity mirror file. Applies to entries written after the change.',
         'title': 'Magic Context',
         'label.telemetry': 'Magic Context telemetry',
       },
@@ -2211,6 +2683,13 @@ window.__ModuleLoader__.load({
         const scope = settingsCtx.configForms.get(CFG_NS)
         const Card = makeCard(scope, catalog)
         settingsCtx.effect(() => settingsCtx.configForms.whileServed([CFG_NS], () => {
+          const offSection = ctx.slots.inject('settings.section', () => ctx.slots.register({
+            name: 'settings.section',
+            id: 'magic-context',
+            order: 30,
+            label: () => t('title'),
+            locale: LOCALE_NS,
+          }, Card))
           const offItem = ctx.slots.inject('plugins.item', () => ctx.slots.register({
             name: 'plugins.item',
             id: CFG_NS,
@@ -2225,6 +2704,7 @@ window.__ModuleLoader__.load({
             locale: LOCALE_NS,
           }, Card))
           return () => {
+            offSection()
             offItem()
             offRow()
           }
@@ -2255,6 +2735,9 @@ window.__ModuleLoader__.load({
         createModelCatalog,
         /** The pin-pair write semantics (pure; pinned by the client spec). */
         routePairOps,
+        /** Settings copy + catalog-backed effort picker helpers. */
+        settingsCopyKeys, reasoningEffortsOf, effortSelectionOf, effortPlanOps, effortDraftOf,
+        EFFORT_CUSTOM_SENTINEL, fieldSpecs: FIELDS,
         // The number/text formatters are the panel's display contract; the
         // node-side spec pins them so a formatting regression (the scope bug
         // that briefly unmounted the pill) cannot come back silently.

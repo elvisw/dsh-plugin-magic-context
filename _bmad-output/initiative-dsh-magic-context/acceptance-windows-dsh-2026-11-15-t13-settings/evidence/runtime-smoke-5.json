@@ -1,0 +1,22 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649",
+  "at": "2026-11-15T14:53:46.520Z",
+  "steps": [
+    {
+      "name": "long-prompt-filled",
+      "at": "2026-11-15T14:53:52.418Z",
+      "chars": 270082
+    },
+    {
+      "name": "long-prompt-sent",
+      "at": "2026-11-15T14:53:52.456Z"
+    },
+    {
+      "name": "wait",
+      "at": "2026-11-15T14:54:37.483Z",
+      "hasSmokeOk5": true,
+      "tail": "rown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.\n22:53\nCompleted\nCompleted in 1s\n\nHISTORIAN_SMOKE_OK_5\n\nUsage 79.3K tok\n22:53\nMessage or run a task, / commands, @ files or sessions\nWorkspace Write\nDeepSeek-V4.1-Flash\nHigh\n4 turns 4 steps·96 tok/s\n136K tok·Cache hit 44%\nMC · 2%\n8%"
+    }
+  ],
+  "errors": []
+}

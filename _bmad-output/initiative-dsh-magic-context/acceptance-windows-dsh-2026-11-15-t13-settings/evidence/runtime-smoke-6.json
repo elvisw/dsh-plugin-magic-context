@@ -1,0 +1,17 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649",
+  "at": "2026-11-15T14:55:54.647Z",
+  "steps": [
+    {
+      "name": "sixth-prompt-sent",
+      "at": "2026-11-15T14:56:00.775Z"
+    },
+    {
+      "name": "wait",
+      "at": "2026-11-15T14:56:45.794Z",
+      "hasSmokeOk6": true,
+      "tail": "x jumps over the lazy dog.\n22:53\nCompleted\nCompleted in 1s\n\nHISTORIAN_SMOKE_OK_5\n\nUsage 79.3K tok\n22:53\nReply with exactly HISTORIAN_SMOKE_OK_6. Do not call any tools.\n22:56\nCompleted\nCompleted in 1s\n\nHISTORIAN_SMOKE_OK_6\n\nUsage 79.3K tok\n22:56\nMessage or run a task, / commands, @ files or sessions\nWorkspace Write\nDeepSeek-V4.1-Flash\nHigh\n5 turns 5 steps·107 tok/s\n216K tok·Cache hit 64%\nMC · 8%\n8%"
+    }
+  ],
+  "errors": []
+}

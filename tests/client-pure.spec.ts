@@ -14,12 +14,13 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
 const CLIENT = fileURLToPath(new URL('../src/client/index.js', import.meta.url))
+const CLIENT_SOURCE = readFileSync(CLIENT, 'utf8')
 const PACKAGE_JSON = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as { name: string }
 
 let definition: { id?: string; factory?: (require: (name: string) => unknown) => Record<string, unknown> } | null = null
 const window = { __ModuleLoader__: { load: (def: unknown) => { definition = def as typeof definition } } }
 // eslint-disable-next-line @typescript-eslint/no-implied-eval
-new Function('window', readFileSync(CLIENT, 'utf8'))(window)
+new Function('window', CLIENT_SOURCE)(window)
 const factory = definition?.factory
 if (typeof factory !== 'function') throw new Error('client bundle did not register a module')
 
@@ -50,7 +51,10 @@ const api = factory((name) => {
       attach: (context: unknown) => void
       getSnapshot: () => {
         status: string
-        groups: Array<{ id: string; models: Array<{ id: string; name: string }> }>
+        groups: Array<{
+          id: string
+          models: Array<{ id: string; name: string; reasoning?: { efforts: Array<{ id: string; name?: string }>; defaultEffort?: string } }>
+        }>
         error: string | null
       }
       subscribe: (listener: () => void) => () => void
@@ -62,6 +66,26 @@ const api = factory((name) => {
       providerPath: string[],
       modelPath: string[],
     ) => Array<{ op: string; path: string[]; value?: string }>
+    settingsCopyKeys: () => string[]
+    fieldSpecs: Array<{ path: string[]; kind: string; labelKey: string; hintKey: string }>
+    reasoningEffortsOf: (
+      groups: Array<{ id: string; models: Array<{ id: string; name?: string; reasoning?: unknown }> }>,
+      provider: string,
+      model: string,
+    ) => { kind: string; efforts: Array<{ id: string; name?: string }>; defaultEffort?: string }
+    effortSelectionOf: (options: Array<{ id: string; name?: string }>, current: string) => { mode: string; value: string }
+    effortPlanOps: (
+      path: string[],
+      draft: { clear?: boolean; text?: string } | undefined,
+    ) => { ops: Array<{ op: string; path: string[]; value?: string }>; blocked: boolean }
+    effortDraftOf: (input: {
+      baseValue?: string
+      stored?: string
+      draft?: { clear?: boolean; text?: string }
+      customOpen?: boolean
+      options?: Array<{ id: string; name?: string }>
+    }) => { mode: string; value: string; displayValue: string; customOpen: boolean; cleared: boolean }
+    EFFORT_CUSTOM_SENTINEL: string
   }
 }
 
@@ -396,6 +420,30 @@ describe('createModelCatalog — the verify-pin picker source', () => {
     expect(state.groups[0]?.models[1]?.name).toBe('deep')
   })
 
+  it('keeps each model reasoning metadata, dropping malformed rows', async () => {
+    const catalog = catalogFrom()
+    catalog.attach(stubContext([{
+      ok: true,
+      value: {
+        groups: [{
+          id: 'corp-a',
+          models: [{
+            id: 'fast',
+            name: 'Fast',
+            reasoning: {
+              efforts: [{ id: 'off' }, { id: 'low', name: 'Low' }, { id: 'low' }, null, { id: '' }],
+              defaultEffort: 'low',
+            },
+          }, { id: 'plain' }],
+        }],
+      },
+    }]))
+    await settle()
+    const models = catalog.getSnapshot().groups[0]?.models
+    expect(models?.[0]?.reasoning).toEqual({ efforts: [{ id: 'off' }, { id: 'low', name: 'Low' }], defaultEffort: 'low' })
+    expect(models?.[1]?.reasoning).toBeUndefined()
+  })
+
   it('keeps the fields usable when the host answers with an error', async () => {
     const catalog = catalogFrom()
     catalog.attach(stubContext([{ ok: false, error: { message: 'catalog unavailable' } }]))
@@ -493,5 +541,194 @@ describe('routePairOps — the pin-pair write semantics', () => {
     expect(first).not.toBe(PROVIDER)
     first.push('extra')
     expect(PROVIDER).toEqual(['maintenance', 'verifyProvider'])
+  })
+})
+
+describe('settings copy — every field key is dictionary-backed', () => {
+  const { settingsCopyKeys, fieldSpecs } = api.__diagnostics
+
+  it('derives a label and hint key for every field spec', () => {
+    expect(fieldSpecs).toHaveLength(22)
+    for (const spec of fieldSpecs) {
+      expect(settingsCopyKeys()).toContain(spec.labelKey)
+      expect(settingsCopyKeys()).toContain(spec.hintKey)
+    }
+  })
+
+  it('has no duplicate keys and carries the form/picker copy', () => {
+    const keys = settingsCopyKeys()
+    expect(new Set(keys).size).toBe(keys.length)
+    expect(keys).toContain('settings.summary.notReady')
+    expect(keys).toContain('settings.form.invalidNumber')
+    expect(keys).toContain('settings.effort.customCurrent')
+    expect(keys).toContain('settings.route.notInCatalog')
+  })
+
+  it('every key resolves in both dictionaries', () => {
+    const { dictionaryKeys } = api.__diagnostics
+    const catalog = dictionaryKeys()
+    for (const key of settingsCopyKeys()) {
+      expect(catalog.zh).toContain(key)
+      expect(catalog.en).toContain(key)
+    }
+  })
+
+  it('field specs carry dictionary keys instead of hardcoded copy', () => {
+    for (const spec of fieldSpecs) {
+      expect(spec).not.toHaveProperty('label')
+      expect(spec).not.toHaveProperty('hint')
+    }
+    expect(CLIENT_SOURCE).not.toMatch(/spec\.(label|hint)\b/)
+  })
+
+  it('the card render path reads its copy through t(...)', () => {
+    const start = CLIENT_SOURCE.indexOf('function makeCard')
+    const end = CLIENT_SOURCE.indexOf('The telemetry badge')
+    expect(start).toBeGreaterThan(-1)
+    expect(end).toBeGreaterThan(start)
+    const card = CLIENT_SOURCE.slice(start, end)
+    // A literal reintroduction must fail even when the matching dictionary key
+    // still exists, which is exactly the unused-key + hardcoded-English hole.
+    for (const literal of ["'Save'", "'Reset'", "'Invalid'", "'Not a number'", "'Default'", "'Custom…'", "'Auto —"]) {
+      expect(card).not.toContain(literal)
+    }
+    expect(card).toContain('formLabels(t)')
+    expect(card).toContain('settingsValueLabels(t)')
+    for (const key of ['settings.summary.line', 'settings.effort.default', 'settings.route.autoSession']) {
+      expect(card).toContain(`t('${key}'`)
+    }
+    const formStart = CLIENT_SOURCE.indexOf('function formLabels')
+    const valueStart = CLIENT_SOURCE.indexOf('function settingsValueLabels')
+    const formCopy = CLIENT_SOURCE.slice(formStart, valueStart)
+    const valueCopy = CLIENT_SOURCE.slice(valueStart, CLIENT_SOURCE.indexOf('function readPath'))
+    for (const key of ['settings.form.save', 'settings.form.saving']) expect(formCopy).toContain(`t('${key}')`)
+    for (const key of ['settings.form.reset', 'settings.form.invalid']) expect(valueCopy).toContain(`t('${key}')`)
+  })
+})
+
+describe('reasoningEffortsOf — the catalog-backed effort options', () => {
+  const { reasoningEffortsOf } = api.__diagnostics
+  const groups = (efforts: unknown, defaultEffort?: string) => [{
+    id: 'deepseek-official',
+    models: [{
+      id: 'deepseek-flash',
+      name: 'DeepSeek Flash',
+      reasoning: efforts === undefined ? undefined : { efforts, ...(defaultEffort === undefined ? {} : { defaultEffort }) },
+    }],
+  }]
+
+  it('keeps host order and advertisement exactly (no medium for flash)', () => {
+    const result = reasoningEffortsOf(groups([
+      { id: 'off', name: 'Off' },
+      { id: 'low', name: 'Low' },
+      { id: 'high', name: 'High' },
+      { id: 'max', name: 'Max' },
+    ], 'low'), 'deepseek-official', 'deepseek-flash')
+    expect(result.kind).toBe('ready')
+    expect(result.efforts.map((effort) => effort.id)).toEqual(['off', 'low', 'high', 'max'])
+    expect(result.efforts.some((effort) => effort.id === 'medium')).toBe(false)
+    expect(result.defaultEffort).toBe('low')
+  })
+
+  it('includes medium when the model advertises it', () => {
+    const result = reasoningEffortsOf(groups([{ id: 'low' }, { id: 'medium' }, { id: 'high' }]),
+      'deepseek-official', 'deepseek-flash')
+    expect(result.efforts.map((effort) => effort.id)).toEqual(['low', 'medium', 'high'])
+  })
+
+  it('drops malformed and duplicate efforts, and the custom sentinel', () => {
+    const result = reasoningEffortsOf(groups([
+      null,
+      { id: '' },
+      { id: 42 },
+      { id: 'low' },
+      { id: 'low', name: 'duplicate' },
+      { id: '__custom__' },
+      { id: 'high', name: 'High', description: 'more thinking' },
+    ]), 'deepseek-official', 'deepseek-flash')
+    expect(result.kind).toBe('ready')
+    expect(result.efforts).toEqual([{ id: 'low' }, { id: 'high', name: 'High', description: 'more thinking' }])
+  })
+
+  it('reports auto, missing and none distinctly', () => {
+    expect(reasoningEffortsOf(groups([{ id: 'low' }]), '', 'deepseek-flash')).toEqual({ kind: 'auto', efforts: [] })
+    expect(reasoningEffortsOf(groups([{ id: 'low' }]), 'deepseek-official', '')).toEqual({ kind: 'auto', efforts: [] })
+    expect(reasoningEffortsOf(groups([{ id: 'low' }]), 'nope', 'deepseek-flash')).toEqual({ kind: 'missing', efforts: [] })
+    expect(reasoningEffortsOf(groups([]), 'deepseek-official', 'deepseek-flash')).toEqual({ kind: 'none', efforts: [] })
+    expect(reasoningEffortsOf(groups(undefined), 'deepseek-official', 'deepseek-flash')).toEqual({ kind: 'none', efforts: [] })
+  })
+})
+
+describe('effortSelectionOf / effortPlanOps — stored values and writes', () => {
+  const { effortSelectionOf, effortPlanOps, EFFORT_CUSTOM_SENTINEL } = api.__diagnostics
+  const options = [{ id: 'off' }, { id: 'low' }, { id: 'high' }, { id: 'max' }]
+  const PATH = ['historian', 'reasoningEffort']
+
+  it('classifies default, advertised and unknown values without mutating them', () => {
+    expect(effortSelectionOf(options, '')).toEqual({ mode: 'default', value: '' })
+    expect(effortSelectionOf(options, 'low')).toEqual({ mode: 'value', value: 'low' })
+    expect(effortSelectionOf(options, 'turbo')).toEqual({ mode: 'custom', value: 'turbo' })
+    expect(EFFORT_CUSTOM_SENTINEL).toBe('__custom__')
+  })
+
+  it('Default and blank text unset; a listed or custom id sets exactly that string', () => {
+    expect(effortPlanOps(PATH, { clear: true })).toEqual({
+      ops: [{ op: 'unset', path: PATH }], blocked: false,
+    })
+    expect(effortPlanOps(PATH, { clear: false, text: '' })).toEqual({
+      ops: [{ op: 'unset', path: PATH }], blocked: false,
+    })
+    expect(effortPlanOps(PATH, { clear: false, text: ' low ' })).toEqual({
+      ops: [{ op: 'set', path: PATH, value: 'low' }], blocked: false,
+    })
+    expect(effortPlanOps(PATH, { clear: false, text: 'turbo' })).toEqual({
+      ops: [{ op: 'set', path: PATH, value: 'turbo' }], blocked: false,
+    })
+    expect(effortPlanOps(PATH, undefined)).toEqual({ ops: [], blocked: false })
+  })
+
+  it('returns fresh paths so a save cannot mutate the field definition', () => {
+    const first = effortPlanOps(PATH, { clear: false, text: 'low' }).ops[0]!.path
+    expect(first).not.toBe(PATH)
+    first.push('extra')
+    expect(PATH).toEqual(['historian', 'reasoningEffort'])
+  })
+})
+
+describe('effortDraftOf — the render-state seam', () => {
+  const { effortDraftOf } = api.__diagnostics
+  const options = [{ id: 'off' }, { id: 'low', name: 'Low' }, { id: 'high' }, { id: 'max' }]
+
+  it('a staged Default wins over a non-empty base value', () => {
+    expect(effortDraftOf({ baseValue: 'low', stored: 'low', draft: { clear: true }, customOpen: false, options }))
+      .toMatchObject({ mode: 'default', value: '', customOpen: false, cleared: true })
+  })
+
+  it('an advertised stored value renders as the selected option', () => {
+    expect(effortDraftOf({ baseValue: '', stored: 'low', customOpen: false, options }))
+      .toMatchObject({ mode: 'value', value: 'low', displayValue: 'Low', customOpen: false, cleared: false })
+  })
+
+  it('an unknown stored id renders as Custom and is preserved', () => {
+    expect(effortDraftOf({ baseValue: '', stored: 'turbo', customOpen: false, options }))
+      .toMatchObject({ mode: 'custom', value: 'turbo', displayValue: 'turbo', customOpen: true, cleared: false })
+  })
+
+  it('Custom with empty text stays custom instead of snapping to Default', () => {
+    expect(effortDraftOf({ baseValue: 'low', stored: 'low', customOpen: true, options }))
+      .toMatchObject({ mode: 'custom', value: 'low', customOpen: true, cleared: false })
+    expect(effortDraftOf({ baseValue: '', stored: '', customOpen: true, options }))
+      .toMatchObject({ mode: 'custom', value: '', displayValue: '', customOpen: true, cleared: false })
+  })
+
+  it('draft text wins over stored and falls back to the base layer', () => {
+    expect(effortDraftOf({ baseValue: 'low', stored: 'low', draft: { text: 'turbo' }, customOpen: false, options }))
+      .toMatchObject({ mode: 'custom', value: 'turbo' })
+    expect(effortDraftOf({ baseValue: 'low', stored: 'low', draft: { text: 'high' }, customOpen: false, options }))
+      .toMatchObject({ mode: 'value', value: 'high' })
+    expect(effortDraftOf({ baseValue: 'low', stored: '', customOpen: false, options }))
+      .toMatchObject({ mode: 'value', value: 'low' })
+    expect(effortDraftOf({ baseValue: '', stored: '', customOpen: false, options }))
+      .toMatchObject({ mode: 'default', value: '', customOpen: false })
   })
 })

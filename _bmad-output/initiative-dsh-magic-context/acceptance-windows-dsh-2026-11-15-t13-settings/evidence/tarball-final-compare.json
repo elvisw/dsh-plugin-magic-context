@@ -1,0 +1,13 @@
+{
+  "oldSha256": "c2a72c6c0a26fd8cb9ca4e64b8d187507b90770ab99aef7a27d2db45686635b8",
+  "oldBytes": 4014953,
+  "newSha256": "c801ac1ff378d40aaafe1b16aa57737de40cb966dc1c564b5f909d0e132586bb",
+  "newBytes": 4015116,
+  "sameNames": true,
+  "differing": [
+    "package/lib/client.js"
+  ],
+  "codeDifferences": [
+    "package/lib/client.js"
+  ]
+}

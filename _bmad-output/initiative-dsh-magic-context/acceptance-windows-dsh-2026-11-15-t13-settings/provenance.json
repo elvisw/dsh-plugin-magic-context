@@ -1,0 +1,15 @@
+{
+  "gitHeadAtGate": "36fea8c070f89fe9127b914e97b022e7c084fc95",
+  "gitDiffSha256": "3a214cde647b3141a10e622d054f36af03994dbbba1e89b99bb9a4adf5baccf3",
+  "gitStatusSha256": "314071577273d7a2e69763046446caac9f0163c3a6fe586915489864bf76bd61",
+  "tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t13-final-pack\\elvisw-dsh-magic-context-0.13.0.tgz",
+  "tarballSha256": "c801ac1ff378d40aaafe1b16aa57737de40cb966dc1c564b5f909d0e132586bb",
+  "tarballBytes": 4015116,
+  "tarballFiles": 66,
+  "package": "@elvisw/dsh-magic-context@0.13.0",
+  "loaderRowId": "magic-context-dsh",
+  "dshVersion": "0.2.2-rc.1",
+  "nodeVersion": "v26.13.1",
+  "playwright": "1.63.0",
+  "browser": "msedge"
+}

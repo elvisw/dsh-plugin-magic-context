@@ -67,7 +67,8 @@ version hot-loads. In your next session:
 
 - Tool results carry `§N§` tags; a **telemetry badge** appears in the overlay showing live
   context occupancy, with a panel of live metrics and an operation record behind it.
-- A **settings card** for the plugin shows up on the GUI Plugins page.
+- A **Settings → Magic Context** page edits every volatile option; the same card is still
+  available on the GUI Plugins page as the legacy location/fallback.
 - The `ctx_reduce` / `ctx_expand` / `ctx_memory` tools are registered for the agent;
   project memory is **on by default** — facts distilled by the historian persist across
   sessions and surface where the model reads them.
@@ -103,7 +104,7 @@ last five manage the context window (full design in [Architecture](#architecture
 | **Pressure scheduling** | Persistent usage (incl. cache reads/writes) → pressure score → execute/defer decisions (65% threshold, 5 min cache TTL, 85% force band); `CONTEXT_WINDOW_EXCEEDED` triggers emergency reclaim + retry; tiered reduce-guidance nudges |
 | **Historian (out-of-band digest)** | One LLM call replays the real prefix (KV cache preserved) → four-tier p1–p4 summary + facts/events, **writes the store only, never touches the wire**; published in the execute band as a `[compacted §C<n>§]` range replacement; `/ctx-recomp` redoes compacted history in place |
 | **Compaction seam** | `registerCompactionEngine` can take over `ctx.compaction` (real `compaction/start\|summary\|replace\|end` protocol); **off by default** — the host compaction-basic stays in place |
-| **UI integration** | Settings card on the Plugins page (volatile fields, save = live); `shell.overlay` telemetry badge + capsule panel (live metrics + operation record); `session-notice` rows in the session stream; Chinese/English instant switching |
+| **UI integration** | Top-level **Settings → Magic Context** page plus the legacy Plugins-page card (volatile fields, save = live); catalog-backed Historian reasoning-effort picker; `shell.overlay` telemetry badge + capsule panel (live metrics + operation record); `session-notice` rows in the session stream; Chinese/English instant switching for every card-owned string |
 
 ## Installation
 
@@ -154,17 +155,20 @@ the profile patch), or `dsh plugin --profile web remove @elvisw/dsh-magic-contex
 ## Configuration
 
 Two ways to change configuration, with different semantics (see the
-[config UI contract](docs/dsh-plugin-config-ui-contract.md)):
+[Settings UI contract](docs/dsh-plugin-settings-ui-contract.md)):
 
-- **GUI settings card**: exposes `policy.*` (incl. historian generation cap / ceiling /
-  timeout), `historianEnabled`, `registerCompactionEngine`, `journal.*`, `maintenance.*`,
-  `historian.*` and other volatile fields. The two provider/model **route pins**
-  (maintenance verify, historian generation) prefer a dropdown fed by the **host's
-  configured model catalog** (client `remote.session.modelCatalog()`), with
-  "Auto = follow the session route" and clearing; shells without that RPC fall back to
-  plain text (values remain hand-editable). Writes go through the settings chain:
-  non-volatile keys are preserved untouched, untouched fields never materialize into
-  override rows — **saving takes effect immediately** (the host side always reads through
+- **GUI settings page (Settings → Magic Context)**: exposes `policy.*` (incl. historian
+  generation cap / ceiling / timeout), `historianEnabled`, `registerCompactionEngine`,
+  `journal.*`, `maintenance.*`, `historian.*` and other volatile fields. The two
+  provider/model **route pins** (maintenance verify, historian generation) prefer a
+  dropdown fed by the **host's configured model catalog** (client
+  `remote.session.modelCatalog()`), with "Auto = follow the session route" and clearing;
+  shells without that RPC fall back to plain text (values remain hand-editable). The
+  Historian reasoning-effort field is the same catalog-backed picker: `Default`, the
+  routed model's advertised ids, and `Custom` for legacy/unknown values; an Auto route
+  keeps the text input. Writes go through the settings chain: non-volatile keys are
+  preserved untouched, untouched fields never materialize into override rows — **saving
+  takes effect immediately** (the host side always reads through
   `liveNumber/liveBoolean/liveString/liveRoute` at the decision point).
 - **Hand-written profile override rows**: `config` **replaces** the package patch's config
   wholesale — it is **not** a deep merge. Writing only `memory:` erases
@@ -193,7 +197,7 @@ writable as profile override rows unless noted):
 | Master switches | `enabled` (true) · `registerTools` (true) · `registerStatusCommand` (true) · `sessionNotices` (true) · `reduceGuidance` (true) · `searchHint` (true) | `enabled: false` stays loaded but fully inert; `sessionNotices` controls the management notice rows in the session stream |
 | Compaction seam | `registerCompactionEngine` (code default: mount when resolvable; **ships false in the bundle**) · `compactionBase` (host-injected base class) | Taking over requires disabling compaction-basic too; pre-step `reconcileEngine` mounts/unmounts dynamically every step |
 | Pressure policy | `policy.*`: `executeThreshold` (65) · `forceThreshold` (85) · `ttlMs` (5 min) · `assumedContextWindow` (256k) · `protectedToolResults` (8) · `historianTimeoutMs` (120 s) · `historianMaxTokens` (8192, raised to 8192 if set lower) · `historianMaxTokensCeiling` (32768) · `baselineTokens` (2000) · `memoryBudgetTokens` (8000) · `memoryLimit` (40) · `forceWaitReadyMs` (0) | Thresholds take effect at the next decision point (incl. `/ctx-status` and the compaction-engine paths). `compartmentGuardMode` / `compartmentEntrantTokens` (publish guards) were retired and are no longer configurable |
-| historian | `historianEnabled` (true) · `historian.{provider, model}` (**pinned as a pair**; empty = follow the session's last route) · `historian.reasoningEffort` (optional, blank = model default) | Generation route for out-of-band digests and `/compact` summaries; the GUI card has "Historian provider/model" dropdowns (Auto = follow session, recommended) and a free-text reasoning-effort field for models that expose effort ids (it also applies while the route is Auto). A provider-level `OUTPUT_TOKEN_LIMIT` empty completion is retried with the normal cap escalation. The only LLM spend besides verify |
+| historian | `historianEnabled` (true) · `historian.{provider, model}` (**pinned as a pair**; empty = follow the session's last route) · `historian.reasoningEffort` (optional, blank = model default) | Generation route for out-of-band digests and `/compact` summaries; the GUI Settings page has "Historian provider/model" dropdowns (Auto = follow session, recommended) and a catalog-backed reasoning-effort picker: `Default`, the routed model's advertised ids, and `Custom` for legacy/unknown values. The Auto route keeps a text input because the session model is unknown there; an unadvertised id is never silently remapped or clamped. A provider-level `OUTPUT_TOKEN_LIMIT` empty completion is retried with the normal cap escalation. The only LLM spend besides verify |
 | Project memory | `memory.{}`: `enabled` (true, on by default since 0.9.0 — opt out with `enabled: false`) · `dbPath` · `project` (omitted = session cwd) · `domainProjects` · `shareCategories` · `autoPromote` (true) · `write` (true) | `write: false` makes `ctx_memory` read-only |
 | Retrieval / vectors | `memory.embedBackfill` (true, query-side inline backfill) · `memory.vectorBackfill` (true, maintenance-tick backfill) · `memory.vectorBackfillLimit` (24 rows/tick) | Any vector-lane failure fails open to FTS |
 | S(t) decay | `memory.scoring.{enabled (true), alpha (0.4), beta (0.2), archiveThreshold (2), halfLives}` | Stats are always collected; the distribution default enabled=true takes over ranking; profile-JSON only, not on the settings card |
@@ -228,8 +232,10 @@ Slash commands (`registerStatusCommand: false` disables this command surface):
 Both UI capabilities ride the same browser half (`src/client/index.js`, copied verbatim to
 `lib/client.js` at build time):
 
-- **Settings card on the Plugins page**: visual editing of the volatile config above;
-  saving takes effect immediately (see "Configuration").
+- **Settings → Magic Context** (top-level Settings page): visual editing of the volatile
+  config above; saving takes effect immediately (see "Configuration"). The same card stays
+  on the Plugins page as the legacy location and fallback for hosts without the
+  `settings.section` slot.
 
   ![Magic Context settings card on the DSH Plugins page — execute/force thresholds, scheduling window, reclaim TTL, protected results, historian minimum nodes](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-card-top.jpg)
 
@@ -251,10 +257,13 @@ Both UI capabilities ride the same browser half (`src/client/index.js`, copied v
   - `GET /mc-telemetry/events` — SSE live tail
 - **Security**: the routes are loopback-only with no token auth, so they **emit counts and
   one-line summaries only** — no message bodies, no file paths, no credentials.
-- **Languages**: browser-side `magic-context` namespace dictionaries (zh/en); Settings →
-  General switches instantly without a refresh; the `session-notice` rows written into the
-  session stream (model-visible) stay English constants (to avoid cached-prefix churn from
+- **Languages**: browser-side `magic-context` namespace dictionaries (zh/en); every
+  card-owned label, hint, route placeholder, summary, form frame and picker caption follows
+  Settings → General instantly without a refresh. Host catalog values (provider/model/effort
+  names) stay as the host sends them. The `session-notice` rows written into the session
+  stream (model-visible) stay English constants (to avoid cached-prefix churn from
   mid-session language switches). Mechanics in the
+  [Settings UI contract](docs/dsh-plugin-settings-ui-contract.md) and the
   [UI telemetry contract](docs/dsh-plugin-ui-telemetry-contract.md).
 
 ## Observability & operations

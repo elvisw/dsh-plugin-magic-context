@@ -1,0 +1,6 @@
+{
+  "port": 14062,
+  "running": true,
+  "log": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t13-20261115-223649\\evidence\\server-profile-only.log",
+  "url_without_token": "http://127.0.0.1:14062/?token=<redacted>"
+}

@@ -4,14 +4,14 @@ type: story
 title: "Magic Context settings page, Chinese copy, and reasoning effort picker"
 parent: initiative-dsh-magic-context
 after: [15]
-refined: false
+refined: true
 hitl: false
 risk: medium
 ---
 
 # Magic Context settings page, Chinese copy, and reasoning effort picker
 
-Status: revision 5 — pending independent re-validation (fourth validation returned NEEDS CHANGES; Web gate order, effortDraftOf priority, effortPlanOps, thinking-disabled provenance and line refs are fixed below).
+Status: revision 5 — implemented; the isolated Web gate, repo gates and independent review fixes are recorded in `acceptance-windows-dsh-2026-11-15-t13-settings/`. Ready for the built/done transition.
 
 ## Goal
 

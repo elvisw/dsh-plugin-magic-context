@@ -1,0 +1,12 @@
+command: dsh plugin --profile t13 add C:\Users\elvis\AppData\Local\Temp\opencode\t13-final-pack\elvisw-dsh-magic-context-0.13.0.tgz --ignore-scripts
+exit: 0
+--- stdout ---
+[WARN] Replaced "@elvisw/dsh-magic-context" ("file:C:/Users/elvis/AppData/Local/Temp/opencode/t13-final-pack/elvisw-dsh-magic-context-0.13.0.tgz") with "C:\Users\elvis\AppData\Local\Temp\opencode\t13-final-pack\elvisw-dsh-magic-context-0.13.0.tgz" from a different source.
+✓ Lockfile passes supply-chain policies (verified 18m ago)
+Packages: +1
++
+Progress: resolved 3, reused 2, downloaded 1, added 1, done
+[WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
+Done in 615ms using pnpm v12.18.0
+
+--- stderr ---

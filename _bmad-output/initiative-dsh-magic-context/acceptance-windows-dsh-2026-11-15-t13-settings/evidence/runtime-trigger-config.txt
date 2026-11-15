@@ -1,0 +1,5 @@
+gate-only trigger config written before the profile-only restart:
+      executeThreshold: 0
+      historianMinNodes: 0
+      historianProtectedNodes: 0
+      historianMinBudgetTokens: 0
