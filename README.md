@@ -205,7 +205,7 @@ Slash commands (`registerStatusCommand: false` disables this command surface):
 | Command | What it does |
 |---|---|
 | `/ctx-status` | pressure / decisions / reclaim ledger / compartments / baseline / policy |
-| `/ctx-flush` | mark this session's pending `ctx_reduce` drops for landing on the next message; reports requested/already/pending counts; starts no historian, recomp, summary, or model call |
+| `/ctx-flush` | mark this session's pending `ctx_reduce` drops for landing on the next message; reports requested/already/pending counts; when the queue is empty, reports the last landed drop count/time for this session; starts no historian, recomp, summary, or model call |
 | `/ctx-recomp` `all` \| `last:<n>` \| `<startSeq>-<endSeq>` | re-runs the historian and **replaces the stored digest in place** (ranges snap to compartments, never split; identity and landed placeholders unchanged, the next pre-step rebuilds the baseline) |
 | `/ctx-profile` `confirm` \| `reject` \| `retire` | confirm / reject / retire user-profile candidates; promotion into the shared profile happens at the next maintenance tick |
 | `/ctx-global` `add` \| `remove` \| `status` \| `promote` \| `approve` \| `reject` | the manual lane for global-domain membership and candidate approval (same gate→publish path as the approval cards, `source_type=user`) |

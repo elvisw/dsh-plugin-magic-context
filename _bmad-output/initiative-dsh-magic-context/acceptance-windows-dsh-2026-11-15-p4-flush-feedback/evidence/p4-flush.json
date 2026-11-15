@@ -1,0 +1,129 @@
+{
+  "sessionId": "session-d797635e-d797-48a8-8634-16cf6db5e3b3",
+  "host": {
+    "args": [
+      "--profile",
+      "headless",
+      "--patch",
+      "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-p4-20261115-113543\\overlays\\p4-flush.yml",
+      "--json",
+      "--permission-mode",
+      "read-only",
+      "--approval-policy",
+      "never",
+      "--session-id",
+      "session-d797635e-d797-48a8-8634-16cf6db5e3b3",
+      "This is a NEW host process resuming the P4 acceptance session. Do NOT read any file and do NOT call tools. The /ctx-flush command has already run through the host command registry. Report exactly P4_FLUSH_OK followed by the exact current text of the fixture tool result, including any [dropped §N§] marker you see. Do not reconstruct missing content."
+    ],
+    "exit_code": 0,
+    "mode": "real-host",
+    "seconds": 7.963,
+    "session_id": "session-d797635e-d797-48a8-8634-16cf6db5e3b3",
+    "final_reason": {
+      "kind": "completed"
+    },
+    "final_text": "P4_FLUSH_OK\n[dropped §1§]",
+    "tool_calls": [],
+    "tool_results": []
+  },
+  "commandEvidence": [
+    {
+      "processId": 15140,
+      "sessionId": "session-d797635e-d797-48a8-8634-16cf6db5e3b3",
+      "target": "session-d797635e-d797-48a8-8634-16cf6db5e3b3",
+      "definition": {
+        "name": "ctx-flush",
+        "description": "Force this session's pending ctx_reduce drops to land on the next message (no summary or model call); when the queue is empty, report the last landing for this session."
+      }
+    },
+    {
+      "processId": 15140,
+      "sessionId": "session-d797635e-d797-48a8-8634-16cf6db5e3b3",
+      "target": "session-d797635e-d797-48a8-8634-16cf6db5e3b3",
+      "definition": {
+        "name": "ctx-flush",
+        "description": "Force this session's pending ctx_reduce drops to land on the next message (no summary or model call); when the queue is empty, report the last landing for this session."
+      },
+      "before": {
+        "usage": 3,
+        "pending": 1,
+        "tags": 2,
+        "dropLanded": 0
+      },
+      "after": {
+        "usage": 3,
+        "pending": 1,
+        "tags": 2,
+        "dropLanded": 0
+      },
+      "execution": {
+        "commandId": "cmd-bc4e2f09-1",
+        "kind": "success",
+        "text": "Magic Context: flush queued for 1 new drop(s) (new §1§): requested 1, already marked 0, processed 0, pendingNext 1 (upper bound). Changes take effect on the next message; the current request is unchanged."
+      }
+    }
+  ],
+  "commandEvents": [
+    {
+      "seq": 34,
+      "type": "command/run",
+      "data": {
+        "commandId": "cmd-bc4e2f09-1",
+        "name": "ctx-flush",
+        "args": "",
+        "source": {
+          "kind": "user"
+        }
+      }
+    },
+    {
+      "seq": 35,
+      "type": "command/done",
+      "data": {
+        "commandId": "cmd-bc4e2f09-1",
+        "kind": "success",
+        "text": "Magic Context: flush queued for 1 new drop(s) (new §1§): requested 1, already marked 0, processed 0, pendingNext 1 (upper bound). Changes take effect on the next message; the current request is unchanged."
+      }
+    }
+  ],
+  "placeholder": [
+    {
+      "seq": 42,
+      "type": "tool/result",
+      "text": "[dropped §1§]"
+    }
+  ],
+  "db": {
+    "pendingDrops": [
+      {
+        "session_id": "session-d797635e-d797-48a8-8634-16cf6db5e3b3",
+        "tag_number": 1,
+        "queued_at": 1794713761448,
+        "landed_event_seq": 42,
+        "flush_requested": 0
+      }
+    ],
+    "tags": [
+      {
+        "tag_number": 1,
+        "target_kind": "tool-result",
+        "target_id": "call_00_ET_TJaU7CUAYMYaJ6Dju9A61104"
+      },
+      {
+        "tag_number": 2,
+        "target_kind": "tool-result",
+        "target_id": "call_00_vSLpcMYUZLNyDYa1yLBj9661"
+      }
+    ],
+    "dropLandedRows": [
+      {
+        "id": 13,
+        "at": 1794713770749,
+        "kind": "drop-landed",
+        "summary": "landed 1 drop(s): §1§",
+        "data": "{\"tags\":[1],\"count\":1,\"estTokens\":89}"
+      }
+    ],
+    "usageRecords": 4
+  }
+}

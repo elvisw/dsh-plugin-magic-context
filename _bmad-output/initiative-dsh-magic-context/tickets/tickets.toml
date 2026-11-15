@@ -120,3 +120,15 @@ after = [9]
 hitl = false
 risk = "high"
 refine = true
+
+[[entry]]
+id = 11
+type = "story"
+title = "P4: /ctx-flush empty-queue feedback"
+description = "When /ctx-flush finds no pending drops, read the newest drop-landed journal row for the current session with stores.listJournal({sessionId, kinds:['drop-landed'], limit:1}) and report its count and full UTC date/time plus the already-in-effect wording instead of only saying nothing to flush. This is feedback only: no surface mutation, no marker change, no new journal row, no wiring change, and no change to pending-drop semantics or the normal queued path."
+verify = "Unit/integration: planFlushCommand with a drop-landed row for the current session reports data.count and full UTC date/time; the newest of two rows wins; another session's row is ignored; a newer row for another session does not displace the current session's older row; no row or a throwing listJournal keeps the old no-op text with kind=success; a row without data.count still reports the date and omits the count; the queued path never queries the journal; journalBounds().rows and drop-landed count are unchanged; a commands stub proves registration. Host gate: a new fresh isolated profile (not a copied T3/T4/T10 root) installs the local build; host 1 uses the T4-style real-model seed prompt for a pending drop; host 2 resumes the same session and lets the command-driver flush land it; host 3 is a new process with the same session id and calls /ctx-flush on the empty queue. The host-3 command result is kind=success with the last landed count/date/time; usage records and pending_drops/tags/journal rows are snapshotted around the command, not the whole host request, and show no new row in that window. A missing host gate leaves the ticket blocked rather than claiming success from unit tests."
+covers = []
+after = [10]
+hitl = false
+risk = "low"
+refine = true

@@ -18,7 +18,7 @@ import { tagPrefix } from '../src/core/tagger.ts'
 import { estimateTokens } from '../src/core/compartments.ts'
 import { tagToolResultContent } from '../src/dsh/seams.ts'
 import { landPendingDrops } from '../src/dsh/drop-landing.ts'
-import { planFlushCommand } from '../src/dsh/flush-command.ts'
+import { planFlushCommand, registerCtxFlushCommand } from '../src/dsh/flush-command.ts'
 import { preStepListener, type PreStepDeps } from '../src/dsh/pre-step.ts'
 import { ReduceNudgeTracker } from '../src/dsh/reduce-guidance.ts'
 import { SearchHintTracker } from '../src/dsh/search-hint.ts'
@@ -72,6 +72,17 @@ function resultTexts(context: TestContext): string[] {
       .join(''))
 }
 
+function appendLanding(context: TestContext, sessionId: string, at: number, count?: number): void {
+  context.stores.appendJournal({
+    at,
+    level: 'info',
+    kind: 'drop-landed',
+    sessionId,
+    summary: 'landed test drop(s)',
+    ...count === undefined ? {} : { data: { count, tags: [1] } },
+  })
+}
+
 describe('/ctx-flush command', () => {
   it('marks only the current session and reports requested/already/pendingNext', () => {
     const ctx = context()
@@ -106,6 +117,182 @@ describe('/ctx-flush command', () => {
       expect(empty.text).toContain('nothing to flush')
       expect(planFlushCommand(ctx.stores, undefined)).toMatchObject({ kind: 'error', requested: 0 })
       expect(planFlushCommand(ctx.stores, '')).toMatchObject({ kind: 'error', requested: 0 })
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('reports the newest current-session landing on an empty queue', () => {
+    const ctx = context()
+    try {
+      appendLanding(ctx, 's1', NOW - 1_000, 1)
+      appendLanding(ctx, 's1', NOW, 2)
+      appendLanding(ctx, 's2', NOW + 1_000, 9)
+      const before = ctx.stores.journalBounds().rows
+      const receipt = planFlushCommand(ctx.stores, 's1')
+      expect(receipt).toMatchObject({ kind: 'success', requested: 0, pendingNext: 0 })
+      expect(receipt.text).toContain('last drop landing: 2 drop(s) at 2023-11-14 22:13:20Z')
+      expect(receipt.text).toContain('already in effect')
+      expect(receipt.text).not.toContain('Changes take effect')
+      expect(ctx.stores.journalBounds().rows).toBe(before)
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('filters by session before applying the one-row limit', () => {
+    const ctx = context()
+    try {
+      appendLanding(ctx, 's1', NOW - 10_000, 1)
+      appendLanding(ctx, 's2', NOW, 9)
+      const receipt = planFlushCommand(ctx.stores, 's1')
+      expect(receipt.text).toContain('last drop landing: 1 drop(s)')
+      expect(receipt.text).not.toContain('9 drop(s)')
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('reports the date without a count and does not fall back to tags length', () => {
+    const ctx = context()
+    try {
+      ctx.stores.appendJournal({
+        at: NOW,
+        level: 'info',
+        kind: 'drop-landed',
+        sessionId: 's1',
+        summary: 'redacted row without count',
+        data: { tags: [1, 2, 3] },
+      })
+      const receipt = planFlushCommand(ctx.stores, 's1')
+      expect(receipt.text).toContain('last drop landing at 2023-11-14 22:13:20Z')
+      expect(receipt.text).not.toContain('drop(s)')
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('queries only drop-landed rows with a one-row limit for the current session', () => {
+    const ctx = context()
+    try {
+      let seen: unknown
+      const tracked = new Proxy(ctx.stores, {
+        get(target, property, receiver) {
+          if (property === 'listJournal') {
+            return (filter: unknown) => {
+              seen = filter
+              return []
+            }
+          }
+          return Reflect.get(target, property, receiver)
+        },
+      }) as AdapterStores
+      const receipt = planFlushCommand(tracked, 's1')
+      expect(receipt.kind).toBe('success')
+      expect(seen).toEqual({ sessionId: 's1', kinds: ['drop-landed'], limit: 1 })
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('ignores a newer landing for another session when the current session has none', () => {
+    const ctx = context()
+    try {
+      appendLanding(ctx, 's2', NOW, 9)
+      const receipt = planFlushCommand(ctx.stores, 's1')
+      expect(receipt.text).toContain('nothing to flush (no pending drops)')
+      expect(receipt.text).not.toContain('9 drop(s)')
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('keeps the old no-op text when the journal query or date formatting fails', () => {
+    const ctx = context()
+    try {
+      const broken = new Proxy(ctx.stores, {
+        get(target, property, receiver) {
+          if (property === 'listJournal') return () => { throw new Error('journal read failed') }
+          return Reflect.get(target, property, receiver)
+        },
+      }) as AdapterStores
+      const queryFailure = planFlushCommand(broken, 's1')
+      expect(queryFailure).toMatchObject({ kind: 'success', requested: 0 })
+      expect(queryFailure.text).toContain('nothing to flush')
+
+      const badAt = new Proxy(ctx.stores, {
+        get(target, property, receiver) {
+          if (property === 'listJournal') {
+            return () => [{
+              at: Number.NaN,
+              level: 'info',
+              kind: 'drop-landed',
+              sessionId: 's1',
+              summary: 'bad timestamp',
+            }]
+          }
+          return Reflect.get(target, property, receiver)
+        },
+      }) as AdapterStores
+      const formatFailure = planFlushCommand(badAt, 's1')
+      expect(formatFailure).toMatchObject({ kind: 'success', requested: 0 })
+      expect(formatFailure.text).toContain('nothing to flush')
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('does not query the journal on the queued path', () => {
+    const ctx = context()
+    try {
+      ctx.stores.queueDrop('s1', 1, NOW)
+      let queries = 0
+      const tracked = new Proxy(ctx.stores, {
+        get(target, property, receiver) {
+          if (property === 'listJournal') {
+            return () => {
+              queries += 1
+              return []
+            }
+          }
+          return Reflect.get(target, property, receiver)
+        },
+      }) as AdapterStores
+      const receipt = planFlushCommand(tracked, 's1')
+      expect(receipt.text).toContain('flush queued')
+      expect(queries).toBe(0)
+
+      const again = planFlushCommand(tracked, 's1')
+      expect(again.text).toContain('already marked')
+      expect(queries).toBe(0)
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('registers a handler that returns the receipt text', () => {
+    const ctx = context()
+    try {
+      appendLanding(ctx, 's1', NOW, 2)
+      const definitions: Array<{
+        name: string
+        description?: string
+        handler: (invocation: { agent?: { session?: { id?: string } } }) =>
+          { kind: 'success'; text?: string } | { kind: 'error'; text: string }
+      }> = []
+      const fakeCtx = {
+        get: (name: string) => name === 'commands'
+          ? { register: (definition: (typeof definitions)[number]) => definitions.push(definition) }
+          : undefined,
+        logger: { warn: () => undefined },
+      } as never
+      registerCtxFlushCommand(fakeCtx, { stores: ctx.stores })
+      expect(definitions).toHaveLength(1)
+      expect(definitions[0]!.name).toBe('ctx-flush')
+      expect(definitions[0]!.description ?? '').toContain('when the queue is empty')
+      const result = definitions[0]!.handler({ agent: { session: { id: 's1' } } })
+      expect(result.kind).toBe('success')
+      expect(result.text).toContain('last drop landing: 2 drop(s)')
     } finally {
       dispose(ctx)
     }

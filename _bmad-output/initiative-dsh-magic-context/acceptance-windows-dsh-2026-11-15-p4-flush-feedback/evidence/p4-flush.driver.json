@@ -1,0 +1,26 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-p4-20261115-113543\\overlays\\p4-flush.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "--session-id",
+    "session-d797635e-d797-48a8-8634-16cf6db5e3b3",
+    "This is a NEW host process resuming the P4 acceptance session. Do NOT read any file and do NOT call tools. The /ctx-flush command has already run through the host command registry. Report exactly P4_FLUSH_OK followed by the exact current text of the fixture tool result, including any [dropped §N§] marker you see. Do not reconstruct missing content."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 7.963,
+  "session_id": "session-d797635e-d797-48a8-8634-16cf6db5e3b3",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "P4_FLUSH_OK\n[dropped §1§]",
+  "tool_calls": [],
+  "tool_results": []
+}

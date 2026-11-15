@@ -1,0 +1,19 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-p4-20261115-113543",
+  "package": "@elvisw/dsh-plugin-magic-context",
+  "version": "0.12.2",
+  "tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\p4-host-pack\\elvisw-dsh-plugin-magic-context-0.12.2.tgz",
+  "tarballSha256": "d0ea9d2799f4e20e8eea03edb3f8ecab8726a9f209bde9d50c938ef0973c9f23",
+  "gitHead": "970f4540131706e2967d1f6fe69c7a15dd5076fc",
+  "installedFlushCommandSha256": "895f96c421b4b4ca13b1b5809e15158d3316c1bd60e331eaf36c90c07f5b08af",
+  "builtFlushCommandSha256": "895f96c421b4b4ca13b1b5809e15158d3316c1bd60e331eaf36c90c07f5b08af",
+  "profile": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-p4-20261115-113543\\dsh-home\\profiles\\headless",
+  "overlays": {
+    "seed": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-p4-20261115-113543\\overlays\\p4-seed.yml",
+    "flush": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-p4-20261115-113543\\overlays\\p4-flush.yml"
+  },
+  "seedPrompt": "read fixture.txt once, note the actual tag, ctx_reduce that tag only",
+  "nonce": "1d0d026bbcaf3ab3240294fec42bafd3",
+  "workingTreePatch": "evidence/p4-working-tree.patch",
+  "workingTreePatchSha256": "fe68b78c8e59657fd22d3fc75220a50e484714b34451023771e53c5a7fafe581"
+}

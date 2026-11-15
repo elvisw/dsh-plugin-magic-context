@@ -8,6 +8,12 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
+## [Unreleased]
+
+### Changed
+
+- `/ctx-flush` 在队列为空时读取本会话最新一条 `drop-landed` 记录，回执显示落地数量与 UTC 时间；不新增 journal 行、不改 surface、不触发模型调用。
+
 ## [0.12.2] - 2026-11-15
 
 ### Added

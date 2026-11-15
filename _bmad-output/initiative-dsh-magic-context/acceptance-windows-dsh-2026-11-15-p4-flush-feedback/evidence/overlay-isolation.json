@@ -1,0 +1,17 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-p4-20261115-113543",
+  "files": {
+    "p4-seed.yml": {
+      "bytes": 1308,
+      "containsRoot": true,
+      "oldMarkers": []
+    },
+    "p4-flush.yml": {
+      "bytes": 1531,
+      "containsRoot": true,
+      "oldMarkers": []
+    }
+  },
+  "oldRootMarkers": [],
+  "pass": true
+}

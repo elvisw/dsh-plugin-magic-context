@@ -1,0 +1,145 @@
+{
+  "root": "_bmad-output\\initiative-dsh-magic-context\\acceptance-windows-dsh-2026-11-15-p4-flush-feedback\\evidence",
+  "files": [
+    {
+      "path": "activity.log",
+      "bytes": 7605,
+      "sha256": "0f5551179337b03d566a781365041422cfcad2d10843c08a662d4d0eb76f4923"
+    },
+    {
+      "path": "add-local.txt",
+      "bytes": 621,
+      "sha256": "561ca0d484bcb33cd4cae45ce623e8d1d944c1a7fd09c35deb04e523d5eb0783"
+    },
+    {
+      "path": "bootstrap-profile.txt",
+      "bytes": 12990,
+      "sha256": "9e828f11b20b972b50c0d2ede36b44eb06ded9838b36f51ae21400a9d66640a7"
+    },
+    {
+      "path": "git-diff-check.txt",
+      "bytes": 156,
+      "sha256": "59a28672f6fdbc3937255f7ee704fed2b8019768aad3f5ab5c74f376ec9fefb1"
+    },
+    {
+      "path": "git-head.txt",
+      "bytes": 42,
+      "sha256": "955821704d19ff946a93e8fbea8875fe13572fb26a38217f994796f56b6fa895"
+    },
+    {
+      "path": "host-version.txt",
+      "bytes": 167,
+      "sha256": "22c50f9c015612a0c7e36f4446fc16770045473dae88b452a4602b4bedf87d6e"
+    },
+    {
+      "path": "i18n.txt",
+      "bytes": 2051,
+      "sha256": "df9a87469f70365dfe36aed08e4836d8cafaf572fac3c5ddaf4cb590f05bbba1"
+    },
+    {
+      "path": "overlay-isolation.json",
+      "bytes": 390,
+      "sha256": "93aa9cb1c6c6ee4881e7614541ba43786c4fd259b8012d9afcb6721fa969e12c"
+    },
+    {
+      "path": "overlays/p4-flush.yml",
+      "bytes": 1531,
+      "sha256": "35c476cf7f37e144f75a72781ac9b70fe64aa15c81b2d5203143157a5f55ec67"
+    },
+    {
+      "path": "overlays/p4-seed.yml",
+      "bytes": 1308,
+      "sha256": "ffce28bb7a3e37e80fc40e64420e500e7c86c9ebfcedec9f2d92ce604fdf5085"
+    },
+    {
+      "path": "p4-flush-command.jsonl",
+      "bytes": 1097,
+      "sha256": "2ea5c5f51f77239218161a274c0833981b78e12c9f6cc732a505e07f8a049e7d"
+    },
+    {
+      "path": "p4-flush-empty-command.jsonl",
+      "bytes": 1041,
+      "sha256": "e7e2ba4fb0da9e90bfa9c48c7a04aec9ec9112dcd3c23bda1f5ecf8e38cada31"
+    },
+    {
+      "path": "p4-flush-empty.driver.json",
+      "bytes": 867,
+      "sha256": "d0d46afb0c3a327beab71e3e6d92da54fc3b7b05a057cfff6a9ae4e5684977c7"
+    },
+    {
+      "path": "p4-flush-empty.json",
+      "bytes": 7233,
+      "sha256": "7f5e38442f92c3c485ed1db87704724784631d9b99822571d32183a9f58e2fdb"
+    },
+    {
+      "path": "p4-flush-empty.stderr.txt",
+      "bytes": 111,
+      "sha256": "72370035d25cec90c049873a2cd826e1196fda214d6b6f5b47beadf55816abd0"
+    },
+    {
+      "path": "p4-flush-empty.stdout.txt",
+      "bytes": 761,
+      "sha256": "0c254c5a2651d62eeed6fe2baeee66df088c7e0a81bb509c03c6d5f5db7f9a16"
+    },
+    {
+      "path": "p4-flush.driver.json",
+      "bytes": 1013,
+      "sha256": "55e8d26e5c17557c2baf858b9828005569ce0714ed8cf2fe1e1f575c89445f84"
+    },
+    {
+      "path": "p4-flush.json",
+      "bytes": 4202,
+      "sha256": "89cd5a587fd1add60c36b5f27d2f8e5422c0addb70aea209c625d0afc8d13237"
+    },
+    {
+      "path": "p4-flush.stderr.txt",
+      "bytes": 111,
+      "sha256": "72370035d25cec90c049873a2cd826e1196fda214d6b6f5b47beadf55816abd0"
+    },
+    {
+      "path": "p4-flush.stdout.txt",
+      "bytes": 882,
+      "sha256": "1e347ee622d7b1fc83d1094a88206cc76a0db3ed0d9c036e6eaa40ca8a9cca73"
+    },
+    {
+      "path": "p4-seed.driver.json",
+      "bytes": 1813,
+      "sha256": "1f4a3c5a047ca3b0ea774737a83c49d23297768d79f30636f35a99fe780e1248"
+    },
+    {
+      "path": "p4-seed.stderr.txt",
+      "bytes": 111,
+      "sha256": "72370035d25cec90c049873a2cd826e1196fda214d6b6f5b47beadf55816abd0"
+    },
+    {
+      "path": "p4-seed.stdout.txt",
+      "bytes": 2225,
+      "sha256": "0ac351808c75f003afe379fa3c59a61e6b576ec7f83856e8de7ddee4d759bbb5"
+    },
+    {
+      "path": "p4-state.json",
+      "bytes": 3464,
+      "sha256": "ab2256ea750396a337c0cf4e10361a743bd8fd4da9218b385177313cc4ee4e40"
+    },
+    {
+      "path": "p4-working-tree.patch",
+      "bytes": 11750,
+      "sha256": "fe68b78c8e59657fd22d3fc75220a50e484714b34451023771e53c5a7fafe581"
+    },
+    {
+      "path": "preflight.json",
+      "bytes": 1405,
+      "sha256": "850c26c35721a72aaae853bb24034ef07867912cc64539f55731c52674a83b73"
+    },
+    {
+      "path": "typecheck.txt",
+      "bytes": 71,
+      "sha256": "d2f6c710a09ac853a034404276d71b49965cfccd991c9219fed9158ede00154a"
+    },
+    {
+      "path": "unit-test.txt",
+      "bytes": 941,
+      "sha256": "d90be828e8e96031e09bc3073108417daf2d432d7e1fcf98cbf58823e068d900"
+    }
+  ]
+}

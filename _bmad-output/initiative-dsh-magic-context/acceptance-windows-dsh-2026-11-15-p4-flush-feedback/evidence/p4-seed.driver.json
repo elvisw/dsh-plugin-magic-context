@@ -1,0 +1,48 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-p4-20261115-113543\\overlays\\p4-seed.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "This is an isolated P4 /ctx-flush feedback seed. Follow this exact sequence, one tool call per model step. (1) read fixture.txt with the file read tool and note the actual §N§ tag on its result. (2) call ctx_reduce with drop set to ONLY that tag. (3) after it returns, respond exactly P4_DROP_READY plus the tag number. Do not call ctx_expand, do not reread the file, and do not batch calls."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 8.889,
+  "session_id": "session-d797635e-d797-48a8-8634-16cf6db5e3b3",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "P4_DROP_READY §1§",
+  "tool_calls": [
+    {
+      "tool": "read",
+      "input": {
+        "file_path": "fixture.txt"
+      }
+    },
+    {
+      "tool": "ctx_reduce",
+      "input": {
+        "drop": "1"
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_ET_TJaU7CUAYMYaJ6Dju9A61104",
+      "status": "completed",
+      "result": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-p4-20261115-113543\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: P4_FLUSH_FEEDBACK_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=1d0d026bbcaf3ab3240294fec42bafd3\n\n(End of file - total 3 lines)\n</content>"
+    },
+    {
+      "callId": "call_00_vSLpcMYUZLNyDYa1yLBj9661",
+      "status": "completed",
+      "result": "§2§ Queued 1 tag for reclaim."
+    }
+  ]
+}

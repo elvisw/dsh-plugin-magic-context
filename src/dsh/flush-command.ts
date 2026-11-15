@@ -37,14 +37,44 @@ function formatTags(tags: readonly number[]): string {
   return tags.length > 8 ? `${shown.join(', ')}, …` : shown.join(', ')
 }
 
+/**
+ * Read-only empty-queue detail. It uses the filtered store query rather than
+ * `Journal.tail`, because `tail` has a fixed row window and is not filtered by
+ * kind: a session with enough `pass`/`tool-call` rows would hide an older
+ * `drop-landed` row. Both the query and date formatting stay inside this
+ * helper's catch; a feedback failure must not turn a successful no-op into an
+ * error.
+ */
+function lastLandingDetail(stores: AdapterStores, sessionId: string): string | undefined {
+  try {
+    const row = stores.listJournal({
+      sessionId,
+      kinds: ['drop-landed'],
+      limit: 1,
+    })[0]
+    if (row === undefined) return undefined
+    const at = new Date(row.at).toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, 'Z')
+    const count = row.data?.count
+    if (typeof count === 'number' && Number.isFinite(count)) {
+      return `last drop landing: ${String(count)} drop(s) at ${at}`
+    }
+    return `last drop landing at ${at}`
+  } catch {
+    return undefined
+  }
+}
+
 function plan(stores: AdapterStores, sessionId: string): FlushReceipt {
   const pending = stores.listPendingDrops(sessionId)
   const markedBefore = new Set(stores.listFlushRequestedDrops(sessionId))
   const alreadyRequested = markedBefore.size
   if (pending.length === 0) {
+    const lastLanding = lastLandingDetail(stores, sessionId)
     return {
       kind: 'success',
-      text: 'Magic Context: nothing to flush (no pending drops).',
+      text: lastLanding === undefined
+        ? 'Magic Context: nothing to flush (no pending drops).'
+        : `Magic Context: nothing to flush now; ${lastLanding}. That landing is already in effect; this call changed nothing.`,
       requested: 0,
       alreadyRequested: 0,
       pendingNext: 0,
@@ -96,8 +126,9 @@ function plan(stores: AdapterStores, sessionId: string): FlushReceipt {
 }
 
 /**
- * Pure result builder for the command and its tests. It never touches the
- * surface; it only reads/writes the queue markers.
+ * Result builder for the command and its tests. It never touches the surface;
+ * it reads/writes the queue markers and, only on an empty queue, reads the
+ * newest `drop-landed` journal row for the feedback text.
  */
 export function planFlushCommand(stores: AdapterStores, sessionId: string | undefined): FlushReceipt {
   if (sessionId === undefined || sessionId === '') {
@@ -141,7 +172,7 @@ export function registerCtxFlushCommand(ctx: Context, deps: { readonly stores: A
   }
   commands.register({
     name: 'ctx-flush',
-    description: 'Force this session\'s pending ctx_reduce drops to land on the next message (no summary or model call).',
+    description: 'Force this session\'s pending ctx_reduce drops to land on the next message (no summary or model call); when the queue is empty, report the last landing for this session.',
     handler: invocation => {
       const receipt = planFlushCommand(deps.stores, invocation.agent?.session?.id)
       return receipt.kind === 'success'
