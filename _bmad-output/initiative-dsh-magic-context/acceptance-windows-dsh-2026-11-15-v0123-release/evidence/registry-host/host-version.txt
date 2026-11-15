@@ -1,0 +1,2 @@
+@deepseek-ai/dsh@0.2.2-rc.1
+node v24.21.0

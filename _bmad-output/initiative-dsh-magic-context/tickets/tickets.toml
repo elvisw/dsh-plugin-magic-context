@@ -132,3 +132,15 @@ after = [10]
 hitl = false
 risk = "low"
 refine = true
+
+[[entry]]
+id = 12
+type = "story"
+title = "V1.1: ctx_expand range and verbose"
+description = "Adds the V1.1 ctx_expand locators start/end and the verbose output shape left out of V1. The refinement must first decide whether start/end are DSH log event seq (not upstream message ordinals), whether a range returns only tool/result events or can include tool calls and user messages, what verbose adds (seq/role/tool/callId/tag/content), how a range interacts with the existing tag/tags/message mutual exclusion, and how Historian-compacted or missing raw events are rejected. No implementation decision is implied by this planned ticket."
+verify = "After refinement and independent ticket validation: unit/integration tests cover inclusive start/end parsing, reversed or missing bounds, unsafe integers, zero, mixed locator rejection, range with non-tool events, compacted/raw-missing failures, verbose fields and deterministic ordering; the existing tag/tags/message paths are unchanged; a real isolated DSH host gate (or a documented blocked state) reads a post-Historian range and verbose payload without changing drop state, surface nodes, compartments or model usage; npm test, typecheck, i18n and build pass."
+covers = []
+after = [11]
+hitl = false
+risk = "high"
+refine = true

@@ -1,0 +1,10 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-registry-0123-20261115-123624",
+  "specifier": "@elvisw/dsh-plugin-magic-context@0.12.3",
+  "installedVersion": "0.12.3",
+  "installedPackage": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-registry-0123-20261115-123624\\dsh-home\\profiles\\headless\\node_modules\\@elvisw\\dsh-plugin-magic-context\\package.json",
+  "installedFlushCommandSha256": "895f96c421b4b4ca13b1b5809e15158d3316c1bd60e331eaf36c90c07f5b08af",
+  "dumpConfigMentionsSpecifier": true,
+  "modelSmoke": "REGISTRY_0123_OK",
+  "overlay": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-registry-0123-20261115-123624\\overlays\\registry-e2e.yml"
+}

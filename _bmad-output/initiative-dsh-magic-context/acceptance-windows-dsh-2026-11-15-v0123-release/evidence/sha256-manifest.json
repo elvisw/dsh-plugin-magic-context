@@ -1,0 +1,80 @@
+{
+  "root": "_bmad-output\\initiative-dsh-magic-context\\acceptance-windows-dsh-2026-11-15-v0123-release\\evidence",
+  "files": [
+    {
+      "path": "artifact.json",
+      "bytes": 489,
+      "sha256": "bef456af554ddf7d3ba71f0d4452f8167ece66e3c73d3a6f5032eb63d89dfc86"
+    },
+    {
+      "path": "git-tag.txt",
+      "bytes": 91,
+      "sha256": "d58edd6b4585b91111d07f2ce7d3cc28a0cb62876301280888c0a0887a25ade1"
+    },
+    {
+      "path": "i18n.txt",
+      "bytes": 2051,
+      "sha256": "4b2e5830b1bf0cb746a28071ce87539286a1e43b74d0c860af509215415aea57"
+    },
+    {
+      "path": "registry-host/add-registry.txt",
+      "bytes": 761,
+      "sha256": "e1968bbdacedc50d947e109e3dd83fb887f36ab75eef5861de0f189e7c125acf"
+    },
+    {
+      "path": "registry-host/bootstrap.txt",
+      "bytes": 12990,
+      "sha256": "9e828f11b20b972b50c0d2ede36b44eb06ded9838b36f51ae21400a9d66640a7"
+    },
+    {
+      "path": "registry-host/dump-config.txt",
+      "bytes": 13996,
+      "sha256": "eee51a9494f6e0224befc9a4b58054717deba4b6c51f2ef43a9b07a217918ee8"
+    },
+    {
+      "path": "registry-host/host-version.txt",
+      "bytes": 44,
+      "sha256": "8042165b60ebf928e6e8c5dee33e5f9ae50d9331976c7a8efc976b490c365b8f"
+    },
+    {
+      "path": "registry-host/registry-e2e.json",
+      "bytes": 788,
+      "sha256": "8538066b70eb55ff5f4459687fd21e097ffe57125aee193793347d29cb5009f7"
+    },
+    {
+      "path": "registry-host/registry-e2e.yml",
+      "bytes": 930,
+      "sha256": "94caa0eb3aa847f902a852492f3a67ebe81ae957ecdf8bda40ecac4ab1b92047"
+    },
+    {
+      "path": "registry-host/root.txt",
+      "bytes": 104,
+      "sha256": "7ee7985ea14cfd0c7ac6de5c1fc1ca5c940184a3b46553ab832e114372276974"
+    },
+    {
+      "path": "registry-host/smoke.txt",
+      "bytes": 894,
+      "sha256": "885c5ba882c8d08afeddf454e963c05f4cd26f78f9d2956794b39a6e5101d96e"
+    },
+    {
+      "path": "registry.json",
+      "bytes": 699,
+      "sha256": "a06a7023bf3b18baac2390a76abc41eeaef6394025f348b975d6b6997a113acd"
+    },
+    {
+      "path": "typecheck.txt",
+      "bytes": 73,
+      "sha256": "d4ceef0a92e2bdbab68ea1917e27cf5e20c8df9cea4bd5cc710e19116855f4af"
+    },
+    {
+      "path": "unit-test.txt",
+      "bytes": 943,
+      "sha256": "aeb684d4e340fb48f43cd403042af88e35a13b77a12dc0895824001e73a466be"
+    },
+    {
+      "path": "workflow.json",
+      "bytes": 239,
+      "sha256": "bca376f2833a684b5c9bf2d98ec64ffe12d6ae86819d8b4df6c1bd0cb7f048a5"
+    }
+  ]
+}
