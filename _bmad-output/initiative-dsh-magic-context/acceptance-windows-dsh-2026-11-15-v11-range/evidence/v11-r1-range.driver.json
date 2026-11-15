@@ -1,0 +1,40 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-v11-20261115-144933\\overlays\\settle.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "--session-id",
+    "session-574e6453-7883-45db-90a0-0307ba3ba778",
+    "Resume the persisted V1.1 session. Call ONLY ctx_expand with start set to the decimal string \"20\" and end set to the decimal string \"28\". Do not pass tag, tags, or message; do not call any other tool and do not read any file. Respond R1_OK plus the nonce from the transcript if it is available; otherwise report the exact refusal."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 5.02,
+  "session_id": "session-574e6453-7883-45db-90a0-0307ba3ba778",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "R1_OK 0c5a44e3e7a598b206c2a8b93ba9092d",
+  "tool_calls": [
+    {
+      "tool": "ctx_expand",
+      "input": {
+        "start": "20",
+        "end": "28"
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_TVTDNr5b3qFklOhSU61k3844",
+      "status": "completed",
+      "result": "§6§ Events 20-28 (4 events, 5 skipped):\n\n[20] tool/result read (call_00_o3Bw5fUYAkNZMXdN3E7Z0589)\n§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-v11-20261115-144933\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: V11_RANGE_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=0c5a44e3e7a598b206c2a8b93ba9092d\n\n(End of file - total 3 lines)\n</content>\n\n[24] assistant/message\nThe fixture result carries tag §1§. Reducing only that tag.\n[24] tool call ctx_reduce (call_00_6rwckIxAZHcPLsFVant75690)\n{\"drop\":\"1\"}\n\n[26] tool/result ctx_reduce (call_00_6rwckIxAZHcPLsFVant75690)\n§2§ Queued 1 tag for reclaim.\n\n[28] tool/result read (call_00_o3Bw5fUYAkNZMXdN3E7Z0589)\n[dropped §1§]"
+    }
+  ]
+}

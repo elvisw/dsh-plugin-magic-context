@@ -22,6 +22,7 @@
  */
 import type { ContentBlock } from '@deepseek-ai/dsh-llm'
 import type { ToolRunContext } from '@deepseek-ai/dsh-tools'
+import { estimateTokens } from '../core/compartments.ts'
 import type { Journal } from '../core/journal.ts'
 import type { MemoryWriter } from '../core/memory-write.ts'
 import { parseTagRanges } from '../core/policy.ts'
@@ -30,6 +31,7 @@ import {
   enumerateSurfaceToolResults,
   originalContentOfToolCall,
   toolResultAt,
+  type SessionEvent,
   type SurfaceToolNode,
   type ToolCallOriginal,
 } from './seams.ts'
@@ -120,22 +122,72 @@ function ackText(lines: string[]): ContentBlock[] {
 type ExpandRequest =
   | { readonly kind: 'tags'; readonly tags: readonly number[] }
   | { readonly kind: 'message'; readonly message: number }
-  | { readonly reason: string }
+  | { readonly kind: 'range'; readonly start: number; readonly end: number; readonly verbose: boolean }
+  | { readonly reason: string; readonly locator?: 'range' }
+
+/** Decimal spelling shared by `message` and range bounds; no whitespace or sign. */
+const DECIMAL_SEQ = /^(?:0|[1-9]\d*)$/
+
+/** Validate one range bound spelling without ever number-coercing it. */
+function rangeBound(raw: unknown, label: 'start' | 'end'): { readonly value: number } | { readonly reason: string } {
+  if (typeof raw !== 'string' || !DECIMAL_SEQ.test(raw)) {
+    return { reason: `${label} must be a non-negative decimal integer string` }
+  }
+  const value = Number(raw)
+  if (!Number.isSafeInteger(value)) {
+    return { reason: `${label} must be a non-negative decimal integer string` }
+  }
+  return { value }
+}
 
 /**
- * Resolve `tag` (canonical, single), `tags` (deprecated multi-tag alias), or
- * `message` (DSH log event seq; T3). A tag pair where either side is empty
- * counts as absent, so `{tag: ''}` reads as "nothing asked" rather than as
- * tag 0. `message` is present whenever the host supplied the field; invalid
- * values are refused, never trimmed into a valid number.
+ * Resolve `tag` (canonical, single), `tags` (deprecated multi-tag alias),
+ * `message` (DSH log event seq; T3), or an inclusive `start`/`end` range
+ * (V1.1). Empty optional strings are absent except for a lone `message`, which
+ * is still an invalid value rather than a silent fall-through.
+ *
+ * Precedence is deliberately range-first: a real range plus another locator is
+ * a mixed-locator error even when the other locator pair is itself invalid;
+ * host filler `start="0",end="0"` is ignored when a tag/message is present.
  */
 function expandRequest(args: {
   readonly tag?: string
   readonly tags?: string
   readonly message?: string
+  readonly start?: string
+  readonly end?: string
+  readonly verbose?: boolean
 }): ExpandRequest {
   const tag = typeof args.tag === 'string' ? args.tag.trim() : ''
   const tags = typeof args.tags === 'string' ? args.tags.trim() : ''
+  const rangeIntent = (args.start !== undefined && args.start !== '')
+    || (args.end !== undefined && args.end !== '')
+  if (args.verbose !== undefined && typeof args.verbose !== 'boolean') {
+    return rangeIntent ? { reason: 'verbose must be a boolean', locator: 'range' } : { reason: 'verbose must be a boolean' }
+  }
+  const verbose = args.verbose === true
+  const startProvided = args.start !== undefined && args.start !== ''
+  const endProvided = args.end !== undefined && args.end !== ''
+  if (startProvided !== endProvided) {
+    return { reason: 'pass both start and end (DSH log event seq, inclusive)', locator: 'range' }
+  }
+  const hasTagOrMessage = tag !== '' || tags !== '' || (args.message !== undefined && args.message !== '')
+  if (startProvided && endProvided) {
+    // Upstream sends this filler when a range-capable host also fills the
+    // bounds; it means "no range" only when another locator is present.
+    const filler = args.start === '0' && args.end === '0'
+    if (!(filler && hasTagOrMessage)) {
+      if (hasTagOrMessage) {
+        return { reason: 'pass either tag, tags, message, or start/end, not more than one', locator: 'range' }
+      }
+      const start = rangeBound(args.start, 'start')
+      if ('reason' in start) return { ...start, locator: 'range' }
+      const end = rangeBound(args.end, 'end')
+      if ('reason' in end) return { ...end, locator: 'range' }
+      if (start.value > end.value) return { reason: 'start must not be greater than end', locator: 'range' }
+      return { kind: 'range', start: start.value, end: end.value, verbose }
+    }
+  }
   if (tag !== '' && tags !== '') return { reason: 'pass either tag or tags, not both' }
   // An empty optional string is how a host often spells "unset" (tag/tags do
   // the same above). Ignore it only when another locator is present; alone it
@@ -144,7 +196,7 @@ function expandRequest(args: {
     if (tag !== '' || tags !== '') {
       return { reason: 'pass either tag, tags, or message, not more than one' }
     }
-    if (typeof args.message !== 'string' || !/^(?:0|[1-9]\d*)$/.test(args.message)) {
+    if (typeof args.message !== 'string' || !DECIMAL_SEQ.test(args.message)) {
       return { reason: 'message must be a non-negative decimal integer string' }
     }
     const seq = Number(args.message)
@@ -156,6 +208,10 @@ function expandRequest(args: {
   if (tag === '' && tags === '') {
     if (args.message !== undefined) {
       return { reason: 'message must be a non-negative decimal integer string' }
+    }
+    if (args.verbose !== undefined) return { reason: 'verbose requires start and end', locator: 'range' }
+    if (args.start !== undefined || args.end !== undefined) {
+      return { reason: 'start and end must both be provided', locator: 'range' }
     }
     return { reason: 'no tag given (pass tag: "N")' }
   }
@@ -202,6 +258,198 @@ function joinExpandPayloads(payloads: readonly (readonly ContentBlock[])[]): Con
     blocks.push(...content)
   }
   return blocks
+}
+
+/** V1.1 range budget: chars/4, same estimate as the rest of the adapter. */
+const CTX_EXPAND_RANGE_TOKEN_BUDGET = 15_000
+/** Verbose preview length per part (upstream-compatible). */
+const CTX_EXPAND_PREVIEW_CHARS = 200
+/** Reserve for the header, continuation, and token-estimate rounding. */
+const CTX_EXPAND_HEADER_RESERVE = 400
+const COMPACTED_RANGE_TEXT = /^\[compacted §C\d+§\]$/
+const EXCLUDED_RANGE_SOURCE_KINDS = new Set(['magic-context', 'compact-checkpoint'])
+
+type RangeReadableEvent = SessionEvent<'user/message' | 'assistant/message' | 'tool/result'>
+
+function isRangeReadableEvent(event: SessionEvent): event is RangeReadableEvent {
+  return event.type === 'user/message' || event.type === 'assistant/message' || event.type === 'tool/result'
+}
+
+function rangeContent(event: RangeReadableEvent): readonly ContentBlock[] {
+  return event.type === 'user/message' ? event.data.content : event.data.message.content
+}
+
+function rangeSourceKind(event: RangeReadableEvent): string | undefined {
+  const source = event.type === 'user/message' ? event.data.source : event.data.message.source
+  return source?.kind
+}
+
+/** Exclude adapter/host bookkeeping and compacted markers from transcript output. */
+function isExcludedRangeEvent(event: RangeReadableEvent): boolean {
+  const kind = rangeSourceKind(event)
+  // A user message belongs in the transcript only when it came from the user.
+  // Adapter notices, compaction checkpoints and other plugin-injected user
+  // messages are context, not conversation; unknown future kinds stay out.
+  if (event.type === 'user/message' && kind !== undefined && kind !== 'user') return true
+  if (kind !== undefined && EXCLUDED_RANGE_SOURCE_KINDS.has(kind)) return true
+  return rangeContent(event).some(block =>
+    block.type === 'text' && COMPACTED_RANGE_TEXT.test(block.text.trim()),
+  )
+}
+
+function compactArguments(raw: unknown): string {
+  if (typeof raw !== 'string') {
+    try {
+      return JSON.stringify(raw) ?? ''
+    } catch {
+      return ''
+    }
+  }
+  try {
+    return JSON.stringify(JSON.parse(raw)) ?? raw
+  } catch {
+    return raw
+  }
+}
+
+function previewPart(text: string): string {
+  // Code-point slice so a preview never ends on a lone surrogate.
+  return Array.from(text.replace(/\s+/gu, ' ').trim()).slice(0, CTX_EXPAND_PREVIEW_CHARS).join('')
+}
+
+function blockName(block: ContentBlock): string {
+  if (block.type !== 'image') return block.type
+  const image = block as {
+    readonly attachment?: { readonly mediaType?: unknown; readonly name?: unknown }
+  }
+  const detail = typeof image.attachment?.name === 'string'
+    ? image.attachment.name
+    : typeof image.attachment?.mediaType === 'string'
+      ? image.attachment.mediaType
+      : ''
+  return detail === '' ? 'image' : `image ${detail}`
+}
+
+function rangeLabel(event: RangeReadableEvent, toolNames: ReadonlyMap<string, string>): string {
+  if (event.type === 'user/message') return 'user/message'
+  if (event.type === 'assistant/message') return 'assistant/message'
+  const callId = String(event.data.message.toolCallId)
+  const name = toolNames.get(callId)
+  return name === undefined ? `tool/result (${callId})` : `tool/result ${name} (${callId})`
+}
+
+/** Render one readable event as text; tool calls are text, never executable blocks. */
+function renderRangeEvent(
+  event: RangeReadableEvent,
+  toolNames: ReadonlyMap<string, string>,
+  verbose: boolean,
+): string {
+  const lines: string[] = [`[${String(event.seq)}] ${rangeLabel(event, toolNames)}`]
+  for (const block of rangeContent(event)) {
+    if (block.type === 'text') {
+      if (verbose) {
+        if (block.text !== '') lines.push(`  • [text] ${previewPart(block.text)}`)
+      } else if (block.text !== '') {
+        lines.push(block.text)
+      }
+      continue
+    }
+    if (block.type === 'tool-call') {
+      const call = String(block.id)
+      const identity = `${block.name} (${call})`
+      const args = compactArguments(block.arguments)
+      if (verbose) {
+        lines.push(`  • [tool-call] ${identity} ${previewPart(args)}`)
+      } else {
+        lines.push(`[${String(event.seq)}] tool call ${identity}`)
+        lines.push(args)
+      }
+      continue
+    }
+    // Reasoning is not transcript content; other non-text parts are named.
+    if (block.type === 'reasoning') continue
+    lines.push(verbose ? `  • [${blockName(block)}]` : `[${blockName(block)}]`)
+  }
+  return lines.join('\n')
+}
+
+function truncateToTokenBudget(text: string, maxTokens: number): string {
+  if (maxTokens <= 0) return ''
+  if (estimateTokens(text) <= maxTokens) return text
+  let low = 0
+  let high = text.length
+  while (low < high) {
+    const mid = Math.ceil((low + high) / 2)
+    if (estimateTokens(text.slice(0, mid)) <= maxTokens) low = mid
+    else high = mid - 1
+  }
+  let end = low
+  // Do not split a UTF-16 surrogate pair at the budget boundary.
+  if (end > 0 && /[\uD800-\uDBFF]/.test(text[end - 1] ?? '')) end -= 1
+  return text.slice(0, end)
+}
+
+interface RenderedRange {
+  readonly text: string
+  readonly events: readonly number[]
+  readonly skipped: number
+}
+
+/**
+ * Render selected readable events with the shared budget. `skipped` counts
+ * every in-bounds event that did not become a rendered section, including
+ * excluded types/source kinds and anything after an ordinary budget cut; seq
+ * gaps are not events and never count.
+ */
+function renderRangeTranscript(
+  events: readonly RangeReadableEvent[],
+  inBoundsCount: number,
+  start: number,
+  end: number,
+  verbose: boolean,
+  toolNames: ReadonlyMap<string, string>,
+): RenderedRange {
+  const bodyBudget = CTX_EXPAND_RANGE_TOKEN_BUDGET - CTX_EXPAND_HEADER_RESERVE
+  const sections: string[] = []
+  const included: number[] = []
+  let trailer = ''
+  for (const event of events) {
+    const section = renderRangeEvent(event, toolNames, verbose)
+    const candidate = [...sections, section].join('\n\n')
+    if (estimateTokens(candidate) <= bodyBudget) {
+      sections.push(section)
+      included.push(event.seq)
+      continue
+    }
+    if (sections.length === 0) {
+      // One oversized event: keep a bounded head instead of returning an
+      // unbounded result. The continuation must not suggest start=<seq+1>,
+      // which would skip the unread remainder.
+      const marker = '[event truncated]'
+      const continuation = `Event ${String(event.seq)} truncated at the budget; narrow start/end to read the remainder (tag/message only restore dropped tool results).`
+      const available = Math.max(
+        1,
+        bodyBudget - estimateTokens(marker) - estimateTokens(continuation) - 2,
+      )
+      sections.push(`${truncateToTokenBudget(section, available)}\n${marker}`)
+      included.push(event.seq)
+      trailer = continuation
+    } else {
+      const last = included[included.length - 1] ?? start
+      const verbosity = verbose ? ' verbose=true' : ''
+      trailer = `Truncated at event ${String(last)} (budget: ~15000 estimated tokens). Call again with start=${String(last + 1)} end=${String(end)}${verbosity}.`
+    }
+    break
+  }
+  const skipped = Math.max(0, inBoundsCount - included.length)
+  const header = verbose
+    ? `Events ${String(start)}-${String(end)} (verbose; ${String(included.length)} events, ${String(skipped)} skipped). Recover a full dropped tool result with tag or message.`
+    : `Events ${String(start)}-${String(end)} (${String(included.length)} events, ${String(skipped)} skipped):`
+  return {
+    text: [header, ...sections, ...trailer === '' ? [] : [trailer]].join('\n\n'),
+    events: included,
+    skipped,
+  }
 }
 
 export function defineCtxReduceTool(deps: ToolBridgeDeps): unknown {
@@ -287,15 +535,24 @@ export function defineCtxReduceTool(deps: ToolBridgeDeps): unknown {
 
 export function defineCtxExpandTool(deps: ToolBridgeDeps): unknown {
   const defineTool = deps.defineTool
-  return defineTool<{ readonly tag?: string; readonly tags?: string; readonly message?: string }>({
+  return defineTool<{
+    readonly tag?: string
+    readonly tags?: string
+    readonly message?: string
+    readonly start?: string
+    readonly end?: string
+    readonly verbose?: boolean
+  }>({
     name: 'ctx_expand',
     description:
-      'Restore previously dropped items in full. Pass tag: "3" — or the deprecated tags: "3, 7" alias. '
-        + 'For a dropped item whose DSH log event seq is known, pass message: "21" (the original tool/result '
-        + 'event or its `[dropped §N§]` placeholder; a `[compacted §C…§]` node is not accepted). The seq comes '
-        + 'from the harness/UI/journal; the model normally sees only tags. '
-        + 'The original content returns as this tool result; the old `[dropped §N§]` placeholder stays in place '
-        + 'and its tag stays spent (drop the new result if you no longer need it).',
+      'Read or restore context. Locators (mutually exclusive): tag — or the deprecated tags alias — restores '
+        + 'a dropped tool result as a new result; message restores one dropped tool result by DSH log event seq; '
+        + 'start/end reads an inclusive range of DSH log events as a read-only transcript. '
+        + 'Ranges use DSH log event seq, not upstream Magic Context message ordinals. '
+        + 'A range does not require a prior drop and never changes drop state; verbose previews each event '
+        + '(200 characters per part) instead of returning full bodies. '
+        + 'For tag/message, the original content returns as this tool result; the old `[dropped §N§]` placeholder '
+        + 'stays in place and its tag stays spent (drop the new result if you no longer need it).',
     parameters: {
       tag: { type: 'string', description: 'Canonical single tag, e.g. "3".' },
       tags: { type: 'string', description: 'Deprecated multi-tag alias, e.g. "3, 7".' },
@@ -304,6 +561,20 @@ export function defineCtxExpandTool(deps: ToolBridgeDeps): unknown {
         description:
           'DSH log event seq of a dropped tool/result or its `[dropped §N§]` placeholder; '
             + 'not the original Magic Context message number; `[compacted §C…§]` is not accepted.',
+      },
+      start: {
+        type: 'string',
+        description:
+          'Inclusive DSH log event seq range start (decimal string). Not an upstream message ordinal. '
+            + 'Requires end; mutually exclusive with tag/tags/message.',
+      },
+      end: {
+        type: 'string',
+        description: 'Inclusive DSH log event seq range end (decimal string). Requires start.',
+      },
+      verbose: {
+        type: 'boolean',
+        description: 'Preview each range event (200 characters per part) instead of full bodies.',
       },
     },
     output: {
@@ -339,6 +610,20 @@ export function defineCtxExpandTool(deps: ToolBridgeDeps): unknown {
       if (sessionId === undefined) return { ok: false, restored: [], refused: [], reason: 'no-session' }
       const request = expandRequest(args)
       if ('reason' in request) {
+        if (request.locator === 'range') {
+          deps.journal?.info('tool-call', 'ctx_expand: read 0 events (refused)', {
+            tool: 'ctx_expand',
+            locator: 'range',
+            start: args.start,
+            end: args.end,
+            verbose: args.verbose,
+            events: [],
+            skipped: 0,
+            reason: request.reason,
+            ms: Date.now() - startedAt,
+          }, sessionId)
+          return { ok: false, locator: 'range', reason: request.reason }
+        }
         deps.journal?.info('tool-call', 'ctx_expand: restored 0, refused 0', {
           tool: 'ctx_expand',
           requested: [],
@@ -350,6 +635,72 @@ export function defineCtxExpandTool(deps: ToolBridgeDeps): unknown {
         return { ok: false, restored: [], refused: [], reason: request.reason }
       }
       const session = exec.agent!.session
+      if (request.kind === 'range') {
+        const events = session.snapshotEvents()
+        const inBounds = events.filter(event => event.seq >= request.start && event.seq <= request.end)
+        const readable = inBounds
+          .filter(isRangeReadableEvent)
+          .filter(event => !isExcludedRangeEvent(event))
+        if (readable.length === 0) {
+          const reason = `no readable events in range ${String(request.start)}-${String(request.end)}`
+          deps.journal?.info('tool-call', 'ctx_expand: read 0 events (no readable)', {
+            tool: 'ctx_expand',
+            locator: 'range',
+            start: request.start,
+            end: request.end,
+            verbose: request.verbose,
+            events: [],
+            skipped: inBounds.length,
+            reason,
+            ms: Date.now() - startedAt,
+          }, sessionId)
+          return { ok: false, locator: 'range', reason }
+        }
+        const live = new Set<number>(session.surface.nodes)
+        if (readable.every(event => live.has(event.seq))) {
+          const text = `Events ${String(request.start)}-${String(request.end)} are already on the live surface; no raw history was read.`
+          deps.journal?.info('tool-call', 'ctx_expand: read 0 events (live surface)', {
+            tool: 'ctx_expand',
+            locator: 'range',
+            start: request.start,
+            end: request.end,
+            verbose: request.verbose,
+            events: [],
+            skipped: inBounds.length - readable.length,
+            liveSurface: true,
+            ms: Date.now() - startedAt,
+          }, sessionId)
+          return { ok: true, locator: 'range', events: [], content: [{ type: 'text', text }] }
+        }
+        const toolNames = new Map<string, string>()
+        for (const event of events) {
+          if (event.type === 'tool/call') toolNames.set(event.data.callId, event.data.name)
+        }
+        const rendered = renderRangeTranscript(
+          readable,
+          inBounds.length,
+          request.start,
+          request.end,
+          request.verbose,
+          toolNames,
+        )
+        deps.journal?.info('tool-call', `ctx_expand: read ${String(rendered.events.length)} event(s)`, {
+          tool: 'ctx_expand',
+          locator: 'range',
+          start: request.start,
+          end: request.end,
+          verbose: request.verbose,
+          events: rendered.events,
+          skipped: rendered.skipped,
+          ms: Date.now() - startedAt,
+        }, sessionId)
+        return {
+          ok: true,
+          locator: 'range',
+          events: rendered.events,
+          content: [{ type: 'text', text: rendered.text }],
+        }
+      }
       if (request.kind === 'message') {
         const lookup = toolResultAt(session, request.message)
         if (lookup.kind === 'unknown') {

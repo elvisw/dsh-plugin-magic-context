@@ -54,16 +54,17 @@ transcript over raw events, not a second drop-recovery path.
    - all output is text blocks; never forward an executable `tool-call` block;
    - a continuation line when the 15,000-token budget cuts the range:
      `Truncated at event <last> ... Call again with start=<last+1> end=<end>.`
+     Add `verbose=true` to the continuation when the request was verbose.
      If the first included event alone exceeds the budget, include a bounded
-     head and mark it `[event truncated]`; the continuation says to use
-     tag/message for that event, not `start=<seq+1>` (which would skip the
-     unread remainder). The result never exceeds the budget by an unbounded
-     event.
+     head and mark it `[event truncated]`; the continuation says to narrow
+     start/end for the remainder (tag/message only restore dropped tool
+     results), not `start=<seq+1>` (which would skip the unread remainder).
+     The result never exceeds the budget by an unbounded event.
 5. **Verbose payload.** One entry per event with `seq`, event type, role,
    tool name and callId when present, and a bounded per-part preview (text
    preview, tool input preview, content type); no full body. Preview is 200
    characters per part. The header names the requested seq range and says to
-   recover a tag or message in full. Verbose obeys the same 15,000-token
+   recover a full dropped tool result with tag or message. Verbose obeys the same 15,000-token
    budget; there is no separate event-count cap. `verbose` must be boolean;
    `verbose` without `start`/`end` is an error. A boolean `verbose` supplied
    with `tag`/`tags`/`message` is ignored (upstream mode behavior), not a

@@ -61,7 +61,7 @@
 |---|---|---|
 | `ctx_expand` | `tag`（原版单数） | 首选；T2 实现 |
 | `ctx_expand` | `message`（DSH 映射） | 原版按消息序号；DSH 映射到 **log event seq（含 shadowed 事件）**；不是原版消息序号；T3 实现 |
-| `ctx_expand` | `start`/`end`、`verbose` | Q2 已定：V1.1 后置 |
+| `ctx_expand` | `start`/`end`、`verbose` | V1.1 已实现（票 12，2026-11-15） |
 | `ctx_reduce` | `drop`（逗号分隔） | 与原版一致，保留 |
 
 **Q2 决定（2026-11-13）：V1 做 `tag` + `message`；`start`/`end`/`verbose` 留到 V1.1。** `message` 映射到 DSH 的 log event seq（包括 Historian 后已 shadow 的原始事件），文档必须写明“不是原版消息序号”；范围/详细输出需要单独验证，不为了形状相同引入错误标识。
@@ -122,7 +122,7 @@
 
 ## Q2–Q5 已定
 
-- **Q2（2026-11-13；T3 澄清 2026-11-14）：** V1 做 `tag` + `message`（DSH log event seq，含 shadowed 事件）；`start`/`end`/`verbose` 后置。
+- **Q2（2026-11-13；T3 澄清 2026-11-14；V1.1 实现 2026-11-15）：** V1 做 `tag` + `message`（DSH log event seq，含 shadowed 事件）；V1.1 已增加 `start`/`end`/`verbose`（票 12）。
 - **Q3（2026-11-13）：** `tag` 正式参数；`tags` deprecated 多 tag 过渡别名，下一 major 移除。
 - **Q4（2026-11-13）：** 标记 + 下一次 preStep；回执明确“尚待下一次请求落地”。
 - **Q5（2026-11-13）：** 移除/关闭 30 天 prune；按原版消息/会话删除与 `compacted` 状态保留。

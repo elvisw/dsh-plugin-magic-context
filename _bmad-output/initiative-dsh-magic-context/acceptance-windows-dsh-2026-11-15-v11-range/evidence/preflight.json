@@ -1,0 +1,36 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-v11-20261115-144933",
+  "nonce": "0c5a44e3e7a598b206c2a8b93ba9092d",
+  "package": "@elvisw/dsh-plugin-magic-context",
+  "version": "0.12.3",
+  "profile_specifier": "file:C:/Users/elvis/AppData/Local/Temp/opencode/v11-host-pack/elvisw-dsh-plugin-magic-context-0.12.3.tgz",
+  "tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\v11-host-pack\\elvisw-dsh-plugin-magic-context-0.12.3.tgz",
+  "tarball_sha256": "beaed6e8b8785a78293fe916599341a810cff182cfc1fca39c25fd79beddc10b",
+  "installed_hashes": {
+    "lib/index.js": {
+      "installed": "445a0200baae1112e78bc42fdcfbeee69932059bfa9fd1f0c9ce52f1a6455cd7",
+      "artifact": "445a0200baae1112e78bc42fdcfbeee69932059bfa9fd1f0c9ce52f1a6455cd7"
+    },
+    "lib/dsh/tool-bridge.js": {
+      "installed": "fa3cdfc31ca5e49cda5e534088f1ba21f8edf0fadfa8d3e25711d923776912fe",
+      "artifact": "fa3cdfc31ca5e49cda5e534088f1ba21f8edf0fadfa8d3e25711d923776912fe"
+    },
+    "lib/dsh/seams.js": {
+      "installed": "ee7221756c12492117402b012f3d3ed21c6cce14f9707e73d8e2ecca25cf9de4",
+      "artifact": "ee7221756c12492117402b012f3d3ed21c6cce14f9707e73d8e2ecca25cf9de4"
+    }
+  },
+  "git_head": "a8da8cdfb78778cabb924ddbd2fcc3110d9ca659",
+  "git_status": " M CHANGELOG.md\n M PARITY.md\n M README.md\n M README.zh-CN.md\n M _bmad-output/initiative-dsh-magic-context/tickets/recovery-contract.md\n M _bmad-output/initiative-dsh-magic-context/tickets/story-v1-1-ctx-expand-range-and-verbose-plan.md\n M _bmad-output/initiative-dsh-magic-context/tickets/story-v1-1-ctx-expand-range-and-verbose.md\n M src/client/index.js\n M src/dsh/tool-bridge.ts\n M tests/client-pure.spec.ts\n M tests/ctx-expand-result.spec.ts\n?? .codegraph/\n?? _bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-15-v11-range/\n",
+  "git_diff_sha256": "f1ce621363bbb48515c2d438f825681be8d0470eb3b0bccb779d7549eaeaf3ef",
+  "deepseek_key_present": true,
+  "host_version": "0.2.2-rc.1",
+  "dump_exit": 0,
+  "settle_dump_exit": 0,
+  "overlays": [
+    "base.yml",
+    "historian.yml",
+    "settle.yml"
+  ],
+  "tool_bridge_has_range": true
+}

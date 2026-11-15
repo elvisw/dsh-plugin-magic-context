@@ -1068,6 +1068,7 @@ window.__ModuleLoader__.load({
         'record.dropLanded': '丢弃落地',
         'record.reduceQueued': '回收入队',
         'record.expandRestored': '恢复原文',
+        'record.expandRange': '读取上下文',
         'record.remountRecovery': '重挂载恢复',
         'record.historianFailed': '历史归档失败',
         'record.archived': '归档已存',
@@ -1088,6 +1089,8 @@ window.__ModuleLoader__.load({
         'detail.queued': '入队 {n}',
         'detail.refused': '被拒 {n}',
         'detail.restored': '恢复 {n}',
+        'detail.rangeEvents': '{n} 个事件',
+        'detail.rangeSkipped': '跳过 {n}',
         'detail.hits': '命中 {n}',
         'detail.rejected': '被拒',
         'detail.replacedNodes': '替换 {n} 节点',
@@ -1156,6 +1159,7 @@ window.__ModuleLoader__.load({
         'record.dropLanded': 'Drop landed',
         'record.reduceQueued': 'Reclaim queued',
         'record.expandRestored': 'Content restored',
+        'record.expandRange': 'Context read',
         'record.remountRecovery': 'Remount recovery',
         'record.historianFailed': 'Historian failed',
         'record.archived': 'Compartment stored',
@@ -1175,6 +1179,8 @@ window.__ModuleLoader__.load({
         'detail.queued': 'queued {n}',
         'detail.refused': 'refused {n}',
         'detail.restored': 'restored {n}',
+        'detail.rangeEvents': '{n} events',
+        'detail.rangeSkipped': 'skipped {n}',
         'detail.hits': '{n} hits',
         'detail.rejected': 'rejected',
         'detail.replacedNodes': 'replaced {n} nodes',
@@ -1387,6 +1393,15 @@ window.__ModuleLoader__.load({
             ])
           }
           if (tool === 'ctx_expand') {
+            if (data !== undefined && data.locator === 'range') {
+              const events = arrayLength(data, 'events')
+              const skipped = numberField(data, 'skipped')
+              return record('read', 'record.expandRange', undefined, [
+                events === undefined ? '' : t('detail.rangeEvents', { n: fmtInt(events) }),
+                skipped ? t('detail.rangeSkipped', { n: fmtInt(skipped) }) : '',
+                spanOf(numberField(data, 'ms')),
+              ])
+            }
             const restored = arrayLength(data, 'restored')
             const refused = arrayLength(data, 'refused')
             return record('archive', 'record.expandRestored', undefined, [

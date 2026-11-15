@@ -1,0 +1,215 @@
+{
+  "sessionId": "session-574e6453-7883-45db-90a0-0307ba3ba778",
+  "rawPath": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-v11-20261115-144933\\evidence\\session-observer\\session-574e6453-7883-45db-90a0-0307ba3ba778.jsonl",
+  "rawBytes": 7714010,
+  "rawSha256": "3b4612e2e6a0e931df92ef55c140e779ae4543a7fee8e2701f7cc1994dcc46c2",
+  "snapshotLine": null,
+  "surface": [
+    10,
+    58,
+    38,
+    49,
+    53,
+    55,
+    59,
+    61,
+    64,
+    75,
+    76,
+    77,
+    80,
+    82,
+    86,
+    97,
+    98,
+    101,
+    103,
+    107,
+    118,
+    119,
+    122,
+    124,
+    128,
+    139,
+    140,
+    143,
+    145,
+    149,
+    160,
+    161,
+    164,
+    166,
+    170
+  ],
+  "events": [
+    {
+      "seq": 11,
+      "present": true,
+      "type": "user/message",
+      "surfaceOp": "append",
+      "sourceEventSeqs": null,
+      "text": "This is an isolated V1.1 range/verbose acceptance seed. In separate sequential model steps: read fixture.txt once and note the actual §N§ tag on its result; call ctx_reduce exactly once with drop set to ONLY that fixture tag (do not reduce any other tag and do not call ctx_reduce again); read historian-fixture.txt once. Then respond only SEED_READY and that tag number. Do not call ctx_expand, do not reread, do not quote either file, and do not use other tools.",
+      "textSha256": "e0f1a07bb76769eb1c7c9b2a31be30c3d42e6f27b54425d750c78316ef016d07"
+    },
+    {
+      "seq": 12,
+      "present": true,
+      "type": "user/message",
+      "surfaceOp": "append",
+      "sourceEventSeqs": null,
+      "text": "Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-v11-20261115-144933\\\\workspace\".\n\nCurrent DSH file policy: read-only. Any available operation enforced by the DSH file sandbox cannot modify files in the standing mode. Do not refuse a required modification from this policy alone: try an available tool normally and follow any denial and escalation guidance it returns.\n\nApproval prompts are disabled in this session: actions that require approval are rejected automatically — do not request sandbox escalation (do not set `sandbox_permissions`).",
+      "textSha256": "f31f796f20812c41d833fbd904766d021247e5a460aacf9e4617f0e1ad581f7f"
+    },
+    {
+      "seq": 13,
+      "present": true,
+      "type": "user/message",
+      "surfaceOp": "append",
+      "sourceEventSeqs": null,
+      "text": "<system-reminder>\nA skill is a reusable set of task-specific instructions. The following skills are available in this session:\n\n<available_skills>\n- `diagnose-windows-sandbox-acl`: Use on Windows for unexpected DSH sandbox access denials: workspace writes or listing fail, or an ordinarily readable path cannot be read. One bundled command inspects the path and every ancestor and repairs the ACL problems it proves in that same run. Expected confinement denials need no ACL repair.\n</available_skills>\n\nIf the user names a skill, or the task clearly matches a skill's description, call the `skill` tool with the exact skill name before taking task actions. Load all applicable skills, then follow their full instructions. This catalog contains summaries only; do not infer or follow a skill's instructions until it has been loaded.\nA user may also invoke a skill directly; its <skill_content> block then appears in this conversation. Follow it, and do not call the `skill` tool again for that skill.\n</system-reminder>",
+      "textSha256": "fb1ace39e8429652dde582bcea4d0e5c400d04ced56b43f4bfc5ee481d756f2a"
+    },
+    {
+      "seq": 18,
+      "present": true,
+      "type": "assistant/message",
+      "surfaceOp": "append",
+      "sourceEventSeqs": null,
+      "text": "I'll start by reading the fixture file.",
+      "textSha256": "52f7e537d90eadbabe657629bc515c56dc540c33b156597434031595dc0ab153"
+    },
+    {
+      "seq": 20,
+      "present": true,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        19
+      ],
+      "text": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-v11-20261115-144933\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: V11_RANGE_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=0c5a44e3e7a598b206c2a8b93ba9092d\n\n(End of file - total 3 lines)\n</content>",
+      "textSha256": "56d9514c04c46dcfb31f83d9f9bae17752d3d6f248386032a586ebc5b20b60cf"
+    },
+    {
+      "seq": 24,
+      "present": true,
+      "type": "assistant/message",
+      "surfaceOp": "append",
+      "sourceEventSeqs": null,
+      "text": "The fixture result carries tag §1§. Reducing only that tag.",
+      "textSha256": "a7b59d93cfb671a0491fbf329566f763661931baf8c5b2bb6976035ba6dab948"
+    },
+    {
+      "seq": 26,
+      "present": true,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        25
+      ],
+      "text": "§2§ Queued 1 tag for reclaim.",
+      "textSha256": "40f7a7d752fa3594ea0149bc376122069f51870c2b6e2248985f5e50c9503082"
+    },
+    {
+      "seq": 28,
+      "present": true,
+      "type": "tool/result",
+      "surfaceOp": {
+        "op": "replace",
+        "startSeq": 20,
+        "endSeq": 20
+      },
+      "sourceEventSeqs": [
+        20
+      ],
+      "text": "[dropped §1§]",
+      "textSha256": "684c5e869a9bbcbc91401d899a08fe5899b301abb8295d8db1e3cd84380e809a"
+    },
+    {
+      "seq": 32,
+      "present": true,
+      "type": "assistant/message",
+      "surfaceOp": "append",
+      "sourceEventSeqs": null,
+      "text": "Now reading the historian fixture once.",
+      "textSha256": "3d49f25b9ed5af8cfcb690b55ef2eed2d53728519849ea3fe22c70f89802060a"
+    },
+    {
+      "seq": 34,
+      "present": true,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        33
+      ],
+      "text": "§3§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-v11-20261115-144933\\workspace\\historian-fixture.txt</path>\n<type>file</type>\n<content>\n1: V11_HISTORIAN_FIXTURE\n2: This synthetic transcript exists only so the real Historian has a stable span to publish.\n3: line 1: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n4: line 2: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n5: line 3: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n6: line 4: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n7: line 5: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n8: line 6: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n9: line 7: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n10: line 8: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n11: line 9: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n12: line 10: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n13: line 11: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n14: line 12: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n15: line 13: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n16: line 14: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n17: line 15: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n18: line 16: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n19: line 17: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n20: line 18: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n21: line 19: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n22: line 20: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n23: line 21: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n24: line 22: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n25: line 23: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n26: line 24: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n27: line 25: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n28: line 26: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n29: line 27: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n30: line 28: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n31: line 29: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n32: line 30: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n33: line 31: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n34: line 32: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n35: line 33: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n36: line 34: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n37: line 35: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n38: line 36: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n39: line 37: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n40: line 38: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n41: line 39: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n42: line 40: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n43: line 41: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n44: line 42: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n45: line 43: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n46: line 44: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n47: line 45: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n48: line 46: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n49: line 47: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n50: line 48: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n51: line 49: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n52: line 50: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n53: line 51: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n54: line 52: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n55: line 53: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n56: line 54: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n57: line 55: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n58: line 56: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n59: line 57: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n60: line 58: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n61: line 59: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n62: line 60: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n63: line 61: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n64: line 62: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n65: line 63: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n66: line 64: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n67: line 65: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n68: line 66: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n69: line 67: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n70: line 68: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n71: line 69: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n72: line 70: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n73: line 71: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n74: line 72: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n75: line 73: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n76: line 74: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n77: line 75: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n78: line 76: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n79: line 77: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n80: line 78: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n81: line 79: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n82: line 80: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n83: line 81: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n84: line 82: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n85: line 83: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n86: line 84: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n87: line 85: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n88: line 86: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n89: line 87: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n90: line 88: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n91: line 89: retain the V1.1 provenance marker 0c5a44e3e7a598b206c2a8b93ba9092d.\n\n(End of file - total 91 lines)\n</content>",
+      "textSha256": "72fb088f3b4c3d7d409e8eadf7c9a86d264426cbce325dfce6917eb882be0c64"
+    },
+    {
+      "seq": 57,
+      "present": true,
+      "type": "user/message",
+      "surfaceOp": {
+        "op": "replace",
+        "startSeq": 11,
+        "endSeq": 34
+      },
+      "sourceEventSeqs": [
+        11,
+        12,
+        13,
+        18,
+        28,
+        24,
+        26,
+        32,
+        34
+      ],
+      "text": "[compacted §C1§]",
+      "textSha256": "79600d9acd649d7c3dad9ca71e2c22c4729099103db85bc2dcdeb96e6e88bd06"
+    },
+    {
+      "seq": 103,
+      "present": true,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        102
+      ],
+      "text": "§6§ Events 20-28 (4 events, 5 skipped):\n\n[20] tool/result read (call_00_o3Bw5fUYAkNZMXdN3E7Z0589)\n§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-v11-20261115-144933\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: V11_RANGE_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=0c5a44e3e7a598b206c2a8b93ba9092d\n\n(End of file - total 3 lines)\n</content>\n\n[24] assistant/message\nThe fixture result carries tag §1§. Reducing only that tag.\n[24] tool call ctx_reduce (call_00_6rwckIxAZHcPLsFVant75690)\n{\"drop\":\"1\"}\n\n[26] tool/result ctx_reduce (call_00_6rwckIxAZHcPLsFVant75690)\n§2§ Queued 1 tag for reclaim.\n\n[28] tool/result read (call_00_o3Bw5fUYAkNZMXdN3E7Z0589)\n[dropped §1§]",
+      "textSha256": "39445e5b2621643202fbcd2ade8d115821e3be6d2bc1917678e54e8b97b3522e"
+    },
+    {
+      "seq": 124,
+      "present": true,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        123
+      ],
+      "text": "§7§ Events 20-28 (verbose; 4 events, 5 skipped). Recover a full dropped tool result with tag or message.\n\n[20] tool/result read (call_00_o3Bw5fUYAkNZMXdN3E7Z0589)\n  • [text] §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-v11-20261115-144933\\workspace\\fixture.txt</path> <type>file</type> <content> 1: V11_RANGE_FIXTURE 2: The acceptance n\n\n[24] assistant/message\n  • [text] The fixture result carries tag §1§. Reducing only that tag.\n  • [tool-call] ctx_reduce (call_00_6rwckIxAZHcPLsFVant75690) {\"drop\":\"1\"}\n\n[26] tool/result ctx_reduce (call_00_6rwckIxAZHcPLsFVant75690)\n  • [text] §2§ Queued 1 tag for reclaim.\n\n[28] tool/result read (call_00_o3Bw5fUYAkNZMXdN3E7Z0589)\n  • [text] [dropped §1§]",
+      "textSha256": "6692564bbc62022d27f06a7d24520ea4448db6e3fc9f394d02e8413f98caeb4e"
+    },
+    {
+      "seq": 145,
+      "present": true,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        144
+      ],
+      "text": "§8§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-v11-20261115-144933\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: V11_RANGE_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=0c5a44e3e7a598b206c2a8b93ba9092d\n\n(End of file - total 3 lines)\n</content>",
+      "textSha256": "a6e4121f5b36bb53206ab0d7df6a954e2037faa947eff2f4eb83fabbc4705e79"
+    },
+    {
+      "seq": 166,
+      "present": true,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        165
+      ],
+      "text": "§9§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-v11-20261115-144933\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: V11_RANGE_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=0c5a44e3e7a598b206c2a8b93ba9092d\n\n(End of file - total 3 lines)\n</content>",
+      "textSha256": "0d0ee6b0edb6d8f684afa1267800b5ef72630733a5746a22e77788f13d6135b9"
+    }
+  ]
+}

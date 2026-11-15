@@ -176,6 +176,36 @@ describe('tool-call records — the reclamation lane the panel used to drop', ()
     expect(row!.detail).not.toContain('被拒')
   })
 
+  it('renders a range read as a read row, not a restore', () => {
+    const row = recordOf({
+      at: 2,
+      level: 'info',
+      kind: 'tool-call',
+      summary: 'ctx_expand: read 4 event(s)',
+      data: { tool: 'ctx_expand', locator: 'range', events: [20, 24, 26, 28], skipped: 5, ms: 6 },
+    })
+    expect(row).not.toBeNull()
+    expect(row!.category).toBe('read')
+    expect(row!.text).toBe('读取上下文')
+    expect(row!.detail).toContain('4 个事件')
+    expect(row!.detail).toContain('跳过 5')
+    expect(row!.detail).not.toContain('恢复')
+  })
+
+  it('renders a range refusal as a read row without restored detail', () => {
+    const row = recordOf({
+      at: 2,
+      level: 'info',
+      kind: 'tool-call',
+      summary: 'ctx_expand: read 0 events (refused)',
+      data: { tool: 'ctx_expand', locator: 'range', start: '9', end: '2', events: [], skipped: 0, reason: 'start must not be greater than end', ms: 1 },
+    })
+    expect(row).not.toBeNull()
+    expect(row!.category).toBe('read')
+    expect(row!.text).toBe('读取上下文')
+    expect(row!.detail).not.toContain('恢复')
+  })
+
   it('records a message-locator restore with the resolved tag', () => {
     const row = recordOf({
       at: 2,

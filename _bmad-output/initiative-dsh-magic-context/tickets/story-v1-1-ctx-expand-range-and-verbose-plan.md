@@ -1,7 +1,7 @@
 ---
 ticket: 12
 title: "V1.1: ctx_expand range and verbose — plan"
-status: ready-for-dev
+status: built
 ---
 
 # Plan — V1.1 `ctx_expand` range and `verbose`
@@ -233,12 +233,12 @@ adding a block that would exceed the budget when at least one block is already
 included. If the first included event alone exceeds the budget, include a
 bounded head, append `[event truncated]`, and stop; the result never exceeds the
 budget by an unbounded event. In that case the continuation is
-`Event <seq> truncated at the budget; use tag or message for its full content.`
+`Event <seq> truncated at the budget; narrow start/end for the remainder (tag/message only restore dropped tool results).`
 — do **not** suggest `start=<seq+1>`, which would skip the unread remainder.
 For an ordinary between-event cut add:
 
 ```text
-Truncated at event <last> (budget: ~15000 tokens). Call again with start=<last+1> end=<end>.
+Truncated at event <last> (budget: ~15000 estimated tokens). Call again with start=<last+1> end=<end>[ verbose=true].
 ```
 
 `last` is the last included event seq, not the last selected seq.
@@ -252,7 +252,7 @@ documented text preview.
 Header:
 
 ```text
-Events <start>-<end> (verbose; <n> events, <skipped> skipped). Recover a full item with tag or message.
+Events <start>-<end> (verbose; <n> events, <skipped> skipped). Recover a full dropped tool result with tag or message.
 ```
 
 Each block:
@@ -261,7 +261,7 @@ Each block:
 [<seq>] <label>
   • [text] <first 200 chars, newlines collapsed>
   • [tool-call] <name> <compact input preview>
-  • [tool-result] <first 200 chars>
+  • [text] <first 200 chars> (tool/result text uses the same text label)
   • [image] <mime/name>
 ```
 

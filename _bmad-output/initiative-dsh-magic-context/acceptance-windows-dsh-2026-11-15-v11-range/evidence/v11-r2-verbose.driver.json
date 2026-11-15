@@ -1,0 +1,41 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-v11-20261115-144933\\overlays\\settle.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "--session-id",
+    "session-574e6453-7883-45db-90a0-0307ba3ba778",
+    "Resume the persisted V1.1 session. Call ONLY ctx_expand with start set to the decimal string \"20\", end set to the decimal string \"28\", and verbose set to true. Do not pass tag, tags, or message; do not call any other tool and do not read any file. Respond R2_OK plus the nonce from the preview if it is available; otherwise report the exact refusal."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 5.555,
+  "session_id": "session-574e6453-7883-45db-90a0-0307ba3ba778",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "R2_OK — the nonce is not available in the verbose preview: each event is truncated at 200 characters and the fixture preview cuts off at \"The acceptance n\", before the `nonce=` line. No refusal occurred; the call succeeded with full range metadata (events 20–28, verbose; 4 events, 5 skipped).",
+  "tool_calls": [
+    {
+      "tool": "ctx_expand",
+      "input": {
+        "start": "20",
+        "end": "28",
+        "verbose": true
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_JW0qidssrj9DNlv5ZNfg8493",
+      "status": "completed",
+      "result": "§7§ Events 20-28 (verbose; 4 events, 5 skipped). Recover a full dropped tool result with tag or message.\n\n[20] tool/result read (call_00_o3Bw5fUYAkNZMXdN3E7Z0589)\n  • [text] §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-v11-20261115-144933\\workspace\\fixture.txt</path> <type>file</type> <content> 1: V11_RANGE_FIXTURE 2: The acceptance n\n\n[24] assistant/message\n  • [text] The fixture result carries tag §1§. Reducing only that tag.\n  • [tool-call] ctx_reduce (call_00_6rwckIxAZHcPLsFVant75690) {\"drop\":\"1\"}\n\n[26] tool/result ctx_reduce (call_00_6rwckIxAZHcPLsFVant75690)\n  • [text] §2§ Queued 1 tag for reclaim.\n\n[28] tool/result read (call_00_o3Bw5fUYAkNZMXdN3E7Z0589)\n  • [text] [dropped §1§]"
+    }
+  ]
+}

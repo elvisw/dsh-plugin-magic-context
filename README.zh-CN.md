@@ -162,7 +162,7 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
 | 工具 | 作用 |
 |---|---|
 | `ctx_reduce` | 解析 MC 范围语法（`"3-5,8"`）→ **只入队**；落地是有价 bust，等待回收带，绝不自发 |
-| `ctx_expand` | 按 `tag`（单个，正式）、已弃用的 `tags` 别名，或 `message`（当前会话中已 drop 项的 DSH 日志事件 seq；不接受 `[compacted §C…§]` 节点），从持久化日志**把原文作为新结果返回**；旧占位符及其已用尽的 tag 保持原位。tag 是主入口，message 是备用定位，不是通用历史浏览器；原始事件已不存在时不承诺恢复 |
+| `ctx_expand` | 按 `tag`（单个，正式）、已弃用的 `tags` 别名，或 `message`（当前会话中已 drop 项的 DSH 日志事件 seq；不接受 `[compacted §C…§]` 节点），从持久化日志**把原文作为新结果返回**；旧占位符及其已用尽的 tag 保持原位。tag 是主入口，message 是备用定位，不是通用历史浏览器。`start`/`end`（闭区间 DSH 日志事件 seq，不是原版消息序号）只读转录 `user`/`assistant`/`tool/result`，不要求先 drop；`verbose` 每 part 预览 200 字符，共享 15k token 预算。`[compacted §C…§]` 记录被排除；读取原始历史时 `[dropped §N§]` 按字面保留，若范围内可读事件都仍在 live surface 上则返回一句 live-surface 说明而不重复内容；原始事件已不存在时不承诺恢复 |
 | `ctx_memory` | 共享记忆库的读写口。读：`list` / `search` / `get`；写：`write` / `update` / `archive` / `merge`（与 MC 相同的规范化内容哈希、mutation log 与 authority 守卫全程在环）；`review_global`（把机器/组织域候选逐条弹成审批卡，批准才发布）；`promote`（单条项目记忆即时入池弹卡，无复现门槛的人工通道）。每个动作可带 `project`（绝对路径或 git 根）操作其它项目 |
 
 斜杠命令（`registerStatusCommand: false` 关闭整个斜杠命令面）：

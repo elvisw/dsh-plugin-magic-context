@@ -221,6 +221,14 @@ earlier "add promote-primers next" reading).
   session** (including a shadowed event), not the upstream message number, and
   only for an already dropped item. `[compacted §C…§]` is not a tool result and is refused; no
   recovery is promised once the raw event is gone.
+- `ctx_expand` ranges (`start`/`end`, `verbose`) are DSH-specific: bounds are
+  inclusive **DSH log event seq**, not upstream message ordinals; there is no
+  compartment-end clamp; liveness is surface-based; and both views share a
+  15k token budget with no separate event cap. `verbose` uses 200-character
+  per-part previews. A fully live range returns a live-surface sentence instead
+  of duplicating live events; literal `[dropped §N§]` markers appear only when
+  the range reads raw/shadowed history. These are documented divergences, not
+  upstream parity.
 - `recordRetrieval` does **not** write `updated_at` (MC does), keeping the m[0]
   digest `id:updatedAt` stable.
 - Above v94 the write path degrades to read-only; `seen_count` uses `COALESCE`;

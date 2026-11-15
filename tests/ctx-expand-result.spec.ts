@@ -18,8 +18,14 @@ import { join } from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import { describe, expect, it } from 'vitest'
 import { Session, SessionId, type SessionSeq } from '@deepseek-ai/dsh-session'
-import { ToolCallId, createToolResultMessage, type ContentBlock } from '@deepseek-ai/dsh-llm'
+import {
+  ToolCallId,
+  createAssistantMessage,
+  createToolResultMessage,
+  type ContentBlock,
+} from '@deepseek-ai/dsh-llm'
 import type { ToolRunContext } from '@deepseek-ai/dsh-tools'
+import { estimateTokens } from '../src/core/compartments.ts'
 import type { AdapterStores } from '../src/core/stores.ts'
 import { openStores } from '../src/index.ts'
 import { tagPrefix } from '../src/core/tagger.ts'
@@ -41,7 +47,14 @@ interface TagVerdict {
   readonly reason?: string
 }
 
-type ExpandArgs = { readonly tag?: string; readonly tags?: string; readonly message?: string }
+type ExpandArgs = {
+  readonly tag?: string
+  readonly tags?: string
+  readonly message?: string
+  readonly start?: string
+  readonly end?: string
+  readonly verbose?: boolean | string
+}
 type ReduceArgs = { readonly drop: string }
 
 interface TestContext {
@@ -88,8 +101,13 @@ async function expand(
   stores: AdapterStores,
   session: Session | undefined,
   args: ExpandArgs,
+  journal?: unknown,
 ): Promise<{ result: unknown; content: ContentBlock[]; text: string; refused: TagVerdict[] }> {
-  const tool = captureTool<ExpandArgs>(defineTool => defineCtxExpandTool({ stores, defineTool }))
+  const tool = captureTool<ExpandArgs>(defineTool => defineCtxExpandTool({
+    stores,
+    defineTool,
+    ...(journal === undefined ? {} : { journal: journal as never }),
+  }))
   const result = await tool.execute(args, execOf(session))
   const content = tool.output.render(args, result)
   return {
@@ -116,6 +134,23 @@ function expectMessageFailure(
   expect(payload.refused).toEqual([])
   expect(payload.content).toBeUndefined()
   expect(payload.reason).toBe(reason)
+}
+
+function expectRangeFailure(expanded: { readonly result: unknown }, reason: string): void {
+  const payload = expanded.result as {
+    readonly ok?: boolean
+    readonly locator?: string
+    readonly reason?: string
+    readonly restored?: unknown
+    readonly refused?: unknown
+    readonly content?: unknown
+  }
+  expect(payload.ok).toBe(false)
+  expect(payload.locator).toBe('range')
+  expect(payload.reason).toBe(reason)
+  expect('restored' in payload).toBe(false)
+  expect('refused' in payload).toBe(false)
+  expect(payload.content).toBeUndefined()
 }
 
 async function reduce(
@@ -154,6 +189,110 @@ function landDrop(context: TestContext, callId: string, tag: number, seq: Sessio
   context.stores.queueDrop(context.session.id, tag, Date.now())
   context.stores.markDropLanded(context.session.id, tag, placeholder)
   return placeholder
+}
+
+function appendUser(context: TestContext, text: string): SessionSeq {
+  return context.session.append('user/message', {
+    id: `mc-range-user-${Math.random().toString(36).slice(2)}`,
+    role: 'user',
+    content: [{ type: 'text', text }],
+    source: { kind: 'user' },
+  } as never, { surfaceOp: 'append' }).seq
+}
+
+function appendAssistant(context: TestContext, content: ContentBlock[]): SessionSeq {
+  return context.session.append('assistant/message', {
+    turn: 1,
+    step: 1,
+    message: createAssistantMessage({ content, provider: 'mock', model: 'mock' }),
+    stream: [],
+  }, { surfaceOp: 'append' }).seq
+}
+
+function appendToolCall(context: TestContext, callId: string, name: string): SessionSeq {
+  return context.session.append('tool/call', {
+    turn: 1,
+    step: 1,
+    callId: ToolCallId(callId),
+    name,
+    arguments: '{"path":"x"}',
+  }).seq
+}
+
+function appendAttempt(context: TestContext): SessionSeq {
+  return context.session.append('assistant/attempt', {
+    turn: 1,
+    step: 1,
+    stream: [],
+  }).seq
+}
+
+function appendSystem(context: TestContext, text: string): SessionSeq {
+  return context.session.append('system/message', {
+    turn: 1,
+    step: 1,
+    message: { role: 'system', content: [{ type: 'text', text }] },
+  } as never, { surfaceOp: 'append' }).seq
+}
+
+function appendCheckpoint(context: TestContext, text: string): SessionSeq {
+  return context.session.append('user/message', {
+    id: `mc-range-checkpoint-${Math.random().toString(36).slice(2)}`,
+    role: 'user',
+    content: [{ type: 'text', text }],
+    source: { kind: 'compact-checkpoint' },
+  } as never, { surfaceOp: 'append' }).seq
+}
+
+function appendNotice(context: TestContext, text: string): SessionSeq {
+  return context.session.append('user/message', {
+    id: `mc-range-notice-${Math.random().toString(36).slice(2)}`,
+    role: 'user',
+    content: [{ type: 'text', text }],
+    source: { kind: 'magic-context', form: 'notice', summary: 'plain notice' },
+  } as never, { surfaceOp: 'append' }).seq
+}
+
+function appendCompactedUser(context: TestContext, text: string): SessionSeq {
+  return context.session.append('user/message', {
+    id: `mc-range-compacted-${Math.random().toString(36).slice(2)}`,
+    role: 'user',
+    content: [{ type: 'text', text }],
+    source: { kind: 'user' },
+  } as never, { surfaceOp: 'append' }).seq
+}
+
+function appendDeveloper(context: TestContext, text: string): SessionSeq {
+  return context.session.append('developer/message', {
+    turn: 1,
+    step: 1,
+    message: { role: 'developer', content: [{ type: 'text', text }] },
+  } as never, { surfaceOp: 'append' }).seq
+}
+
+function appendToolResult(context: TestContext, callId: string, text: string): SessionSeq {
+  return context.session.append('tool/result', {
+    turn: 1,
+    step: 1,
+    message: createToolResultMessage({
+      callId: ToolCallId(callId),
+      content: [{ type: 'text', text }],
+      isError: false,
+    }),
+  }, { surfaceOp: 'append' }).seq
+}
+
+/** Simulate a publish/compaction replacement, leaving the target shadowed. */
+function shadowEvent(context: TestContext, target: SessionSeq, text = '[compacted §C1§]'): SessionSeq {
+  return context.session.append('user/message', {
+    id: `mc-range-shadow-${Math.random().toString(36).slice(2)}`,
+    role: 'user',
+    content: [{ type: 'text', text }],
+    source: { kind: 'magic-context', form: 'notice', summary: 'compacted' },
+  } as never, {
+    surfaceOp: { op: 'replace', startSeq: target, endSeq: target },
+    sourceEventSeqs: [target],
+  }).seq
 }
 
 /** The raw `pending_drops` row, read straight from the database file. */
@@ -792,6 +931,410 @@ describe('refusals are named and never fabricate content', () => {
       expect(range.text).toContain('is not a single tag number')
       const empty = await expand(ctx.stores, ctx.session, { tags: 'x,y' })
       expect(empty.text).toContain('names no tag number')
+    } finally {
+      dispose(ctx)
+    }
+  })
+})
+
+describe('range locator', () => {
+  it('validates bounds, presence, filler, and locator precedence', async () => {
+    const ctx = context('mc-expand-range-parse')
+    try {
+      appendUser(ctx, 'live zero')
+      const failures: Array<[ExpandArgs, string]> = [
+        [{ start: '1' }, 'pass both start and end (DSH log event seq, inclusive)'],
+        [{ start: '', end: '1' }, 'pass both start and end (DSH log event seq, inclusive)'],
+        [{ start: '3', end: '1' }, 'start must not be greater than end'],
+        [{ start: '01', end: '2' }, 'start must be a non-negative decimal integer string'],
+        [{ start: '-1', end: '2' }, 'start must be a non-negative decimal integer string'],
+        [{ start: '1.5', end: '2' }, 'start must be a non-negative decimal integer string'],
+        [{ start: ' 1', end: '2' }, 'start must be a non-negative decimal integer string'],
+        [{ start: '+1', end: '2' }, 'start must be a non-negative decimal integer string'],
+        [{ start: '9007199254740992', end: '9007199254740992' }, 'start must be a non-negative decimal integer string'],
+        [{ start: '1', end: '2', tag: '1' }, 'pass either tag, tags, message, or start/end, not more than one'],
+        [{ start: '1', end: '2', tags: '1' }, 'pass either tag, tags, message, or start/end, not more than one'],
+        [{ start: '1', end: '2', message: '1' }, 'pass either tag, tags, message, or start/end, not more than one'],
+        [{ start: '1', end: '2', tag: '1', tags: '2' }, 'pass either tag, tags, message, or start/end, not more than one'],
+        [{ start: '1', end: '2', verbose: 'yes' }, 'verbose must be a boolean'],
+        [{ verbose: true }, 'verbose requires start and end'],
+      ]
+      for (const [args, reason] of failures) {
+        expectRangeFailure(await expand(ctx.stores, ctx.session, args), reason)
+      }
+      const badVerbose = await expand(ctx.stores, ctx.session, { tag: '1', verbose: 'yes' })
+      expect(badVerbose.text).toContain('verbose must be a boolean')
+
+      // The zero/zero filler is ignored when a tag locator is present; a
+      // genuine zero/zero range alone remains a range.
+      const filler = await expand(ctx.stores, ctx.session, { tag: '1', start: '0', end: '0' })
+      expect(filler.text).toContain('no such tag')
+      expect(filler.text).not.toContain('pass either')
+      const realZero = await expand(ctx.stores, ctx.session, { start: '0', end: '0' })
+      expect((realZero.result as { ok?: boolean }).ok).toBe(true)
+      expect(realZero.text).toContain('already on the live surface')
+      const zeroVerbose = await expand(ctx.stores, ctx.session, { start: '0', end: '0', verbose: true })
+      expect(zeroVerbose.text).toContain('already on the live surface')
+
+      // Empty message/tag strings are absent when a range is present.
+      expectRangeFailure(
+        await expand(ctx.stores, ctx.session, { message: '', start: '1', end: '2' }),
+        'no readable events in range 1-2',
+      )
+      expectRangeFailure(
+        await expand(ctx.stores, ctx.session, { tag: '', start: '1', end: '2' }),
+        'no readable events in range 1-2',
+      )
+      const emptyMessage = await expand(ctx.stores, ctx.session, { message: '' })
+      expect(emptyMessage.text).toContain('message must be a non-negative decimal integer string')
+      const ignoredVerbose = await expand(ctx.stores, ctx.session, { tag: '1', verbose: true })
+      expect(ignoredVerbose.text).toContain('no such tag')
+      expect(ignoredVerbose.text).not.toContain('verbose')
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('renders user, assistant tool-call, and tool result once in ascending order', async () => {
+    const ctx = context('mc-expand-range-render')
+    try {
+      const user = appendUser(ctx, 'hello range')
+      const assistant = appendAssistant(ctx, [
+        { type: 'reasoning', text: 'internal reasoning must not enter the transcript' },
+        { type: 'text', text: 'checking the file' },
+        { type: 'tool-call', id: ToolCallId('call-1'), name: 'read', arguments: '{"path":"x"}' },
+      ])
+      const call = appendToolCall(ctx, 'call-1', 'read')
+      const result = appendToolResult(ctx, 'call-1', 'result body')
+      shadowEvent(ctx, user)
+
+      const expanded = await expand(ctx.stores, ctx.session, {
+        start: String(user),
+        end: String(result),
+      })
+      const payload = expanded.result as {
+        ok?: boolean
+        locator?: string
+        events?: number[]
+        content?: ContentBlock[]
+      }
+      expect(payload.ok).toBe(true)
+      expect(payload.locator).toBe('range')
+      expect(payload.events).toEqual([user, assistant, result])
+      expect(payload.content?.every(block => block.type === 'text')).toBe(true)
+      expect(expanded.text).toContain(`Events ${String(user)}-${String(result)} (3 events, 1 skipped):`)
+      expect(expanded.text).toContain(`[${String(user)}] user/message`)
+      expect(expanded.text).toContain('hello range')
+      expect(expanded.text).toContain(`[${String(assistant)}] assistant/message`)
+      expect(expanded.text).toContain('checking the file')
+      expect(expanded.text).toContain(`[${String(assistant)}] tool call read (call-1)`)
+      expect(expanded.text).toContain('{"path":"x"}')
+      expect(expanded.text.match(/tool call read/g)).toHaveLength(1)
+      expect(expanded.text).toContain(`[${String(result)}] tool/result read (call-1)`)
+      expect(expanded.text).toContain('result body')
+      expect(expanded.text).not.toContain('[compacted')
+      expect(expanded.text).not.toContain('[tool-call]')
+      expect(expanded.text).not.toContain('internal reasoning')
+      expect('restored' in (expanded.result as object)).toBe(false)
+      expect(expanded.text).not.toContain('assistant/attempt')
+      // The standalone tool/call is counted as skipped, never rendered twice.
+      expect(call).toBeGreaterThan(assistant)
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('falls back to raw tool-call arguments when JSON parsing fails', async () => {
+    const ctx = context('mc-expand-range-raw-args')
+    try {
+      const user = appendUser(ctx, 'raw args')
+      const assistant = appendAssistant(ctx, [
+        { type: 'tool-call', id: ToolCallId('call-raw'), name: 'read', arguments: 'not-json {' },
+      ])
+      shadowEvent(ctx, user)
+      const expanded = await expand(ctx.stores, ctx.session, {
+        start: String(user),
+        end: String(assistant),
+      })
+      expect(expanded.text).toContain('not-json {')
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('lets a range result be tagged, reduced, landed and expanded again', async () => {
+    const ctx = context('mc-expand-range-lifecycle')
+    try {
+      const seeded = seedResult(ctx, 'call-range-life', 'lifecycle body')
+      const placeholder = landDrop(ctx, 'call-range-life', seeded.tag, seeded.seq)
+      shadowEvent(ctx, placeholder)
+      const range = await expand(ctx.stores, ctx.session, {
+        start: String(seeded.seq),
+        end: String(Number(placeholder) + 1),
+      })
+      const rangeTag = ctx.stores.allocateTag(
+        ctx.session.id,
+        { kind: 'tool-result', callId: 'call-range-result' },
+        Date.now(),
+      )
+      const rangeSeq = ctx.session.append('tool/result', {
+        turn: 1,
+        step: 1,
+        message: createToolResultMessage({
+          callId: ToolCallId('call-range-result'),
+          content: tagToolResultContent(range.content, tagPrefix, rangeTag),
+          isError: false,
+        }),
+      }, { surfaceOp: 'append' }).seq
+      expect((await reduce(ctx.stores, ctx.session, String(rangeTag))).text).toContain(
+        `Queued 1 tag for reclaim.`,
+      )
+      landDrop(ctx, 'call-range-result', rangeTag, rangeSeq)
+      const again = await expand(ctx.stores, ctx.session, { tag: String(rangeTag) })
+      expect(again.text).toContain('lifecycle body')
+      expect(again.text).toContain('[dropped §1§]')
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('counts excluded events as skipped but never seq gaps', async () => {
+    const ctx = context('mc-expand-range-skipped')
+    try {
+      const user = appendUser(ctx, 'first')
+      appendAttempt(ctx)
+      appendToolCall(ctx, 'call-x', 'read')
+      appendSystem(ctx, 'system-only instruction')
+      appendCheckpoint(ctx, 'checkpoint body')
+      appendNotice(ctx, 'plain plugin notice')
+      appendCompactedUser(ctx, '[compacted §C9§]')
+      appendDeveloper(ctx, 'developer instruction')
+      appendUser(ctx, 'second')
+      shadowEvent(ctx, user)
+
+      const expanded = await expand(ctx.stores, ctx.session, {
+        start: String(user),
+        end: '100',
+      })
+      expect(expanded.text).toContain(`Events ${String(user)}-100 (2 events, 8 skipped):`)
+      expect(expanded.text).toContain('first')
+      expect(expanded.text).toContain('second')
+      expect(expanded.text).not.toContain('assistant/attempt')
+      expect(expanded.text).not.toContain('tool/call')
+      expect(expanded.text).not.toContain('system-only instruction')
+      expect(expanded.text).not.toContain('checkpoint body')
+      expect(expanded.text).not.toContain('plain plugin notice')
+      expect(expanded.text).not.toContain('developer instruction')
+      expect(expanded.text).not.toContain('[compacted')
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('treats start=end as one inclusive event and keeps dropped placeholders literal', async () => {
+    const ctx = context('mc-expand-range-single')
+    try {
+      const seeded = seedResult(ctx, 'call-range-drop', 'drop body')
+      const placeholder = landDrop(ctx, 'call-range-drop', seeded.tag, seeded.seq)
+      shadowEvent(ctx, placeholder)
+      const exact = await expand(ctx.stores, ctx.session, {
+        start: String(placeholder),
+        end: String(placeholder),
+      })
+      expect(exact.text).toContain(`Events ${String(placeholder)}-${String(placeholder)} (1 events, 0 skipped):`)
+      expect(exact.text).toContain('[dropped §1§]')
+      expect(exact.text).not.toContain('drop body')
+
+      const whole = await expand(ctx.stores, ctx.session, {
+        start: String(seeded.seq),
+        end: String(Number(placeholder) + 1),
+      })
+      expect(whole.text).toContain('drop body')
+      expect(whole.text).toContain('[dropped §1§]')
+      expect(whole.text).not.toContain('Content restored')
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('journals range reads and live-surface reads without restore fields', async () => {
+    const ctx = context('mc-expand-range-journal')
+    try {
+      const rows: unknown[][] = []
+      const journal = { info: (...args: unknown[]) => { rows.push(args) } }
+      const user = appendUser(ctx, 'journal live')
+      const live = await expand(ctx.stores, ctx.session, { start: String(user), end: String(user) }, journal)
+      expect(live.text).toContain('already on the live surface')
+      expect(rows).toHaveLength(1)
+      expect(rows[0]![0]).toBe('tool-call')
+      expect(rows[0]![1]).toContain('ctx_expand: read 0 events (live surface)')
+      expect((rows[0]![2] as { liveSurface?: boolean }).liveSurface).toBe(true)
+
+      shadowEvent(ctx, user)
+      const raw = await expand(ctx.stores, ctx.session, { start: String(user), end: String(user) }, journal)
+      expect(raw.text).toContain('(1 events, 0 skipped)')
+      expect(rows).toHaveLength(2)
+      expect(rows[1]![1]).toContain('ctx_expand: read 1 event(s)')
+      const data = rows[1]![2] as { locator?: string; events?: number[]; restored?: unknown }
+      expect(data.locator).toBe('range')
+      expect(data.events).toEqual([user])
+      expect('restored' in data).toBe(false)
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('returns a live-surface sentence instead of rereading live events', async () => {
+    const ctx = context('mc-expand-range-live')
+    try {
+      const user = appendUser(ctx, 'already live')
+      const expanded = await expand(ctx.stores, ctx.session, {
+        start: String(user),
+        end: String(user),
+      })
+      const payload = expanded.result as {
+        ok?: boolean
+        locator?: string
+        events?: number[]
+        restored?: unknown
+        content?: ContentBlock[]
+      }
+      expect(payload.ok).toBe(true)
+      expect(payload.locator).toBe('range')
+      expect(payload.events).toEqual([])
+      expect('restored' in payload).toBe(false)
+      expect(expanded.text).toBe(
+        `Events ${String(user)}-${String(user)} are already on the live surface; no raw history was read.`,
+      )
+      expect(payload.content).toHaveLength(1)
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('bounds verbose previews and keeps full bodies out of the transcript', async () => {
+    const ctx = context('mc-expand-range-verbose')
+    try {
+      const longUser = `user-${'x'.repeat(300)}`
+      const longAssistant = `assistant-${'y'.repeat(250)}`
+      const user = appendUser(ctx, longUser)
+      const assistant = appendAssistant(ctx, [
+        { type: 'text', text: longAssistant },
+        { type: 'tool-call', id: ToolCallId('call-v'), name: 'read', arguments: '{"path":"v"}' },
+      ])
+      const result = appendToolResult(ctx, 'call-v', `result-${'z'.repeat(250)}`)
+      shadowEvent(ctx, user)
+
+      const expanded = await expand(ctx.stores, ctx.session, {
+        start: String(user),
+        end: String(result),
+        verbose: true,
+      })
+      expect(expanded.text).toContain('(verbose; 3 events, 0 skipped)')
+      expect(expanded.text).toContain('  • [text] result-')
+      expect(expanded.text).toContain('  • [text]')
+      expect(expanded.text).toContain('  • [tool-call] read (call-v)')
+      expect(expanded.text).not.toContain(longUser)
+      expect(expanded.text).not.toContain(longAssistant)
+      expect(expanded.text).toContain('Recover a full dropped tool result with tag or message.')
+      for (const part of expanded.text.split('\n').filter(line => line.includes('• [text]'))) {
+        expect(Array.from(part.slice(part.indexOf(']') + 2)).length).toBeLessThanOrEqual(200)
+      }
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('truncates an oversized first event and stays inside the 15k budget', async () => {
+    const ctx = context('mc-expand-range-budget')
+    try {
+      const user = appendUser(ctx, `huge-${'Q'.repeat(80_000)}`)
+      shadowEvent(ctx, user)
+      const expanded = await expand(ctx.stores, ctx.session, {
+        start: String(user),
+        end: String(user + 1),
+      })
+      expect(expanded.text).toContain('[event truncated]')
+      expect(expanded.text).toContain(`Event ${String(user)} truncated at the budget`)
+      expect(expanded.text).toContain('narrow start/end')
+      expect(expanded.text).not.toContain('Call again with start=')
+      expect(estimateTokens(expanded.text)).toBeLessThanOrEqual(15_000)
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('truncates ordinary multi-event ranges and keeps verbose on the continuation', async () => {
+    const ctx = context('mc-expand-range-continuation')
+    try {
+      const first = appendUser(ctx, 'small first event')
+      const second = appendUser(ctx, `large-${'B'.repeat(70_000)}`)
+      shadowEvent(ctx, first)
+      shadowEvent(ctx, second)
+      const expanded = await expand(ctx.stores, ctx.session, {
+        start: String(first),
+        end: String(second),
+      })
+      expect(expanded.text).toContain(
+        `Truncated at event ${String(first)} (budget: ~15000 estimated tokens). Call again with start=${String(Number(first) + 1)} end=${String(second)}.`,
+      )
+      expect(expanded.text).not.toContain('verbose=true')
+      expect(estimateTokens(expanded.text)).toBeLessThanOrEqual(15_000)
+
+      const manyBlocks = Array.from({ length: 400 }, (_, index) => ({
+        type: 'text' as const,
+        text: `block ${String(index)} ${'x'.repeat(190)}`,
+      }))
+      const blocks = ctx.session.append('user/message', {
+        id: 'mc-range-many-blocks',
+        role: 'user',
+        content: manyBlocks,
+        source: { kind: 'user' },
+      } as never, { surfaceOp: 'append' }).seq
+      shadowEvent(ctx, blocks)
+      const verbose = await expand(ctx.stores, ctx.session, {
+        start: String(first),
+        end: String(blocks),
+        verbose: true,
+      })
+      expect(verbose.text).toMatch(
+        new RegExp(`Truncated at event \\d+ \\(budget: ~15000 estimated tokens\\)\\. Call again with start=\\d+ end=${String(blocks)} verbose=true\\.`),
+      )
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('treats both empty range strings as a range error, not a tag payload', async () => {
+    const ctx = context('mc-expand-range-empty')
+    try {
+      const expanded = await expand(ctx.stores, ctx.session, { start: '', end: '' })
+      expectRangeFailure(expanded, 'start and end must both be provided')
+    } finally {
+      dispose(ctx)
+    }
+  })
+
+  it('has no separate event-count cap', async () => {
+    const ctx = context('mc-expand-range-count')
+    try {
+      const seqs: SessionSeq[] = []
+      for (let index = 0; index < 70; index += 1) seqs.push(appendUser(ctx, `event ${String(index)}`))
+      shadowEvent(ctx, seqs[0]!)
+      const last = seqs[seqs.length - 1]!
+      const expanded = await expand(ctx.stores, ctx.session, {
+        start: String(seqs[0]),
+        end: String(Number(last) + 1),
+      })
+      expect(expanded.text).toContain('(70 events, 1 skipped)')
+      expect(expanded.text).toContain(`[${String(last)}] user/message`)
+      expect(expanded.text).toContain('event 69')
+      const verbose = await expand(ctx.stores, ctx.session, {
+        start: String(seqs[0]),
+        end: String(Number(last) + 1),
+        verbose: true,
+      })
+      expect(verbose.text).toContain('(verbose; 70 events, 1 skipped)')
     } finally {
       dispose(ctx)
     }

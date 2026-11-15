@@ -8,6 +8,12 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
+## [Unreleased]
+
+### Added
+
+- `ctx_expand` 新增 `start`/`end` 范围与 `verbose` 预览：闭区间 DSH 日志事件 seq，只读 `user`/`assistant`/`tool/result` 转录，不要求先 drop、不改 drop 状态、不调用模型；`[compacted §C…§]` 与 adapter 记录被排除，`[dropped §N§]` 按字面保留。成功结果使用 `locator: "range"`，不含 `restored` 键。
+
 ## [0.12.3] - 2026-11-15
 
 ### Changed

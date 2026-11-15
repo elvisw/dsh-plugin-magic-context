@@ -1,0 +1,7 @@
+{
+  "preflight_git_diff_sha256": "f1ce621363bbb48515c2d438f825681be8d0470eb3b0bccb779d7549eaeaf3ef",
+  "freeze_git_diff_sha256": "a610a95d8ce7d7f22de86b1731ea37afa4f87a9d14aff1904b442d495a6b2115",
+  "freeze_git_status_sha256": "317e463a6d18d2e3a8e5e849e98a109aaa5ebecf559c5a355812c9d75cdf6283",
+  "note": "Preflight hash was captured at build time; freeze hash is the final pre-commit tree. Only tests/docs changed after the host build; installed lib hashes remain the preflight ones.",
+  "test_file_sha256": "5dbf2df97b073423163a0f89c4cbcb920381a231f93d02be23a7a1be3f14ebe5"
+}
