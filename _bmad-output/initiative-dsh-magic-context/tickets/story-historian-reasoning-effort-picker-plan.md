@@ -1,7 +1,7 @@
 ---
 ticket: 13
 title: "Magic Context settings page, Chinese copy, and reasoning effort picker — plan"
-status: built
+status: done
 ---
 
 # Plan — Magic Context settings page, Chinese copy, and effort picker
