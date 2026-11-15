@@ -1,7 +1,7 @@
 ---
 ticket: 12
 title: "V1.1: ctx_expand range and verbose — plan"
-status: built
+status: done
 ---
 
 # Plan — V1.1 `ctx_expand` range and `verbose`
