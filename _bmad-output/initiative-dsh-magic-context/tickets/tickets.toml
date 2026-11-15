@@ -144,3 +144,15 @@ after = [11]
 hitl = false
 risk = "high"
 refine = true
+
+[[entry]]
+id = 13
+type = "story"
+title = "Historian reasoning effort picker"
+description = "Replace the free-text Historian reasoning effort field with a picker. Static low/medium/high is not acceptable: accepted effort ids are provider/model specific (for example commandcode deepseek/deepseek-v4.1-flash supports off/low/high/max, while other models may support low/medium/high or none). The picker must derive options from the routed provider/model capability when the host catalog exposes reasoning metadata, include a Default (model decides) option and a Custom fallback that preserves an unknown/legacy string, and never alias or silently clamp an id. It is UI/config-surface only: runtime pass-through semantics in src/dsh/pre-step.ts, compaction-engine.ts and recomp.ts must not change, and an unsupported id must still fail explicitly. Start only after the 0.12.3 daily-profile E2E has been completed; this ticket is backlog, not part of that E2E."
+verify = "Independent ticket validation passes; client tests cover a model advertising off/low/high/max, a model advertising low/medium/high, a model with no reasoning metadata (control disabled or only Default), an unknown stored value shown as Custom and preserved, changing provider/model refreshes options, and no static medium offered to a model that does not support it. The chosen value is written through the existing historian.reasoningEffort path and a real Historian/compact call receives exactly that id; an unsupported id still produces UNSUPPORTED_REASONING_EFFORT rather than being remapped. typecheck, i18n, build and the full client-focused suite stay green; no schema or host-store change."
+covers = []
+after = [12]
+hitl = false
+risk = "low"
+refine = true
