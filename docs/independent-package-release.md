@@ -6,7 +6,7 @@
 本仓库 `0.12.0`–`0.12.3` 使用 npm 包名 **`@elvisw/dsh-plugin-magic-context`**；从 **`0.13.0`** 起改为
 **`@elvisw/dsh-magic-context`**。`0.12.1` 是同一代码线的 docs-only patch，`0.12.2` 是 historian 重试、
 reasoning effort 与两处观测口径的修复版，`0.12.3` 是 `/ctx-flush` 空队列反馈的 patch，`0.13.0` 是包名
-迁移 + `ctx_expand` range/verbose，`0.14.0` 是顶层设置页、全量中文化与 catalog-backed effort 选择器（发布前以仓库版本为准）。上游包 `dsh-plugin-magic-context` 属于另一位
+迁移 + `ctx_expand` range/verbose，`0.14.0` 是顶层设置页、全量中文化与 catalog-backed effort 选择器（已发布）。上游包 `dsh-plugin-magic-context` 属于另一位
 维护者，本 fork 不修改、不覆盖它。
 
 ## 用户迁移

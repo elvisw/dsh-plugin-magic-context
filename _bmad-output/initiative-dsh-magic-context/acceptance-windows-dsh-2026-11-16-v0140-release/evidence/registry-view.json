@@ -1,0 +1,17 @@
+{
+  "version": "0.14.0",
+  "dist-tags": {
+    "bootstrap": "0.0.0-bootstrap.0",
+    "latest": "0.14.0"
+  },
+  "dist.attestations": {
+    "url": "https://registry.npmjs.org/-/npm/v1/attestations/@elvisw%2fdsh-magic-context@0.14.0",
+    "provenance": {
+      "predicateType": "https://slsa.dev/provenance/v1"
+    }
+  },
+  "gitHead": "48c49485647e9fd63c6431816a5f96641272bcb3",
+  "dist.tarball": "https://registry.npmjs.org/@elvisw/dsh-magic-context/-/dsh-magic-context-0.14.0.tgz",
+  "dist.shasum": "230d8c0edfa7ace60293e8e589a0c529d18d2008",
+  "dist.integrity": "sha512-fliA4uhDAsLA2OvUJi0PIRgZ8x+l6GXx7oPXt3zA/j3M2cbUcs2rFu4bmew/Q/61DWowA1aLq6Dq3ipyHU1b2Q=="
+}

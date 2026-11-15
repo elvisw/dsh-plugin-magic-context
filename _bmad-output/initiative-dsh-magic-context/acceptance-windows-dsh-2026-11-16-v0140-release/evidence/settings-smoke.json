@@ -1,0 +1,25 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-v0140-20261116-003817",
+  "steps": [
+    {
+      "name": "settings-nav-visible",
+      "count": 1
+    },
+    {
+      "name": "settings-card-visible",
+      "effortPresent": true,
+      "effortOptions": [
+        "",
+        "off",
+        "low",
+        "high",
+        "max",
+        "__custom__"
+      ],
+      "hasDefault": true,
+      "hasSelectableEffort": true,
+      "bodyHasHistorian": true
+    }
+  ],
+  "errors": []
+}

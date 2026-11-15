@@ -1,0 +1,45 @@
+{
+  "local": {
+    "bytes": 4016894,
+    "sha256": "7ba1bb6f0dd1a2c42559e2750c181efda33915d5db40037a5e8815f4aec4e68d",
+    "sha1": "63ab0cbe0532f20c4aeb4f976579ec010a9e3807"
+  },
+  "registry": {
+    "bytes": 4016594,
+    "sha256": "1a47c4561922a09a4dfc477112a54b5dbe64a8800f8c5fac1d0aae1d6261c183",
+    "sha1": "230d8c0edfa7ace60293e8e589a0c529d18d2008"
+  },
+  "diffs": [
+    {
+      "path": "README.md",
+      "local_bytes": 37564,
+      "registry_bytes": 37062,
+      "local_sha256": "2e936b3b27a497cba781a054b93df2f064dcc9c1e70339a9b2b074a9b532c9ec",
+      "registry_sha256": "009be55c6faf3afd36888711819ea08b2bc84a58197706ceca3b69cf1bb28b37",
+      "local_crlf": 502,
+      "registry_crlf": 0,
+      "normalized_equal": true
+    },
+    {
+      "path": "README.zh-CN.md",
+      "local_bytes": 33654,
+      "registry_bytes": 33256,
+      "local_sha256": "934599b1676aea82774151b816394dea14566e724994acc4502a6d0bfacbba8b",
+      "registry_sha256": "841464f7369a320d2e0a126af0f6dc4f9997ff077ff44439ca7f2a1734473209",
+      "local_crlf": 398,
+      "registry_crlf": 0,
+      "normalized_equal": true
+    },
+    {
+      "path": "lib/client.js",
+      "local_bytes": 137245,
+      "registry_bytes": 134492,
+      "local_sha256": "e6dc0a8316596c58c1e4b95961eb71ba41107affa64dc7b8f8a632c6165f62e1",
+      "registry_sha256": "d5f5b118a978b703a25a573bb2adaad6592335bfb5f3abe886f1393e2af193bb",
+      "local_crlf": 2753,
+      "registry_crlf": 0,
+      "normalized_equal": true
+    }
+  ],
+  "note": "All differing members are CRLF-vs-LF only; normalized text is byte-identical."
+}
