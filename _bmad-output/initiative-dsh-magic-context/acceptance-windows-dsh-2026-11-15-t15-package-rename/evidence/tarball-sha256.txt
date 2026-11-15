@@ -1,0 +1,7 @@
+tarball: elvisw-dsh-magic-context-0.13.0.tgz
+sha256: 1c8ac596be020e72b6e0103c287bcd606721dccd5af5b118605d253e2049dfd6
+bytes: 4007255
+files: 66
+shasum: f64dd86cc65f455566a4b06b10b0a7b598ce961f
+integrity: sha512-+wyCgXTD78S6oGQj+yKkXNAVHmcidw85WA8JcNXnozEbj/fuACB/qLVvRa/mKKD5omKIln3dAbJnLaUP3kV7Ww==
+source: npm pack --pack-destination %TEMP%\opencode\t15-pack-gate

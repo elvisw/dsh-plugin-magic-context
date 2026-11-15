@@ -8,7 +8,13 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
-## [Unreleased]
+## [0.13.0] - 2026-11-15
+
+### Changed
+
+- npm 包名迁移为 **`@elvisw/dsh-magic-context`**（0.12.x 为 `@elvisw/dsh-plugin-magic-context`）。loader row id `magic-context-dsh`、settings namespace、数据目录 `magic-context-dsh-poc`、schema v11 与存储格式不变。
+- 新增一次性 profile/home/overlay patch 迁移脚本 `tools/migrate-profile-package-name.mjs`；0.12.x 升级必须先运行，否则 loader 按 `id` + `name` 匹配时会跳过旧配置行，表现为设置或自定义 `dataDir` 丢失。脚本随 npm tarball 与 hand-out 一起发布。
+- 上游包、0.12.x fork 包与新包**不支持共装**：loader 不拒绝重复 row id，而是保留一条并可能隐藏重复设置行；升级前先移除旧包。
 
 ### Added
 
@@ -224,7 +230,7 @@ npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布�
 
 0.12.0 之前的 tag 位于上游仓库 `wk544863858/dsh-plugin-magic-context`；从 0.12.0 起，版本与 tag 属于本 fork。
 
-[Unreleased]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.12.3...HEAD
+[0.13.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.12.3...v0.13.0
 [0.12.3]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.12.2...v0.12.3
 [0.12.2]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.12.1...v0.12.2
 [0.12.1]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.12.0...v0.12.1

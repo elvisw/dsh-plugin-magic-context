@@ -1,0 +1,30 @@
+ M .github/workflows/release.yml
+ M CHANGELOG.md
+ M CONTRIBUTING.md
+ M NOTICE
+ M PARITY.md
+ M README.md
+ M README.zh-CN.md
+ M _bmad-output/initiative-dsh-magic-context/tickets/story-historian-reasoning-effort-picker.md
+ M _bmad-output/initiative-dsh-magic-context/tickets/tickets.toml
+ M cordis.patch.yml
+ M docs/dsh-plugin-config-ui-contract.md
+ M docs/dsh-plugin-ui-telemetry-contract.md
+ M docs/dsh-plugin-upgrade-followup.md
+ M docs/independent-package-release.md
+ M package-lock.json
+ M package.json
+ M scripts/mc-pack-dist.mjs
+ M scripts/phase-map.mjs
+ M src/client/index.js
+ M tests/client-pure.spec.ts
+ M tools/install-magic-context.bat
+?? .codegraph/
+?? _bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-15-t15-package-rename/
+?? _bmad-output/initiative-dsh-magic-context/tickets/story-documentation-index-and-contract-status-audit-plan.md
+?? _bmad-output/initiative-dsh-magic-context/tickets/story-documentation-index-and-contract-status-audit.md
+?? _bmad-output/initiative-dsh-magic-context/tickets/story-historian-reasoning-effort-picker-plan.md
+?? _bmad-output/initiative-dsh-magic-context/tickets/story-magic-context-package-identity-rename-plan.md
+?? _bmad-output/initiative-dsh-magic-context/tickets/story-magic-context-package-identity-rename.md
+?? tests/package-identity-migration.spec.ts
+?? tools/migrate-profile-package-name.mjs

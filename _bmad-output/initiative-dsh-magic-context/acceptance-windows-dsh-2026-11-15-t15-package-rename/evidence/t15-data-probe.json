@@ -1,0 +1,42 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t15-data-probe-20261115-205000",
+  "node": "v26.13.1",
+  "old_tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t15-old-pack\\elvisw-dsh-plugin-magic-context-0.12.3.tgz",
+  "old_tarball_hashes": {
+    "sha1": "14175a767425cdd5a161e96a7918237aedfb2294",
+    "sha256": "32ba182d345fb0070ac703989d6d356e6084bb234211cda8f90e53ec484d8ae7",
+    "integrity": "sha512-sZyS6z7LJo89VlGRNGxDEE8R5bqk8ABBA2LSZd+opnCrA7WnEW0Srjurnh91N3px0BXh9IxkjmcXvT+iJGNYnw=="
+  },
+  "new_tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t15-pack-gate\\elvisw-dsh-magic-context-0.13.0.tgz",
+  "new_tarball_hashes": {
+    "sha1": "f64dd86cc65f455566a4b06b10b0a7b598ce961f",
+    "sha256": "1c8ac596be020e72b6e0103c287bcd606721dccd5af5b118605d253e2049dfd6",
+    "integrity": "sha512-+wyCgXTD78S6oGQj+yKkXNAVHmcidw85WA8JcNXnozEbj/fuACB/qLVvRa/mKKD5omKIln3dAbJnLaUP3kV7Ww=="
+  },
+  "scope": "read path through the new package; no write through the new package",
+  "old_package_version": "0.12.3",
+  "new_package_version": "0.13.0",
+  "adapter_schema_seed": 11,
+  "adapter_schema_verify": 11,
+  "corpus_schema_seed": "v95",
+  "corpus_bootstrap_seed": "created",
+  "corpus_bootstrap_verify": "exists",
+  "memory_seed_ok": true,
+  "memory_verify_rows": 1,
+  "memory_id": 1,
+  "memory_content": "T15_DATA_SURVIVAL_4097",
+  "memory_category": "CONFIG_VALUES",
+  "memory_importance": 7,
+  "journal_seed_rows": 1,
+  "journal_verify_rows": 1,
+  "journal_marker": "T15_DATA_SURVIVAL_4097",
+  "pending_drop_seed": "pending",
+  "pending_drop_verify": "pending",
+  "probe_marker": "T15_DATA_SURVIVAL_4097",
+  "memory_preserved": true,
+  "journal_preserved": true,
+  "pending_drop_preserved": true,
+  "schema_preserved": true,
+  "corpus_preserved": true,
+  "ok": true
+}

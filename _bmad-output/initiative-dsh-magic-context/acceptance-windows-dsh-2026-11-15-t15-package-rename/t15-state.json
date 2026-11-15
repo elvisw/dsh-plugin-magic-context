@@ -1,0 +1,62 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t15-20261115-211430",
+  "fresh_root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t15-fresh-20261115-211430",
+  "tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t15-pack-gate\\elvisw-dsh-magic-context-0.13.0.tgz",
+  "tarball_sha256": "1c8ac596be020e72b6e0103c287bcd606721dccd5af5b118605d253e2049dfd6",
+  "tarball_bytes": 4007255,
+  "tarball_files": 66,
+  "helper_sha256": "ffd1a2b42351f2cce16a07300c6c729d002e2db3bdbaaeff48f67f8ad7a19716",
+  "bootstrap_exit_code": 0,
+  "old_add_exit_code": 0,
+  "old_dump_exit_code": 0,
+  "remove_old_exit_code": 0,
+  "new_add_exit_code": 0,
+  "new_dump_exit_code": 0,
+  "fresh_dump_exit_code": 0,
+  "fresh_add_exit_code": 0,
+  "fresh_dump_after_exit_code": 0,
+  "conflict_add_exit_code": 0,
+  "conflict_dump_exit_code": 0,
+  "conflict_dump_has_old_name": true,
+  "conflict_dump_has_new_name": true,
+  "before_has_old_name": true,
+  "after_has_new_name": true,
+  "profile_migrate_exit": 0,
+  "profile_migrate_second_exit": 0,
+  "profile_second_stdout": "already migrated: magic-context-dsh uses @elvisw/dsh-magic-context\n",
+  "home_migrate_exit": 0,
+  "home_after_has_new_name": true,
+  "home_dump_has_new_name": true,
+  "overlay_migrate_exit": 0,
+  "overlay_after_has_new_name": true,
+  "overlay_dump_has_new_name": true,
+  "new_dump_has_new_name": true,
+  "new_dump_has_old_name": false,
+  "new_dump_has_custom_data_dir": true,
+  "new_dump_has_execute_threshold": true,
+  "fresh_dump_has_new_name": true,
+  "fresh_dump_has_old_name": false,
+  "installer_has_helper": true,
+  "installer_has_old_specifier_removal": true,
+  "installer_removal_commands": [
+    "call \"%DSH%\" plugin --profile %PROFILE% remove %PKG% >nul 2>nul",
+    "call \"%DSH%\" plugin --profile %PROFILE% remove @elvisw/dsh-plugin-magic-context >nul 2>nul",
+    "call \"%DSH%\" plugin --profile %PROFILE% remove dsh-plugin-magic-context >nul 2>nul"
+  ],
+  "installer_removal_specifiers": [
+    "@elvisw/dsh-magic-context",
+    "@elvisw/dsh-plugin-magic-context",
+    "dsh-plugin-magic-context"
+  ],
+  "installer_removal_count": 3,
+  "installer_has_profile_prompt": true,
+  "daily_profile_mtime_before": {
+    "C:\\Users\\elvis\\.dsh": 1794722547304543000,
+    "C:\\Users\\elvis\\.local\\share\\cortexkit\\magic-context-dsh-poc": 1794732513161076300
+  },
+  "daily_profile_mtime_after": {
+    "C:\\Users\\elvis\\.dsh": 1794722547304543000,
+    "C:\\Users\\elvis\\.local\\share\\cortexkit\\magic-context-dsh-poc": 1794732513161076300
+  },
+  "daily_profile_touched": false
+}

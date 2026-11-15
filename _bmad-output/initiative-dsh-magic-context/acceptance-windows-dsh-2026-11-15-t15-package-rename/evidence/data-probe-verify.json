@@ -1,0 +1,42 @@
+{
+  "mode": "verify",
+  "packageVersion": "0.13.0",
+  "schemaVersion": "11",
+  "corpus": {
+    "outcome": "exists"
+  },
+  "probeMarker": "T15_DATA_SURVIVAL_4097",
+  "journal": [
+    {
+      "at": 1794748524891,
+      "level": "info",
+      "kind": "memory-recall",
+      "summary": "T15 data probe seed",
+      "sessionId": "session-t15-data-probe",
+      "data": {
+        "marker": "T15_DATA_SURVIVAL_4097"
+      }
+    }
+  ],
+  "pendingDrop": "pending",
+  "journalBounds": {
+    "rows": 1,
+    "oldest": 1794748524891,
+    "newest": 1794748524891
+  },
+  "memories": [
+    {
+      "id": 1,
+      "category": "CONFIG_VALUES",
+      "content": "T15_DATA_SURVIVAL_4097",
+      "importance": 7
+    }
+  ],
+  "stats": {
+    "rows": 1,
+    "mutationLog": 0,
+    "epoch": 0,
+    "verified": 0,
+    "unverified": 1
+  }
+}

@@ -5,7 +5,7 @@
 > 标注约定：〔码〕= 源码行号证据；〔测〕= 本机实测（隔离 TEMP 目录，未触碰用户 desktop profile）；〔档〕= 仓库文档/README。
 > 证据基线：DSH Desktop 0.2.0-rc.2；源码参考 `deepseek-harness-master`（vendor 版本：cordis 4.0.5-alpha.1、schemastery 3.18.5-alpha.1）。
 >
-> 2026-11-14：npm 包名迁移为 `@elvisw/dsh-plugin-magic-context`；本文的契约示例已按新包名更新，早期实测输出中若出现旧名只作历史记录。
+> 2026-11-14：npm 包名迁移为 `@elvisw/dsh-plugin-magic-context`；本文的契约示例已按当时的包名更新，早期实测输出中若出现旧名只作历史记录。2026-11-15（0.13.0）包名再次迁移为 `@elvisw/dsh-magic-context`；本文保留为 0.12.x 历史契约，当前 Settings 页契约以 T13 产出的 `docs/dsh-plugin-settings-ui-contract.md` 为准，示例中的旧包名不再更新。
 
 ---
 

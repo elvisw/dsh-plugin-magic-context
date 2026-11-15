@@ -1,0 +1,12 @@
+# == @elvisw/dsh-magic-context
+- id: magic-context-dsh
+  name: '@elvisw/dsh-magic-context'
+  config:
+    registerCompactionEngine: false
+# == @elvisw/dsh-plugin-magic-context
+- id: magic-context-dsh
+  name: '@elvisw/dsh-plugin-magic-context'
+  config:
+    registerCompactionEngine: false
+
+--- stderr ---

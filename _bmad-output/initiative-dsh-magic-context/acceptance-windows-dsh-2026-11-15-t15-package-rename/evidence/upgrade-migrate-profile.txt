@@ -1,0 +1,3 @@
+migrated magic-context-dsh to @elvisw/dsh-magic-context (backup: C:\Users\elvis\AppData\Local\Temp\opencode\dsh-mc-t15-20261115-211430\dsh-home\profiles\web\cordis.patch.yml.bak-20261115-211445)
+
+--- stderr ---

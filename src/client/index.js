@@ -43,7 +43,7 @@ window.__ModuleLoader__.load({
    * all by the package name — not by the Loader row id (`magic-context-dsh`),
    * which is only the settings namespace.
    */
-  id: '@elvisw/dsh-plugin-magic-context',
+  id: '@elvisw/dsh-magic-context',
   factory: (require) => {
     const React = require('react')
     const { useEffect, useRef, useState } = React
@@ -56,7 +56,7 @@ window.__ModuleLoader__.load({
     /** Loader row id of the Host half; also the settings namespace. */
     const CFG_NS = 'magic-context-dsh'
     /** Package name; the `plugins.row.config` key is `<package name>#<row id>`. */
-    const PKG_NAME = '@elvisw/dsh-plugin-magic-context'
+    const PKG_NAME = '@elvisw/dsh-magic-context'
     const ROW_CONFIG_KEY = PKG_NAME + '#' + CFG_NS
     /** Host telemetry routes (loopback only, no auth — telemetry only). */
     const SUMMARY_URL = '/mc-telemetry/summary'
@@ -2244,6 +2244,8 @@ window.__ModuleLoader__.load({
       apply,
       __diagnostics: {
         recordOf, recordsOf, recordCounts, noiseLine, dictionaryKeys, dictionaryTranslator, dictionaries: DICTIONARIES,
+        // Package identity (the client module id and the row-config key).
+        PKG_NAME, ROW_CONFIG_KEY,
         // The category table the panel renders from. Exposed so node-side checks
         // use THIS table instead of a hand-copied mirror — the mirror had
         // already drifted (`maintain` was missing) and the records-check script

@@ -1,7 +1,7 @@
 {
-  "name": "@elvisw/dsh-plugin-magic-context",
-  "version": "0.12.3",
-  "description": "Magic Context for DeepSeek Harness: reversible context reclaim, an out-of-band historian, an m[0]/m[1] baseline, project memories in the plugin's own corpus, and the compaction seam.",
+  "name": "@elvisw/dsh-magic-context",
+  "version": "0.13.0",
+  "description": "Magic Context for DeepSeek Harness — elvisw fork: reversible context reclaim, an out-of-band historian, an m[0]/m[1] baseline, project memories in the plugin's own corpus, and the compaction seam.",
   "keywords": [
     "deepseek-harness",
     "dsh",
@@ -44,6 +44,7 @@
     "lib",
     "vendor",
     "cordis.patch.yml",
+    "tools/migrate-profile-package-name.mjs",
     "README.md",
     "NOTICE",
     "LICENSE"

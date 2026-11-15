@@ -14,8 +14,9 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
 const CLIENT = fileURLToPath(new URL('../src/client/index.js', import.meta.url))
+const PACKAGE_JSON = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as { name: string }
 
-let definition: { factory?: (require: (name: string) => unknown) => Record<string, unknown> } | null = null
+let definition: { id?: string; factory?: (require: (name: string) => unknown) => Record<string, unknown> } | null = null
 const window = { __ModuleLoader__: { load: (def: unknown) => { definition = def as typeof definition } } }
 // eslint-disable-next-line @typescript-eslint/no-implied-eval
 new Function('window', readFileSync(CLIENT, 'utf8'))(window)
@@ -33,6 +34,7 @@ const api = factory((name) => {
   throw new Error('unexpected require: ' + name)
 }) as {
   __diagnostics: {
+    PKG_NAME: string
     compactTok: (value: unknown) => string
     fmtInt: (value: unknown) => string
     spanOf: (value: unknown) => string
@@ -457,6 +459,13 @@ describe('createModelCatalog — the verify-pin picker source', () => {
  * half-filled pair: a provider without its model (or vice versa) reads as "no
  * pin" on the host, so a half write would silently leave a stale model behind.
  */
+describe('client package identity', () => {
+  it('registers under the package.json name', () => {
+    expect(definition?.id).toBe(PACKAGE_JSON.name)
+    expect(api.__diagnostics.PKG_NAME).toBe(PACKAGE_JSON.name)
+  })
+})
+
 describe('routePairOps — the pin-pair write semantics', () => {
   const PROVIDER = ['maintenance', 'verifyProvider']
   const MODEL = ['maintenance', 'verifyModel']

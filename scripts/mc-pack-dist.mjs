@@ -23,6 +23,7 @@ import { fileURLToPath } from 'node:url'
 const here = dirname(fileURLToPath(import.meta.url))
 const root = join(here, '..')
 const installer = join(root, 'tools', 'install-magic-context.bat')
+const migrationHelper = join(root, 'tools', 'migrate-profile-package-name.mjs')
 const entry = join(root, 'lib', 'index.js')
 const cache = join(root, '.tmp-pack-cache')
 
@@ -41,6 +42,7 @@ const fail = (message) => {
 }
 
 if (!existsSync(installer)) fail(`missing ${installer}`)
+if (!existsSync(migrationHelper)) fail(`missing ${migrationHelper}`)
 if (!skipBuild) {
   console.log('pack-dist: npm run build')
   npmRun('run build')
@@ -67,6 +69,8 @@ if (!existsSync(tarball)) {
 }
 
 copyFileSync(installer, join(outDir, 'install-magic-context.bat'))
+mkdirSync(join(outDir, 'tools'), { recursive: true })
+copyFileSync(migrationHelper, join(outDir, 'tools', 'migrate-profile-package-name.mjs'))
 const sha256 = createHash('sha256').update(readFileSync(tarball)).digest('hex')
 
 console.log(`
@@ -76,6 +80,9 @@ hand-out bundle: ${outDir}
     sha256 ${sha256}
   install-magic-context.bat
     copies the tarball into %USERPROFILE%\\dsh-plugins and installs from that copy
+  tools/migrate-profile-package-name.mjs
+    one-time profile/home/overlay patch name migration (0.12.x -> 0.13.0)
 
-Send both files together. The recipient quits DeepSeek Harness, double-clicks
-install-magic-context.bat, then starts DeepSeek Harness again.`)
+Send the files together. The recipient quits DeepSeek Harness, double-clicks
+install-magic-context.bat, runs the printed migration command if upgrading
+from 0.12.x, then starts DeepSeek Harness again.`)

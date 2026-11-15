@@ -7,12 +7,14 @@ came from and the exact revisions it was taken at.
 
 ## This fork
 
-The npm package `@elvisw/dsh-plugin-magic-context` is maintained by **elvisw**
+The npm package `@elvisw/dsh-magic-context` is maintained by **elvisw**
 (https://github.com/elvisw). It is a fork of the DSH adapter previously
-published as `dsh-plugin-magic-context` by wukai. The upstream package and
-repository are not modified by this fork; upstream credit and the notices below
-remain in force. The loader row id (`magic-context-dsh`), settings namespace,
-and plugin data directory are intentionally unchanged.
+published as `dsh-plugin-magic-context` by wukai; the fork used
+`@elvisw/dsh-plugin-magic-context` for `0.12.x` and renamed to
+`@elvisw/dsh-magic-context` in `0.13.0`. The upstream package and repository
+are not modified by this fork; upstream credit and the notices below remain in
+force. The loader row id (`magic-context-dsh`), settings namespace, and plugin
+data directory are intentionally unchanged.
 
 Upstream DSH adapter: `wk544863858/dsh-plugin-magic-context`, npm
 `dsh-plugin-magic-context@0.11.2` (last public release, 2026-11-11), MIT,
@@ -24,9 +26,12 @@ semantics (`ctx_expand` returns a new result and leaves the old placeholder and
 tag dropped), the `message` locator for raw results shadowed by a Historian
 compartment, manual `/ctx-flush`, durable drop-state decisions, and the removal
 of the 30-day tag prune / `tags.retentionDays` / `pruneTags`. The plugin schema
-moves to v11 (`pending_drops.flush_requested`). The npm package name changes,
-but the row id, settings namespace, and data directory stay the same, so the
-upstream package and this fork cannot be installed side by side.
+moves to v11 (`pending_drops.flush_requested`). `0.13.0` renames the npm package
+to `@elvisw/dsh-magic-context` and adds a one-time profile patch name migration;
+the row id, settings namespace, data directory, schema and stored format stay
+the same. Co-installing the upstream package, the 0.12.x fork package, or this
+package is unsupported: the loader keeps one duplicate row id, so remove the old
+package before installing this one.
 
 ## magic-context — https://github.com/cortexkit/magic-context
 

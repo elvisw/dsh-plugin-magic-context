@@ -1,5 +1,5 @@
 @echo off
-rem Magic Context plugin installer, shipped next to elvisw-dsh-plugin-magic-context-<version>.tgz.
+rem Magic Context plugin installer, shipped next to elvisw-dsh-magic-context-<version>.tgz.
 rem
 rem Why this file exists: `dsh plugin add <file>.tgz` records the tarball's
 rem ABSOLUTE PATH in the profile manifest, so deleting that file breaks every
@@ -10,15 +10,15 @@ rem the next version a plain overwrite.
 rem
 rem Usage:  install-magic-context.bat [profile] [tarball]
 rem         default profile: desktop
-rem         default tarball: newest elvisw-dsh-plugin-magic-context-*.tgz next to this script
+rem         default tarball: newest elvisw-dsh-magic-context-*.tgz next to this script
 rem
 rem Messages are ASCII on purpose: a .bat with non-ASCII text renders as mojibake
 rem under the default console code page.
 setlocal EnableExtensions
 title Magic Context plugin installer
 
-set "PKG=@elvisw/dsh-plugin-magic-context"
-set "TGZ_PREFIX=elvisw-dsh-plugin-magic-context"
+set "PKG=@elvisw/dsh-magic-context"
+set "TGZ_PREFIX=elvisw-dsh-magic-context"
 set "PROFILE=%~1"
 if "%PROFILE%"=="" set "PROFILE=desktop"
 set "ARCHIVE=%MC_ARCHIVE_DIR%"
@@ -91,9 +91,11 @@ if not defined DSH (
 )
 
 rem ---- 5) replace whatever is installed, then install from the archive -----
-rem The remove also clears a manifest entry whose source file is already gone,
-rem which would otherwise block the install with ENOENT.
+rem Replace whatever is installed, including the old fork package and the
+rem upstream package (the three share loader row id `magic-context-dsh`).
 call "%DSH%" plugin --profile %PROFILE% remove %PKG% >nul 2>nul
+call "%DSH%" plugin --profile %PROFILE% remove @elvisw/dsh-plugin-magic-context >nul 2>nul
+call "%DSH%" plugin --profile %PROFILE% remove dsh-plugin-magic-context >nul 2>nul
 echo -- installing %NAME% into profile "%PROFILE%" --
 call "%DSH%" plugin --profile %PROFILE% add "%ARCHIVE%\%NAME%"
 if errorlevel 1 (
@@ -106,6 +108,18 @@ if errorlevel 1 (
 echo.
 echo [OK] Installed. The profile now records:
 echo     %PKG%  -^>  %ARCHIVE%\%NAME%
+echo.
+set "DSH_HOME_EFFECTIVE=%DSH_HOME%"
+if "%DSH_HOME_EFFECTIVE%"=="" set "DSH_HOME_EFFECTIVE=%USERPROFILE%\.dsh"
+echo [ACTION REQUIRED] Upgrading from 0.12.x (old package name)?
+echo The old profile row still says @elvisw/dsh-plugin-magic-context and will be
+echo skipped by the loader. Run the one-time migration before opening Settings:
+echo.
+echo   node "%DSH_HOME_EFFECTIVE%\profiles\%PROFILE%\node_modules\@elvisw\dsh-magic-context\tools\migrate-profile-package-name.mjs" --patch "%DSH_HOME_EFFECTIVE%\profiles\%PROFILE%\cordis.patch.yml"
+echo.
+echo If your config lives in a home patch or an overlay, use:
+echo   node "%~dp0tools\migrate-profile-package-name.mjs" --patch "%DSH_HOME_EFFECTIVE%\cordis.patch.yml"
+echo   node "%~dp0tools\migrate-profile-package-name.mjs" --patch "<overlay>\cordis.patch.yml"
 echo.
 echo Keep %ARCHIVE%\%NAME% where it is: the profile records this path.
 echo Start DeepSeek Harness again to load the new version.

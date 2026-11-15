@@ -9,9 +9,10 @@ name: Release
 #   3. the version does not exist on the registry yet.
 #
 # Authentication: npm Trusted Publishing (OIDC), so no long-lived token lives in
-# the repository. The very first release (0.10.0) used a one-off NPM_TOKEN
-# secret; it was deleted as soon as the trusted publisher was linked on
-# npmjs.com, and every later release publishes through OIDC.
+# the repository. The very first release of the 0.12.x fork package (0.10.0
+# lineage) used a one-off NPM_TOKEN secret; the 0.13.0 package name has its own
+# 0.0.0-bootstrap.0 web-auth/OTP bootstrap before its trusted publisher is
+# linked. Every later release publishes through OIDC.
 on:
   push:
     tags:

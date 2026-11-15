@@ -1,0 +1,9 @@
+Packages: -3
+---
+
+dependencies:
+- @elvisw/dsh-plugin-magic-context 0.12.3
+
+Done in 107ms using pnpm v12.18.0
+
+--- stderr ---

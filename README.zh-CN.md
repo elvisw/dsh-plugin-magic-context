@@ -1,7 +1,7 @@
-# dsh-plugin-magic-context — Magic Context 的 DeepSeek Harness 适配插件
+# Magic Context for DeepSeek Harness — elvisw fork
 
 [![CI](https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml/badge.svg)](https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/@elvisw/dsh-plugin-magic-context)](https://www.npmjs.com/package/@elvisw/dsh-plugin-magic-context)
+[![npm](https://img.shields.io/npm/v/@elvisw/dsh-magic-context)](https://www.npmjs.com/package/@elvisw/dsh-magic-context)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D22.19-brightgreen.svg)](package.json)
 [![DeepSeek Harness](https://img.shields.io/badge/DSH-0.2.x-blue.svg)](package.json)
@@ -14,27 +14,30 @@
 > [Magic Context](https://github.com/cortexkit/magic-context) 的回答：**知识应该沉淀，上下文
 > 应该被管理**。会话中提炼的事实沉淀为项目记忆——跨会话复用、全文+本地向量混合检索、经人工
 > 审批的机器/组织共享域；同时上下文本身被当作资产经营——工具输出打标回收、需要时原样恢复，
-> 被消化的历史变成四层摘要而不是消失。本插件把这套能力完整接到 **DeepSeek Harness（DSH）**
-> 桌面端：以 bundle 形态装进 profile，出现在 GUI"插件"页，在运行中的应用里即时开始工作。
+> 被消化的历史变成四层摘要而不是消失。本插件把这套能力完整接到 **DeepSeek Harness（DSH）**：
+> 以 bundle 形态装进 profile，出现在 GUI"插件"页，在运行中的应用里即时开始工作。
 >
 > 上游跟进已核到 **v0.49.30**（适配器对齐面 0 变动）· 宿主 **0.2.2-rc.1** 实测运行正常 ·
-> 状态：**已在真实 DSH Desktop 日常运行**，849 测试用例门禁。仓库历史与出处见
-> [NOTICE](NOTICE)；数据目录见[观测与运维](#观测与运维)。
+> 状态：**已在真实 DSH Web（web profile）日常运行**，仓内测试门禁与真实宿主证据见下文；Desktop profile 未单独验收。
+> 仓库历史与出处见 [NOTICE](NOTICE)；数据目录见[观测与运维](#观测与运维)。
 
-需要 **Node ≥ 22.19** 与 **DSH 0.2.x** 桌面宿主。包内自带编译产物，直接从 npm registry
-安装：
+需要 **Node ≥ 22.19** 与带 Web 客户端的 **DSH 0.2.x 宿主**（桌面应用或 `web` profile）。包内自带编译产物，
+直接从 npm registry 安装：
 
 ```bash
-dsh plugin --profile desktop add @elvisw/dsh-plugin-magic-context
+dsh plugin --profile web add @elvisw/dsh-magic-context
 ```
 
-自 `0.12.0` 起 npm 包名为 `@elvisw/dsh-plugin-magic-context`。如果之前装过上游的 `dsh-plugin-magic-context`，请先移除旧包：两者使用同一个 loader row id（`magic-context-dsh`）。
+`0.13.0` 是本包名下的首个版本。如果之前装过 `@elvisw/dsh-plugin-magic-context`（0.12.x）或上游
+`dsh-plugin-magic-context`，请先移除旧包：三者使用同一个 loader row id（`magic-context-dsh`），不支持共装；共装时只会加载一行，设置页可能消失。
+从 0.12.x 升级还需要一次性迁移 profile patch 的包名，见
+[docs/independent-package-release.md](docs/independent-package-release.md)；迁移脚本随 npm tarball 与 hand-out 一起发布。
 
 五分钟上手见[快速上手](#快速上手)；配置、工具与架构见下文各节。
 
 ## 快速上手
 
-装好后插件热加载（无需重启）。下一个会话里你会看到：
+装好后重启 profile；如果该 profile 启用了 HMR，则会热加载。下一个会话里你会看到：
 
 - 工具结果带上 `§N§` 标签；overlay 里出现**遥测徽标**，显示实时上下文占用，点开是
   指标面板与操作记录。
@@ -78,7 +81,7 @@ dsh plugin --profile desktop add @elvisw/dsh-plugin-magic-context
 从 npm registry 安装（推荐；包内自带编译产物 `lib/` 与 `vendor/`，无需本地构建）：
 
 ```bash
-dsh plugin --profile desktop add @elvisw/dsh-plugin-magic-context
+dsh plugin --profile web add @elvisw/dsh-magic-context
 ```
 
 registry 版本由 tag 推送自动发布（带 npm provenance 签名），发布流程见
@@ -91,17 +94,18 @@ git clone https://github.com/elvisw/dsh-plugin-magic-context
 cd dsh-plugin-magic-context
 npm install
 npm run build     # tsc → lib/（多文件 ESM）+ 浏览器半侧拷贝为 lib/client.js
-dsh plugin --profile desktop add <本仓库路径>   # 应用自带 CLI；spec 可以是 Git 地址、本地路径或 registry 版本
+dsh plugin --profile web add <本仓库路径>   # 应用自带 CLI；spec 可以是 Git 地址、本地路径或 registry 版本
 ```
 
 安装做三件事：profile 里 `pnpm add`（本地路径用 `link:`）、把包名追加进 `dsh.profile.bundles`、
-由 loader 组合。**Desktop 带 HMR → 立即热生效**（无需重启，运行中的会话即刻开始打标签）。
+由 loader 组合。profile 启用 HMR 时改动立即热生效（无需重启，运行中的会话即刻开始打标签）；
+否则刷新页面或重启 profile。
 
 - `peerDependencies` 里的 `@deepseek-ai/*` 全部声明为 `"*"`——兼容性预检对任何 DSH 0.2.x 放行；
   运行时真正 import 的宿主包同时列为**精确版本 dependencies**（随包解析，link: 开发安装由本仓
   自己的 node_modules 提供）。
-- 运行环境需要 **Node ≥ 22.19**：自有存储基于内建的 `node:sqlite`，无原生模块（桌面宿主是
-  Electron RunAsNode 进程，ABI 编译模块不可移植）。
+- 运行环境需要 **Node ≥ 22.19**：自有存储基于内建的 `node:sqlite`，无原生模块；CLI/`web` profile
+  运行在 Node 上，桌面应用提供 Electron RunAsNode 运行时，两者都需要 Node 22.19 所带的 `node:sqlite`。
 - **工具构造器解析**：`config.defineTool`（宿主注入，树内 glue 用）优先，其次动态
   `import('@deepseek-ai/dsh-tools')`（硬依赖，任何安装形态物理可解析）。二者皆不可用时**响亮
   失败**（挂载中止）——ctx_* 工具是回收标记的唯一入口，不能静默半启动。
@@ -109,7 +113,7 @@ dsh plugin --profile desktop add <本仓库路径>   # 应用自带 CLI；spec �
   与 **profile 安装**（生产，包名行 + link 依赖）。生产路径即上面的 `dsh plugin add`。
 
 卸载 / 停用：GUI 插件页停用该 bundle（写 profile patch 的 `disabled`），或
-`dsh plugin --profile desktop remove @elvisw/dsh-plugin-magic-context`。
+`dsh plugin --profile web remove @elvisw/dsh-magic-context`。
 
 ## 配置
 
@@ -130,7 +134,7 @@ bundle 自带配置只有一行：`registerCompactionEngine: false`——保守�
 
 ```yaml
 - id: magic-context-dsh
-  name: '@elvisw/dsh-plugin-magic-context'
+  name: '@elvisw/dsh-magic-context'
   config:
     registerCompactionEngine: true
 - id: compaction-basic
@@ -324,19 +328,29 @@ typecheck → test → build → check:i18n。
 
 本仓库是 [`wk544863858/dsh-plugin-magic-context`](https://github.com/wk544863858/dsh-plugin-magic-context)
 （npm 包 `dsh-plugin-magic-context`）的 fork。上游最后一个公开发布是 `dsh-plugin-magic-context@0.11.2`
-（2026-11-11）；本 fork 自 `0.12.0` 起以 `@elvisw/dsh-plugin-magic-context` 发布，版本与 tag 归本 fork。
+（2026-11-11）；本 fork 自 `0.12.0` 到 `0.12.3` 以 `@elvisw/dsh-plugin-magic-context` 发布，
+`0.13.0` 起以 **`@elvisw/dsh-magic-context`** 发布；版本与 tag 归本 fork。
 上游仓库和上游 npm 包仍由原维护者维护，本 fork 不修改它们。
 
-相对上游 `0.11.2`，`0.12.0` 的主要差异：
+相对上游 `0.11.2`，累计到 `0.13.0` 的主要差异：
 
 - **恢复语义**：`ctx_expand` 不再原地改写占位符，而是读取持久化的原始 `tool/result`，作为新的工具结果返回并分配新 tag；旧占位符保持不变，旧 tag 仍是 dropped，再次 `ctx_reduce` 是 no-op（`already dropped`）。这是 breaking change。
 - **Historian 之后仍可读原文**：`ctx_expand` 新增 `message` 定位，接受当前会话的 DSH log event seq（包括被 Historian shadow 的原始 `tool/result`）；不重跑原工具、不改写摘要或 compartment。
 - **手动 flush**：新增 `/ctx-flush`，只把当前会话已 pending 的 drop 标记为下一次 preStep 落地；不启动 Historian、recomp、摘要或模型调用。
 - **持久 drop 状态**：`ctx_reduce`/`ctx_expand` 以 `pending_drops` 的 `none`/`pending`/`landed` 状态判定，而不是依赖当前 surface 上是否还有占位符；旧 tag 在 restore 后不会再显示假的 “Queued”。
 - **tag 保留策略**：移除挂载时的 30 天 tag prune、`tags.retentionDays` 配置与 `AdapterStores.pruneTags`；旧 profile 里的该键保留但被忽略，且每进程最多告警一次。
-- **schema 与包名**：插件数据库升到 v11（`pending_drops.flush_requested`，v10 自动迁移）；npm 包名改为 `@elvisw/dsh-plugin-magic-context`，但 loader row id `magic-context-dsh`、settings namespace 与插件数据目录 `magic-context-dsh-poc` 不变。
+- **schema 与包名**：插件数据库升到 v11（`pending_drops.flush_requested`，v10 自动迁移）；npm 包名在 `0.12.x` 为
+  `@elvisw/dsh-plugin-magic-context`，`0.13.0` 改为 `@elvisw/dsh-magic-context`，但 loader row id
+  `magic-context-dsh`、settings namespace、插件数据目录 `magic-context-dsh-poc`、schema 与存储格式不变。
+- **升级迁移**：0.12.x 的 profile patch 行仍写着旧包名；DSH loader 同时匹配 `id` 与 `name`，不匹配时整行跳过，
+  所以在打开 Settings 前要用 `tools/migrate-profile-package-name.mjs --patch <cordis.patch.yml>` 迁移一次。
+  迁移 `name` 行后，插件记忆、journal、schema 与自定义 `dataDir` 的路径不变，改名不做数据迁移；`0.13.0`
+  宿主 gate 只验证配置生效，没有打开旧库。
 
-因为 row id 相同，上游 `dsh-plugin-magic-context` 与本 fork **不能并排安装**；升级前先移除旧包。本 fork 只保证自己的插件行为与数据迁移，不承诺与上游 0.11.x 的 UX/API 长期兼容；兼容语义以原版 `cortexkit/magic-context` 为参照，DSH 仍是宿主。
+因为 row id 相同，上游 `dsh-plugin-magic-context`、0.12.x 的 fork 包与本包**不支持共装**；升级前先移除旧包。
+本 gate 只观察到 config dump 同时接受两行并保留两个名字；“loader 只保留一条”与“设置页隐藏重复 id”
+是源码层推断，不是 gate 观测。本 fork 只保证自己的插件行为与数据迁移，不承诺与上游 0.11.x 的
+UX/API 长期兼容；兼容语义以原版 `cortexkit/magic-context` 为参照，DSH 仍是宿主。
 
 ### 版权与第三方
 

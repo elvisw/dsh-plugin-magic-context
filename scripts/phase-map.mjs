@@ -48,6 +48,7 @@ const PHASE_BASE = [
   'tests/memory-search.spec.ts',
   'tests/memory-tool-bridge.spec.ts',
   'tests/memory-write.spec.ts',
+  'tests/package-identity-migration.spec.ts',
   'tests/phase1.spec.ts',
   'tests/phase2.spec.ts',
   'tests/poc.spec.ts',

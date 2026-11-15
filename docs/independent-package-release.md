@@ -1,23 +1,46 @@
 # 独立包名与发布
 
-本仓库从 `0.12.0` 起使用 npm 包名 **`@elvisw/dsh-plugin-magic-context`**；`0.12.1` 是同一代码线的 docs-only patch，`0.12.2` 是 historian 重试、reasoning effort 与两处观测口径的修复版，`0.12.3` 是 `/ctx-flush` 空队列反馈的 patch（发布前以仓库版本为准）。上游包 `dsh-plugin-magic-context` 属于另一位维护者，本 fork 不修改、不覆盖它。
+本仓库 `0.12.0`–`0.12.3` 使用 npm 包名 **`@elvisw/dsh-plugin-magic-context`**；从 **`0.13.0`** 起改为
+**`@elvisw/dsh-magic-context`**。`0.12.1` 是同一代码线的 docs-only patch，`0.12.2` 是 historian 重试、
+reasoning effort 与两处观测口径的修复版，`0.12.3` 是 `/ctx-flush` 空队列反馈的 patch，`0.13.0` 是包名
+迁移 + `ctx_expand` range/verbose（发布前以仓库版本为准）。上游包 `dsh-plugin-magic-context` 属于另一位
+维护者，本 fork 不修改、不覆盖它。
 
 ## 用户迁移
 
-旧包与新包的 Cordis loader row id 都是 `magic-context-dsh`，同一个 profile 不能同时启用两者。安装新包前先移除旧包：
+三个包（上游 `dsh-plugin-magic-context`、0.12.x 的 `@elvisw/dsh-plugin-magic-context`、0.13.0 的
+`@elvisw/dsh-magic-context`）使用同一个 Cordis loader row id `magic-context-dsh`。共装不受支持：loader
+不会拒绝重复 row id，而是保留一条并可能隐藏重复设置行，结果是静默错配。安装新包前先移除旧包：
 
 ```bash
-dsh plugin --profile desktop remove dsh-plugin-magic-context
-dsh plugin --profile desktop add @elvisw/dsh-plugin-magic-context
+dsh plugin --profile web remove dsh-plugin-magic-context
+dsh plugin --profile web remove @elvisw/dsh-plugin-magic-context
+dsh plugin --profile web add @elvisw/dsh-magic-context
 ```
 
-插件数据目录仍是 `~/.local/share/cortexkit/magic-context-dsh-poc/`，settings namespace 仍是 `magic-context-dsh`，已有数据与会话不需要迁移。
+从 0.12.x 升级还必须迁移 profile patch 的 `name` 行。loader 同时匹配 `id` 与 `name`，旧行不会自动改写；
+不迁移时整行被跳过，`config`、自定义 `dataDir` 和设置看起来像丢了。新包自带
+`tools/migrate-profile-package-name.mjs`，在 npm 安装目录或 hand-out 的 `tools/` 下：
+
+```bash
+node "<profile>/node_modules/@elvisw/dsh-magic-context/tools/migrate-profile-package-name.mjs" --patch "<profile>/cordis.patch.yml"
+```
+
+`--patch` 是必填；同一脚本也可用于 `%DSH_HOME%\cordis.patch.yml` 和 overlay 的 `cordis.patch.yml`。
+脚本只改目标 id 行的 `name`，保留 `config`/`dataDir`/`disabled`/注释/CRLF，修改前写时间戳备份，第二次
+运行报 already migrated。
+
+插件数据目录仍是 `~/.local/share/cortexkit/magic-context-dsh-poc/`，settings namespace 仍是
+`magic-context-dsh`，schema 仍是 v11；已有记忆、journal 与会话数据的路径不变，包名迁移不移动或重写它们。
+0.13.0 宿主 gate 只验证配置生效，未打开旧库，因此不把这条当作数据内容保留的实测。
 
 ## 包名与安装脚本
 
-- npm 包名：`@elvisw/dsh-plugin-magic-context`
-- tarball 文件名由 npm 自动清理为：`elvisw-dsh-plugin-magic-context-<version>.tgz`
-- `tools/install-magic-context.bat` 用 `PKG` 做 `dsh plugin add/remove` 的 specifier，用 `TGZ_PREFIX` 查找 tarball；两者不能混用。
+- npm 包名：`@elvisw/dsh-magic-context`
+- tarball 文件名由 npm 自动清理为：`elvisw-dsh-magic-context-<version>.tgz`
+- `tools/install-magic-context.bat` 用 `PKG` 做 `dsh plugin add/remove` 的 specifier，用 `TGZ_PREFIX`
+  查找 tarball；两者不能混用。安装脚本会先尝试移除两个旧 specifier，再装新包，并打印迁移命令。
+- Desktop 应用请用其自带命令运行时管理 `desktop` profile；npm CLI 的示例统一使用 `--profile web`。
 
 ## 首次发布：bootstrap
 
@@ -36,23 +59,23 @@ npm 的 Trusted Publishing 只能绑定到已经存在的包，因此首次发�
 4. 绑定 Trusted Publisher：
 
    ```bash
-   npm trust github @elvisw/dsh-plugin-magic-context \
+   npm trust github @elvisw/dsh-magic-context \
      --file release.yml \
      --repo elvisw/dsh-plugin-magic-context \
      --allow-publish
    ```
 
-5. 用 `npm trust list @elvisw/dsh-plugin-magic-context` 确认 repo、workflow 与 publish 权限。
-6. 恢复仓库内 `package.json` 与 `package-lock.json` 的正式版本（当前 `0.12.3`，以仓库为准），提交并推送 `main`；只有确认 `main` 全绿后才创建并推送对应的 `v<version>` tag。
+5. 用 `npm trust list @elvisw/dsh-magic-context` 确认 repo、workflow 与 publish 权限。
+6. 恢复仓库内 `package.json` 与 `package-lock.json` 的正式版本（当前 `0.13.0`，以仓库为准），提交并推送 `main`；只有确认 `main` 全绿后才创建并推送对应的 `v<version>` tag。
 
 正式发布必须由 tag 触发 `.github/workflows/release.yml` 的 OIDC 流程；不要手工 `npm publish <version>`，否则会消耗版本号且没有 provenance，release workflow 的“already published”守卫会拒绝再次发布。
 
 ## 发布后核对
 
 ```bash
-npm view @elvisw/dsh-plugin-magic-context@0.12.3 version dist.integrity
-npm view @elvisw/dsh-plugin-magic-context dist-tags
-npm trust list @elvisw/dsh-plugin-magic-context
+npm view @elvisw/dsh-magic-context@0.13.0 version dist.integrity
+npm view @elvisw/dsh-magic-context dist-tags
+npm trust list @elvisw/dsh-magic-context
 ```
 
 `dist.integrity` 只作记录；真正的内容一致性要解包 registry tarball，与本地 `npm pack` 产物逐文件比较 SHA-256。还要确认 `dist-tags.latest` 指向正式版本、`dist.attestations` 存在，并且上游 `dsh-plugin-magic-context` 未被修改。
@@ -62,6 +85,7 @@ npm trust list @elvisw/dsh-plugin-magic-context
 - loader row id：`magic-context-dsh`
 - settings namespace：`magic-context-dsh`
 - 插件数据目录：`~/.local/share/cortexkit/magic-context-dsh-poc/`
-- 插件导出名与 T2–T5 行为
+- schema：v11（`pending_drops.flush_requested`）
+- 存储格式与 T2–T5 行为
 
 包名之外的这些标识是数据连续性和宿主兼容性的一部分，不随 npm 包名迁移。

@@ -1,7 +1,7 @@
-# dsh-plugin-magic-context — Magic Context adapter for DeepSeek Harness
+# Magic Context for DeepSeek Harness — elvisw fork
 
 [![CI](https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml/badge.svg)](https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/@elvisw/dsh-plugin-magic-context)](https://www.npmjs.com/package/@elvisw/dsh-plugin-magic-context)
+[![npm](https://img.shields.io/npm/v/@elvisw/dsh-magic-context)](https://www.npmjs.com/package/@elvisw/dsh-magic-context)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D22.19-brightgreen.svg)](package.json)
 [![DeepSeek Harness](https://img.shields.io/badge/DSH-0.2.x-blue.svg)](package.json)
@@ -34,14 +34,21 @@
 - **Conservative by default** — the host `compaction-basic` engine stays in place unless
   you explicitly opt in.
 
-Requires **Node ≥ 22.19** and a **DSH 0.2.x** desktop host. The package ships compiled —
-install straight from the npm registry:
+Requires **Node ≥ 22.19** and a **DSH 0.2.x host with the Web client** (the desktop app or
+a `web` profile). The package ships compiled — install straight from the npm registry:
 
 ```bash
-dsh plugin --profile desktop add @elvisw/dsh-plugin-magic-context
+dsh plugin --profile web add @elvisw/dsh-magic-context
 ```
 
-Since `0.12.0` the npm package is `@elvisw/dsh-plugin-magic-context`. If you previously installed the upstream `dsh-plugin-magic-context`, remove it first: both packages use the same loader row id (`magic-context-dsh`).
+`0.13.0` is the first release under this package name. If you installed
+`@elvisw/dsh-plugin-magic-context` (0.12.x) or the upstream
+`dsh-plugin-magic-context`, remove it first: all three use the same loader row id
+(`magic-context-dsh`), so co-install is unsupported: the loader keeps one row and
+settings may disappear. Upgrading from 0.12.x also
+needs the one-time profile patch migration described in
+[docs/independent-package-release.md](docs/independent-package-release.md); the helper is
+shipped in the npm tarball and the hand-out bundle.
 
 New to the plugin? A five-minute tour follows in [Quick start](#quick-start);
 configuration, tools and architecture are covered in full below. A complete Chinese
@@ -50,7 +57,8 @@ translation is at [README.zh-CN.md](README.zh-CN.md). Contributions are welcome 
 
 ## Quick start
 
-After installing, the plugin hot-loads (no restart). In your next session:
+After installing, restart the profile unless it has HMR enabled; with HMR the new
+version hot-loads. In your next session:
 
 - Tool results carry `§N§` tags; a **telemetry badge** appears in the overlay showing live
   context occupancy, with a panel of live metrics and an operation record behind it.
@@ -98,7 +106,7 @@ From the npm registry — recommended; the package ships compiled `lib/` and `ve
 local build needed:
 
 ```bash
-dsh plugin --profile desktop add @elvisw/dsh-plugin-magic-context
+dsh plugin --profile web add @elvisw/dsh-magic-context
 ```
 
 Registry versions are published automatically by tag pushes (with npm provenance
@@ -111,21 +119,21 @@ git clone https://github.com/elvisw/dsh-plugin-magic-context
 cd dsh-plugin-magic-context
 npm install
 npm run build     # tsc → lib/ (multi-file ESM) + browser half copied to lib/client.js
-dsh plugin --profile desktop add <path to this repo>   # the CLI ships with the app; the spec can be a Git URL, a local path, or a registry version
+dsh plugin --profile web add <path to this repo>   # the CLI ships with the app; the spec can be a Git URL, a local path, or a registry version
 ```
 
 Installing does three things: `pnpm add` into the profile (`link:` for local paths),
-appends the package name to `dsh.profile.bundles`, and the loader composes it. **Desktop
-has HMR → takes effect immediately** (no restart; running sessions start tagging right
-away).
+appends the package name to `dsh.profile.bundles`, and the loader composes it. When the
+profile has HMR enabled, changes take effect immediately (no restart; running sessions
+start tagging right away); otherwise reload the page or restart the profile.
 
 - All `@deepseek-ai/*` in `peerDependencies` are declared `"*"` — the compatibility
   precheck passes on any DSH 0.2.x; the host packages actually imported at runtime are
   also listed as **exact-version dependencies** (resolved with the package; `link:` dev
   installs are served by this repo's own node_modules).
 - **Node ≥ 22.19** required: the stores build on the built-in `node:sqlite`, no native
-  modules (the desktop host is an Electron RunAsNode process; ABI-compiled modules are not
-  portable).
+  modules. A CLI/`web` profile runs on Node; the desktop app supplies an Electron
+  RunAsNode runtime; both need the `node:sqlite` version that Node 22.19 provides.
 - **Tool-constructor resolution**: `config.defineTool` (host-injected, used by in-tree
   glue) first, then dynamic `import('@deepseek-ai/dsh-tools')` (a hard dependency,
   physically resolvable in every install shape). If both are unavailable the mount **fails
@@ -136,7 +144,7 @@ away).
   link dependency). The production path is the `dsh plugin add` above.
 
 Uninstall / disable: disable the bundle on the GUI Plugins page (writes `disabled` into
-the profile patch), or `dsh plugin --profile desktop remove @elvisw/dsh-plugin-magic-context`.
+the profile patch), or `dsh plugin --profile web remove @elvisw/dsh-magic-context`.
 
 ## Configuration
 
@@ -164,7 +172,7 @@ and historian are on by default). To take over compaction:
 
 ```yaml
 - id: magic-context-dsh
-  name: '@elvisw/dsh-plugin-magic-context'
+  name: '@elvisw/dsh-magic-context'
   config:
     registerCompactionEngine: true
 - id: compaction-basic
@@ -389,11 +397,12 @@ typecheck → test → build → check:i18n on Node 22.x / 24.x.
 
 This repository is a fork of [`wk544863858/dsh-plugin-magic-context`](https://github.com/wk544863858/dsh-plugin-magic-context)
 (npm `dsh-plugin-magic-context`). The upstream's last public release is `dsh-plugin-magic-context@0.11.2`
-(2026-11-11); this fork publishes as `@elvisw/dsh-plugin-magic-context` from `0.12.0`, and its versions
-and tags belong to the fork. The upstream repository and npm package remain under their original
-maintainer; this fork does not modify them.
+(2026-11-11); this fork published as `@elvisw/dsh-plugin-magic-context` from `0.12.0` through `0.12.3`,
+and publishes as **`@elvisw/dsh-magic-context`** from `0.13.0`. Its versions and tags belong to the
+fork. The upstream repository and npm package remain under their original maintainer; this fork does
+not modify them.
 
-Differences from upstream `0.11.2` in `0.12.0`:
+Differences from upstream `0.11.2`, accumulated through `0.13.0`:
 
 - **Recovery semantics**: `ctx_expand` no longer rewrites placeholders in place. It reads the persisted
   original `tool/result`, returns it as a new tool result, and assigns a new tag. The old placeholder is
@@ -411,14 +420,22 @@ Differences from upstream `0.11.2` in `0.12.0`:
   `AdapterStores.pruneTags` are removed. An old profile's key is kept but ignored, with at most one warning
   per process.
 - **Schema and package name**: the plugin DB moves to v11 (`pending_drops.flush_requested`, automatic v10
-  migration), and the npm package becomes `@elvisw/dsh-plugin-magic-context`. The loader row id
-  `magic-context-dsh`, the settings namespace, and the plugin data directory `magic-context-dsh-poc` stay
-  unchanged.
+  migration). The npm package was `@elvisw/dsh-plugin-magic-context` in `0.12.x`; `0.13.0` renames it to
+  `@elvisw/dsh-magic-context` without changing the loader row id `magic-context-dsh`, the settings
+  namespace, the plugin data directory `magic-context-dsh-poc`, the schema, or the stored format.
+- **Upgrade migration**: a `0.12.x` profile patch row still says the old package name; the DSH loader
+  matches by both `id` and `name` and skips a mismatched row, so run
+  `tools/migrate-profile-package-name.mjs --patch <cordis.patch.yml>` once before opening Settings.
+  Plugin memories, journal, schema and a custom `dataDir` stay at the same paths; the rename performs no
+  data migration. The `0.13.0` host gate is config-effective only and did not open the old database.
 
-Because the row id is shared, upstream `dsh-plugin-magic-context` and this fork **cannot be installed side
-by side**; remove the old package before installing the fork. This fork guarantees its own plugin behavior
-and data migration, not long-term UX/API compatibility with upstream 0.11.x; compatibility semantics target
-the original `cortexkit/magic-context`, with DSH as the host.
+Because the row id is shared, co-installing upstream `dsh-plugin-magic-context`, the `0.12.x` fork
+package, and this package is **unsupported**; remove the old package before installing the new one. The
+gate observed only that a config dump accepts both rows and keeps both names. The loader keeping one
+duplicate-id row and the settings editor hiding duplicate ids are source-level inferences, not
+gate observations. This fork guarantees its own plugin behavior and data migration, not long-term
+UX/API compatibility with upstream 0.11.x; compatibility semantics target the original
+`cortexkit/magic-context`, with DSH as the host.
 
 ### Copyright and third parties
 

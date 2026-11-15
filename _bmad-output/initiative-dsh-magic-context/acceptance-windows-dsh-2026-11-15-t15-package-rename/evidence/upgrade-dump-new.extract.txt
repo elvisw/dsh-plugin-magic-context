@@ -1,0 +1,11 @@
+# == @elvisw/dsh-magic-context, patched by C:\Users\elvis\AppData\Local\Temp\opencode\dsh-mc-t15-20261115-211430\dsh-home\profiles\web\cordis.patch.yml
+- id: magic-context-dsh
+  name: '@elvisw/dsh-magic-context'
+  config:
+    dataDir: >-
+      C:\Users\elvis\AppData\Local\Temp\opencode\dsh-mc-t15-20261115-211430\plugin-data-custom
+    historianEnabled: false
+    policy:
+      executeThreshold: 42
+
+--- stderr ---
