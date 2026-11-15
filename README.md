@@ -238,9 +238,9 @@ Both UI capabilities ride the same browser half (`src/client/index.js`, copied v
   on the Plugins page as the legacy location and fallback for hosts without the
   `settings.section` slot.
 
-  ![Magic Context settings card on the DSH Plugins page — execute/force thresholds, scheduling window, reclaim TTL, protected results, historian minimum nodes](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-card-top.jpg)
+  ![Magic Context page in DSH Settings — execute/force thresholds, assumed window, reclaim TTL, protected results, historian nodes and token caps](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-top.png)
 
-  ![Lower half of the settings card — memory recall budget and limits, journal retention, historian and compaction toggles, verify/historian route selectors, journal switches](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-card-bottom.jpg)
+  ![Lower part of the Magic Context Settings page — journal retention, verify/historian routes, catalog-backed reasoning effort picker, journal switches](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-bottom.png)
 
 - **`shell.overlay` telemetry badge + capsule panel**: collapsed state shows the occupancy
   percentage; the panel holds two metric rows, the beat, and a **live operation record**

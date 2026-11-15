@@ -8,6 +8,12 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
+## [Unreleased]
+
+### Changed
+
+- README 的设置页截图更新为 0.14.0 的顶层「设置 → Magic Context」页面，包含 catalog-backed Historian 推理强度选择器；旧「插件」页卡片截图保留，供已发布旧版本引用。
+
 ## [0.14.0] - 2026-11-16
 
 ### Added

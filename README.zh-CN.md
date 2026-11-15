@@ -188,9 +188,9 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
 
 - **「设置 → Magic Context」顶层设置页**：上文 volatile 配置项的可视化编辑，保存即生效（见“配置”一节）。同一张卡片保留在「插件」页，作为旧位置与没有 `settings.section` 槽位时的回退。
 
-  ![DSH 插件页的 Magic Context 设置卡片——执行/强制阈值、调度窗口、回收 TTL、保护条数、historian 最小节点数](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-card-top.jpg)
+  ![DSH 设置页顶层的 Magic Context 页面——执行/强制阈值、假定窗口、回收 TTL、保护条数、historian 节点数与 token 上限](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-top.png)
 
-  ![设置卡片下半部——记忆召回预算与行数上限、journal 保留天数、historian 与压缩引擎开关、verify/historian 路由选择器、journal 开关](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-card-bottom.jpg)
+  ![Magic Context 设置页下半部——journal 保留天数、verify/historian 路由、catalog-backed 推理强度选择器、journal 开关](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-bottom.png)
 
 - **`shell.overlay` 遥测徽标 + 胶囊面板**：收起态显示占用百分比；面板里是两行指标、节拍与
   **实时操作记录**（最多 12 条，相邻同操作折叠 `×N`）：🧠 写入记忆 · 🔎 加载记忆 · 🗑️ 回收入队 ·
