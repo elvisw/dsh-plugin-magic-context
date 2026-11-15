@@ -1,7 +1,7 @@
 ---
 ticket: 15
 title: "Magic Context package identity rename — plan"
-status: built
+status: done
 ---
 
 # Plan — Magic Context package identity rename

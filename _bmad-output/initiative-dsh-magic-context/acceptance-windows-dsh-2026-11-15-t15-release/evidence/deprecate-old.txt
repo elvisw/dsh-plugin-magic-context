@@ -1,0 +1,8 @@
+verified from registry metadata
+0.0.0-stage: Renamed to @elvisw/dsh-magic-context. Install the new package; see https://github.com/elvisw/dsh-plugin-magic-context
+0.0.0-bootstrap.0: Renamed to @elvisw/dsh-magic-context. Install the new package; see https://github.com/elvisw/dsh-plugin-magic-context
+0.12.0: Renamed to @elvisw/dsh-magic-context. Install the new package; see https://github.com/elvisw/dsh-plugin-magic-context
+0.12.1: Renamed to @elvisw/dsh-magic-context. Install the new package; see https://github.com/elvisw/dsh-plugin-magic-context
+0.12.2: Renamed to @elvisw/dsh-magic-context. Install the new package; see https://github.com/elvisw/dsh-plugin-magic-context
+0.12.3: Renamed to @elvisw/dsh-magic-context. Install the new package; see https://github.com/elvisw/dsh-plugin-magic-context
+latest: 0.12.3

@@ -10,6 +10,11 @@ Tarball SHA-256: `1c8ac596be020e72b6e0103c287bcd606721dccd5af5b118605d253e2049df
 Root: `%TEMP%\opencode\dsh-mc-t15-20261115-211430`
 Fresh root: `%TEMP%\opencode\dsh-mc-t15-fresh-20261115-211430`
 
+Release follow-up: `0.13.0` was published after this implementation gate. See
+`../acceptance-windows-dsh-2026-11-15-t15-release/acceptance-report.md` for the
+registry artifact hash, Trusted Publisher, GitHub run, and isolated registry
+install smoke.
+
 ## 1. What changed
 
 | Identity | Before | After | Changed? |
@@ -157,9 +162,10 @@ refuses the install".
 
 ## 8. What this does not prove
 
-- No npm publish, tag, Trusted Publisher binding, deprecation, or release
-  workflow was run. T15 remains HITL; the bootstrap/trust/tag steps are still
-  awaiting explicit authorization.
+- This implementation gate itself did not publish, tag, bind Trusted Publisher,
+  or deprecate the old package. Those actions were run afterward and are covered
+  by the release report linked at the top; the release smoke is a separate
+  registry-install check, not part of this local-tarball gate.
 - No Settings-page or UI migration test: T13 owns the new Settings page and
   `docs/dsh-plugin-settings-ui-contract.md`.
 - No real model call was made in this gate. The package identity and profile

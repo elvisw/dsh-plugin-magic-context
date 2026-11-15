@@ -1,0 +1,90 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "path": "acceptance-report.md",
+      "bytes": 5781,
+      "sha256": "01a824f1bcd07903fc94b271dc54f3222bb1e91310254a34cb038cdc5ed413c2"
+    },
+    {
+      "path": "evidence\\add-registry.txt",
+      "bytes": 800,
+      "sha256": "bdef191ff2dc3f23dc511aa654cdeda149409fef43e26565cf4e483ea3ea9d07"
+    },
+    {
+      "path": "evidence\\artifact-compare.json",
+      "bytes": 1340,
+      "sha256": "d6575e67b5100d43712d1051dbd166d99b705efe62e5e02c5cd23a7f95a7720a"
+    },
+    {
+      "path": "evidence\\attestations.json",
+      "bytes": 14821,
+      "sha256": "a2d9fe9e75253c40aeab1b8bc9670c46b7467e8c98b2f27302fb312a36b9201f"
+    },
+    {
+      "path": "evidence\\bootstrap.txt",
+      "bytes": 12990,
+      "sha256": "9e828f11b20b972b50c0d2ede36b44eb06ded9838b36f51ae21400a9d66640a7"
+    },
+    {
+      "path": "evidence\\deprecate-old.txt",
+      "bytes": 827,
+      "sha256": "731c29290103abfa480687b99ad049677f3fec805c4128990351db896d3fb339"
+    },
+    {
+      "path": "evidence\\dump-config.txt",
+      "bytes": 13976,
+      "sha256": "8da0a161fff116caaae61c55981f60e3603fa9821249a0c9c428befb460d3cae"
+    },
+    {
+      "path": "evidence\\git-tag.txt",
+      "bytes": 129,
+      "sha256": "b39df2deba1c44197fb3c97837d3dddc239950518317a06e294404ac1fcac6e9"
+    },
+    {
+      "path": "evidence\\npm-view-0.13.0.json",
+      "bytes": 558,
+      "sha256": "e01717117163521b4036ffeac6480cb21738910951a783168bb528e7388895ab"
+    },
+    {
+      "path": "evidence\\npm-view-bootstrap.json",
+      "bytes": 127,
+      "sha256": "fc095d8ddc4b72e5d9d2dfad9b3770e2fc53377de7ac203e9a86709b1de0b28a"
+    },
+    {
+      "path": "evidence\\old-package-metadata.json",
+      "bytes": 51698,
+      "sha256": "3beedede24e87f72a547f582e7258f800e9ddb68413d23a3fd45c91986d3d637"
+    },
+    {
+      "path": "evidence\\registry-e2e.json",
+      "bytes": 939,
+      "sha256": "c78d541045a1a9c4beec6aba5517b09a5c8975012b74320f0e938104bc75d98b"
+    },
+    {
+      "path": "evidence\\registry-metadata.json",
+      "bytes": 40454,
+      "sha256": "935550bd3654ddbfa7306bf4c2d912646c235e4c02d797699f258cd5d3cb4ccf"
+    },
+    {
+      "path": "evidence\\release-workflow.json",
+      "bytes": 253,
+      "sha256": "76b8c14393162591ae1d7c13d5766bad286e1b3e205683d43fbeee7b3f6d52f8"
+    },
+    {
+      "path": "evidence\\smoke.txt",
+      "bytes": 891,
+      "sha256": "19ad4fcc5d80942e3e3ada260dc0f8de9cdabb0413d83f5f08657c1f7abbf5e6"
+    },
+    {
+      "path": "REPRODUCE.md",
+      "bytes": 3489,
+      "sha256": "91014ca5f47d309d2f2e13c1be0c02e7bc970e79c8129b1537e66f776995ea9e"
+    },
+    {
+      "path": "run_registry_e2e.py",
+      "bytes": 6785,
+      "sha256": "389061634b5661a331a12535aef53820ebec13410c082c3f7b3bf011005fc97e"
+    }
+  ]
+}

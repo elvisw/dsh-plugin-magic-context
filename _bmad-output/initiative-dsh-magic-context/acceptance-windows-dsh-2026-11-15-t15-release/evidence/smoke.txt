@@ -1,0 +1,11 @@
+{"type":"session","sessionId":"session-6497ed3a-7e6e-48d3-b924-f19fa4eaab4f","cwd":"C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-t15-release-20261115-213833\\workspace"}
+{"type":"status","phase":"turn_start","turn":1}
+{"type":"status","phase":"step_start","turn":1,"step":1}
+{"type":"thinking","text":""}
+{"type":"text","text":"T15_REGISTRY_OK"}
+{"type":"status","phase":"step_end","turn":1,"step":1,"usage":{"inputTokens":6443,"outputTokens":7,"cacheReadTokens":1920,"cacheWriteTokens":0,"totalTokens":8370}}
+{"type":"status","phase":"turn_end","turn":1,"reason":{"kind":"completed"}}
+{"type":"final","sessionId":"session-6497ed3a-7e6e-48d3-b924-f19fa4eaab4f","reason":{"kind":"completed"},"text":"T15_REGISTRY_OK"}
+
+--- stderr ---
+[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)

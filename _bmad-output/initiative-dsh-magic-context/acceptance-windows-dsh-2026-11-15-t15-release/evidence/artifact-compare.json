@@ -1,0 +1,38 @@
+{
+  "registry": {
+    "sourceUrl": "https://registry.npmjs.org/@elvisw/dsh-magic-context/-/dsh-magic-context-0.13.0.tgz",
+    "bytes": 4007255,
+    "sha256": "1c8ac596be020e72b6e0103c287bcd606721dccd5af5b118605d253e2049dfd6",
+    "sha1": "f64dd86cc65f455566a4b06b10b0a7b598ce961f",
+    "files": 66,
+    "name": "@elvisw/dsh-magic-context",
+    "version": "0.13.0"
+  },
+  "local": {
+    "source": "%TEMP%/opencode/t15-pack-gate/elvisw-dsh-magic-context-0.13.0.tgz",
+    "bytes": 4007255,
+    "sha256": "1c8ac596be020e72b6e0103c287bcd606721dccd5af5b118605d253e2049dfd6",
+    "sha1": "f64dd86cc65f455566a4b06b10b0a7b598ce961f"
+  },
+  "identical": true,
+  "registryMetadata": {
+    "gitHead": "f61e42beea88e10dd0bb2e1a51fc86a71dd2730f",
+    "distShasum": "f64dd86cc65f455566a4b06b10b0a7b598ce961f",
+    "distIntegrity": "sha512-+wyCgXTD78S6oGQj+yKkXNAVHmcidw85WA8JcNXnozEbj/fuACB/qLVvRa/mKKD5omKIln3dAbJnLaUP3kV7Ww==",
+    "fileCount": 66,
+    "unpackedSize": 15341188,
+    "distTags": {
+      "bootstrap": "0.0.0-bootstrap.0",
+      "latest": "0.13.0"
+    },
+    "versions": [
+      "0.0.0-stage",
+      "0.0.0-bootstrap.0",
+      "0.13.0"
+    ],
+    "provenancePredicateTypes": [
+      "https://github.com/npm/attestation/tree/main/specs/publish/v0.1",
+      "https://slsa.dev/provenance/v1"
+    ]
+  }
+}
