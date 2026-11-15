@@ -1,0 +1,19 @@
+{
+  "version": "0.12.2",
+  "dist-tags": {
+    "bootstrap": "0.0.0-bootstrap.0",
+    "latest": "0.12.2"
+  },
+  "dist.attestations": {
+    "url": "https://registry.npmjs.org/-/npm/v1/attestations/@elvisw%2fdsh-plugin-magic-context@0.12.2",
+    "provenance": {
+      "predicateType": "https://slsa.dev/provenance/v1"
+    }
+  },
+  "gitHead": "1d1dc4fe2bc7d7cf9083b0cc50cf76298d5bf118",
+  "dist.tarball": "https://registry.npmjs.org/@elvisw/dsh-plugin-magic-context/-/dsh-plugin-magic-context-0.12.2.tgz",
+  "dist.shasum": "2cf0581b3dc5de03143bc88a995d422bbc459c12"
+}
+
+--- stderr ---
+npm warn Unknown env config "store-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.

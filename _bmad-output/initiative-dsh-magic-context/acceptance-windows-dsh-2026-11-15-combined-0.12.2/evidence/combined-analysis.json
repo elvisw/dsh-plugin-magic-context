@@ -1,0 +1,3270 @@
+{
+  "artifact": {
+    "package": "@elvisw/dsh-plugin-magic-context",
+    "version": "0.12.2",
+    "specifier": "@elvisw/dsh-plugin-magic-context@0.12.2",
+    "profileSpecifier": "0.12.2",
+    "tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\downloads\\elvisw-dsh-plugin-magic-context-0.12.2.tgz",
+    "tarballSha256": "d1ec72bc147cc22cee7a3c68b7d39a1636a8c7febed4c003f48b5e60e4470a60",
+    "preflightTarballSha256": "d1ec72bc147cc22cee7a3c68b7d39a1636a8c7febed4c003f48b5e60e4470a60",
+    "tarballSha1": "2cf0581b3dc5de03143bc88a995d422bbc459c12",
+    "registryShasum": "2cf0581b3dc5de03143bc88a995d422bbc459c12",
+    "registryGitHead": "1d1dc4fe2bc7d7cf9083b0cc50cf76298d5bf118",
+    "repoHead": "1d1dc4fe2bc7d7cf9083b0cc50cf76298d5bf118",
+    "latest": "0.12.2",
+    "provenance": true,
+    "installedHashes": {
+      "lib/index.js": "445a0200baae1112e78bc42fdcfbeee69932059bfa9fd1f0c9ce52f1a6455cd7",
+      "lib/dsh/historian.js": "404f520d69395206d771290bedb14ba3e6231827cb429271ffd267d1fb793111",
+      "lib/dsh/drop-landing.js": "96d6021ea554f4c24f5d8ef0f3962fdaf1aa7ce5e34d417f15e3b6bfa643754d",
+      "lib/dsh/memory-lane.js": "ab1b4d9ed337c08db5a0e6a09386fbf6a54c6db4f078b7d735ad41bca84cf686",
+      "lib/dsh/tool-bridge.js": "7bd3d7a1bfcf51eb6b793a69e5bb64efed21c12857dee1570f470a0efb03564d",
+      "lib/dsh/flush-command.js": "e605f4f1abcc7f9b37684e38c8f907b3a948ba120f97d7d790ce4588e1644cab"
+    },
+    "preflightInstalledHashes": {
+      "lib/index.js": "445a0200baae1112e78bc42fdcfbeee69932059bfa9fd1f0c9ce52f1a6455cd7",
+      "lib/dsh/historian.js": "404f520d69395206d771290bedb14ba3e6231827cb429271ffd267d1fb793111",
+      "lib/dsh/drop-landing.js": "96d6021ea554f4c24f5d8ef0f3962fdaf1aa7ce5e34d417f15e3b6bfa643754d",
+      "lib/dsh/memory-lane.js": "ab1b4d9ed337c08db5a0e6a09386fbf6a54c6db4f078b7d735ad41bca84cf686",
+      "lib/dsh/tool-bridge.js": "7bd3d7a1bfcf51eb6b793a69e5bb64efed21c12857dee1570f470a0efb03564d",
+      "lib/dsh/flush-command.js": "e605f4f1abcc7f9b37684e38c8f907b3a948ba120f97d7d790ce4588e1644cab"
+    },
+    "hashStable": true,
+    "sha256MatchesPreflight": true,
+    "shasumMatches": true,
+    "gitHeadMatches": true
+  },
+  "recovery": {
+    "calls": [
+      "read",
+      "ctx_reduce",
+      "ctx_expand",
+      "ctx_reduce",
+      "ctx_expand"
+    ],
+    "readTag": 1,
+    "expandOldTag": 3,
+    "expandNewTag": 5,
+    "oldPayloadMatchesRead": true,
+    "newPayloadMatchesOldExpand": true,
+    "readSha256": "5bf8df34f1b71f7380192dab8108568a6c645daa799206dc9716ce247a41a105",
+    "expandOldPayloadSha256": "5bf8df34f1b71f7380192dab8108568a6c645daa799206dc9716ce247a41a105",
+    "finalText": "RECOVERY_OK afd2773bb98d48eb018945d1b987a44f\n\nThe full sequence worked with no refusals:\n1. `fixture.txt` read → result tagged **§1§**\n2. `ctx_reduce` drop `1` → queued (§2§)\n3. `ctx_expand` tag `1` → returned a new **§3§** marker (M = 3)\n4. `ctx_reduce` drop `3` → queued (§4§)\n5. `ctx_expand` tag `3` → recovered the original fixture content\n\nNonce: `afd2773bb98d48eb018945d1b987a44f`",
+    "placeholderEvents": [
+      "[dropped §1§]"
+    ],
+    "dbTags": [
+      {
+        "tag_number": 1,
+        "target_kind": "tool-result",
+        "target_id": "call_00_ET_yqZoF5hJWaJkNnC2OTWZ0079"
+      },
+      {
+        "tag_number": 2,
+        "target_kind": "tool-result",
+        "target_id": "call_00_h0rUOmwN7r3yUkRwZyKy1105"
+      },
+      {
+        "tag_number": 3,
+        "target_kind": "tool-result",
+        "target_id": "call_00_ET_mi6rOIfxLPKXYzevVVep1490"
+      },
+      {
+        "tag_number": 4,
+        "target_kind": "tool-result",
+        "target_id": "call_00_E5pdmnJi3ije7oyzN4Zf1868"
+      },
+      {
+        "tag_number": 5,
+        "target_kind": "tool-result",
+        "target_id": "call_00_ET_Yik1VDdn8WmutUqCn4sU4232"
+      }
+    ],
+    "pendingDrops": [
+      {
+        "tag_number": 1,
+        "queued_at": 1794708050591,
+        "landed_event_seq": 28,
+        "flush_requested": 0
+      },
+      {
+        "tag_number": 3,
+        "queued_at": 1794708053057,
+        "landed_event_seq": 42,
+        "flush_requested": 0
+      }
+    ],
+    "finalOk": true,
+    "oldTagReduce": {
+      "finalText": "OLD_TAG_REDUCE §6§ §1§ not queued: already dropped.",
+      "result": "§6§ §1§ not queued: already dropped.",
+      "alreadyDropped": true,
+      "pendingDropsAfter": [
+        {
+          "tag_number": 1,
+          "queued_at": 1794708050591,
+          "landed_event_seq": 28,
+          "flush_requested": 0
+        },
+        {
+          "tag_number": 3,
+          "queued_at": 1794708053057,
+          "landed_event_seq": 42,
+          "flush_requested": 0
+        }
+      ]
+    }
+  },
+  "historian": {
+    "sessionId": "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+    "tag": 1,
+    "originalSeq": 20,
+    "placeholderSeq": 28,
+    "originalText": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>",
+    "originalSha256": "5bf8df34f1b71f7380192dab8108568a6c645daa799206dc9716ce247a41a105",
+    "target": {
+      "ok": true,
+      "compartmentId": 1,
+      "publishSeq": 57,
+      "sourceEventSeqs": [
+        11,
+        12,
+        13,
+        18,
+        28,
+        24,
+        26,
+        32,
+        34
+      ],
+      "text": "[compacted §C1§]",
+      "sourceFile": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\evidence\\session-observer\\session-b6619b8b-5a25-48f2-96e0-6a636789b452.jsonl",
+      "sourceLine": 19
+    },
+    "precondition": {
+      "unlanded": [],
+      "target": {
+        "compartment_id": 1,
+        "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+        "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+        "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+        "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+        "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+        "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+        "importance": 88,
+        "covered_start_seq": 11,
+        "covered_end_seq": 34,
+        "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+        "covered_tokens": 2647,
+        "baseline_epoch": 0,
+        "landed_event_seq": 57,
+        "landed_reason": null,
+        "superseded": 0
+      },
+      "pass": {
+        "id": 109,
+        "at": 1794708300121,
+        "data": {
+          "decision": "execute",
+          "reason": "execute-threshold",
+          "pressure": 35.2,
+          "contextWindow": 32768,
+          "route": "deepseek-official/deepseek-flash",
+          "usage": {
+            "input": 146,
+            "cacheRead": 11392,
+            "cacheWrite": 0
+          },
+          "landed": [],
+          "published": [
+            1
+          ],
+          "forceDropped": 0,
+          "baseline": "refreshed",
+          "historianStarted": true,
+          "tokensBefore": 4660,
+          "tokensAfter": 2391,
+          "tokensDelta": -2269,
+          "factsPromoted": 4,
+          "factsSeenAgain": 0
+        }
+      }
+    },
+    "e1": {
+      "record": {
+        "args": [
+          "--profile",
+          "headless",
+          "--patch",
+          "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\settle.yml",
+          "--json",
+          "--permission-mode",
+          "read-only",
+          "--approval-policy",
+          "never",
+          "--session-id",
+          "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+          "Resume the persisted combined session. Call ONLY ctx_expand with tag set to 1. Do not call any other tool and do not read any file. Respond E1_OK plus the nonce from the restored original if it is available; otherwise report the exact refusal."
+        ],
+        "exit_code": 0,
+        "mode": "real-host",
+        "seconds": 5.185,
+        "session_id": "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+        "final_reason": {
+          "kind": "completed"
+        },
+        "final_text": "E1_OK afd2773bb98d48eb018945d1b987a44f",
+        "tool_calls": [
+          {
+            "tool": "ctx_expand",
+            "input": {
+              "tag": "1"
+            }
+          }
+        ],
+        "tool_results": [
+          {
+            "callId": "call_00_tUSa3xh4Q0zgu0C9fNfn7227",
+            "status": "completed",
+            "result": "§6§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>"
+          }
+        ]
+      },
+      "result": {
+        "callSeq": 102,
+        "callId": "call_00_tUSa3xh4Q0zgu0C9fNfn7227",
+        "resultSeq": 103,
+        "resultText": "§6§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>",
+        "eventsAfterResult": [
+          {
+            "type": "step/end",
+            "seq": 104,
+            "time": 1794708329264,
+            "data": {
+              "turn": 4,
+              "step": 1
+            }
+          },
+          {
+            "type": "step/start",
+            "seq": 105,
+            "time": 1794708329283,
+            "data": {
+              "turn": 4,
+              "step": 2
+            }
+          },
+          {
+            "type": "session-log-deepseek/delivery-accepted",
+            "seq": 106,
+            "time": 1794708329377,
+            "data": {
+              "sessionId": "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+              "sessionFormatVersion": 4,
+              "throughSeq": 105
+            }
+          },
+          {
+            "type": "assistant/message",
+            "seq": 107,
+            "time": 1794708330049,
+            "data": {
+              "turn": 4,
+              "step": 2,
+              "message": {
+                "role": "assistant",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "E1_OK afd2773bb98d48eb018945d1b987a44f"
+                  }
+                ],
+                "source": {
+                  "kind": "model",
+                  "provider": "deepseek-official",
+                  "model": "deepseek-flash",
+                  "replayState": {
+                    "response": {
+                      "kind": "deepseek-messages",
+                      "version": 1,
+                      "model": "deepseek-flash"
+                    },
+                    "blocks": [
+                      {
+                        "type": "text"
+                      }
+                    ]
+                  }
+                },
+                "id": "b1b6a599-35f6-4ca5-8680-b64cf6e3878c"
+              },
+              "usage": {
+                "inputTokens": 200,
+                "outputTokens": 21,
+                "cacheReadTokens": 9216,
+                "cacheWriteTokens": 0,
+                "totalTokens": 9437
+              },
+              "stream": [
+                {
+                  "type": "chunk",
+                  "time": 1794708329870,
+                  "chunk": {
+                    "type": "block-start",
+                    "index": 0,
+                    "blockType": "text"
+                  }
+                },
+                {
+                  "type": "text-chunks",
+                  "time0": 1794708329871,
+                  "index": 0,
+                  "dt": [
+                    116,
+                    14,
+                    1,
+                    13,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    16,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    14,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "texts": [
+                    "E",
+                    "1",
+                    "_OK",
+                    " af",
+                    "d",
+                    "277",
+                    "3",
+                    "bb",
+                    "98",
+                    "d",
+                    "48",
+                    "eb",
+                    "018",
+                    "945",
+                    "d",
+                    "1",
+                    "b",
+                    "987",
+                    "a",
+                    "44",
+                    "f"
+                  ]
+                },
+                {
+                  "type": "chunk",
+                  "time": 1794708330047,
+                  "chunk": {
+                    "type": "block-end",
+                    "index": 0,
+                    "block": {
+                      "type": "text",
+                      "text": "E1_OK afd2773bb98d48eb018945d1b987a44f"
+                    }
+                  }
+                },
+                {
+                  "type": "chunk",
+                  "time": 1794708330047,
+                  "chunk": {
+                    "type": "usage",
+                    "usage": {
+                      "inputTokens": 200,
+                      "outputTokens": 21,
+                      "cacheReadTokens": 9216,
+                      "cacheWriteTokens": 0,
+                      "totalTokens": 9437
+                    }
+                  }
+                },
+                {
+                  "type": "chunk",
+                  "time": 1794708330047,
+                  "chunk": {
+                    "type": "finish",
+                    "reason": {
+                      "kind": "stop"
+                    },
+                    "replayState": {
+                      "response": {
+                        "kind": "deepseek-messages",
+                        "version": 1,
+                        "model": "deepseek-flash"
+                      },
+                      "blocks": [
+                        {
+                          "type": "text"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            "surfaceOp": "append"
+          }
+        ]
+      },
+      "window": {
+        "label": "e1",
+        "ok": true,
+        "errors": [],
+        "agentUsageDelta": {
+          "usage_records": 2
+        },
+        "pre": {
+          "compartments": [
+            {
+              "compartment_id": 1,
+              "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+              "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+              "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+              "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+              "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+              "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+              "importance": 88,
+              "covered_start_seq": 11,
+              "covered_end_seq": 34,
+              "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+              "covered_tokens": 2647,
+              "baseline_epoch": 0,
+              "landed_event_seq": 57,
+              "landed_reason": null,
+              "superseded": 0
+            }
+          ],
+          "unlanded": [],
+          "journal": {
+            "historian": {
+              "count": 3,
+              "maxId": 105,
+              "rows": [
+                {
+                  "id": 101,
+                  "at": 1794708279365,
+                  "kind": "historian",
+                  "summary": "historian automatic run started over 9 nodes",
+                  "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+                },
+                {
+                  "id": 104,
+                  "at": 1794708282327,
+                  "kind": "historian",
+                  "summary": "historian digest ready (importance 88, 9 nodes)",
+                  "data": "{\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000,\"importance\":88,\"facts\":4,\"events\":3,\"attempts\":1,\"durationMs\":2962,\"usage\":{\"inputTokens\":5723,\"outputTokens\":591,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":7850},\"finishReason\":\"stop\"}"
+                },
+                {
+                  "id": 105,
+                  "at": 1794708282338,
+                  "kind": "historian",
+                  "summary": "compartment §C1§ stored (~2647 tokens, importance 88)",
+                  "data": "{\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":2647,\"importance\":88,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":11,\"coveredEndSeq\":34}"
+                }
+              ]
+            },
+            "compartment-published": {
+              "count": 1,
+              "maxId": 106,
+              "rows": [
+                {
+                  "id": 106,
+                  "at": 1794708300090,
+                  "kind": "compartment-published",
+                  "summary": "compartment §C1§ replaced 9 nodes on the wire",
+                  "data": "{\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":2647,\"estTokensReclaimed\":2647,\"nodeSeq\":57,\"importance\":88}"
+                }
+              ]
+            },
+            "pass": {
+              "count": 7,
+              "maxId": 116,
+              "rows": [
+                {
+                  "id": 86,
+                  "at": 1794708265542,
+                  "kind": "pass",
+                  "summary": "defer (no-usage) at ?%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+                },
+                {
+                  "id": 90,
+                  "at": 1794708266637,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 25.5%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":25.5,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":683,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2598,\"tokensAfter\":2598,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 93,
+                  "at": 1794708267908,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":151,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2606,\"tokensAfter\":2520,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 95,
+                  "at": 1794708268931,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.0%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":207,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4626,\"tokensAfter\":4626,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 102,
+                  "at": 1794708279370,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.1%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.1,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":2926,\"cacheRead\":8576,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4630,\"tokensAfter\":4630,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 109,
+                  "at": 1794708300121,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":146,\"cacheRead\":11392,\"cacheWrite\":0},\"landed\":[],\"published\":[1],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":true,\"tokensBefore\":4660,\"tokensAfter\":2391,\"tokensDelta\":-2269,\"factsPromoted\":4,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 116,
+                  "at": 1794708311887,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 26.4%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":26.4,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":975,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+                }
+              ]
+            }
+          },
+          "usageTables": {
+            "usage_records": 34
+          },
+          "tags": [
+            {
+              "tag_number": 1,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2s74fK99RuBwhhjoB6Ea9597"
+            },
+            {
+              "tag_number": 2,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2DaRPylUPK2KHo6V24vY7931"
+            },
+            {
+              "tag_number": 3,
+              "target_kind": "tool-result",
+              "target_id": "call_00_i0GyXnyu52AvyXSQ4sTl2535"
+            },
+            {
+              "tag_number": 4,
+              "target_kind": "tool-result",
+              "target_id": "call_00_Lwrej8EpX6xGTztIMajV2199"
+            },
+            {
+              "tag_number": 5,
+              "target_kind": "tool-result",
+              "target_id": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927"
+            }
+          ],
+          "pendingDrops": [
+            {
+              "tag_number": 1,
+              "queued_at": 1794708267864,
+              "landed_event_seq": 28,
+              "flush_requested": 0
+            }
+          ],
+          "compartmentSha256": "7cd2f34a0af1d9ae40fa6898d09f29471f50cf34d388bd6db5d5e87ac9f7b2ca"
+        },
+        "post": {
+          "compartments": [
+            {
+              "compartment_id": 1,
+              "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+              "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+              "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+              "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+              "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+              "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+              "importance": 88,
+              "covered_start_seq": 11,
+              "covered_end_seq": 34,
+              "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+              "covered_tokens": 2647,
+              "baseline_epoch": 0,
+              "landed_event_seq": 57,
+              "landed_reason": null,
+              "superseded": 0
+            }
+          ],
+          "unlanded": [],
+          "journal": {
+            "historian": {
+              "count": 3,
+              "maxId": 105,
+              "rows": [
+                {
+                  "id": 101,
+                  "at": 1794708279365,
+                  "kind": "historian",
+                  "summary": "historian automatic run started over 9 nodes",
+                  "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+                },
+                {
+                  "id": 104,
+                  "at": 1794708282327,
+                  "kind": "historian",
+                  "summary": "historian digest ready (importance 88, 9 nodes)",
+                  "data": "{\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000,\"importance\":88,\"facts\":4,\"events\":3,\"attempts\":1,\"durationMs\":2962,\"usage\":{\"inputTokens\":5723,\"outputTokens\":591,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":7850},\"finishReason\":\"stop\"}"
+                },
+                {
+                  "id": 105,
+                  "at": 1794708282338,
+                  "kind": "historian",
+                  "summary": "compartment §C1§ stored (~2647 tokens, importance 88)",
+                  "data": "{\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":2647,\"importance\":88,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":11,\"coveredEndSeq\":34}"
+                }
+              ]
+            },
+            "compartment-published": {
+              "count": 1,
+              "maxId": 106,
+              "rows": [
+                {
+                  "id": 106,
+                  "at": 1794708300090,
+                  "kind": "compartment-published",
+                  "summary": "compartment §C1§ replaced 9 nodes on the wire",
+                  "data": "{\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":2647,\"estTokensReclaimed\":2647,\"nodeSeq\":57,\"importance\":88}"
+                }
+              ]
+            },
+            "pass": {
+              "count": 8,
+              "maxId": 122,
+              "rows": [
+                {
+                  "id": 86,
+                  "at": 1794708265542,
+                  "kind": "pass",
+                  "summary": "defer (no-usage) at ?%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+                },
+                {
+                  "id": 90,
+                  "at": 1794708266637,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 25.5%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":25.5,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":683,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2598,\"tokensAfter\":2598,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 93,
+                  "at": 1794708267908,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":151,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2606,\"tokensAfter\":2520,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 95,
+                  "at": 1794708268931,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.0%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":207,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4626,\"tokensAfter\":4626,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 102,
+                  "at": 1794708279370,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.1%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.1,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":2926,\"cacheRead\":8576,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4630,\"tokensAfter\":4630,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 109,
+                  "at": 1794708300121,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":146,\"cacheRead\":11392,\"cacheWrite\":0},\"landed\":[],\"published\":[1],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":true,\"tokensBefore\":4660,\"tokensAfter\":2391,\"tokensDelta\":-2269,\"factsPromoted\":4,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 116,
+                  "at": 1794708311887,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 26.4%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":26.4,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":975,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+                },
+                {
+                  "id": 122,
+                  "at": 1794708328346,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 27.6%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":27.6,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":205,\"cacheRead\":8832,\"cacheWrite\":0},\"consecutive\":1}"
+                }
+              ]
+            }
+          },
+          "usageTables": {
+            "usage_records": 36
+          },
+          "tags": [
+            {
+              "tag_number": 1,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2s74fK99RuBwhhjoB6Ea9597"
+            },
+            {
+              "tag_number": 2,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2DaRPylUPK2KHo6V24vY7931"
+            },
+            {
+              "tag_number": 3,
+              "target_kind": "tool-result",
+              "target_id": "call_00_i0GyXnyu52AvyXSQ4sTl2535"
+            },
+            {
+              "tag_number": 4,
+              "target_kind": "tool-result",
+              "target_id": "call_00_Lwrej8EpX6xGTztIMajV2199"
+            },
+            {
+              "tag_number": 5,
+              "target_kind": "tool-result",
+              "target_id": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927"
+            },
+            {
+              "tag_number": 6,
+              "target_kind": "tool-result",
+              "target_id": "call_00_tUSa3xh4Q0zgu0C9fNfn7227"
+            }
+          ],
+          "pendingDrops": [
+            {
+              "tag_number": 1,
+              "queued_at": 1794708267864,
+              "landed_event_seq": 28,
+              "flush_requested": 0
+            }
+          ],
+          "compartmentSha256": "7cd2f34a0af1d9ae40fa6898d09f29471f50cf34d388bd6db5d5e87ac9f7b2ca"
+        }
+      }
+    },
+    "e2": {
+      "record": {
+        "args": [
+          "--profile",
+          "headless",
+          "--patch",
+          "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\settle.yml",
+          "--json",
+          "--permission-mode",
+          "read-only",
+          "--approval-policy",
+          "never",
+          "--session-id",
+          "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+          "Resume the persisted combined session. Call ONLY ctx_expand with message set to the decimal string \"20\". Do not pass tag or tags, do not call any other tool, and do not read any file. Respond E2_OK plus the nonce from the restored original if it is available; otherwise report the exact refusal."
+        ],
+        "exit_code": 0,
+        "mode": "real-host",
+        "seconds": 6.148,
+        "session_id": "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+        "final_reason": {
+          "kind": "completed"
+        },
+        "final_text": "E2_OK afd2773bb98d48eb018945d1b987a44f",
+        "tool_calls": [
+          {
+            "tool": "ctx_expand",
+            "input": {
+              "message": "20"
+            }
+          }
+        ],
+        "tool_results": [
+          {
+            "callId": "call_00_NvsFH2P6iNwJjYcJXEPn4686",
+            "status": "completed",
+            "result": "§7§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>"
+          }
+        ]
+      },
+      "result": {
+        "callSeq": 123,
+        "callId": "call_00_NvsFH2P6iNwJjYcJXEPn4686",
+        "resultSeq": 124,
+        "resultText": "§7§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>",
+        "eventsAfterResult": [
+          {
+            "type": "step/end",
+            "seq": 125,
+            "time": 1794708344134,
+            "data": {
+              "turn": 5,
+              "step": 1
+            }
+          },
+          {
+            "type": "step/start",
+            "seq": 126,
+            "time": 1794708344155,
+            "data": {
+              "turn": 5,
+              "step": 2
+            }
+          },
+          {
+            "type": "session-log-deepseek/delivery-accepted",
+            "seq": 127,
+            "time": 1794708344316,
+            "data": {
+              "sessionId": "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+              "sessionFormatVersion": 4,
+              "throughSeq": 126
+            }
+          },
+          {
+            "type": "assistant/message",
+            "seq": 128,
+            "time": 1794708345175,
+            "data": {
+              "turn": 5,
+              "step": 2,
+              "message": {
+                "role": "assistant",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "E2_OK afd2773bb98d48eb018945d1b987a44f"
+                  }
+                ],
+                "source": {
+                  "kind": "model",
+                  "provider": "deepseek-official",
+                  "model": "deepseek-flash",
+                  "replayState": {
+                    "response": {
+                      "kind": "deepseek-messages",
+                      "version": 1,
+                      "model": "deepseek-flash"
+                    },
+                    "blocks": [
+                      {
+                        "type": "text"
+                      }
+                    ]
+                  }
+                },
+                "id": "a773e516-1ffd-43f1-9db6-8fcb2514f5a9"
+              },
+              "usage": {
+                "inputTokens": 228,
+                "outputTokens": 21,
+                "cacheReadTokens": 9600,
+                "cacheWriteTokens": 0,
+                "totalTokens": 9849
+              },
+              "stream": [
+                {
+                  "type": "chunk",
+                  "time": 1794708345106,
+                  "chunk": {
+                    "type": "block-start",
+                    "index": 0,
+                    "blockType": "text"
+                  }
+                },
+                {
+                  "type": "text-chunks",
+                  "time0": 1794708345107,
+                  "index": 0,
+                  "dt": [
+                    12,
+                    9,
+                    0,
+                    17,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    17,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    11,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "texts": [
+                    "E",
+                    "2",
+                    "_OK",
+                    " af",
+                    "d",
+                    "277",
+                    "3",
+                    "bb",
+                    "98",
+                    "d",
+                    "48",
+                    "eb",
+                    "018",
+                    "945",
+                    "d",
+                    "1",
+                    "b",
+                    "987",
+                    "a",
+                    "44",
+                    "f"
+                  ]
+                },
+                {
+                  "type": "chunk",
+                  "time": 1794708345173,
+                  "chunk": {
+                    "type": "block-end",
+                    "index": 0,
+                    "block": {
+                      "type": "text",
+                      "text": "E2_OK afd2773bb98d48eb018945d1b987a44f"
+                    }
+                  }
+                },
+                {
+                  "type": "chunk",
+                  "time": 1794708345173,
+                  "chunk": {
+                    "type": "usage",
+                    "usage": {
+                      "inputTokens": 228,
+                      "outputTokens": 21,
+                      "cacheReadTokens": 9600,
+                      "cacheWriteTokens": 0,
+                      "totalTokens": 9849
+                    }
+                  }
+                },
+                {
+                  "type": "chunk",
+                  "time": 1794708345173,
+                  "chunk": {
+                    "type": "finish",
+                    "reason": {
+                      "kind": "stop"
+                    },
+                    "replayState": {
+                      "response": {
+                        "kind": "deepseek-messages",
+                        "version": 1,
+                        "model": "deepseek-flash"
+                      },
+                      "blocks": [
+                        {
+                          "type": "text"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            "surfaceOp": "append"
+          }
+        ]
+      },
+      "window": {
+        "label": "e2",
+        "ok": true,
+        "errors": [],
+        "agentUsageDelta": {
+          "usage_records": 2
+        },
+        "pre": {
+          "compartments": [
+            {
+              "compartment_id": 1,
+              "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+              "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+              "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+              "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+              "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+              "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+              "importance": 88,
+              "covered_start_seq": 11,
+              "covered_end_seq": 34,
+              "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+              "covered_tokens": 2647,
+              "baseline_epoch": 0,
+              "landed_event_seq": 57,
+              "landed_reason": null,
+              "superseded": 0
+            }
+          ],
+          "unlanded": [],
+          "journal": {
+            "historian": {
+              "count": 3,
+              "maxId": 105,
+              "rows": [
+                {
+                  "id": 101,
+                  "at": 1794708279365,
+                  "kind": "historian",
+                  "summary": "historian automatic run started over 9 nodes",
+                  "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+                },
+                {
+                  "id": 104,
+                  "at": 1794708282327,
+                  "kind": "historian",
+                  "summary": "historian digest ready (importance 88, 9 nodes)",
+                  "data": "{\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000,\"importance\":88,\"facts\":4,\"events\":3,\"attempts\":1,\"durationMs\":2962,\"usage\":{\"inputTokens\":5723,\"outputTokens\":591,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":7850},\"finishReason\":\"stop\"}"
+                },
+                {
+                  "id": 105,
+                  "at": 1794708282338,
+                  "kind": "historian",
+                  "summary": "compartment §C1§ stored (~2647 tokens, importance 88)",
+                  "data": "{\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":2647,\"importance\":88,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":11,\"coveredEndSeq\":34}"
+                }
+              ]
+            },
+            "compartment-published": {
+              "count": 1,
+              "maxId": 106,
+              "rows": [
+                {
+                  "id": 106,
+                  "at": 1794708300090,
+                  "kind": "compartment-published",
+                  "summary": "compartment §C1§ replaced 9 nodes on the wire",
+                  "data": "{\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":2647,\"estTokensReclaimed\":2647,\"nodeSeq\":57,\"importance\":88}"
+                }
+              ]
+            },
+            "pass": {
+              "count": 8,
+              "maxId": 122,
+              "rows": [
+                {
+                  "id": 86,
+                  "at": 1794708265542,
+                  "kind": "pass",
+                  "summary": "defer (no-usage) at ?%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+                },
+                {
+                  "id": 90,
+                  "at": 1794708266637,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 25.5%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":25.5,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":683,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2598,\"tokensAfter\":2598,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 93,
+                  "at": 1794708267908,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":151,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2606,\"tokensAfter\":2520,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 95,
+                  "at": 1794708268931,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.0%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":207,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4626,\"tokensAfter\":4626,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 102,
+                  "at": 1794708279370,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.1%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.1,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":2926,\"cacheRead\":8576,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4630,\"tokensAfter\":4630,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 109,
+                  "at": 1794708300121,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":146,\"cacheRead\":11392,\"cacheWrite\":0},\"landed\":[],\"published\":[1],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":true,\"tokensBefore\":4660,\"tokensAfter\":2391,\"tokensDelta\":-2269,\"factsPromoted\":4,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 116,
+                  "at": 1794708311887,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 26.4%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":26.4,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":975,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+                },
+                {
+                  "id": 122,
+                  "at": 1794708328346,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 27.6%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":27.6,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":205,\"cacheRead\":8832,\"cacheWrite\":0},\"consecutive\":1}"
+                }
+              ]
+            }
+          },
+          "usageTables": {
+            "usage_records": 36
+          },
+          "tags": [
+            {
+              "tag_number": 1,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2s74fK99RuBwhhjoB6Ea9597"
+            },
+            {
+              "tag_number": 2,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2DaRPylUPK2KHo6V24vY7931"
+            },
+            {
+              "tag_number": 3,
+              "target_kind": "tool-result",
+              "target_id": "call_00_i0GyXnyu52AvyXSQ4sTl2535"
+            },
+            {
+              "tag_number": 4,
+              "target_kind": "tool-result",
+              "target_id": "call_00_Lwrej8EpX6xGTztIMajV2199"
+            },
+            {
+              "tag_number": 5,
+              "target_kind": "tool-result",
+              "target_id": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927"
+            },
+            {
+              "tag_number": 6,
+              "target_kind": "tool-result",
+              "target_id": "call_00_tUSa3xh4Q0zgu0C9fNfn7227"
+            }
+          ],
+          "pendingDrops": [
+            {
+              "tag_number": 1,
+              "queued_at": 1794708267864,
+              "landed_event_seq": 28,
+              "flush_requested": 0
+            }
+          ],
+          "compartmentSha256": "7cd2f34a0af1d9ae40fa6898d09f29471f50cf34d388bd6db5d5e87ac9f7b2ca"
+        },
+        "post": {
+          "compartments": [
+            {
+              "compartment_id": 1,
+              "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+              "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+              "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+              "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+              "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+              "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+              "importance": 88,
+              "covered_start_seq": 11,
+              "covered_end_seq": 34,
+              "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+              "covered_tokens": 2647,
+              "baseline_epoch": 0,
+              "landed_event_seq": 57,
+              "landed_reason": null,
+              "superseded": 0
+            }
+          ],
+          "unlanded": [],
+          "journal": {
+            "historian": {
+              "count": 3,
+              "maxId": 105,
+              "rows": [
+                {
+                  "id": 101,
+                  "at": 1794708279365,
+                  "kind": "historian",
+                  "summary": "historian automatic run started over 9 nodes",
+                  "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+                },
+                {
+                  "id": 104,
+                  "at": 1794708282327,
+                  "kind": "historian",
+                  "summary": "historian digest ready (importance 88, 9 nodes)",
+                  "data": "{\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000,\"importance\":88,\"facts\":4,\"events\":3,\"attempts\":1,\"durationMs\":2962,\"usage\":{\"inputTokens\":5723,\"outputTokens\":591,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":7850},\"finishReason\":\"stop\"}"
+                },
+                {
+                  "id": 105,
+                  "at": 1794708282338,
+                  "kind": "historian",
+                  "summary": "compartment §C1§ stored (~2647 tokens, importance 88)",
+                  "data": "{\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":2647,\"importance\":88,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":11,\"coveredEndSeq\":34}"
+                }
+              ]
+            },
+            "compartment-published": {
+              "count": 1,
+              "maxId": 106,
+              "rows": [
+                {
+                  "id": 106,
+                  "at": 1794708300090,
+                  "kind": "compartment-published",
+                  "summary": "compartment §C1§ replaced 9 nodes on the wire",
+                  "data": "{\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":2647,\"estTokensReclaimed\":2647,\"nodeSeq\":57,\"importance\":88}"
+                }
+              ]
+            },
+            "pass": {
+              "count": 9,
+              "maxId": 129,
+              "rows": [
+                {
+                  "id": 86,
+                  "at": 1794708265542,
+                  "kind": "pass",
+                  "summary": "defer (no-usage) at ?%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+                },
+                {
+                  "id": 90,
+                  "at": 1794708266637,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 25.5%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":25.5,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":683,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2598,\"tokensAfter\":2598,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 93,
+                  "at": 1794708267908,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":151,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2606,\"tokensAfter\":2520,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 95,
+                  "at": 1794708268931,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.0%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":207,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4626,\"tokensAfter\":4626,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 102,
+                  "at": 1794708279370,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.1%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.1,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":2926,\"cacheRead\":8576,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4630,\"tokensAfter\":4630,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 109,
+                  "at": 1794708300121,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":146,\"cacheRead\":11392,\"cacheWrite\":0},\"landed\":[],\"published\":[1],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":true,\"tokensBefore\":4660,\"tokensAfter\":2391,\"tokensDelta\":-2269,\"factsPromoted\":4,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 116,
+                  "at": 1794708311887,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 26.4%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":26.4,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":975,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+                },
+                {
+                  "id": 122,
+                  "at": 1794708328346,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 27.6%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":27.6,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":205,\"cacheRead\":8832,\"cacheWrite\":0},\"consecutive\":1}"
+                },
+                {
+                  "id": 129,
+                  "at": 1794708342456,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 28.7%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":28.7,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":200,\"cacheRead\":9216,\"cacheWrite\":0},\"consecutive\":1}"
+                }
+              ]
+            }
+          },
+          "usageTables": {
+            "usage_records": 38
+          },
+          "tags": [
+            {
+              "tag_number": 1,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2s74fK99RuBwhhjoB6Ea9597"
+            },
+            {
+              "tag_number": 2,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2DaRPylUPK2KHo6V24vY7931"
+            },
+            {
+              "tag_number": 3,
+              "target_kind": "tool-result",
+              "target_id": "call_00_i0GyXnyu52AvyXSQ4sTl2535"
+            },
+            {
+              "tag_number": 4,
+              "target_kind": "tool-result",
+              "target_id": "call_00_Lwrej8EpX6xGTztIMajV2199"
+            },
+            {
+              "tag_number": 5,
+              "target_kind": "tool-result",
+              "target_id": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927"
+            },
+            {
+              "tag_number": 6,
+              "target_kind": "tool-result",
+              "target_id": "call_00_tUSa3xh4Q0zgu0C9fNfn7227"
+            },
+            {
+              "tag_number": 7,
+              "target_kind": "tool-result",
+              "target_id": "call_00_NvsFH2P6iNwJjYcJXEPn4686"
+            }
+          ],
+          "pendingDrops": [
+            {
+              "tag_number": 1,
+              "queued_at": 1794708267864,
+              "landed_event_seq": 28,
+              "flush_requested": 0
+            }
+          ],
+          "compartmentSha256": "7cd2f34a0af1d9ae40fa6898d09f29471f50cf34d388bd6db5d5e87ac9f7b2ca"
+        }
+      }
+    },
+    "e1OuterTag": 6,
+    "e1PayloadMatchesOriginal": true,
+    "e1PayloadSha256": "5bf8df34f1b71f7380192dab8108568a6c645daa799206dc9716ce247a41a105",
+    "e1ResultSeq": 103,
+    "e1Window": {
+      "label": "e1",
+      "ok": true,
+      "errors": [],
+      "agentUsageDelta": {
+        "usage_records": 2
+      },
+      "pre": {
+        "compartments": [
+          {
+            "compartment_id": 1,
+            "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+            "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+            "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+            "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+            "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+            "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+            "importance": 88,
+            "covered_start_seq": 11,
+            "covered_end_seq": 34,
+            "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+            "covered_tokens": 2647,
+            "baseline_epoch": 0,
+            "landed_event_seq": 57,
+            "landed_reason": null,
+            "superseded": 0
+          }
+        ],
+        "unlanded": [],
+        "journal": {
+          "historian": {
+            "count": 3,
+            "maxId": 105,
+            "rows": [
+              {
+                "id": 101,
+                "at": 1794708279365,
+                "kind": "historian",
+                "summary": "historian automatic run started over 9 nodes",
+                "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+              },
+              {
+                "id": 104,
+                "at": 1794708282327,
+                "kind": "historian",
+                "summary": "historian digest ready (importance 88, 9 nodes)",
+                "data": "{\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000,\"importance\":88,\"facts\":4,\"events\":3,\"attempts\":1,\"durationMs\":2962,\"usage\":{\"inputTokens\":5723,\"outputTokens\":591,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":7850},\"finishReason\":\"stop\"}"
+              },
+              {
+                "id": 105,
+                "at": 1794708282338,
+                "kind": "historian",
+                "summary": "compartment §C1§ stored (~2647 tokens, importance 88)",
+                "data": "{\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":2647,\"importance\":88,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":11,\"coveredEndSeq\":34}"
+              }
+            ]
+          },
+          "compartment-published": {
+            "count": 1,
+            "maxId": 106,
+            "rows": [
+              {
+                "id": 106,
+                "at": 1794708300090,
+                "kind": "compartment-published",
+                "summary": "compartment §C1§ replaced 9 nodes on the wire",
+                "data": "{\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":2647,\"estTokensReclaimed\":2647,\"nodeSeq\":57,\"importance\":88}"
+              }
+            ]
+          },
+          "pass": {
+            "count": 7,
+            "maxId": 116,
+            "rows": [
+              {
+                "id": 86,
+                "at": 1794708265542,
+                "kind": "pass",
+                "summary": "defer (no-usage) at ?%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+              },
+              {
+                "id": 90,
+                "at": 1794708266637,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 25.5%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":25.5,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":683,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2598,\"tokensAfter\":2598,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 93,
+                "at": 1794708267908,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 26.2%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":151,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2606,\"tokensAfter\":2520,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 95,
+                "at": 1794708268931,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 26.0%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":207,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4626,\"tokensAfter\":4626,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 102,
+                "at": 1794708279370,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 35.1%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.1,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":2926,\"cacheRead\":8576,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4630,\"tokensAfter\":4630,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 109,
+                "at": 1794708300121,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 35.2%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":146,\"cacheRead\":11392,\"cacheWrite\":0},\"landed\":[],\"published\":[1],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":true,\"tokensBefore\":4660,\"tokensAfter\":2391,\"tokensDelta\":-2269,\"factsPromoted\":4,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 116,
+                "at": 1794708311887,
+                "kind": "pass",
+                "summary": "defer (below-threshold) at 26.4%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":26.4,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":975,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+              }
+            ]
+          }
+        },
+        "usageTables": {
+          "usage_records": 34
+        },
+        "tags": [
+          {
+            "tag_number": 1,
+            "target_kind": "tool-result",
+            "target_id": "call_00_2s74fK99RuBwhhjoB6Ea9597"
+          },
+          {
+            "tag_number": 2,
+            "target_kind": "tool-result",
+            "target_id": "call_00_2DaRPylUPK2KHo6V24vY7931"
+          },
+          {
+            "tag_number": 3,
+            "target_kind": "tool-result",
+            "target_id": "call_00_i0GyXnyu52AvyXSQ4sTl2535"
+          },
+          {
+            "tag_number": 4,
+            "target_kind": "tool-result",
+            "target_id": "call_00_Lwrej8EpX6xGTztIMajV2199"
+          },
+          {
+            "tag_number": 5,
+            "target_kind": "tool-result",
+            "target_id": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927"
+          }
+        ],
+        "pendingDrops": [
+          {
+            "tag_number": 1,
+            "queued_at": 1794708267864,
+            "landed_event_seq": 28,
+            "flush_requested": 0
+          }
+        ],
+        "compartmentSha256": "7cd2f34a0af1d9ae40fa6898d09f29471f50cf34d388bd6db5d5e87ac9f7b2ca"
+      },
+      "post": {
+        "compartments": [
+          {
+            "compartment_id": 1,
+            "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+            "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+            "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+            "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+            "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+            "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+            "importance": 88,
+            "covered_start_seq": 11,
+            "covered_end_seq": 34,
+            "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+            "covered_tokens": 2647,
+            "baseline_epoch": 0,
+            "landed_event_seq": 57,
+            "landed_reason": null,
+            "superseded": 0
+          }
+        ],
+        "unlanded": [],
+        "journal": {
+          "historian": {
+            "count": 3,
+            "maxId": 105,
+            "rows": [
+              {
+                "id": 101,
+                "at": 1794708279365,
+                "kind": "historian",
+                "summary": "historian automatic run started over 9 nodes",
+                "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+              },
+              {
+                "id": 104,
+                "at": 1794708282327,
+                "kind": "historian",
+                "summary": "historian digest ready (importance 88, 9 nodes)",
+                "data": "{\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000,\"importance\":88,\"facts\":4,\"events\":3,\"attempts\":1,\"durationMs\":2962,\"usage\":{\"inputTokens\":5723,\"outputTokens\":591,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":7850},\"finishReason\":\"stop\"}"
+              },
+              {
+                "id": 105,
+                "at": 1794708282338,
+                "kind": "historian",
+                "summary": "compartment §C1§ stored (~2647 tokens, importance 88)",
+                "data": "{\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":2647,\"importance\":88,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":11,\"coveredEndSeq\":34}"
+              }
+            ]
+          },
+          "compartment-published": {
+            "count": 1,
+            "maxId": 106,
+            "rows": [
+              {
+                "id": 106,
+                "at": 1794708300090,
+                "kind": "compartment-published",
+                "summary": "compartment §C1§ replaced 9 nodes on the wire",
+                "data": "{\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":2647,\"estTokensReclaimed\":2647,\"nodeSeq\":57,\"importance\":88}"
+              }
+            ]
+          },
+          "pass": {
+            "count": 8,
+            "maxId": 122,
+            "rows": [
+              {
+                "id": 86,
+                "at": 1794708265542,
+                "kind": "pass",
+                "summary": "defer (no-usage) at ?%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+              },
+              {
+                "id": 90,
+                "at": 1794708266637,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 25.5%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":25.5,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":683,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2598,\"tokensAfter\":2598,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 93,
+                "at": 1794708267908,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 26.2%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":151,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2606,\"tokensAfter\":2520,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 95,
+                "at": 1794708268931,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 26.0%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":207,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4626,\"tokensAfter\":4626,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 102,
+                "at": 1794708279370,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 35.1%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.1,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":2926,\"cacheRead\":8576,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4630,\"tokensAfter\":4630,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 109,
+                "at": 1794708300121,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 35.2%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":146,\"cacheRead\":11392,\"cacheWrite\":0},\"landed\":[],\"published\":[1],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":true,\"tokensBefore\":4660,\"tokensAfter\":2391,\"tokensDelta\":-2269,\"factsPromoted\":4,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 116,
+                "at": 1794708311887,
+                "kind": "pass",
+                "summary": "defer (below-threshold) at 26.4%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":26.4,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":975,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+              },
+              {
+                "id": 122,
+                "at": 1794708328346,
+                "kind": "pass",
+                "summary": "defer (below-threshold) at 27.6%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":27.6,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":205,\"cacheRead\":8832,\"cacheWrite\":0},\"consecutive\":1}"
+              }
+            ]
+          }
+        },
+        "usageTables": {
+          "usage_records": 36
+        },
+        "tags": [
+          {
+            "tag_number": 1,
+            "target_kind": "tool-result",
+            "target_id": "call_00_2s74fK99RuBwhhjoB6Ea9597"
+          },
+          {
+            "tag_number": 2,
+            "target_kind": "tool-result",
+            "target_id": "call_00_2DaRPylUPK2KHo6V24vY7931"
+          },
+          {
+            "tag_number": 3,
+            "target_kind": "tool-result",
+            "target_id": "call_00_i0GyXnyu52AvyXSQ4sTl2535"
+          },
+          {
+            "tag_number": 4,
+            "target_kind": "tool-result",
+            "target_id": "call_00_Lwrej8EpX6xGTztIMajV2199"
+          },
+          {
+            "tag_number": 5,
+            "target_kind": "tool-result",
+            "target_id": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927"
+          },
+          {
+            "tag_number": 6,
+            "target_kind": "tool-result",
+            "target_id": "call_00_tUSa3xh4Q0zgu0C9fNfn7227"
+          }
+        ],
+        "pendingDrops": [
+          {
+            "tag_number": 1,
+            "queued_at": 1794708267864,
+            "landed_event_seq": 28,
+            "flush_requested": 0
+          }
+        ],
+        "compartmentSha256": "7cd2f34a0af1d9ae40fa6898d09f29471f50cf34d388bd6db5d5e87ac9f7b2ca"
+      }
+    },
+    "e1Inputs": [
+      {
+        "tag": "1"
+      }
+    ],
+    "e1OnlyExpectedLocator": true,
+    "e2OuterTag": 7,
+    "e2PayloadMatchesOriginal": true,
+    "e2PayloadSha256": "5bf8df34f1b71f7380192dab8108568a6c645daa799206dc9716ce247a41a105",
+    "e2ResultSeq": 124,
+    "e2Window": {
+      "label": "e2",
+      "ok": true,
+      "errors": [],
+      "agentUsageDelta": {
+        "usage_records": 2
+      },
+      "pre": {
+        "compartments": [
+          {
+            "compartment_id": 1,
+            "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+            "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+            "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+            "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+            "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+            "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+            "importance": 88,
+            "covered_start_seq": 11,
+            "covered_end_seq": 34,
+            "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+            "covered_tokens": 2647,
+            "baseline_epoch": 0,
+            "landed_event_seq": 57,
+            "landed_reason": null,
+            "superseded": 0
+          }
+        ],
+        "unlanded": [],
+        "journal": {
+          "historian": {
+            "count": 3,
+            "maxId": 105,
+            "rows": [
+              {
+                "id": 101,
+                "at": 1794708279365,
+                "kind": "historian",
+                "summary": "historian automatic run started over 9 nodes",
+                "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+              },
+              {
+                "id": 104,
+                "at": 1794708282327,
+                "kind": "historian",
+                "summary": "historian digest ready (importance 88, 9 nodes)",
+                "data": "{\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000,\"importance\":88,\"facts\":4,\"events\":3,\"attempts\":1,\"durationMs\":2962,\"usage\":{\"inputTokens\":5723,\"outputTokens\":591,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":7850},\"finishReason\":\"stop\"}"
+              },
+              {
+                "id": 105,
+                "at": 1794708282338,
+                "kind": "historian",
+                "summary": "compartment §C1§ stored (~2647 tokens, importance 88)",
+                "data": "{\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":2647,\"importance\":88,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":11,\"coveredEndSeq\":34}"
+              }
+            ]
+          },
+          "compartment-published": {
+            "count": 1,
+            "maxId": 106,
+            "rows": [
+              {
+                "id": 106,
+                "at": 1794708300090,
+                "kind": "compartment-published",
+                "summary": "compartment §C1§ replaced 9 nodes on the wire",
+                "data": "{\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":2647,\"estTokensReclaimed\":2647,\"nodeSeq\":57,\"importance\":88}"
+              }
+            ]
+          },
+          "pass": {
+            "count": 8,
+            "maxId": 122,
+            "rows": [
+              {
+                "id": 86,
+                "at": 1794708265542,
+                "kind": "pass",
+                "summary": "defer (no-usage) at ?%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+              },
+              {
+                "id": 90,
+                "at": 1794708266637,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 25.5%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":25.5,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":683,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2598,\"tokensAfter\":2598,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 93,
+                "at": 1794708267908,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 26.2%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":151,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2606,\"tokensAfter\":2520,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 95,
+                "at": 1794708268931,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 26.0%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":207,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4626,\"tokensAfter\":4626,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 102,
+                "at": 1794708279370,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 35.1%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.1,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":2926,\"cacheRead\":8576,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4630,\"tokensAfter\":4630,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 109,
+                "at": 1794708300121,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 35.2%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":146,\"cacheRead\":11392,\"cacheWrite\":0},\"landed\":[],\"published\":[1],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":true,\"tokensBefore\":4660,\"tokensAfter\":2391,\"tokensDelta\":-2269,\"factsPromoted\":4,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 116,
+                "at": 1794708311887,
+                "kind": "pass",
+                "summary": "defer (below-threshold) at 26.4%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":26.4,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":975,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+              },
+              {
+                "id": 122,
+                "at": 1794708328346,
+                "kind": "pass",
+                "summary": "defer (below-threshold) at 27.6%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":27.6,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":205,\"cacheRead\":8832,\"cacheWrite\":0},\"consecutive\":1}"
+              }
+            ]
+          }
+        },
+        "usageTables": {
+          "usage_records": 36
+        },
+        "tags": [
+          {
+            "tag_number": 1,
+            "target_kind": "tool-result",
+            "target_id": "call_00_2s74fK99RuBwhhjoB6Ea9597"
+          },
+          {
+            "tag_number": 2,
+            "target_kind": "tool-result",
+            "target_id": "call_00_2DaRPylUPK2KHo6V24vY7931"
+          },
+          {
+            "tag_number": 3,
+            "target_kind": "tool-result",
+            "target_id": "call_00_i0GyXnyu52AvyXSQ4sTl2535"
+          },
+          {
+            "tag_number": 4,
+            "target_kind": "tool-result",
+            "target_id": "call_00_Lwrej8EpX6xGTztIMajV2199"
+          },
+          {
+            "tag_number": 5,
+            "target_kind": "tool-result",
+            "target_id": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927"
+          },
+          {
+            "tag_number": 6,
+            "target_kind": "tool-result",
+            "target_id": "call_00_tUSa3xh4Q0zgu0C9fNfn7227"
+          }
+        ],
+        "pendingDrops": [
+          {
+            "tag_number": 1,
+            "queued_at": 1794708267864,
+            "landed_event_seq": 28,
+            "flush_requested": 0
+          }
+        ],
+        "compartmentSha256": "7cd2f34a0af1d9ae40fa6898d09f29471f50cf34d388bd6db5d5e87ac9f7b2ca"
+      },
+      "post": {
+        "compartments": [
+          {
+            "compartment_id": 1,
+            "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+            "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+            "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+            "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+            "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+            "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+            "importance": 88,
+            "covered_start_seq": 11,
+            "covered_end_seq": 34,
+            "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+            "covered_tokens": 2647,
+            "baseline_epoch": 0,
+            "landed_event_seq": 57,
+            "landed_reason": null,
+            "superseded": 0
+          }
+        ],
+        "unlanded": [],
+        "journal": {
+          "historian": {
+            "count": 3,
+            "maxId": 105,
+            "rows": [
+              {
+                "id": 101,
+                "at": 1794708279365,
+                "kind": "historian",
+                "summary": "historian automatic run started over 9 nodes",
+                "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+              },
+              {
+                "id": 104,
+                "at": 1794708282327,
+                "kind": "historian",
+                "summary": "historian digest ready (importance 88, 9 nodes)",
+                "data": "{\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000,\"importance\":88,\"facts\":4,\"events\":3,\"attempts\":1,\"durationMs\":2962,\"usage\":{\"inputTokens\":5723,\"outputTokens\":591,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":7850},\"finishReason\":\"stop\"}"
+              },
+              {
+                "id": 105,
+                "at": 1794708282338,
+                "kind": "historian",
+                "summary": "compartment §C1§ stored (~2647 tokens, importance 88)",
+                "data": "{\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":2647,\"importance\":88,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":11,\"coveredEndSeq\":34}"
+              }
+            ]
+          },
+          "compartment-published": {
+            "count": 1,
+            "maxId": 106,
+            "rows": [
+              {
+                "id": 106,
+                "at": 1794708300090,
+                "kind": "compartment-published",
+                "summary": "compartment §C1§ replaced 9 nodes on the wire",
+                "data": "{\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":2647,\"estTokensReclaimed\":2647,\"nodeSeq\":57,\"importance\":88}"
+              }
+            ]
+          },
+          "pass": {
+            "count": 9,
+            "maxId": 129,
+            "rows": [
+              {
+                "id": 86,
+                "at": 1794708265542,
+                "kind": "pass",
+                "summary": "defer (no-usage) at ?%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+              },
+              {
+                "id": 90,
+                "at": 1794708266637,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 25.5%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":25.5,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":683,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2598,\"tokensAfter\":2598,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 93,
+                "at": 1794708267908,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 26.2%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":151,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2606,\"tokensAfter\":2520,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 95,
+                "at": 1794708268931,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 26.0%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":207,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4626,\"tokensAfter\":4626,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 102,
+                "at": 1794708279370,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 35.1%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.1,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":2926,\"cacheRead\":8576,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4630,\"tokensAfter\":4630,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 109,
+                "at": 1794708300121,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 35.2%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":146,\"cacheRead\":11392,\"cacheWrite\":0},\"landed\":[],\"published\":[1],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":true,\"tokensBefore\":4660,\"tokensAfter\":2391,\"tokensDelta\":-2269,\"factsPromoted\":4,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 116,
+                "at": 1794708311887,
+                "kind": "pass",
+                "summary": "defer (below-threshold) at 26.4%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":26.4,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":975,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+              },
+              {
+                "id": 122,
+                "at": 1794708328346,
+                "kind": "pass",
+                "summary": "defer (below-threshold) at 27.6%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":27.6,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":205,\"cacheRead\":8832,\"cacheWrite\":0},\"consecutive\":1}"
+              },
+              {
+                "id": 129,
+                "at": 1794708342456,
+                "kind": "pass",
+                "summary": "defer (below-threshold) at 28.7%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":28.7,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":200,\"cacheRead\":9216,\"cacheWrite\":0},\"consecutive\":1}"
+              }
+            ]
+          }
+        },
+        "usageTables": {
+          "usage_records": 38
+        },
+        "tags": [
+          {
+            "tag_number": 1,
+            "target_kind": "tool-result",
+            "target_id": "call_00_2s74fK99RuBwhhjoB6Ea9597"
+          },
+          {
+            "tag_number": 2,
+            "target_kind": "tool-result",
+            "target_id": "call_00_2DaRPylUPK2KHo6V24vY7931"
+          },
+          {
+            "tag_number": 3,
+            "target_kind": "tool-result",
+            "target_id": "call_00_i0GyXnyu52AvyXSQ4sTl2535"
+          },
+          {
+            "tag_number": 4,
+            "target_kind": "tool-result",
+            "target_id": "call_00_Lwrej8EpX6xGTztIMajV2199"
+          },
+          {
+            "tag_number": 5,
+            "target_kind": "tool-result",
+            "target_id": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927"
+          },
+          {
+            "tag_number": 6,
+            "target_kind": "tool-result",
+            "target_id": "call_00_tUSa3xh4Q0zgu0C9fNfn7227"
+          },
+          {
+            "tag_number": 7,
+            "target_kind": "tool-result",
+            "target_id": "call_00_NvsFH2P6iNwJjYcJXEPn4686"
+          }
+        ],
+        "pendingDrops": [
+          {
+            "tag_number": 1,
+            "queued_at": 1794708267864,
+            "landed_event_seq": 28,
+            "flush_requested": 0
+          }
+        ],
+        "compartmentSha256": "7cd2f34a0af1d9ae40fa6898d09f29471f50cf34d388bd6db5d5e87ac9f7b2ca"
+      }
+    },
+    "e2Inputs": [
+      {
+        "message": "20"
+      }
+    ],
+    "e2OnlyExpectedLocator": true,
+    "historianStart": {
+      "id": 101,
+      "at": 1794708279365,
+      "kind": "historian",
+      "summary": "historian automatic run started over 9 nodes",
+      "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+    },
+    "compartmentHashStable": true,
+    "currentDb": {
+      "compartments": [
+        {
+          "compartment_id": 1,
+          "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+          "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+          "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+          "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+          "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+          "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+          "importance": 88,
+          "covered_start_seq": 11,
+          "covered_end_seq": 34,
+          "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+          "covered_tokens": 2647,
+          "baseline_epoch": 0,
+          "landed_event_seq": 57,
+          "landed_reason": null,
+          "superseded": 0
+        }
+      ],
+      "journal": {
+        "historian": {
+          "count": 3,
+          "maxId": 105,
+          "rows": [
+            {
+              "id": 101,
+              "at": 1794708279365,
+              "kind": "historian",
+              "summary": "historian automatic run started over 9 nodes",
+              "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+            },
+            {
+              "id": 104,
+              "at": 1794708282327,
+              "kind": "historian",
+              "summary": "historian digest ready (importance 88, 9 nodes)",
+              "data": "{\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000,\"importance\":88,\"facts\":4,\"events\":3,\"attempts\":1,\"durationMs\":2962,\"usage\":{\"inputTokens\":5723,\"outputTokens\":591,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":7850},\"finishReason\":\"stop\"}"
+            },
+            {
+              "id": 105,
+              "at": 1794708282338,
+              "kind": "historian",
+              "summary": "compartment §C1§ stored (~2647 tokens, importance 88)",
+              "data": "{\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":2647,\"importance\":88,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":11,\"coveredEndSeq\":34}"
+            }
+          ]
+        },
+        "compartment-published": {
+          "count": 1,
+          "maxId": 106,
+          "rows": [
+            {
+              "id": 106,
+              "at": 1794708300090,
+              "kind": "compartment-published",
+              "summary": "compartment §C1§ replaced 9 nodes on the wire",
+              "data": "{\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":2647,\"estTokensReclaimed\":2647,\"nodeSeq\":57,\"importance\":88}"
+            }
+          ]
+        },
+        "pass": {
+          "count": 9,
+          "maxId": 129,
+          "rows": [
+            {
+              "id": 86,
+              "at": 1794708265542,
+              "kind": "pass",
+              "summary": "defer (no-usage) at ?%",
+              "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+            },
+            {
+              "id": 90,
+              "at": 1794708266637,
+              "kind": "pass",
+              "summary": "execute (execute-threshold) at 25.5%",
+              "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":25.5,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":683,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2598,\"tokensAfter\":2598,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+            },
+            {
+              "id": 93,
+              "at": 1794708267908,
+              "kind": "pass",
+              "summary": "execute (execute-threshold) at 26.2%",
+              "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":151,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2606,\"tokensAfter\":2520,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+            },
+            {
+              "id": 95,
+              "at": 1794708268931,
+              "kind": "pass",
+              "summary": "execute (execute-threshold) at 26.0%",
+              "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":207,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4626,\"tokensAfter\":4626,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+            },
+            {
+              "id": 102,
+              "at": 1794708279370,
+              "kind": "pass",
+              "summary": "execute (execute-threshold) at 35.1%",
+              "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.1,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":2926,\"cacheRead\":8576,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4630,\"tokensAfter\":4630,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+            },
+            {
+              "id": 109,
+              "at": 1794708300121,
+              "kind": "pass",
+              "summary": "execute (execute-threshold) at 35.2%",
+              "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":146,\"cacheRead\":11392,\"cacheWrite\":0},\"landed\":[],\"published\":[1],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":true,\"tokensBefore\":4660,\"tokensAfter\":2391,\"tokensDelta\":-2269,\"factsPromoted\":4,\"factsSeenAgain\":0}"
+            },
+            {
+              "id": 116,
+              "at": 1794708311887,
+              "kind": "pass",
+              "summary": "defer (below-threshold) at 26.4%",
+              "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":26.4,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":975,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+            },
+            {
+              "id": 122,
+              "at": 1794708328346,
+              "kind": "pass",
+              "summary": "defer (below-threshold) at 27.6%",
+              "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":27.6,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":205,\"cacheRead\":8832,\"cacheWrite\":0},\"consecutive\":1}"
+            },
+            {
+              "id": 129,
+              "at": 1794708342456,
+              "kind": "pass",
+              "summary": "defer (below-threshold) at 28.7%",
+              "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":28.7,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":200,\"cacheRead\":9216,\"cacheWrite\":0},\"consecutive\":1}"
+            }
+          ]
+        },
+        "drop-landed": {
+          "count": 1,
+          "maxId": 92,
+          "rows": [
+            {
+              "id": 92,
+              "at": 1794708267904,
+              "kind": "drop-landed",
+              "summary": "landed 1 drop(s): §1§",
+              "data": "{\"tags\":[1],\"count\":1,\"estTokens\":90}"
+            }
+          ]
+        },
+        "emergency-reclaim": {
+          "count": 0,
+          "maxId": null,
+          "rows": []
+        }
+      },
+      "tags": [
+        {
+          "tag_number": 1,
+          "target_kind": "tool-result",
+          "target_id": "call_00_2s74fK99RuBwhhjoB6Ea9597"
+        },
+        {
+          "tag_number": 2,
+          "target_kind": "tool-result",
+          "target_id": "call_00_2DaRPylUPK2KHo6V24vY7931"
+        },
+        {
+          "tag_number": 3,
+          "target_kind": "tool-result",
+          "target_id": "call_00_i0GyXnyu52AvyXSQ4sTl2535"
+        },
+        {
+          "tag_number": 4,
+          "target_kind": "tool-result",
+          "target_id": "call_00_Lwrej8EpX6xGTztIMajV2199"
+        },
+        {
+          "tag_number": 5,
+          "target_kind": "tool-result",
+          "target_id": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927"
+        },
+        {
+          "tag_number": 6,
+          "target_kind": "tool-result",
+          "target_id": "call_00_tUSa3xh4Q0zgu0C9fNfn7227"
+        },
+        {
+          "tag_number": 7,
+          "target_kind": "tool-result",
+          "target_id": "call_00_NvsFH2P6iNwJjYcJXEPn4686"
+        }
+      ],
+      "pendingDrops": [
+        {
+          "tag_number": 1,
+          "queued_at": 1794708267864,
+          "landed_event_seq": 28,
+          "flush_requested": 0
+        }
+      ],
+      "compartmentSha256": "7cd2f34a0af1d9ae40fa6898d09f29471f50cf34d388bd6db5d5e87ac9f7b2ca"
+    },
+    "originalCallCounts": {
+      "toolCalls": 1,
+      "toolResults": 2
+    },
+    "surfaceAfterE2": {
+      "processId": 15920,
+      "trigger": {
+        "type": "assistant/message",
+        "seq": 128
+      },
+      "surface": [
+        10,
+        58,
+        38,
+        49,
+        53,
+        55,
+        59,
+        61,
+        64,
+        75,
+        76,
+        77,
+        80,
+        82,
+        86,
+        97,
+        98,
+        101,
+        103,
+        107,
+        118,
+        119,
+        122,
+        124,
+        128
+      ],
+      "surfaceSha256": "2ae32afd514c520db05deb9a0de5b96ed7d5594f52cfe8b0b10654d175627d5b",
+      "snapshotCount": 35
+    }
+  },
+  "flush": {
+    "sessionId": "session-79f046ad-ce89-4b17-99bd-a2428e6277ab",
+    "executions": [
+      {
+        "processId": 10968,
+        "sessionId": "session-79f046ad-ce89-4b17-99bd-a2428e6277ab",
+        "target": "session-79f046ad-ce89-4b17-99bd-a2428e6277ab",
+        "definition": {
+          "name": "ctx-flush",
+          "description": "Force this session's pending ctx_reduce drops to land on the next message (no summary or model call)."
+        },
+        "execution": {
+          "commandId": "cmd-ce6c6589-1",
+          "kind": "success",
+          "text": "Magic Context: flush queued for 1 new drop(s) (new §1§): requested 1, already marked 0, processed 0, pendingNext 1 (upper bound). Changes take effect on the next message; the current request is unchanged."
+        }
+      }
+    ],
+    "commandEvents": [
+      {
+        "type": "command/run",
+        "seq": 35,
+        "time": 1794708368881,
+        "data": {
+          "commandId": "cmd-ce6c6589-1",
+          "name": "ctx-flush",
+          "args": "",
+          "source": {
+            "kind": "user"
+          }
+        }
+      },
+      {
+        "type": "command/done",
+        "seq": 36,
+        "time": 1794708368886,
+        "data": {
+          "commandId": "cmd-ce6c6589-1",
+          "kind": "success",
+          "text": "Magic Context: flush queued for 1 new drop(s) (new §1§): requested 1, already marked 0, processed 0, pendingNext 1 (upper bound). Changes take effect on the next message; the current request is unchanged."
+        }
+      }
+    ],
+    "db": {
+      "compartments": [],
+      "journal": {
+        "historian": {
+          "count": 0,
+          "maxId": null,
+          "rows": []
+        },
+        "compartment-published": {
+          "count": 0,
+          "maxId": null,
+          "rows": []
+        },
+        "pass": {
+          "count": 3,
+          "maxId": 147,
+          "rows": [
+            {
+              "id": 136,
+              "at": 1794708355483,
+              "kind": "pass",
+              "summary": "defer (no-usage) at ?%",
+              "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+            },
+            {
+              "id": 140,
+              "at": 1794708356993,
+              "kind": "pass",
+              "summary": "defer (below-threshold) at 0.8%",
+              "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":0.8,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":748,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+            },
+            {
+              "id": 147,
+              "at": 1794708369217,
+              "kind": "pass",
+              "summary": "defer (below-threshold) at 0.8%",
+              "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":0.8,\"pressureStale\":true,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":184,\"cacheRead\":8576,\"cacheWrite\":0},\"consecutive\":1}"
+            }
+          ]
+        },
+        "drop-landed": {
+          "count": 1,
+          "maxId": 144,
+          "rows": [
+            {
+              "id": 144,
+              "at": 1794708369089,
+              "kind": "drop-landed",
+              "summary": "landed 1 drop(s): §1§",
+              "data": "{\"tags\":[1],\"count\":1,\"estTokens\":90}"
+            }
+          ]
+        },
+        "emergency-reclaim": {
+          "count": 0,
+          "maxId": null,
+          "rows": []
+        }
+      },
+      "tags": [
+        {
+          "tag_number": 1,
+          "target_kind": "tool-result",
+          "target_id": "call_00_0reFTjuaVCmL2COBfien1226"
+        },
+        {
+          "tag_number": 2,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_mrwdeC9z2ZgOWD1sPffI7569"
+        }
+      ],
+      "pendingDrops": [
+        {
+          "tag_number": 1,
+          "queued_at": 1794708357601,
+          "landed_event_seq": 43,
+          "flush_requested": 0
+        }
+      ],
+      "compartmentSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "placeholderSeen": true,
+    "placeholderEvent": {
+      "type": "tool/result",
+      "seq": 43,
+      "time": 1794708369084,
+      "data": {
+        "turn": 1,
+        "step": 1,
+        "message": {
+          "role": "tool",
+          "source": {
+            "kind": "tool",
+            "callId": "call_00_0reFTjuaVCmL2COBfien1226"
+          },
+          "toolCallId": "call_00_0reFTjuaVCmL2COBfien1226",
+          "isError": false,
+          "id": "0476346d-0714-4e8c-8dae-1c2a991aa401",
+          "content": [
+            {
+              "type": "text",
+              "text": "[dropped §1§]"
+            }
+          ]
+        },
+        "meta": {
+          "path": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt",
+          "offset": 1,
+          "lines": [
+            {
+              "number": 1,
+              "text": "COMBINED_RECOVERY_FIXTURE"
+            },
+            {
+              "number": 2,
+              "text": "The acceptance nonce is stored in the payload; it must survive the round trip."
+            },
+            {
+              "number": 3,
+              "text": "nonce=afd2773bb98d48eb018945d1b987a44f"
+            }
+          ],
+          "totalLines": 3
+        }
+      },
+      "sourceEventSeqs": [
+        21
+      ],
+      "surfaceOp": {
+        "op": "replace",
+        "startSeq": 21,
+        "endSeq": 21
+      }
+    },
+    "placeholderSeq": 43,
+    "historianAtE2Post": 3,
+    "historianCrossSession": {
+      "sameCompartments": true,
+      "sameTags": true,
+      "samePending": true,
+      "currentDb": {
+        "compartments": [
+          {
+            "compartment_id": 1,
+            "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+            "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+            "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+            "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+            "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+            "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+            "importance": 88,
+            "covered_start_seq": 11,
+            "covered_end_seq": 34,
+            "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+            "covered_tokens": 2647,
+            "baseline_epoch": 0,
+            "landed_event_seq": 57,
+            "landed_reason": null,
+            "superseded": 0
+          }
+        ],
+        "journal": {
+          "historian": {
+            "count": 3,
+            "maxId": 105,
+            "rows": [
+              {
+                "id": 101,
+                "at": 1794708279365,
+                "kind": "historian",
+                "summary": "historian automatic run started over 9 nodes",
+                "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+              },
+              {
+                "id": 104,
+                "at": 1794708282327,
+                "kind": "historian",
+                "summary": "historian digest ready (importance 88, 9 nodes)",
+                "data": "{\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000,\"importance\":88,\"facts\":4,\"events\":3,\"attempts\":1,\"durationMs\":2962,\"usage\":{\"inputTokens\":5723,\"outputTokens\":591,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":7850},\"finishReason\":\"stop\"}"
+              },
+              {
+                "id": 105,
+                "at": 1794708282338,
+                "kind": "historian",
+                "summary": "compartment §C1§ stored (~2647 tokens, importance 88)",
+                "data": "{\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":2647,\"importance\":88,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":11,\"coveredEndSeq\":34}"
+              }
+            ]
+          },
+          "compartment-published": {
+            "count": 1,
+            "maxId": 106,
+            "rows": [
+              {
+                "id": 106,
+                "at": 1794708300090,
+                "kind": "compartment-published",
+                "summary": "compartment §C1§ replaced 9 nodes on the wire",
+                "data": "{\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":2647,\"estTokensReclaimed\":2647,\"nodeSeq\":57,\"importance\":88}"
+              }
+            ]
+          },
+          "pass": {
+            "count": 9,
+            "maxId": 129,
+            "rows": [
+              {
+                "id": 86,
+                "at": 1794708265542,
+                "kind": "pass",
+                "summary": "defer (no-usage) at ?%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+              },
+              {
+                "id": 90,
+                "at": 1794708266637,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 25.5%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":25.5,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":683,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2598,\"tokensAfter\":2598,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 93,
+                "at": 1794708267908,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 26.2%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":151,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2606,\"tokensAfter\":2520,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 95,
+                "at": 1794708268931,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 26.0%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":207,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4626,\"tokensAfter\":4626,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 102,
+                "at": 1794708279370,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 35.1%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.1,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":2926,\"cacheRead\":8576,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4630,\"tokensAfter\":4630,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 109,
+                "at": 1794708300121,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 35.2%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":146,\"cacheRead\":11392,\"cacheWrite\":0},\"landed\":[],\"published\":[1],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":true,\"tokensBefore\":4660,\"tokensAfter\":2391,\"tokensDelta\":-2269,\"factsPromoted\":4,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 116,
+                "at": 1794708311887,
+                "kind": "pass",
+                "summary": "defer (below-threshold) at 26.4%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":26.4,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":975,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+              },
+              {
+                "id": 122,
+                "at": 1794708328346,
+                "kind": "pass",
+                "summary": "defer (below-threshold) at 27.6%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":27.6,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":205,\"cacheRead\":8832,\"cacheWrite\":0},\"consecutive\":1}"
+              },
+              {
+                "id": 129,
+                "at": 1794708342456,
+                "kind": "pass",
+                "summary": "defer (below-threshold) at 28.7%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":28.7,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":200,\"cacheRead\":9216,\"cacheWrite\":0},\"consecutive\":1}"
+              }
+            ]
+          },
+          "drop-landed": {
+            "count": 1,
+            "maxId": 92,
+            "rows": [
+              {
+                "id": 92,
+                "at": 1794708267904,
+                "kind": "drop-landed",
+                "summary": "landed 1 drop(s): §1§",
+                "data": "{\"tags\":[1],\"count\":1,\"estTokens\":90}"
+              }
+            ]
+          },
+          "emergency-reclaim": {
+            "count": 0,
+            "maxId": null,
+            "rows": []
+          }
+        },
+        "tags": [
+          {
+            "tag_number": 1,
+            "target_kind": "tool-result",
+            "target_id": "call_00_2s74fK99RuBwhhjoB6Ea9597"
+          },
+          {
+            "tag_number": 2,
+            "target_kind": "tool-result",
+            "target_id": "call_00_2DaRPylUPK2KHo6V24vY7931"
+          },
+          {
+            "tag_number": 3,
+            "target_kind": "tool-result",
+            "target_id": "call_00_i0GyXnyu52AvyXSQ4sTl2535"
+          },
+          {
+            "tag_number": 4,
+            "target_kind": "tool-result",
+            "target_id": "call_00_Lwrej8EpX6xGTztIMajV2199"
+          },
+          {
+            "tag_number": 5,
+            "target_kind": "tool-result",
+            "target_id": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927"
+          },
+          {
+            "tag_number": 6,
+            "target_kind": "tool-result",
+            "target_id": "call_00_tUSa3xh4Q0zgu0C9fNfn7227"
+          },
+          {
+            "tag_number": 7,
+            "target_kind": "tool-result",
+            "target_id": "call_00_NvsFH2P6iNwJjYcJXEPn4686"
+          }
+        ],
+        "pendingDrops": [
+          {
+            "tag_number": 1,
+            "queued_at": 1794708267864,
+            "landed_event_seq": 28,
+            "flush_requested": 0
+          }
+        ],
+        "compartmentSha256": "7cd2f34a0af1d9ae40fa6898d09f29471f50cf34d388bd6db5d5e87ac9f7b2ca"
+      }
+    }
+  },
+  "vector": {
+    "sessionId": "session-bccc5d17-b49f-40df-89c4-1473588fe67c",
+    "memories": 5,
+    "memoryEmbeddings": 4,
+    "spaces": [
+      {
+        "model_id": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+        "rows": 4
+      }
+    ],
+    "journal": [
+      {
+        "id": 163,
+        "level": "info",
+        "summary": "shared-space gate: gate-closed",
+        "data": {
+          "outcome": "gate-closed",
+          "reason": "no dominant embedding space",
+          "bootstrapModelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea"
+        }
+      },
+      {
+        "id": 164,
+        "level": "info",
+        "summary": "backfill: creating the first embedding space",
+        "data": {
+          "outcome": "backfill-bootstrap",
+          "modelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+          "total": 4
+        }
+      },
+      {
+        "id": 179,
+        "level": "info",
+        "summary": "shared-space gate: gate-closed",
+        "data": {
+          "outcome": "gate-closed",
+          "reason": "no dominant embedding space",
+          "bootstrapModelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea"
+        }
+      },
+      {
+        "id": 180,
+        "level": "info",
+        "summary": "backfill: creating the first embedding space",
+        "data": {
+          "outcome": "backfill-bootstrap",
+          "modelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+          "total": 4
+        }
+      },
+      {
+        "id": 181,
+        "level": "info",
+        "summary": "backfill: +4 vector(s) in the new space",
+        "data": {
+          "outcome": "backfill",
+          "created": 4,
+          "present": 0,
+          "skipped": 0,
+          "failed": 0,
+          "total": 4,
+          "modelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+          "batch": 4
+        }
+      },
+      {
+        "id": 185,
+        "level": "info",
+        "summary": "shared-space gate: parity-pass",
+        "data": {
+          "outcome": "parity-pass",
+          "modelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+          "parity": 1
+        }
+      }
+    ],
+    "outcomes": [
+      "gate-closed",
+      "backfill-bootstrap",
+      "gate-closed",
+      "backfill-bootstrap",
+      "backfill",
+      "parity-pass"
+    ],
+    "hybridMatch": true,
+    "memoryAfter": {
+      "memories": 5,
+      "memory_embeddings": 4,
+      "spaces": [
+        {
+          "model_id": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+          "rows": 4
+        }
+      ]
+    }
+  },
+  "isolation": {
+    "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709",
+    "overlays": [
+      "effort.yml",
+      "flush.yml",
+      "historian.yml",
+      "recovery.yml",
+      "settle.yml",
+      "vector.yml"
+    ],
+    "activityLog": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\plugin-data\\activity.log",
+    "bootDbPaths": [
+      "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\plugin-data\\dsh-magic-context.db"
+    ],
+    "allBootPathsInRoot": true,
+    "oldRootReferencesInOverlays": [],
+    "oldRootReferencesInActivity": [],
+    "outsideRootBootPaths": []
+  },
+  "discardedSessions": {
+    "session-4712e872-7645-4700-b64d-9bb96355f572": {
+      "snapshots": 31,
+      "lastProcessId": 16344,
+      "prompt": "This is an isolated 0.12.2 combined-host acceptance seed. In separate sequential model steps: read fixture.txt once and note the actual §N§ tag on its result; call ctx_reduce with drop set to ONLY that tag; read historia",
+      "tags": [
+        {
+          "tag_number": 1,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_hx4876Y1yv2zhiKkZc6K7041"
+        },
+        {
+          "tag_number": 2,
+          "target_kind": "tool-result",
+          "target_id": "call_00_uJd96S4rT9m5voGnq5WG7023"
+        },
+        {
+          "tag_number": 3,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_lSwa2Up0VHsoeh4HcQxr6009"
+        },
+        {
+          "tag_number": 4,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_eRIGxRmbMCTLojIod9rz5591"
+        },
+        {
+          "tag_number": 5,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_aDFNjSVfurOM6Wa4uObu3527"
+        },
+        {
+          "tag_number": 6,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_whJi1JIUyZNRBduAuwCh9827"
+        },
+        {
+          "tag_number": 7,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_g3pbrwZiIipGXBXyjnMF9041"
+        },
+        {
+          "tag_number": 8,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_tar13FWlipIRy1LqJ9HY1466"
+        }
+      ],
+      "pendingDrops": [
+        {
+          "tag_number": 1,
+          "queued_at": 1794708071099,
+          "landed_event_seq": 28,
+          "flush_requested": 0
+        }
+      ]
+    },
+    "session-cd1b5fdc-634b-433f-aaee-e16bcc59d8dc": {
+      "snapshots": 14,
+      "lastProcessId": 7372,
+      "prompt": "This is an isolated 0.12.2 combined-build recovery lifecycle test. Follow this exact sequence, one tool call per model step. (1) Read fixture.txt once and note the actual §N§ tag on its result. (2) Call ctx_reduce with d",
+      "tags": [
+        {
+          "tag_number": 1,
+          "target_kind": "tool-result",
+          "target_id": "call_00_HNFlJluqQtMF5QBdGMbY3206"
+        },
+        {
+          "tag_number": 2,
+          "target_kind": "tool-result",
+          "target_id": "call_00_MOazqgvFpOWk6uiYBZuW4603"
+        },
+        {
+          "tag_number": 3,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_YMOLVlILRko1vP55J1pF8752"
+        },
+        {
+          "tag_number": 4,
+          "target_kind": "tool-result",
+          "target_id": "call_00_8mAf9ouDmwkIvJBMq7E43495"
+        },
+        {
+          "tag_number": 5,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_CxRAJRu0g0G1YLhlYyNI5636"
+        }
+      ],
+      "pendingDrops": [
+        {
+          "tag_number": 1,
+          "queued_at": 1794708006632,
+          "landed_event_seq": null,
+          "flush_requested": 0
+        },
+        {
+          "tag_number": 3,
+          "queued_at": 1794708010652,
+          "landed_event_seq": null,
+          "flush_requested": 0
+        }
+      ]
+    },
+    "session-e894610c-b6ac-463c-b680-e2af29d1ec73": {
+      "snapshots": 11,
+      "lastProcessId": 14956,
+      "prompt": "",
+      "tags": [
+        {
+          "tag_number": 1,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_QopkuTGkqZyTsXGY6jL83727"
+        },
+        {
+          "tag_number": 2,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_Q4f6NBq9yCbBxXcSe9cE5008"
+        },
+        {
+          "tag_number": 3,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_IxNc5EC3RsYGQKwP3JfI6539"
+        }
+      ],
+      "pendingDrops": []
+    }
+  },
+  "evidence": [
+    {
+      "path": "evidence\\add-registry.txt",
+      "bytes": 811,
+      "sha256": "f285caa381a08ad1b74e44e81d5cd6228b0139d2729ae921ee0625e2cb68f578"
+    },
+    {
+      "path": "evidence\\bootstrap-profile.txt",
+      "bytes": 12990,
+      "sha256": "9e828f11b20b972b50c0d2ede36b44eb06ded9838b36f51ae21400a9d66640a7"
+    },
+    {
+      "path": "evidence\\combined-analysis.json",
+      "bytes": 162740,
+      "sha256": "0a3609f58686e894fa5e282ab2f91df696fcad109ae7c7f80040c6794dda82ee"
+    },
+    {
+      "path": "evidence\\combined-e1-tag.driver.json",
+      "bytes": 1519,
+      "sha256": "1f2f30afd97774e9ad5d87a42358aba7ca712dbead251bf7529eae8a1ba474ae"
+    },
+    {
+      "path": "evidence\\combined-e1-tag.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence\\combined-e1-tag.stdout.txt",
+      "bytes": 1590,
+      "sha256": "7c331c07c78101978c29dc225442d4269241cc4c36b93f996f2ef2f7fef5f81d"
+    },
+    {
+      "path": "evidence\\combined-e2-message.driver.json",
+      "bytes": 1578,
+      "sha256": "d9142c70253883245b4dc57ae4806d682bf0eed677b43b079eba34261df2aef7"
+    },
+    {
+      "path": "evidence\\combined-e2-message.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence\\combined-e2-message.stdout.txt",
+      "bytes": 1595,
+      "sha256": "cd156cb07bd28ff799a90fce43b88d98c771b843287dbbf2da4d9eb7792b0481"
+    },
+    {
+      "path": "evidence\\combined-flush-seed.driver.json",
+      "bytes": 1711,
+      "sha256": "3163691b5a7fec8fd1bd400641309c6efeca0b66e398ba876afcbe9600f93335"
+    },
+    {
+      "path": "evidence\\combined-flush-seed.stderr.txt",
+      "bytes": 1123,
+      "sha256": "325b437bad19abd98274acb207877124e205596ca437684d822fa35da20e3f93"
+    },
+    {
+      "path": "evidence\\combined-flush-seed.stdout.txt",
+      "bytes": 2485,
+      "sha256": "60411e0f930afce75126e30a7b2f3a874ff60f7e9f6ba09c02518f66b19148af"
+    },
+    {
+      "path": "evidence\\combined-flush.driver.json",
+      "bytes": 731,
+      "sha256": "a5c287c24159e1cc2bbf417b3c24de72310e9409d274ee1b0bfc8b6691dcdfcb"
+    },
+    {
+      "path": "evidence\\combined-flush.stderr.txt",
+      "bytes": 111,
+      "sha256": "72370035d25cec90c049873a2cd826e1196fda214d6b6f5b47beadf55816abd0"
+    },
+    {
+      "path": "evidence\\combined-flush.stdout.txt",
+      "bytes": 748,
+      "sha256": "5b4a937d69bcfbca93374c99bad24bf658685f2a972a32c424de6ce7075321e4"
+    },
+    {
+      "path": "evidence\\combined-observer-extract.json",
+      "bytes": 78567,
+      "sha256": "b1c39094e675d3de9b745e3fa32618192e52f5100a5965923c76dba02c2230a4"
+    },
+    {
+      "path": "evidence\\combined-recovery-old-tag.driver.json",
+      "bytes": 1199,
+      "sha256": "463dbfad61af345d791b560200f3411ee557a784ffc271151a9ae5fcbc94dfde"
+    },
+    {
+      "path": "evidence\\combined-recovery-old-tag.stderr.txt",
+      "bytes": 111,
+      "sha256": "72370035d25cec90c049873a2cd826e1196fda214d6b6f5b47beadf55816abd0"
+    },
+    {
+      "path": "evidence\\combined-recovery-old-tag.stdout.txt",
+      "bytes": 1702,
+      "sha256": "570a5e1f46a6a9b391a096106d40f165c5c7c53567a94a689ba3f576ab19bcfe"
+    },
+    {
+      "path": "evidence\\combined-recovery.driver.json",
+      "bytes": 3993,
+      "sha256": "ea127a32748df02ea9f7fb28eea1900bb6abe847779b1f1eea82ce130b748d3e"
+    },
+    {
+      "path": "evidence\\combined-recovery.stderr.txt",
+      "bytes": 111,
+      "sha256": "72370035d25cec90c049873a2cd826e1196fda214d6b6f5b47beadf55816abd0"
+    },
+    {
+      "path": "evidence\\combined-recovery.stdout.txt",
+      "bytes": 6008,
+      "sha256": "76df4ed5119262f0bc7d4c7e433675dee0744faa11e0d68fc7932cd18ce3ff61"
+    },
+    {
+      "path": "evidence\\combined-seed.driver.json",
+      "bytes": 10573,
+      "sha256": "8c04c3cfb865d5cdd591d7039cde65ed38283cf849ce720dd34486d741662ada"
+    },
+    {
+      "path": "evidence\\combined-seed.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence\\combined-seed.stdout.txt",
+      "bytes": 11012,
+      "sha256": "e64788a2c30de6b06a995f11b97eef0d1b3219fd17765985880e4e1a2d702a8b"
+    },
+    {
+      "path": "evidence\\combined-settle.driver.json",
+      "bytes": 988,
+      "sha256": "8b98b536d29ff6974d1246b1ae02e3e5b6bf4d7b9b859fdec472f8c75d45e887"
+    },
+    {
+      "path": "evidence\\combined-settle.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence\\combined-settle.stdout.txt",
+      "bytes": 1179,
+      "sha256": "6a2b7526cd0917a3417df1889a51fad8f8fc15c0612800103251e56516a055a9"
+    },
+    {
+      "path": "evidence\\combined-state.json",
+      "bytes": 105364,
+      "sha256": "b21b74d33eb98d0df875c37e6d3a6c48c886a9e8d0fb146735f601fff553d52f"
+    },
+    {
+      "path": "evidence\\combined-vector.driver.json",
+      "bytes": 2915,
+      "sha256": "d5377a006baa7ada2444c72a68c53875295618aa0398223557c19a1d41b7d167"
+    },
+    {
+      "path": "evidence\\combined-vector.stderr.txt",
+      "bytes": 111,
+      "sha256": "72370035d25cec90c049873a2cd826e1196fda214d6b6f5b47beadf55816abd0"
+    },
+    {
+      "path": "evidence\\combined-vector.stdout.txt",
+      "bytes": 3760,
+      "sha256": "d9d00f4a80864f0f3c9e87023d9fc05a343c3c74da24ee6c8069ebd2b1dbcad6"
+    },
+    {
+      "path": "evidence\\combined-wait-1.driver.json",
+      "bytes": 990,
+      "sha256": "ca43d506ce79d7ff5d15c15979873838c30b9b666556464c01b7fac1a447bdab"
+    },
+    {
+      "path": "evidence\\combined-wait-1.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence\\combined-wait-1.stdout.txt",
+      "bytes": 1179,
+      "sha256": "dac0cb65dfaefe86a7e91aae6a360ce3269e4f5a3d93933d549cf4b40556c465"
+    },
+    {
+      "path": "evidence\\combined-wait-2.driver.json",
+      "bytes": 993,
+      "sha256": "c72ce9a3170f17007bfafb0f384c8f3d55a7ef364533e5b18de94481b54ccda4"
+    },
+    {
+      "path": "evidence\\combined-wait-2.stderr.txt",
+      "bytes": 111,
+      "sha256": "72370035d25cec90c049873a2cd826e1196fda214d6b6f5b47beadf55816abd0"
+    },
+    {
+      "path": "evidence\\combined-wait-2.stdout.txt",
+      "bytes": 1249,
+      "sha256": "6028c4a0f7b6cbbf037dfdb6d345a4827c37b0bdf79563c077e69b7cac323959"
+    },
+    {
+      "path": "evidence\\combined-wait-3.driver.json",
+      "bytes": 993,
+      "sha256": "cdceedbc06b6b027e788e464f4ab816a2e989eb11673561f9f0d6f7b5a3fa596"
+    },
+    {
+      "path": "evidence\\combined-wait-3.stderr.txt",
+      "bytes": 111,
+      "sha256": "72370035d25cec90c049873a2cd826e1196fda214d6b6f5b47beadf55816abd0"
+    },
+    {
+      "path": "evidence\\combined-wait-3.stdout.txt",
+      "bytes": 1249,
+      "sha256": "048f53bf77f5520f8b59d7d9eb719937353e728bfba805f2625587629179c9b4"
+    },
+    {
+      "path": "evidence\\combined-wait-4.driver.json",
+      "bytes": 993,
+      "sha256": "785a2ef1b703653a85c48afd7abf53f83f856a61cf4cb8dcc5cd365539e34151"
+    },
+    {
+      "path": "evidence\\combined-wait-4.stderr.txt",
+      "bytes": 111,
+      "sha256": "72370035d25cec90c049873a2cd826e1196fda214d6b6f5b47beadf55816abd0"
+    },
+    {
+      "path": "evidence\\combined-wait-4.stdout.txt",
+      "bytes": 1249,
+      "sha256": "8f963f9a45adac295d81f6542d25d8b78b9b1d2fee083ff85b9cc83d6365e34c"
+    },
+    {
+      "path": "evidence\\combined-wait-5.driver.json",
+      "bytes": 993,
+      "sha256": "745996497afdd7f2335a079a122e13d04742fb7fee5b73b93247aa7010aeca97"
+    },
+    {
+      "path": "evidence\\combined-wait-5.stderr.txt",
+      "bytes": 111,
+      "sha256": "72370035d25cec90c049873a2cd826e1196fda214d6b6f5b47beadf55816abd0"
+    },
+    {
+      "path": "evidence\\combined-wait-5.stdout.txt",
+      "bytes": 1249,
+      "sha256": "7d469b79689dcef2575ecf9a4513c807883bf18863d24f01227d6f5e6f5e4d45"
+    },
+    {
+      "path": "evidence\\db-probes.json",
+      "bytes": 20571,
+      "sha256": "e5ef476cdf28ab6647e0a375c839f763322ef8d0b5de0d251e8368736529f2eb"
+    },
+    {
+      "path": "evidence\\dump-effort.txt",
+      "bytes": 14771,
+      "sha256": "8fe31aef1abe20ca3ac933aef7c70f8b8c599c865465e659d3ff86328e508935"
+    },
+    {
+      "path": "evidence\\dump-historian.txt",
+      "bytes": 14736,
+      "sha256": "ecc46ffee9008f3465a1c29cb4944a82ce87db4520616ecd6befffeefd7c608c"
+    },
+    {
+      "path": "evidence\\flush-command.jsonl",
+      "bytes": 563,
+      "sha256": "4f042287c63c8be9d16d2c4d28ed0d234e1374cf48f35678bb75eb0a271a0211"
+    },
+    {
+      "path": "evidence\\i18n.txt",
+      "bytes": 2051,
+      "sha256": "df9a87469f70365dfe36aed08e4836d8cafaf572fac3c5ddaf4cb590f05bbba1"
+    },
+    {
+      "path": "evidence\\npm-pack.txt",
+      "bytes": 3448,
+      "sha256": "ebca9dc1661160715d3a99ee95348124da0a85306676eeb36a0e77ba22bb1031"
+    },
+    {
+      "path": "evidence\\npm-view.txt",
+      "bytes": 747,
+      "sha256": "41290c5375680c83d407e79f711aa86759b0fc1f5d94a882a0aae09efc579a0f"
+    },
+    {
+      "path": "evidence\\preflight.json",
+      "bytes": 5669,
+      "sha256": "06b299efedbeb2ced6e056986b4dce678880eac558265ff6e43ba924215af87b"
+    },
+    {
+      "path": "evidence\\session-observer\\engine-owners.jsonl",
+      "bytes": 1652,
+      "sha256": "2e7d9b9df467bad093e539e323303bbf1315f7aba1b96265864ba3c774504d86"
+    },
+    {
+      "path": "evidence\\session-observer\\session-4712e872-7645-4700-b64d-9bb96355f572.jsonl",
+      "bytes": 4136460,
+      "sha256": "bcf0fc797c2ae88501c8e94ae8a67317560ac4f691c35fd9e60c1e7a3b24c0f2"
+    },
+    {
+      "path": "evidence\\session-observer\\session-79f046ad-ce89-4b17-99bd-a2428e6277ab.jsonl",
+      "bytes": 514469,
+      "sha256": "dbc7b72e6f3c3ccf9da4a5d8924fe471087a84ef74c1ea14053e7a8bf7d6cc4a"
+    },
+    {
+      "path": "evidence\\session-observer\\session-b6619b8b-5a25-48f2-96e0-6a636789b452.jsonl",
+      "bytes": 4727768,
+      "sha256": "4a6854f002f89eeceebeb156788236e7531f1f42f48b2f2d099cebf7bd2b2f49"
+    },
+    {
+      "path": "evidence\\session-observer\\session-bccc5d17-b49f-40df-89c4-1473588fe67c.jsonl",
+      "bytes": 489839,
+      "sha256": "50e51aee372f220f1424456eb13134e001f49fc93cf20c42dd7ef4cb5d723242"
+    },
+    {
+      "path": "evidence\\session-observer\\session-cd1b5fdc-634b-433f-aaee-e16bcc59d8dc.jsonl",
+      "bytes": 618174,
+      "sha256": "f5149ce7072b000e46175b8bdf9feccc29ff547be71cfac69a55c1c24ed12c43"
+    },
+    {
+      "path": "evidence\\session-observer\\session-e7c842dc-b193-4c7e-ae4b-b7bbdd5decec.jsonl",
+      "bytes": 1802917,
+      "sha256": "c3cf55f7ca91f744aeb103afc7d9dc43dea86675c98bdba2b7d6e1d39a69ed90"
+    },
+    {
+      "path": "evidence\\session-observer\\session-e894610c-b6ac-463c-b680-e2af29d1ec73.jsonl",
+      "bytes": 379294,
+      "sha256": "af9eede0a0a344599097a21b4c2f2b1fe63761c900de6091497f8eb194e85fc3"
+    },
+    {
+      "path": "evidence\\typecheck.txt",
+      "bytes": 73,
+      "sha256": "829dbb072a9a389bb0aa13a2a0af97902f03e5931f2434bfb4280c35ef42e1eb"
+    },
+    {
+      "path": "evidence\\unit-test.txt",
+      "bytes": 944,
+      "sha256": "e2b4870397b17066456d490d0ccfd722734e56e2b3a77ec63a64f9a991aa4276"
+    }
+  ]
+}

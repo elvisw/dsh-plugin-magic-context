@@ -1,0 +1,30 @@
+{
+  "package": "@elvisw/dsh-plugin-magic-context",
+  "version": "0.12.2",
+  "installSpecifier": "@elvisw/dsh-plugin-magic-context@0.12.2",
+  "profileSpecifier": "0.12.2",
+  "registryTarball": "https://registry.npmjs.org/@elvisw/dsh-plugin-magic-context/-/dsh-plugin-magic-context-0.12.2.tgz",
+  "distIntegrity": "sha512-1VW2Ev0tuMZsaPVnEyEbh6CfTKDyVeDJZoAyijxrolfqILuusltlldNuI6+ar4Rsgylc9nGwpQYz3htXIOj7NQ==",
+  "distIntegrityMatchesTarball": true,
+  "distShasum": "2cf0581b3dc5de03143bc88a995d422bbc459c12",
+  "tarballSha256": "d1ec72bc147cc22cee7a3c68b7d39a1636a8c7febed4c003f48b5e60e4470a60",
+  "tarballSha1": "2cf0581b3dc5de03143bc88a995d422bbc459c12",
+  "gitHead": "1d1dc4fe2bc7d7cf9083b0cc50cf76298d5bf118",
+  "latest": "0.12.2",
+  "provenance": true,
+  "loaderRowId": "magic-context-dsh",
+  "settingsNamespace": "magic-context-dsh",
+  "dataDir": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\plugin-data",
+  "installedHashes": {
+    "lib/index.js": "445a0200baae1112e78bc42fdcfbeee69932059bfa9fd1f0c9ce52f1a6455cd7",
+    "lib/dsh/historian.js": "404f520d69395206d771290bedb14ba3e6231827cb429271ffd267d1fb793111",
+    "lib/dsh/drop-landing.js": "96d6021ea554f4c24f5d8ef0f3962fdaf1aa7ce5e34d417f15e3b6bfa643754d",
+    "lib/dsh/memory-lane.js": "ab1b4d9ed337c08db5a0e6a09386fbf6a54c6db4f078b7d735ad41bca84cf686",
+    "lib/dsh/tool-bridge.js": "7bd3d7a1bfcf51eb6b793a69e5bb64efed21c12857dee1570f470a0efb03564d",
+    "lib/dsh/flush-command.js": "e605f4f1abcc7f9b37684e38c8f907b3a948ba120f97d7d790ce4588e1644cab"
+  },
+  "registryInstallExitCode": 0,
+  "dumpConfigExitCode": 0,
+  "effortDumpExitCode": 0,
+  "sourceTarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\downloads\\elvisw-dsh-plugin-magic-context-0.12.2.tgz"
+}

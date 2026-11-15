@@ -108,3 +108,15 @@ after = [8]
 hitl = false
 risk = "medium"
 refine = true
+
+[[entry]]
+id = 10
+type = "story"
+title = "0.12.2 combined host regression"
+description = "Runs the recovery, post-Historian retrieval, manual flush, vector bootstrap and historian reasoning-effort chains on the published @elvisw/dsh-plugin-magic-context@0.12.2 artifact in one fresh isolated DSH profile, so the previously separate host gates are proven to coexist in the same build."
+verify = "The registry artifact is installed by specifier @elvisw/dsh-plugin-magic-context@0.12.2 (gitHead 1d1dc4f, latest 0.12.2) into a fresh isolated profile; tag expand/new-result lifecycle, post-Historian tag+message retrieval in that order, real /ctx-flush, empty-embedding-space vector bootstrap, and the config-only reasoningEffort dump all pass on that build; evidence is scoped per session, no daily profile is touched, and an independent reviewer confirms the report does not exceed the artifacts."
+covers = []
+after = [9]
+hitl = false
+risk = "high"
+refine = true

@@ -1,0 +1,39 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\recovery.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "--session-id",
+    "session-e7c842dc-b193-4c7e-ae4b-b7bbdd5decec",
+    "Resume the persisted combined session. Call ONLY ctx_reduce with drop set to 1, which is the already-expanded old tag. Then respond OLD_TAG_REDUCE plus the exact tool result. Do not call ctx_expand, do not read any file, and do not use other tools."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 90.787,
+  "session_id": "session-e7c842dc-b193-4c7e-ae4b-b7bbdd5decec",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "OLD_TAG_REDUCE §6§ §1§ not queued: already dropped.",
+  "tool_calls": [
+    {
+      "tool": "ctx_reduce",
+      "input": {
+        "drop": "1"
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_oyi0upsR7l6gaiTPg02e1237",
+      "status": "completed",
+      "result": "§6§ §1§ not queued: already dropped."
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\historian.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "This is an isolated 0.12.2 combined-host acceptance seed. In separate sequential model steps: read fixture.txt once and note the actual §N§ tag on its result; call ctx_reduce with drop set to ONLY that tag; read historian-fixture.txt once. Then respond only SEED_READY and that tag number. Do not call ctx_expand, do not reread, do not quote either file, and do not use other tools."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 7.977,
+  "session_id": "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "SEED_READY §1§",
+  "tool_calls": [
+    {
+      "tool": "read",
+      "input": {
+        "file_path": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt"
+      }
+    },
+    {
+      "tool": "ctx_reduce",
+      "input": {
+        "drop": "1"
+      }
+    },
+    {
+      "tool": "read",
+      "input": {
+        "file_path": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\historian-fixture.txt"
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_2s74fK99RuBwhhjoB6Ea9597",
+      "status": "completed",
+      "result": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>"
+    },
+    {
+      "callId": "call_00_2DaRPylUPK2KHo6V24vY7931",
+      "status": "completed",
+      "result": "§2§ Queued 1 tag for reclaim."
+    },
+    {
+      "callId": "call_00_i0GyXnyu52AvyXSQ4sTl2535",
+      "status": "completed",
+      "result": "§3§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\historian-fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_HISTORIAN_FIXTURE\n2: This synthetic transcript exists only so the real Historian has a stable span to publish.\n3: line 1: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n4: line 2: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n5: line 3: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n6: line 4: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n7: line 5: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n8: line 6: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n9: line 7: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n10: line 8: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n11: line 9: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n12: line 10: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n13: line 11: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n14: line 12: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n15: line 13: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n16: line 14: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n17: line 15: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n18: line 16: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n19: line 17: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n20: line 18: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n21: line 19: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n22: line 20: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n23: line 21: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n24: line 22: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n25: line 23: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n26: line 24: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n27: line 25: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n28: line 26: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n29: line 27: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n30: line 28: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n31: line 29: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n32: line 30: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n33: line 31: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n34: line 32: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n35: line 33: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n36: line 34: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n37: line 35: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n38: line 36: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n39: line 37: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n40: line 38: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n41: line 39: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n42: line 40: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n43: line 41: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n44: line 42: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n45: line 43: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n46: line 44: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n47: line 45: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n48: line 46: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n49: line 47: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n50: line 48: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n51: line 49: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n52: line 50: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n53: line 51: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n54: line 52: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n55: line 53: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n56: line 54: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n57: line 55: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n58: line 56: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n59: line 57: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n60: line 58: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n61: line 59: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n62: line 60: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n63: line 61: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n64: line 62: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n65: line 63: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n66: line 64: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n67: line 65: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n68: line 66: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n69: line 67: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n70: line 68: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n71: line 69: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n72: line 70: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n73: line 71: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n74: line 72: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n75: line 73: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n76: line 74: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n77: line 75: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n78: line 76: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n79: line 77: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n80: line 78: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n81: line 79: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n82: line 80: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n83: line 81: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n84: line 82: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n85: line 83: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n86: line 84: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n87: line 85: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n88: line 86: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n89: line 87: retain the combined-build provenance marker afd2773bb98d48eb018945d1b"
+    }
+  ]
+}

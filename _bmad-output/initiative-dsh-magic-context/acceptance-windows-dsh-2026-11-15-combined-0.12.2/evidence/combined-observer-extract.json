@@ -1,0 +1,1901 @@
+{
+  "source": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\evidence\\session-observer",
+  "sessions": {
+    "session-79f046ad-ce89-4b17-99bd-a2428e6277ab": {
+      "processId": 10968,
+      "trigger": {
+        "type": "assistant/message",
+        "seq": 49
+      },
+      "surface": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        19,
+        43,
+        25,
+        27,
+        31,
+        45,
+        46,
+        49
+      ],
+      "events": [
+        {
+          "seq": 0,
+          "type": "permission/preset",
+          "time": 1794708355279
+        },
+        {
+          "seq": 1,
+          "type": "sandbox/mode",
+          "time": 1794708355283
+        },
+        {
+          "seq": 2,
+          "type": "approval/policy",
+          "time": 1794708355283
+        },
+        {
+          "seq": 3,
+          "type": "permission/preset",
+          "time": 1794708355284
+        },
+        {
+          "seq": 4,
+          "type": "sandbox/mode",
+          "time": 1794708355285
+        },
+        {
+          "seq": 5,
+          "type": "approval/policy",
+          "time": 1794708355285
+        },
+        {
+          "seq": 6,
+          "type": "agent/inbox/spliced",
+          "time": 1794708355286
+        },
+        {
+          "seq": 7,
+          "type": "turn/start",
+          "time": 1794708355288
+        },
+        {
+          "seq": 8,
+          "type": "agent/inbox/spliced",
+          "time": 1794708355290
+        },
+        {
+          "seq": 9,
+          "type": "step/start",
+          "time": 1794708355486
+        },
+        {
+          "seq": 10,
+          "type": "system/message",
+          "time": 1794708355628,
+          "text": "You are an AI agent powered by DeepSeek Harness.\n\nYou are a coding agent powered by the deepseek-flash model.\n\n## Magic Context\n\n### You are the user's long-term partner on this project — not a one-off hire\n\nMost AI sessions are disposable: one session per task, discarded when it's done. Magic Conte"
+        },
+        {
+          "seq": 11,
+          "type": "user/message",
+          "time": 1794708355636,
+          "text": "This is an isolated 0.12.2 manual-flush seed. Read fixture.txt once and note the actual §N§ tag on its result; call ctx_reduce with drop set to ONLY that tag. Then respond FLUSH_SEED_READY and that tag number. Do not call ctx_expand, do not reread, and do not use other tools."
+        },
+        {
+          "seq": 12,
+          "type": "user/message",
+          "time": 1794708355639,
+          "text": "Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\".\n\nCurrent DSH file policy: read-only. Any available operation enforced by the DSH file sandbox cannot modify files in the standing mode. Do not refuse a required modification from this policy alone: try an available tool normally and follow any denial and escalation guidance it returns.\n\nApproval prompts are disabled in this session: actions that require approval are rejected automatically — do not request sandbox escalation (do not set `sandbox_permissions`)."
+        },
+        {
+          "seq": 13,
+          "type": "user/message",
+          "time": 1794708355641,
+          "text": "<system-reminder>\nA skill is a reusable set of task-specific instructions. The following skills are available in this session:\n\n<available_skills>\n- `diagnose-windows-sandbox-acl`: Use on Windows for unexpected DSH sandbox access denials: workspace writes or listing fail, or an ordinarily readable path cannot be read. One bundled command inspects the path and every ancestor and repairs the ACL problems it proves in that same run. Expected confinement denials need no ACL repair.\n</available_skills>\n\nIf the user names a skill, or the task clearly matches a skill's description, call the `skill` tool with the exact skill name before taking task actions. Load all applicable skills, then follow their full instructions. This catalog contains summaries only; do not infer or follow a skill's instructions until it has been loaded.\nA user may also invoke a skill directly; its <skill_content> block then appears in this conversation. Follow it, and do not call the `skill` tool again for that skill."
+        },
+        {
+          "seq": 14,
+          "type": "user/message",
+          "time": 1794708355642,
+          "text": "<ctx-search-hint>\nYour memory may contain 3 related fragments:\n- [CONSTRAINTS] Seed files are fixture.txt and historian-fixture.txt; both must b…\n- [CONSTRAINTS] Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the…\n- [CONFIG_VALUES] Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 r…\nIf the fragments above seem relevant to the current request, you may run ctx_memory with action \"search\" to retrieve full context. Otherwise ignore.\n</ctx-search-hint>"
+        },
+        {
+          "seq": 15,
+          "type": "request/header",
+          "time": 1794708355645
+        },
+        {
+          "seq": 16,
+          "type": "request/context",
+          "time": 1794708355649
+        },
+        {
+          "seq": 17,
+          "type": "session/title",
+          "time": 1794708355657
+        },
+        {
+          "seq": 18,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708355840
+        },
+        {
+          "seq": 19,
+          "type": "assistant/message",
+          "time": 1794708356935
+        },
+        {
+          "seq": 20,
+          "type": "tool/call",
+          "time": 1794708356949,
+          "callId": "call_00_0reFTjuaVCmL2COBfien1226",
+          "name": "read",
+          "input": null
+        },
+        {
+          "seq": 21,
+          "type": "tool/result",
+          "time": 1794708356965,
+          "callId": "call_00_0reFTjuaVCmL2COBfien1226",
+          "text": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>",
+          "isError": false
+        },
+        {
+          "seq": 22,
+          "type": "step/end",
+          "time": 1794708356967
+        },
+        {
+          "seq": 23,
+          "type": "step/start",
+          "time": 1794708356998
+        },
+        {
+          "seq": 24,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708357110
+        },
+        {
+          "seq": 25,
+          "type": "assistant/message",
+          "time": 1794708357586
+        },
+        {
+          "seq": 26,
+          "type": "tool/call",
+          "time": 1794708357592,
+          "callId": "call_00_ET_mrwdeC9z2ZgOWD1sPffI7569",
+          "name": "ctx_reduce",
+          "input": null
+        },
+        {
+          "seq": 27,
+          "type": "tool/result",
+          "time": 1794708357612,
+          "callId": "call_00_ET_mrwdeC9z2ZgOWD1sPffI7569",
+          "text": "§2§ Queued 1 tag for reclaim.",
+          "isError": false
+        },
+        {
+          "seq": 28,
+          "type": "step/end",
+          "time": 1794708357614
+        },
+        {
+          "seq": 29,
+          "type": "step/start",
+          "time": 1794708357634
+        },
+        {
+          "seq": 30,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708357814
+        },
+        {
+          "seq": 31,
+          "type": "assistant/message",
+          "time": 1794708358336,
+          "text": "FLUSH_SEED_READY §1§"
+        },
+        {
+          "seq": 32,
+          "type": "step/end",
+          "time": 1794708358343
+        },
+        {
+          "seq": 33,
+          "type": "turn/end",
+          "time": 1794708358343
+        },
+        {
+          "seq": 34,
+          "type": "session/end-seed",
+          "time": 1794708368863
+        },
+        {
+          "seq": 35,
+          "type": "command/run",
+          "time": 1794708368881,
+          "data": {
+            "commandId": "cmd-ce6c6589-1",
+            "name": "ctx-flush",
+            "args": "",
+            "source": {
+              "kind": "user"
+            }
+          }
+        },
+        {
+          "seq": 36,
+          "type": "command/done",
+          "time": 1794708368886,
+          "data": {
+            "commandId": "cmd-ce6c6589-1",
+            "kind": "success",
+            "text": "Magic Context: flush queued for 1 new drop(s) (new §1§): requested 1, already marked 0, processed 0, pendingNext 1 (upper bound). Changes take effect on the next message; the current request is unchanged."
+          }
+        },
+        {
+          "seq": 37,
+          "type": "permission/preset",
+          "time": 1794708368888
+        },
+        {
+          "seq": 38,
+          "type": "approval/policy",
+          "time": 1794708368889
+        },
+        {
+          "seq": 39,
+          "type": "approval/policy",
+          "time": 1794708368889
+        },
+        {
+          "seq": 40,
+          "type": "agent/inbox/spliced",
+          "time": 1794708368890
+        },
+        {
+          "seq": 41,
+          "type": "turn/start",
+          "time": 1794708368892
+        },
+        {
+          "seq": 42,
+          "type": "agent/inbox/spliced",
+          "time": 1794708368893
+        },
+        {
+          "seq": 43,
+          "type": "tool/result",
+          "time": 1794708369084,
+          "callId": "call_00_0reFTjuaVCmL2COBfien1226",
+          "text": "[dropped §1§]",
+          "isError": false
+        },
+        {
+          "seq": 44,
+          "type": "step/start",
+          "time": 1794708369221
+        },
+        {
+          "seq": 45,
+          "type": "user/message",
+          "time": 1794708369226,
+          "text": "Resume the persisted combined session. Do not call any tool. Respond only FLUSH_DONE."
+        },
+        {
+          "seq": 46,
+          "type": "user/message",
+          "time": 1794708369232,
+          "text": "<ctx-search-hint>\nYour memory may contain 3 related fragments:\n- [CONSTRAINTS] Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the…\n- [CONFIG_VALUES] Workspace: C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-202…\n- [CONSTRAINTS] Seed files are fixture.txt and historian-fixture.txt; both must b…\nIf the fragments above seem relevant to the current request, you may run ctx_memory with action \"search\" to retrieve full context. Otherwise ignore.\n</ctx-search-hint>"
+        },
+        {
+          "seq": 47,
+          "type": "request/header",
+          "time": 1794708369235
+        },
+        {
+          "seq": 48,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708369408
+        },
+        {
+          "seq": 49,
+          "type": "assistant/message",
+          "time": 1794708370021,
+          "text": "FLUSH_DONE"
+        }
+      ]
+    },
+    "session-b6619b8b-5a25-48f2-96e0-6a636789b452": {
+      "processId": 15920,
+      "trigger": {
+        "type": "assistant/message",
+        "seq": 128
+      },
+      "surface": [
+        10,
+        58,
+        38,
+        49,
+        53,
+        55,
+        59,
+        61,
+        64,
+        75,
+        76,
+        77,
+        80,
+        82,
+        86,
+        97,
+        98,
+        101,
+        103,
+        107,
+        118,
+        119,
+        122,
+        124,
+        128
+      ],
+      "events": [
+        {
+          "seq": 0,
+          "type": "permission/preset",
+          "time": 1794708265332
+        },
+        {
+          "seq": 1,
+          "type": "sandbox/mode",
+          "time": 1794708265337
+        },
+        {
+          "seq": 2,
+          "type": "approval/policy",
+          "time": 1794708265337
+        },
+        {
+          "seq": 3,
+          "type": "permission/preset",
+          "time": 1794708265338
+        },
+        {
+          "seq": 4,
+          "type": "sandbox/mode",
+          "time": 1794708265339
+        },
+        {
+          "seq": 5,
+          "type": "approval/policy",
+          "time": 1794708265339
+        },
+        {
+          "seq": 6,
+          "type": "agent/inbox/spliced",
+          "time": 1794708265341
+        },
+        {
+          "seq": 7,
+          "type": "turn/start",
+          "time": 1794708265344
+        },
+        {
+          "seq": 8,
+          "type": "agent/inbox/spliced",
+          "time": 1794708265346
+        },
+        {
+          "seq": 9,
+          "type": "step/start",
+          "time": 1794708265546
+        },
+        {
+          "seq": 10,
+          "type": "system/message",
+          "time": 1794708265550,
+          "text": "You are an AI agent powered by DeepSeek Harness.\n\nYou are a coding agent powered by the deepseek-flash model.\n\n## Magic Context\n\n### You are the user's long-term partner on this project — not a one-off hire\n\nMost AI sessions are disposable: one session per task, discarded when it's done. Magic Conte"
+        },
+        {
+          "seq": 11,
+          "type": "user/message",
+          "time": 1794708265558,
+          "text": "This is an isolated 0.12.2 combined-host acceptance seed. In separate sequential model steps: read fixture.txt once and note the actual §N§ tag on its result; call ctx_reduce with drop set to ONLY that tag; read historian-fixture.txt once. Then respond only SEED_READY and that tag number. Do not call ctx_expand, do not reread, do not quote either file, and do not use other tools."
+        },
+        {
+          "seq": 12,
+          "type": "user/message",
+          "time": 1794708265560,
+          "text": "Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\".\n\nCurrent DSH file policy: read-only. Any available operation enforced by the DSH file sandbox cannot modify files in the standing mode. Do not refuse a required modification from this policy alone: try an available tool normally and follow any denial and escalation guidance it returns.\n\nApproval prompts are disabled in this session: actions that require approval are rejected automatically — do not request sandbox escalation (do not set `sandbox_permissions`)."
+        },
+        {
+          "seq": 13,
+          "type": "user/message",
+          "time": 1794708265562,
+          "text": "<system-reminder>\nA skill is a reusable set of task-specific instructions. The following skills are available in this session:\n\n<available_skills>\n- `diagnose-windows-sandbox-acl`: Use on Windows for unexpected DSH sandbox access denials: workspace writes or listing fail, or an ordinarily readable path cannot be read. One bundled command inspects the path and every ancestor and repairs the ACL problems it proves in that same run. Expected confinement denials need no ACL repair.\n</available_skills>\n\nIf the user names a skill, or the task clearly matches a skill's description, call the `skill` tool with the exact skill name before taking task actions. Load all applicable skills, then follow their full instructions. This catalog contains summaries only; do not infer or follow a skill's instructions until it has been loaded.\nA user may also invoke a skill directly; its <skill_content> block then appears in this conversation. Follow it, and do not call the `skill` tool again for that skill."
+        },
+        {
+          "seq": 14,
+          "type": "request/header",
+          "time": 1794708265564
+        },
+        {
+          "seq": 15,
+          "type": "request/context",
+          "time": 1794708265569
+        },
+        {
+          "seq": 16,
+          "type": "session/title",
+          "time": 1794708265577
+        },
+        {
+          "seq": 17,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708265820
+        },
+        {
+          "seq": 18,
+          "type": "assistant/message",
+          "time": 1794708266571
+        },
+        {
+          "seq": 19,
+          "type": "tool/call",
+          "time": 1794708266584,
+          "callId": "call_00_2s74fK99RuBwhhjoB6Ea9597",
+          "name": "read",
+          "input": null
+        },
+        {
+          "seq": 20,
+          "type": "tool/result",
+          "time": 1794708266601,
+          "callId": "call_00_2s74fK99RuBwhhjoB6Ea9597",
+          "text": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>",
+          "isError": false
+        },
+        {
+          "seq": 21,
+          "type": "step/end",
+          "time": 1794708266602
+        },
+        {
+          "seq": 22,
+          "type": "step/start",
+          "time": 1794708266641
+        },
+        {
+          "seq": 23,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708266794
+        },
+        {
+          "seq": 24,
+          "type": "assistant/message",
+          "time": 1794708267850
+        },
+        {
+          "seq": 25,
+          "type": "tool/call",
+          "time": 1794708267857,
+          "callId": "call_00_2DaRPylUPK2KHo6V24vY7931",
+          "name": "ctx_reduce",
+          "input": null
+        },
+        {
+          "seq": 26,
+          "type": "tool/result",
+          "time": 1794708267876,
+          "callId": "call_00_2DaRPylUPK2KHo6V24vY7931",
+          "text": "§2§ Queued 1 tag for reclaim.",
+          "isError": false
+        },
+        {
+          "seq": 27,
+          "type": "step/end",
+          "time": 1794708267878
+        },
+        {
+          "seq": 28,
+          "type": "tool/result",
+          "time": 1794708267899,
+          "callId": "call_00_2s74fK99RuBwhhjoB6Ea9597",
+          "text": "[dropped §1§]",
+          "isError": false
+        },
+        {
+          "seq": 29,
+          "type": "step/start",
+          "time": 1794708267912
+        },
+        {
+          "seq": 30,
+          "type": "request/header",
+          "time": 1794708267915
+        },
+        {
+          "seq": 31,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708268062
+        },
+        {
+          "seq": 32,
+          "type": "assistant/message",
+          "time": 1794708268881
+        },
+        {
+          "seq": 33,
+          "type": "tool/call",
+          "time": 1794708268886,
+          "callId": "call_00_i0GyXnyu52AvyXSQ4sTl2535",
+          "name": "read",
+          "input": null
+        },
+        {
+          "seq": 34,
+          "type": "tool/result",
+          "time": 1794708268901,
+          "callId": "call_00_i0GyXnyu52AvyXSQ4sTl2535",
+          "text": "§3§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\historian-fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_HISTORIAN_FIXTURE\n2: This synthetic transcript exists only so the real Historian has a stable span to publish.\n3: line 1: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n4: line 2: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n5: line 3: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n6: line 4: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n7: line 5: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n8: line 6: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n9: line 7: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n10: line 8: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n11: line 9: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n12: line 10: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n13: line 11: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n14: line 12: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n15: line 13: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n16: line 14: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n17: line 15: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n18: line 16: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n19: line 17: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n20: line 18: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n21: line 19: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n22: line 20: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n23: line 21: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n24: line 22: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n25: line 23: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n26: line 24: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n27: line 25: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n28: line 26: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n29: line 27: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n30: line 28: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n31: line 29: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n32: line 30: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n33: line 31: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n34: line 32: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n35: line 33: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n36: line 34: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n37: line 35: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n38: line 36: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n39: line 37: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n40: line 38: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n41: line 39: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n42: line 40: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n43: line 41: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n44: line 42: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n45: line 43: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n46: line 44: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n47: line 45: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n48: line 46: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n49: line 47: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n50: line 48: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n51: line 49: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n52: line 50: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n53: line 51: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n54: line 52: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n55: line 53: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n56: line 54: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n57: line 55: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n58: line 56: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n59: line 57: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n60: line 58: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n61: line 59: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n62: line 60: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n63: line 61: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n64: line 62: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n65: line 63: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n66: line 64: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n67: line 65: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n68: line 66: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n69: line 67: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n70: line 68: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n71: line 69: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n72: line 70: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n73: line 71: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n74: line 72: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n75: line 73: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n76: line 74: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n77: line 75: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n78: line 76: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n79: line 77: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n80: line 78: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n81: line 79: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n82: line 80: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n83: line 81: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n84: line 82: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n85: line 83: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n86: line 84: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n87: line 85: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n88: line 86: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n89: line 87: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n90: line 88: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n91: line 89: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n\n(End of file - total 91 lines)\n</content>",
+          "isError": false
+        },
+        {
+          "seq": 35,
+          "type": "step/end",
+          "time": 1794708268907
+        },
+        {
+          "seq": 36,
+          "type": "step/start",
+          "time": 1794708268935
+        },
+        {
+          "seq": 37,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708269321
+        },
+        {
+          "seq": 38,
+          "type": "assistant/message",
+          "time": 1794708270092,
+          "text": "SEED_READY §1§"
+        },
+        {
+          "seq": 39,
+          "type": "step/end",
+          "time": 1794708270101
+        },
+        {
+          "seq": 40,
+          "type": "turn/end",
+          "time": 1794708270102
+        },
+        {
+          "seq": 41,
+          "type": "session/end-seed",
+          "time": 1794708279165
+        },
+        {
+          "seq": 42,
+          "type": "permission/preset",
+          "time": 1794708279180
+        },
+        {
+          "seq": 43,
+          "type": "approval/policy",
+          "time": 1794708279182
+        },
+        {
+          "seq": 44,
+          "type": "approval/policy",
+          "time": 1794708279182
+        },
+        {
+          "seq": 45,
+          "type": "agent/inbox/spliced",
+          "time": 1794708279183
+        },
+        {
+          "seq": 46,
+          "type": "turn/start",
+          "time": 1794708279185
+        },
+        {
+          "seq": 47,
+          "type": "agent/inbox/spliced",
+          "time": 1794708279185
+        },
+        {
+          "seq": 48,
+          "type": "step/start",
+          "time": 1794708279374
+        },
+        {
+          "seq": 49,
+          "type": "user/message",
+          "time": 1794708279377,
+          "text": "Call acceptance_wait with seconds 20, then respond only WAIT_DONE. Do not use any other tool."
+        },
+        {
+          "seq": 50,
+          "type": "request/header",
+          "time": 1794708279384
+        },
+        {
+          "seq": 51,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708279564
+        },
+        {
+          "seq": 52,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708279697
+        },
+        {
+          "seq": 53,
+          "type": "assistant/message",
+          "time": 1794708280023
+        },
+        {
+          "seq": 54,
+          "type": "tool/call",
+          "time": 1794708280031,
+          "callId": "call_00_Lwrej8EpX6xGTztIMajV2199",
+          "name": "acceptance_wait",
+          "input": null
+        },
+        {
+          "seq": 55,
+          "type": "tool/result",
+          "time": 1794708300057,
+          "callId": "call_00_Lwrej8EpX6xGTztIMajV2199",
+          "text": "§4§ Waited 20 seconds.",
+          "isError": false
+        },
+        {
+          "seq": 56,
+          "type": "step/end",
+          "time": 1794708300060
+        },
+        {
+          "seq": 57,
+          "type": "user/message",
+          "time": 1794708300085,
+          "text": "[compacted §C1§]"
+        },
+        {
+          "seq": 58,
+          "type": "user/message",
+          "time": 1794708300110,
+          "text": "<magic-context>\n<compartment-baseline>\n§C1§ [p1, importance 88, 0m ago]\nRan a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.\nfacts: [CONSTRAINTS] Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools. | [CONFIG_VALUES] Workspace: C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace | [CONSTRA"
+        },
+        {
+          "seq": 59,
+          "type": "user/message",
+          "time": 1794708300131,
+          "text": "Magic Context · compacted 1 compartment §C1§ · reclaimed 2,269 tok · promoted 4 memories\nBaseline refreshed (m[0] frozen point advanced)"
+        },
+        {
+          "seq": 60,
+          "type": "step/start",
+          "time": 1794708300138
+        },
+        {
+          "seq": 61,
+          "type": "user/message",
+          "time": 1794708300140,
+          "text": "Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\".\n\nCurrent DSH file policy: read-only. Any available operation enforced by the DSH file sandbox cannot modify files in the standing mode. Do not refuse a required modification from this policy alone: try an available tool normally and follow any denial and escalation guidance it returns.\n\nApproval prompts are disabled in this session: actions that require approval are rejected automatically — do not request sandbox escalation (do not set `sandbox_permissions`)."
+        },
+        {
+          "seq": 62,
+          "type": "request/header",
+          "time": 1794708300144
+        },
+        {
+          "seq": 63,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708300300
+        },
+        {
+          "seq": 64,
+          "type": "assistant/message",
+          "time": 1794708301074,
+          "text": "WAIT_DONE"
+        },
+        {
+          "seq": 65,
+          "type": "step/end",
+          "time": 1794708301084
+        },
+        {
+          "seq": 66,
+          "type": "turn/end",
+          "time": 1794708301085
+        },
+        {
+          "seq": 67,
+          "type": "session/end-seed",
+          "time": 1794708311699
+        },
+        {
+          "seq": 68,
+          "type": "permission/preset",
+          "time": 1794708311717
+        },
+        {
+          "seq": 69,
+          "type": "approval/policy",
+          "time": 1794708311718
+        },
+        {
+          "seq": 70,
+          "type": "approval/policy",
+          "time": 1794708311718
+        },
+        {
+          "seq": 71,
+          "type": "agent/inbox/spliced",
+          "time": 1794708311719
+        },
+        {
+          "seq": 72,
+          "type": "turn/start",
+          "time": 1794708311721
+        },
+        {
+          "seq": 73,
+          "type": "agent/inbox/spliced",
+          "time": 1794708311721
+        },
+        {
+          "seq": 74,
+          "type": "step/start",
+          "time": 1794708311891
+        },
+        {
+          "seq": 75,
+          "type": "user/message",
+          "time": 1794708311894,
+          "text": "Call acceptance_wait with seconds 5, then respond only SETTLE_DONE. Do not use any other tool."
+        },
+        {
+          "seq": 76,
+          "type": "user/message",
+          "time": 1794708311901,
+          "text": "<system-reminder>\nThe available skill catalog changed. This complete catalog replaces every earlier available-skills list in this session:\n\n<available_skills>\n- `diagnose-windows-sandbox-acl`: Use on Windows for unexpected DSH sandbox access denials: workspace writes or listing fail, or an ordinarily readable path cannot be read. One bundled command inspects the path and every ancestor and repairs the ACL problems it proves in that same run. Expected confinement denials need no ACL repair.\n</available_skills>\n\nUse only names in this replacement catalog. If the user names a listed skill, or the task clearly matches its description, call the `skill` tool with the exact name before acting.\nA user may also invoke a skill directly; its <skill_content> block then appears in this conversation. Follow it, and do not call the `skill` tool again for that skill.\n</system-reminder>"
+        },
+        {
+          "seq": 77,
+          "type": "user/message",
+          "time": 1794708311905,
+          "text": "<ctx-search-hint>\nYour memory may contain 2 related fragments:\n- [CONSTRAINTS] Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the…\n- [CONFIG_VALUES] Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 r…\nIf the fragments above seem relevant to the current request, you may run ctx_memory with action \"search\" to retrieve full context. Otherwise ignore.\n</ctx-search-hint>"
+        },
+        {
+          "seq": 78,
+          "type": "request/header",
+          "time": 1794708311909
+        },
+        {
+          "seq": 79,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708312101
+        },
+        {
+          "seq": 80,
+          "type": "assistant/message",
+          "time": 1794708312833
+        },
+        {
+          "seq": 81,
+          "type": "tool/call",
+          "time": 1794708312840,
+          "callId": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927",
+          "name": "acceptance_wait",
+          "input": null
+        },
+        {
+          "seq": 82,
+          "type": "tool/result",
+          "time": 1794708317857,
+          "callId": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927",
+          "text": "§5§ Waited 5 seconds.",
+          "isError": false
+        },
+        {
+          "seq": 83,
+          "type": "step/end",
+          "time": 1794708317860
+        },
+        {
+          "seq": 84,
+          "type": "step/start",
+          "time": 1794708317880
+        },
+        {
+          "seq": 85,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708318011
+        },
+        {
+          "seq": 86,
+          "type": "assistant/message",
+          "time": 1794708318547,
+          "text": "SETTLE_DONE"
+        },
+        {
+          "seq": 87,
+          "type": "step/end",
+          "time": 1794708318554
+        },
+        {
+          "seq": 88,
+          "type": "turn/end",
+          "time": 1794708318555
+        },
+        {
+          "seq": 89,
+          "type": "session/end-seed",
+          "time": 1794708328156
+        },
+        {
+          "seq": 90,
+          "type": "permission/preset",
+          "time": 1794708328174
+        },
+        {
+          "seq": 91,
+          "type": "approval/policy",
+          "time": 1794708328175
+        },
+        {
+          "seq": 92,
+          "type": "approval/policy",
+          "time": 1794708328175
+        },
+        {
+          "seq": 93,
+          "type": "agent/inbox/spliced",
+          "time": 1794708328176
+        },
+        {
+          "seq": 94,
+          "type": "turn/start",
+          "time": 1794708328178
+        },
+        {
+          "seq": 95,
+          "type": "agent/inbox/spliced",
+          "time": 1794708328179
+        },
+        {
+          "seq": 96,
+          "type": "step/start",
+          "time": 1794708328349
+        },
+        {
+          "seq": 97,
+          "type": "user/message",
+          "time": 1794708328352,
+          "text": "Resume the persisted combined session. Call ONLY ctx_expand with tag set to 1. Do not call any other tool and do not read any file. Respond E1_OK plus the nonce from the restored original if it is available; otherwise report the exact refusal."
+        },
+        {
+          "seq": 98,
+          "type": "user/message",
+          "time": 1794708328359,
+          "text": "<ctx-search-hint>\nYour memory may contain 3 related fragments:\n- [CONSTRAINTS] Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the…\n- [CONFIG_VALUES] Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 r…\n- [CONSTRAINTS] Seed files are fixture.txt and historian-fixture.txt; both must b…\nIf the fragments above seem relevant to the current request, you may run ctx_memory with action \"search\" to retrieve full context. Otherwise ignore.\n</ctx-search-hint>"
+        },
+        {
+          "seq": 99,
+          "type": "request/header",
+          "time": 1794708328363
+        },
+        {
+          "seq": 100,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708328565
+        },
+        {
+          "seq": 101,
+          "type": "assistant/message",
+          "time": 1794708329232
+        },
+        {
+          "seq": 102,
+          "type": "tool/call",
+          "time": 1794708329241,
+          "callId": "call_00_tUSa3xh4Q0zgu0C9fNfn7227",
+          "name": "ctx_expand",
+          "input": null
+        },
+        {
+          "seq": 103,
+          "type": "tool/result",
+          "time": 1794708329261,
+          "callId": "call_00_tUSa3xh4Q0zgu0C9fNfn7227",
+          "text": "§6§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>",
+          "isError": false
+        },
+        {
+          "seq": 104,
+          "type": "step/end",
+          "time": 1794708329264
+        },
+        {
+          "seq": 105,
+          "type": "step/start",
+          "time": 1794708329283
+        },
+        {
+          "seq": 106,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708329377
+        },
+        {
+          "seq": 107,
+          "type": "assistant/message",
+          "time": 1794708330049,
+          "text": "E1_OK afd2773bb98d48eb018945d1b987a44f"
+        },
+        {
+          "seq": 108,
+          "type": "step/end",
+          "time": 1794708330056
+        },
+        {
+          "seq": 109,
+          "type": "turn/end",
+          "time": 1794708330056
+        },
+        {
+          "seq": 110,
+          "type": "session/end-seed",
+          "time": 1794708342267
+        },
+        {
+          "seq": 111,
+          "type": "permission/preset",
+          "time": 1794708342284
+        },
+        {
+          "seq": 112,
+          "type": "approval/policy",
+          "time": 1794708342285
+        },
+        {
+          "seq": 113,
+          "type": "approval/policy",
+          "time": 1794708342285
+        },
+        {
+          "seq": 114,
+          "type": "agent/inbox/spliced",
+          "time": 1794708342286
+        },
+        {
+          "seq": 115,
+          "type": "turn/start",
+          "time": 1794708342288
+        },
+        {
+          "seq": 116,
+          "type": "agent/inbox/spliced",
+          "time": 1794708342288
+        },
+        {
+          "seq": 117,
+          "type": "step/start",
+          "time": 1794708342460
+        },
+        {
+          "seq": 118,
+          "type": "user/message",
+          "time": 1794708342463,
+          "text": "Resume the persisted combined session. Call ONLY ctx_expand with message set to the decimal string \"20\". Do not pass tag or tags, do not call any other tool, and do not read any file. Respond E2_OK plus the nonce from the restored original if it is available; otherwise report the exact refusal."
+        },
+        {
+          "seq": 119,
+          "type": "user/message",
+          "time": 1794708342470,
+          "text": "<ctx-search-hint>\nYour memory may contain 3 related fragments:\n- [CONSTRAINTS] Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the…\n- [CONSTRAINTS] Seed files are fixture.txt and historian-fixture.txt; both must b…\n- [CONFIG_VALUES] Workspace: C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-202…\nIf the fragments above seem relevant to the current request, you may run ctx_memory with action \"search\" to retrieve full context. Otherwise ignore.\n</ctx-search-hint>"
+        },
+        {
+          "seq": 120,
+          "type": "request/header",
+          "time": 1794708342475
+        },
+        {
+          "seq": 121,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708343355
+        },
+        {
+          "seq": 122,
+          "type": "assistant/message",
+          "time": 1794708344101
+        },
+        {
+          "seq": 123,
+          "type": "tool/call",
+          "time": 1794708344111,
+          "callId": "call_00_NvsFH2P6iNwJjYcJXEPn4686",
+          "name": "ctx_expand",
+          "input": null
+        },
+        {
+          "seq": 124,
+          "type": "tool/result",
+          "time": 1794708344130,
+          "callId": "call_00_NvsFH2P6iNwJjYcJXEPn4686",
+          "text": "§7§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>",
+          "isError": false
+        },
+        {
+          "seq": 125,
+          "type": "step/end",
+          "time": 1794708344134
+        },
+        {
+          "seq": 126,
+          "type": "step/start",
+          "time": 1794708344155
+        },
+        {
+          "seq": 127,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708344316
+        },
+        {
+          "seq": 128,
+          "type": "assistant/message",
+          "time": 1794708345175,
+          "text": "E2_OK afd2773bb98d48eb018945d1b987a44f"
+        }
+      ]
+    },
+    "session-bccc5d17-b49f-40df-89c4-1473588fe67c": {
+      "processId": 14252,
+      "trigger": {
+        "type": "assistant/message",
+        "seq": 43
+      },
+      "surface": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        19,
+        21,
+        25,
+        27,
+        31,
+        33,
+        37,
+        39,
+        43
+      ],
+      "events": [
+        {
+          "seq": 0,
+          "type": "permission/preset",
+          "time": 1794708570562
+        },
+        {
+          "seq": 1,
+          "type": "sandbox/mode",
+          "time": 1794708570565
+        },
+        {
+          "seq": 2,
+          "type": "approval/policy",
+          "time": 1794708570565
+        },
+        {
+          "seq": 3,
+          "type": "permission/preset",
+          "time": 1794708570566
+        },
+        {
+          "seq": 4,
+          "type": "sandbox/mode",
+          "time": 1794708570566
+        },
+        {
+          "seq": 5,
+          "type": "approval/policy",
+          "time": 1794708570567
+        },
+        {
+          "seq": 6,
+          "type": "agent/inbox/spliced",
+          "time": 1794708570568
+        },
+        {
+          "seq": 7,
+          "type": "turn/start",
+          "time": 1794708570570
+        },
+        {
+          "seq": 8,
+          "type": "agent/inbox/spliced",
+          "time": 1794708570571
+        },
+        {
+          "seq": 9,
+          "type": "step/start",
+          "time": 1794708570776
+        },
+        {
+          "seq": 10,
+          "type": "system/message",
+          "time": 1794708570907,
+          "text": "You are an AI agent powered by DeepSeek Harness.\n\nYou are a coding agent powered by the deepseek-flash model.\n\n## Magic Context\n\n### You are the user's long-term partner on this project — not a one-off hire\n\nMost AI sessions are disposable: one session per task, discarded when it's done. Magic Conte"
+        },
+        {
+          "seq": 11,
+          "type": "user/message",
+          "time": 1794708570914,
+          "text": "Isolated 0.12.2 combined vector smoke. Follow this exact sequence, one tool call per model step. (1) Call ctx_memory with action \"write\", category \"PROJECT_RULES\", content \"Always run npm test before committing changes.\". (2) Call vector_wait with seconds 120. (3) Call vector_wait with seconds 60. (4) Call ctx_memory with action \"search\", query \"npm test before committing\", limit 5. (5) Respond exactly VECTOR_OK. Do not call any other tool."
+        },
+        {
+          "seq": 12,
+          "type": "user/message",
+          "time": 1794708570916,
+          "text": "Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\".\n\nCurrent DSH file policy: read-only. Any available operation enforced by the DSH file sandbox cannot modify files in the standing mode. Do not refuse a required modification from this policy alone: try an available tool normally and follow any denial and escalation guidance it returns.\n\nApproval prompts are disabled in this session: actions that require approval are rejected automatically — do not request sandbox escalation (do not set `sandbox_permissions`)."
+        },
+        {
+          "seq": 13,
+          "type": "user/message",
+          "time": 1794708570917,
+          "text": "<system-reminder>\nA skill is a reusable set of task-specific instructions. The following skills are available in this session:\n\n<available_skills>\n- `diagnose-windows-sandbox-acl`: Use on Windows for unexpected DSH sandbox access denials: workspace writes or listing fail, or an ordinarily readable path cannot be read. One bundled command inspects the path and every ancestor and repairs the ACL problems it proves in that same run. Expected confinement denials need no ACL repair.\n</available_skills>\n\nIf the user names a skill, or the task clearly matches a skill's description, call the `skill` tool with the exact skill name before taking task actions. Load all applicable skills, then follow their full instructions. This catalog contains summaries only; do not infer or follow a skill's instructions until it has been loaded.\nA user may also invoke a skill directly; its <skill_content> block then appears in this conversation. Follow it, and do not call the `skill` tool again for that skill."
+        },
+        {
+          "seq": 14,
+          "type": "user/message",
+          "time": 1794708570918,
+          "text": "<ctx-search-hint>\nYour memory may contain 2 related fragments:\n- [CONSTRAINTS] Seed files are fixture.txt and historian-fixture.txt; both must b…\n- [CONSTRAINTS] Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the…\nIf the fragments above seem relevant to the current request, you may run ctx_memory with action \"search\" to retrieve full context. Otherwise ignore.\n</ctx-search-hint>"
+        },
+        {
+          "seq": 15,
+          "type": "request/header",
+          "time": 1794708570921
+        },
+        {
+          "seq": 16,
+          "type": "request/context",
+          "time": 1794708570926
+        },
+        {
+          "seq": 17,
+          "type": "session/title",
+          "time": 1794708570935
+        },
+        {
+          "seq": 18,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708571112
+        },
+        {
+          "seq": 19,
+          "type": "assistant/message",
+          "time": 1794708572079
+        },
+        {
+          "seq": 20,
+          "type": "tool/call",
+          "time": 1794708572090,
+          "callId": "call_00_9xcWbueO8xAlw9lwxURf1120",
+          "name": "ctx_memory",
+          "input": null
+        },
+        {
+          "seq": 21,
+          "type": "tool/result",
+          "time": 1794708572117,
+          "callId": "call_00_9xcWbueO8xAlw9lwxURf1120",
+          "text": "§1§ Already known (memory 5, seen 2 times).",
+          "isError": false
+        },
+        {
+          "seq": 22,
+          "type": "step/end",
+          "time": 1794708572119
+        },
+        {
+          "seq": 23,
+          "type": "step/start",
+          "time": 1794708572144
+        },
+        {
+          "seq": 24,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708572288
+        },
+        {
+          "seq": 25,
+          "type": "assistant/message",
+          "time": 1794708573003
+        },
+        {
+          "seq": 26,
+          "type": "tool/call",
+          "time": 1794708573011,
+          "callId": "call_00_etX7RhQzs6emzl03QFuu6622",
+          "name": "vector_wait",
+          "input": null
+        },
+        {
+          "seq": 27,
+          "type": "tool/result",
+          "time": 1794708693037,
+          "callId": "call_00_etX7RhQzs6emzl03QFuu6622",
+          "text": "§2§ Waited 120 seconds.",
+          "isError": false
+        },
+        {
+          "seq": 28,
+          "type": "step/end",
+          "time": 1794708693042
+        },
+        {
+          "seq": 29,
+          "type": "step/start",
+          "time": 1794708693074
+        },
+        {
+          "seq": 30,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708693290
+        },
+        {
+          "seq": 31,
+          "type": "assistant/message",
+          "time": 1794708693738
+        },
+        {
+          "seq": 32,
+          "type": "tool/call",
+          "time": 1794708693745,
+          "callId": "call_00_ET_BPA2fYsdCTw9diczFDkB8526",
+          "name": "vector_wait",
+          "input": null
+        },
+        {
+          "seq": 33,
+          "type": "tool/result",
+          "time": 1794708753766,
+          "callId": "call_00_ET_BPA2fYsdCTw9diczFDkB8526",
+          "text": "§3§ Waited 60 seconds.",
+          "isError": false
+        },
+        {
+          "seq": 34,
+          "type": "step/end",
+          "time": 1794708753768
+        },
+        {
+          "seq": 35,
+          "type": "step/start",
+          "time": 1794708753790
+        },
+        {
+          "seq": 36,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708754542
+        },
+        {
+          "seq": 37,
+          "type": "assistant/message",
+          "time": 1794708755308
+        },
+        {
+          "seq": 38,
+          "type": "tool/call",
+          "time": 1794708755313,
+          "callId": "call_00_ZGrP1QafxswPdlIU4HSc9919",
+          "name": "ctx_memory",
+          "input": null
+        },
+        {
+          "seq": 39,
+          "type": "tool/result",
+          "time": 1794708755361,
+          "callId": "call_00_ZGrP1QafxswPdlIU4HSc9919",
+          "text": "§4§ Found 4 results for \"npm test before committing\":\n\n[1] [memory] score=0.91 id=5 category=PROJECT_RULES match=hybrid\nAlways run npm test before committing changes.\n\n[2] [memory] score=0.24 id=1 category=CONSTRAINTS match=semantic\nCombined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\n\n[3] [memory] score=0.17 id=3 category=CONSTRAINTS match=semantic\nSeed files are fixture.txt and historian-fixture.txt; both must be read once only.\n\n[4] [memory] score=0.03 id=2 category=CONFIG_VALUES match=semantic\nWorkspace: C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace",
+          "isError": false
+        },
+        {
+          "seq": 40,
+          "type": "step/end",
+          "time": 1794708755363
+        },
+        {
+          "seq": 41,
+          "type": "step/start",
+          "time": 1794708755383
+        },
+        {
+          "seq": 42,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708755958
+        },
+        {
+          "seq": 43,
+          "type": "assistant/message",
+          "time": 1794708756568,
+          "text": "VECTOR_OK"
+        }
+      ]
+    },
+    "session-e7c842dc-b193-4c7e-ae4b-b7bbdd5decec": {
+      "processId": 3456,
+      "trigger": {
+        "type": "assistant/message",
+        "seq": 74
+      },
+      "surface": [
+        10,
+        62,
+        12,
+        13,
+        18,
+        28,
+        24,
+        26,
+        32,
+        42,
+        38,
+        40,
+        46,
+        48,
+        52,
+        64,
+        65,
+        68,
+        70,
+        74
+      ],
+      "events": [
+        {
+          "seq": 0,
+          "type": "permission/preset",
+          "time": 1794708047496
+        },
+        {
+          "seq": 1,
+          "type": "sandbox/mode",
+          "time": 1794708047500
+        },
+        {
+          "seq": 2,
+          "type": "approval/policy",
+          "time": 1794708047500
+        },
+        {
+          "seq": 3,
+          "type": "permission/preset",
+          "time": 1794708047502
+        },
+        {
+          "seq": 4,
+          "type": "sandbox/mode",
+          "time": 1794708047502
+        },
+        {
+          "seq": 5,
+          "type": "approval/policy",
+          "time": 1794708047502
+        },
+        {
+          "seq": 6,
+          "type": "agent/inbox/spliced",
+          "time": 1794708047505
+        },
+        {
+          "seq": 7,
+          "type": "turn/start",
+          "time": 1794708047507
+        },
+        {
+          "seq": 8,
+          "type": "agent/inbox/spliced",
+          "time": 1794708047509
+        },
+        {
+          "seq": 9,
+          "type": "step/start",
+          "time": 1794708047718
+        },
+        {
+          "seq": 10,
+          "type": "system/message",
+          "time": 1794708047894,
+          "text": "You are an AI agent powered by DeepSeek Harness.\n\nYou are a coding agent powered by the deepseek-flash model.\n\n## Magic Context\n\n### You are the user's long-term partner on this project — not a one-off hire\n\nMost AI sessions are disposable: one session per task, discarded when it's done. Magic Conte"
+        },
+        {
+          "seq": 11,
+          "type": "user/message",
+          "time": 1794708047901,
+          "text": "This is an isolated 0.12.2 combined-build recovery lifecycle test. Follow this exact sequence, one tool call per model step. (1) Read fixture.txt once and note the actual §N§ tag on its result. (2) Call ctx_reduce with drop set to ONLY that tag. (3) In a NEW model step, call ctx_expand with tag set to that SAME old tag. (4) The ctx_expand result begins with a NEW §M§ marker; note M, then call ctx_reduce with drop set to M. (5) In a NEW step, call ctx_expand with tag set to M and note the nonce. Respond RECOVERY_OK plus the nonce; otherwise report the exact refusal. Do not read any other file."
+        },
+        {
+          "seq": 12,
+          "type": "user/message",
+          "time": 1794708047904,
+          "text": "Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\".\n\nCurrent DSH file policy: read-only. Any available operation enforced by the DSH file sandbox cannot modify files in the standing mode. Do not refuse a required modification from this policy alone: try an available tool normally and follow any denial and escalation guidance it returns.\n\nApproval prompts are disabled in this session: actions that require approval are rejected automatically — do not request sandbox escalation (do not set `sandbox_permissions`)."
+        },
+        {
+          "seq": 13,
+          "type": "user/message",
+          "time": 1794708047905,
+          "text": "<system-reminder>\nA skill is a reusable set of task-specific instructions. The following skills are available in this session:\n\n<available_skills>\n- `diagnose-windows-sandbox-acl`: Use on Windows for unexpected DSH sandbox access denials: workspace writes or listing fail, or an ordinarily readable path cannot be read. One bundled command inspects the path and every ancestor and repairs the ACL problems it proves in that same run. Expected confinement denials need no ACL repair.\n</available_skills>\n\nIf the user names a skill, or the task clearly matches a skill's description, call the `skill` tool with the exact skill name before taking task actions. Load all applicable skills, then follow their full instructions. This catalog contains summaries only; do not infer or follow a skill's instructions until it has been loaded.\nA user may also invoke a skill directly; its <skill_content> block then appears in this conversation. Follow it, and do not call the `skill` tool again for that skill."
+        },
+        {
+          "seq": 14,
+          "type": "request/header",
+          "time": 1794708047908
+        },
+        {
+          "seq": 15,
+          "type": "request/context",
+          "time": 1794708047913
+        },
+        {
+          "seq": 16,
+          "type": "session/title",
+          "time": 1794708047921
+        },
+        {
+          "seq": 17,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708048091
+        },
+        {
+          "seq": 18,
+          "type": "assistant/message",
+          "time": 1794708049346,
+          "text": "I'll follow the sequence exactly, one tool call per step."
+        },
+        {
+          "seq": 19,
+          "type": "tool/call",
+          "time": 1794708049359,
+          "callId": "call_00_ET_yqZoF5hJWaJkNnC2OTWZ0079",
+          "name": "read",
+          "input": null
+        },
+        {
+          "seq": 20,
+          "type": "tool/result",
+          "time": 1794708049375,
+          "callId": "call_00_ET_yqZoF5hJWaJkNnC2OTWZ0079",
+          "text": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>",
+          "isError": false
+        },
+        {
+          "seq": 21,
+          "type": "step/end",
+          "time": 1794708049376
+        },
+        {
+          "seq": 22,
+          "type": "step/start",
+          "time": 1794708049412
+        },
+        {
+          "seq": 23,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708049568
+        },
+        {
+          "seq": 24,
+          "type": "assistant/message",
+          "time": 1794708050577,
+          "text": "Tag noted: **§1§**. Now dropping it."
+        },
+        {
+          "seq": 25,
+          "type": "tool/call",
+          "time": 1794708050583,
+          "callId": "call_00_h0rUOmwN7r3yUkRwZyKy1105",
+          "name": "ctx_reduce",
+          "input": null
+        },
+        {
+          "seq": 26,
+          "type": "tool/result",
+          "time": 1794708050604,
+          "callId": "call_00_h0rUOmwN7r3yUkRwZyKy1105",
+          "text": "§2§ Queued 1 tag for reclaim.",
+          "isError": false
+        },
+        {
+          "seq": 27,
+          "type": "step/end",
+          "time": 1794708050606
+        },
+        {
+          "seq": 28,
+          "type": "tool/result",
+          "time": 1794708050630,
+          "callId": "call_00_ET_yqZoF5hJWaJkNnC2OTWZ0079",
+          "text": "[dropped §1§]",
+          "isError": false
+        },
+        {
+          "seq": 29,
+          "type": "step/start",
+          "time": 1794708050644
+        },
+        {
+          "seq": 30,
+          "type": "request/header",
+          "time": 1794708050647
+        },
+        {
+          "seq": 31,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708050824
+        },
+        {
+          "seq": 32,
+          "type": "assistant/message",
+          "time": 1794708051590,
+          "text": "Now step 3: expanding the same old tag §1§."
+        },
+        {
+          "seq": 33,
+          "type": "tool/call",
+          "time": 1794708051597,
+          "callId": "call_00_ET_mi6rOIfxLPKXYzevVVep1490",
+          "name": "ctx_expand",
+          "input": null
+        },
+        {
+          "seq": 34,
+          "type": "tool/result",
+          "time": 1794708051613,
+          "callId": "call_00_ET_mi6rOIfxLPKXYzevVVep1490",
+          "text": "§3§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>",
+          "isError": false
+        },
+        {
+          "seq": 35,
+          "type": "step/end",
+          "time": 1794708051616
+        },
+        {
+          "seq": 36,
+          "type": "step/start",
+          "time": 1794708051645
+        },
+        {
+          "seq": 37,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708051837
+        },
+        {
+          "seq": 38,
+          "type": "assistant/message",
+          "time": 1794708053042,
+          "text": "The expand result begins with **§3§** (M = 3). Now dropping that new tag."
+        },
+        {
+          "seq": 39,
+          "type": "tool/call",
+          "time": 1794708053050,
+          "callId": "call_00_E5pdmnJi3ije7oyzN4Zf1868",
+          "name": "ctx_reduce",
+          "input": null
+        },
+        {
+          "seq": 40,
+          "type": "tool/result",
+          "time": 1794708053069,
+          "callId": "call_00_E5pdmnJi3ije7oyzN4Zf1868",
+          "text": "§4§ Queued 1 tag for reclaim.",
+          "isError": false
+        },
+        {
+          "seq": 41,
+          "type": "step/end",
+          "time": 1794708053073
+        },
+        {
+          "seq": 42,
+          "type": "tool/result",
+          "time": 1794708053098,
+          "callId": "call_00_ET_mi6rOIfxLPKXYzevVVep1490",
+          "text": "[dropped §3§]",
+          "isError": false
+        },
+        {
+          "seq": 43,
+          "type": "step/start",
+          "time": 1794708053122
+        },
+        {
+          "seq": 44,
+          "type": "request/header",
+          "time": 1794708053126
+        },
+        {
+          "seq": 45,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708053315
+        },
+        {
+          "seq": 46,
+          "type": "assistant/message",
+          "time": 1794708054168,
+          "text": "Now the final step: expanding tag M (§3§)."
+        },
+        {
+          "seq": 47,
+          "type": "tool/call",
+          "time": 1794708054175,
+          "callId": "call_00_ET_Yik1VDdn8WmutUqCn4sU4232",
+          "name": "ctx_expand",
+          "input": null
+        },
+        {
+          "seq": 48,
+          "type": "tool/result",
+          "time": 1794708054191,
+          "callId": "call_00_ET_Yik1VDdn8WmutUqCn4sU4232",
+          "text": "§5§ §3§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>",
+          "isError": false
+        },
+        {
+          "seq": 49,
+          "type": "step/end",
+          "time": 1794708054193
+        },
+        {
+          "seq": 50,
+          "type": "step/start",
+          "time": 1794708054219
+        },
+        {
+          "seq": 51,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794708054802
+        },
+        {
+          "seq": 52,
+          "type": "assistant/message",
+          "time": 1794708056062,
+          "text": "RECOVERY_OK afd2773bb98d48eb018945d1b987a44f\n\nThe full sequence worked with no refusals:\n1. `fixture.txt` read → result tagged **§1§**\n2. `ctx_reduce` drop `1` → queued (§2§)\n3. `ctx_expand` tag `1` → returned a new **§3§** marker (M = 3)\n4. `ctx_reduce` drop `3` → queued (§4§)\n5. `ctx_expand` tag `"
+        },
+        {
+          "seq": 53,
+          "type": "step/end",
+          "time": 1794708056069
+        },
+        {
+          "seq": 54,
+          "type": "turn/end",
+          "time": 1794708056069
+        },
+        {
+          "seq": 55,
+          "type": "session/end-seed",
+          "time": 1794709165167
+        },
+        {
+          "seq": 56,
+          "type": "permission/preset",
+          "time": 1794709165191
+        },
+        {
+          "seq": 57,
+          "type": "approval/policy",
+          "time": 1794709165193
+        },
+        {
+          "seq": 58,
+          "type": "approval/policy",
+          "time": 1794709165193
+        },
+        {
+          "seq": 59,
+          "type": "agent/inbox/spliced",
+          "time": 1794709165195
+        },
+        {
+          "seq": 60,
+          "type": "turn/start",
+          "time": 1794709165197
+        },
+        {
+          "seq": 61,
+          "type": "agent/inbox/spliced",
+          "time": 1794709165198
+        },
+        {
+          "seq": 62,
+          "type": "user/message",
+          "time": 1794709165724,
+          "text": "<magic-context>\n<project-memories>\n- [PROJECT_RULES] Always run npm test before committing changes.\n- [CONSTRAINTS] Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\n- [CONSTRAINTS] Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\n- [CONFIG_VALUES] Workspace: C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\n</project-memories>\n</magic-context>This is an isolated 0.12.2 combined-build recovery lifecycle test. Follow this exact sequence, one tool call per model step. (1) Read fixture.txt once and note the actual §N§ tag on its result. (2) Call ctx_reduce with drop set to ONLY that tag. (3) In a NEW model step, call ctx_expand with tag set to that SAME old tag. (4) The ctx_expand result begins with a NEW §M§ marker; note M, then call ctx_reduce with drop set to M. (5) In a NEW step, call ctx_expand"
+        },
+        {
+          "seq": 63,
+          "type": "step/start",
+          "time": 1794709165738
+        },
+        {
+          "seq": 64,
+          "type": "user/message",
+          "time": 1794709165745,
+          "text": "Resume the persisted combined session. Call ONLY ctx_reduce with drop set to 1, which is the already-expanded old tag. Then respond OLD_TAG_REDUCE plus the exact tool result. Do not call ctx_expand, do not read any file, and do not use other tools."
+        },
+        {
+          "seq": 65,
+          "type": "user/message",
+          "time": 1794709165756,
+          "text": "<ctx-search-hint>\nYour memory may contain 3 related fragments:\n- [CONSTRAINTS] Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the…\n- [CONSTRAINTS] Seed files are fixture.txt and historian-fixture.txt; both must b…\n- [CONFIG_VALUES] Workspace: C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-202…\nIf the fragments above seem relevant to the current request, you may run ctx_memory with action \"search\" to retrieve full context. Otherwise ignore.\n</ctx-search-hint>"
+        },
+        {
+          "seq": 66,
+          "type": "request/header",
+          "time": 1794709165763
+        },
+        {
+          "seq": 67,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794709166013
+        },
+        {
+          "seq": 68,
+          "type": "assistant/message",
+          "time": 1794709167099
+        },
+        {
+          "seq": 69,
+          "type": "tool/call",
+          "time": 1794709167110,
+          "callId": "call_00_oyi0upsR7l6gaiTPg02e1237",
+          "name": "ctx_reduce",
+          "input": null
+        },
+        {
+          "seq": 70,
+          "type": "tool/result",
+          "time": 1794709167138,
+          "callId": "call_00_oyi0upsR7l6gaiTPg02e1237",
+          "text": "§6§ §1§ not queued: already dropped.",
+          "isError": false
+        },
+        {
+          "seq": 71,
+          "type": "step/end",
+          "time": 1794709167143
+        },
+        {
+          "seq": 72,
+          "type": "step/start",
+          "time": 1794709167217
+        },
+        {
+          "seq": 73,
+          "type": "session-log-deepseek/delivery-accepted",
+          "time": 1794709167417
+        },
+        {
+          "seq": 74,
+          "type": "assistant/message",
+          "time": 1794709168124,
+          "text": "OLD_TAG_REDUCE §6§ §1§ not queued: already dropped."
+        }
+      ]
+    }
+  },
+  "discardedSessions": {
+    "session-4712e872-7645-4700-b64d-9bb96355f572": {
+      "snapshots": 31,
+      "lastProcessId": 16344,
+      "prompt": "This is an isolated 0.12.2 combined-host acceptance seed. In separate sequential model steps: read fixture.txt once and note the actual §N§ tag on its result; call ctx_reduce with drop set to ONLY that tag; read historian-fixture.txt once. Then respond only SEED_READY and that tag number. Do not cal",
+      "surface": [
+        10,
+        11,
+        12,
+        13,
+        18,
+        28,
+        24,
+        26,
+        32,
+        34,
+        38,
+        49,
+        52,
+        54,
+        58,
+        69,
+        72,
+        74,
+        78,
+        89,
+        92,
+        94,
+        98,
+        109,
+        112,
+        114,
+        118,
+        129,
+        132,
+        134,
+        138
+      ]
+    },
+    "session-cd1b5fdc-634b-433f-aaee-e16bcc59d8dc": {
+      "snapshots": 14,
+      "lastProcessId": 7372,
+      "prompt": "This is an isolated 0.12.2 combined-build recovery lifecycle test. Follow this exact sequence, one tool call per model step. (1) Read fixture.txt once and note the actual §N§ tag on its result. (2) Call ctx_reduce with drop set to ONLY that tag. (3) In a NEW model step, call ctx_expand with tag set ",
+      "surface": [
+        10,
+        11,
+        12,
+        13,
+        18,
+        20,
+        24,
+        26,
+        30,
+        32,
+        36,
+        38,
+        42,
+        44,
+        48
+      ]
+    },
+    "session-e894610c-b6ac-463c-b680-e2af29d1ec73": {
+      "snapshots": 11,
+      "lastProcessId": 14956,
+      "prompt": "Isolated 0.12.2 combined vector smoke. Follow this exact sequence, one tool call per model step. (1) Call ctx_memory with action \"write\", category \"PROJECT_RULES\", content \"Always run npm test before committing changes.\". (2) Call vector_wait with seconds 100. (3) Call ctx_memory with action \"search",
+      "surface": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        19,
+        21,
+        25,
+        27,
+        31,
+        33,
+        37
+      ]
+    }
+  },
+  "engineOwners": [
+    "{\"processId\":7372,\"time\":\"2026-11-15T02:00:03.329Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":25396,\"time\":\"2026-11-15T02:00:47.432Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":16920,\"time\":\"2026-11-15T02:01:08.164Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":25364,\"time\":\"2026-11-15T02:01:21.090Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":19096,\"time\":\"2026-11-15T02:01:46.745Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":17592,\"time\":\"2026-11-15T02:02:12.066Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":16608,\"time\":\"2026-11-15T02:02:37.663Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":16344,\"time\":\"2026-11-15T02:03:03.332Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":21396,\"time\":\"2026-11-15T02:04:25.266Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":27296,\"time\":\"2026-11-15T02:04:39.050Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":24688,\"time\":\"2026-11-15T02:05:11.590Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":11572,\"time\":\"2026-11-15T02:05:28.055Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":15920,\"time\":\"2026-11-15T02:05:42.162Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":240,\"time\":\"2026-11-15T02:05:55.225Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":10968,\"time\":\"2026-11-15T02:06:08.767Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":14956,\"time\":\"2026-11-15T02:06:26.602Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":14252,\"time\":\"2026-11-15T02:09:30.507Z\",\"constructor\":\"BasicCompactionEngine\"}",
+    "{\"processId\":3456,\"time\":\"2026-11-15T02:19:24.762Z\",\"constructor\":\"BasicCompactionEngine\"}"
+  ]
+}

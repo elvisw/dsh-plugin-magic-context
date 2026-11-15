@@ -1,0 +1,471 @@
+{
+  "db": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\plugin-data\\dsh-magic-context.db",
+  "sessions": {
+    "recovery": {
+      "session_id": "session-e7c842dc-b193-4c7e-ae4b-b7bbdd5decec",
+      "tags": [
+        {
+          "tag_number": 1,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_yqZoF5hJWaJkNnC2OTWZ0079"
+        },
+        {
+          "tag_number": 2,
+          "target_kind": "tool-result",
+          "target_id": "call_00_h0rUOmwN7r3yUkRwZyKy1105"
+        },
+        {
+          "tag_number": 3,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_mi6rOIfxLPKXYzevVVep1490"
+        },
+        {
+          "tag_number": 4,
+          "target_kind": "tool-result",
+          "target_id": "call_00_E5pdmnJi3ije7oyzN4Zf1868"
+        },
+        {
+          "tag_number": 5,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_Yik1VDdn8WmutUqCn4sU4232"
+        },
+        {
+          "tag_number": 6,
+          "target_kind": "tool-result",
+          "target_id": "call_00_oyi0upsR7l6gaiTPg02e1237"
+        }
+      ],
+      "pendingDrops": [
+        {
+          "tag_number": 1,
+          "queued_at": 1794708050591,
+          "landed_event_seq": 28,
+          "flush_requested": 0
+        },
+        {
+          "tag_number": 3,
+          "queued_at": 1794708053057,
+          "landed_event_seq": 42,
+          "flush_requested": 0
+        }
+      ],
+      "compartments": [],
+      "journalCounts": {
+        "baseline": 1,
+        "context-pressure": 4,
+        "drop-landed": 2,
+        "memory-recall": 2,
+        "pass": 8,
+        "search-hint": 2,
+        "session-first-seen": 2,
+        "tool-call": 5
+      },
+      "historianRows": [],
+      "publishedRows": [],
+      "passRows": [
+        {
+          "id": 18,
+          "summary": "defer (no-usage) at ?%",
+          "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+        },
+        {
+          "id": 22,
+          "summary": "execute (execute-threshold) at 0.8%",
+          "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":0.8,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":136,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":false,\"tokensBefore\":2667,\"tokensAfter\":2667,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+        },
+        {
+          "id": 25,
+          "summary": "execute (execute-threshold) at 0.8%",
+          "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":0.8,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":257,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":false,\"tokensBefore\":2684,\"tokensAfter\":2598,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+        },
+        {
+          "id": 27,
+          "summary": "execute (execute-threshold) at 0.8%",
+          "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":0.8,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":216,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":false,\"tokensBefore\":2700,\"tokensAfter\":2700,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+        },
+        {
+          "id": 30,
+          "summary": "execute (execute-threshold) at 0.8%",
+          "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":0.8,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":165,\"cacheRead\":8704,\"cacheWrite\":0},\"landed\":[3],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":false,\"tokensBefore\":2727,\"tokensAfter\":2640,\"tokensDelta\":-87,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+        },
+        {
+          "id": 32,
+          "summary": "execute (execute-threshold) at 0.9%",
+          "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":0.9,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":211,\"cacheRead\":8704,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":false,\"tokensBefore\":2743,\"tokensAfter\":2743,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+        },
+        {
+          "id": 197,
+          "summary": "execute (execute-threshold) at 0.9%",
+          "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":0.9,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":161,\"cacheRead\":8960,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":false,\"tokensBefore\":2840,\"tokensAfter\":2975,\"tokensDelta\":135,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+        },
+        {
+          "id": 201,
+          "summary": "execute (execute-threshold) at 0.9%",
+          "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":0.9,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":1961,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":false,\"tokensBefore\":3166,\"tokensAfter\":3166,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+        }
+      ],
+      "emergencyRows": [],
+      "usageRecords": 8
+    },
+    "historian": {
+      "session_id": "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+      "tags": [
+        {
+          "tag_number": 1,
+          "target_kind": "tool-result",
+          "target_id": "call_00_2s74fK99RuBwhhjoB6Ea9597"
+        },
+        {
+          "tag_number": 2,
+          "target_kind": "tool-result",
+          "target_id": "call_00_2DaRPylUPK2KHo6V24vY7931"
+        },
+        {
+          "tag_number": 3,
+          "target_kind": "tool-result",
+          "target_id": "call_00_i0GyXnyu52AvyXSQ4sTl2535"
+        },
+        {
+          "tag_number": 4,
+          "target_kind": "tool-result",
+          "target_id": "call_00_Lwrej8EpX6xGTztIMajV2199"
+        },
+        {
+          "tag_number": 5,
+          "target_kind": "tool-result",
+          "target_id": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927"
+        },
+        {
+          "tag_number": 6,
+          "target_kind": "tool-result",
+          "target_id": "call_00_tUSa3xh4Q0zgu0C9fNfn7227"
+        },
+        {
+          "tag_number": 7,
+          "target_kind": "tool-result",
+          "target_id": "call_00_NvsFH2P6iNwJjYcJXEPn4686"
+        }
+      ],
+      "pendingDrops": [
+        {
+          "tag_number": 1,
+          "queued_at": 1794708267864,
+          "landed_event_seq": 28,
+          "flush_requested": 0
+        }
+      ],
+      "compartments": [
+        {
+          "compartment_id": 1,
+          "covered_start_seq": 11,
+          "covered_end_seq": 34,
+          "landed_event_seq": 57,
+          "superseded": 0
+        }
+      ],
+      "journalCounts": {
+        "baseline": 1,
+        "compartment-published": 1,
+        "context-pressure": 10,
+        "drop-landed": 1,
+        "historian": 3,
+        "memory-promote": 1,
+        "pass": 9,
+        "search-hint": 5,
+        "session-first-seen": 5,
+        "session-notice": 1,
+        "tool-call": 3
+      },
+      "historianRows": [
+        {
+          "id": 101,
+          "summary": "historian automatic run started over 9 nodes",
+          "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+        },
+        {
+          "id": 104,
+          "summary": "historian digest ready (importance 88, 9 nodes)",
+          "data": "{\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000,\"importance\":88,\"facts\":4,\"events\":3,\"attempts\":1,\"durationMs\":2962,\"usage\":{\"inputTokens\":5723,\"outputTokens\":591,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":7850},\"finishReason\":\"stop\"}"
+        },
+        {
+          "id": 105,
+          "summary": "compartment §C1§ stored (~2647 tokens, importance 88)",
+          "data": "{\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":2647,\"importance\":88,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":11,\"coveredEndSeq\":34}"
+        }
+      ],
+      "publishedRows": [
+        {
+          "id": 106,
+          "summary": "compartment §C1§ replaced 9 nodes on the wire",
+          "data": "{\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":2647,\"estTokensReclaimed\":2647,\"nodeSeq\":57,\"importance\":88}"
+        }
+      ],
+      "passRows": [
+        {
+          "id": 86,
+          "summary": "defer (no-usage) at ?%",
+          "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+        },
+        {
+          "id": 90,
+          "summary": "execute (execute-threshold) at 25.5%",
+          "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":25.5,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":683,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2598,\"tokensAfter\":2598,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+        },
+        {
+          "id": 93,
+          "summary": "execute (execute-threshold) at 26.2%",
+          "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":151,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2606,\"tokensAfter\":2520,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+        },
+        {
+          "id": 95,
+          "summary": "execute (execute-threshold) at 26.0%",
+          "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":207,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4626,\"tokensAfter\":4626,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+        },
+        {
+          "id": 102,
+          "summary": "execute (execute-threshold) at 35.1%",
+          "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.1,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":2926,\"cacheRead\":8576,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4630,\"tokensAfter\":4630,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+        },
+        {
+          "id": 109,
+          "summary": "execute (execute-threshold) at 35.2%",
+          "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":146,\"cacheRead\":11392,\"cacheWrite\":0},\"landed\":[],\"published\":[1],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":true,\"tokensBefore\":4660,\"tokensAfter\":2391,\"tokensDelta\":-2269,\"factsPromoted\":4,\"factsSeenAgain\":0}"
+        },
+        {
+          "id": 116,
+          "summary": "defer (below-threshold) at 26.4%",
+          "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":26.4,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":975,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+        },
+        {
+          "id": 122,
+          "summary": "defer (below-threshold) at 27.6%",
+          "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":27.6,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":205,\"cacheRead\":8832,\"cacheWrite\":0},\"consecutive\":1}"
+        },
+        {
+          "id": 129,
+          "summary": "defer (below-threshold) at 28.7%",
+          "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":28.7,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":200,\"cacheRead\":9216,\"cacheWrite\":0},\"consecutive\":1}"
+        }
+      ],
+      "emergencyRows": [],
+      "usageRecords": 12
+    },
+    "flush": {
+      "session_id": "session-79f046ad-ce89-4b17-99bd-a2428e6277ab",
+      "tags": [
+        {
+          "tag_number": 1,
+          "target_kind": "tool-result",
+          "target_id": "call_00_0reFTjuaVCmL2COBfien1226"
+        },
+        {
+          "tag_number": 2,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_mrwdeC9z2ZgOWD1sPffI7569"
+        }
+      ],
+      "pendingDrops": [
+        {
+          "tag_number": 1,
+          "queued_at": 1794708357601,
+          "landed_event_seq": 43,
+          "flush_requested": 0
+        }
+      ],
+      "compartments": [],
+      "journalCounts": {
+        "context-pressure": 4,
+        "drop-landed": 1,
+        "pass": 3,
+        "search-hint": 2,
+        "session-first-seen": 2,
+        "tool-call": 1
+      },
+      "historianRows": [],
+      "publishedRows": [],
+      "passRows": [
+        {
+          "id": 136,
+          "summary": "defer (no-usage) at ?%",
+          "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+        },
+        {
+          "id": 140,
+          "summary": "defer (below-threshold) at 0.8%",
+          "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":0.8,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":748,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+        },
+        {
+          "id": 147,
+          "summary": "defer (below-threshold) at 0.8%",
+          "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":0.8,\"pressureStale\":true,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":184,\"cacheRead\":8576,\"cacheWrite\":0},\"consecutive\":1}"
+        }
+      ],
+      "emergencyRows": [],
+      "usageRecords": 4
+    },
+    "vector": {
+      "session_id": "session-bccc5d17-b49f-40df-89c4-1473588fe67c",
+      "tags": [
+        {
+          "tag_number": 1,
+          "target_kind": "tool-result",
+          "target_id": "call_00_9xcWbueO8xAlw9lwxURf1120"
+        },
+        {
+          "tag_number": 2,
+          "target_kind": "tool-result",
+          "target_id": "call_00_etX7RhQzs6emzl03QFuu6622"
+        },
+        {
+          "tag_number": 3,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_BPA2fYsdCTw9diczFDkB8526"
+        },
+        {
+          "tag_number": 4,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ZGrP1QafxswPdlIU4HSc9919"
+        }
+      ],
+      "pendingDrops": [],
+      "compartments": [],
+      "journalCounts": {
+        "context-pressure": 3,
+        "pass": 2,
+        "search-hint": 1,
+        "session-first-seen": 1,
+        "tool-call": 2
+      },
+      "historianRows": [],
+      "publishedRows": [],
+      "passRows": [
+        {
+          "id": 170,
+          "summary": "defer (no-usage) at ?%",
+          "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+        },
+        {
+          "id": 175,
+          "summary": "defer (below-threshold) at 0.8%",
+          "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":0.8,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":690,\"cacheRead\":7808,\"cacheWrite\":0},\"consecutive\":1}"
+        }
+      ],
+      "emergencyRows": [],
+      "usageRecords": 5
+    }
+  },
+  "discardedSessions": {},
+  "vector": {
+    "journal": [
+      {
+        "id": 163,
+        "at": 1794708488469,
+        "summary": "shared-space gate: gate-closed",
+        "data": "{\"outcome\":\"gate-closed\",\"reason\":\"no dominant embedding space\",\"bootstrapModelId\":\"embedding-provider:adc36d64c8cb774f10f8348390e75fea\"}"
+      },
+      {
+        "id": 164,
+        "at": 1794708488494,
+        "summary": "backfill: creating the first embedding space",
+        "data": "{\"outcome\":\"backfill-bootstrap\",\"modelId\":\"embedding-provider:adc36d64c8cb774f10f8348390e75fea\",\"total\":4}"
+      },
+      {
+        "id": 179,
+        "at": 1794708630383,
+        "summary": "shared-space gate: gate-closed",
+        "data": "{\"outcome\":\"gate-closed\",\"reason\":\"no dominant embedding space\",\"bootstrapModelId\":\"embedding-provider:adc36d64c8cb774f10f8348390e75fea\"}"
+      },
+      {
+        "id": 180,
+        "at": 1794708630399,
+        "summary": "backfill: creating the first embedding space",
+        "data": "{\"outcome\":\"backfill-bootstrap\",\"modelId\":\"embedding-provider:adc36d64c8cb774f10f8348390e75fea\",\"total\":4}"
+      },
+      {
+        "id": 181,
+        "at": 1794708659669,
+        "summary": "backfill: +4 vector(s) in the new space",
+        "data": "{\"outcome\":\"backfill\",\"created\":4,\"present\":0,\"skipped\":0,\"failed\":0,\"total\":4,\"modelId\":\"embedding-provider:adc36d64c8cb774f10f8348390e75fea\",\"batch\":4}"
+      },
+      {
+        "id": 185,
+        "at": 1794708690414,
+        "summary": "shared-space gate: parity-pass",
+        "data": "{\"outcome\":\"parity-pass\",\"modelId\":\"embedding-provider:adc36d64c8cb774f10f8348390e75fea\",\"parity\":1}"
+      }
+    ],
+    "kinds": {
+      "baseline": 2,
+      "boot": 18,
+      "compartment-published": 1,
+      "config-drift": 2,
+      "context-pressure": 36,
+      "drop-landed": 5,
+      "engine": 18,
+      "historian": 3,
+      "maintenance": 4,
+      "memory-promote": 5,
+      "memory-recall": 2,
+      "memory-sample": 4,
+      "pass": 40,
+      "search-hint": 18,
+      "session-first-seen": 18,
+      "session-notice": 1,
+      "tool-call": 18,
+      "vector-lane": 6
+    }
+  },
+  "memory": {
+    "memories": [
+      {
+        "id": 1,
+        "created_at": 1794708300095,
+        "category": "CONSTRAINTS"
+      },
+      {
+        "id": 2,
+        "created_at": 1794708300095,
+        "category": "CONFIG_VALUES"
+      },
+      {
+        "id": 3,
+        "created_at": 1794708300095,
+        "category": "CONSTRAINTS"
+      },
+      {
+        "id": 4,
+        "created_at": 1794708300095,
+        "category": "CONFIG_VALUES"
+      },
+      {
+        "id": 5,
+        "created_at": 1794708388207,
+        "category": "PROJECT_RULES"
+      }
+    ],
+    "embeddings": [
+      {
+        "memory_id": 1,
+        "model_id": "embedding-provider:adc36d64c8cb774f10f8348390e75fea"
+      },
+      {
+        "memory_id": 2,
+        "model_id": "embedding-provider:adc36d64c8cb774f10f8348390e75fea"
+      },
+      {
+        "memory_id": 3,
+        "model_id": "embedding-provider:adc36d64c8cb774f10f8348390e75fea"
+      },
+      {
+        "memory_id": 5,
+        "model_id": "embedding-provider:adc36d64c8cb774f10f8348390e75fea"
+      }
+    ],
+    "spaces": [
+      {
+        "model_id": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+        "n": 4
+      }
+    ]
+  }
+}

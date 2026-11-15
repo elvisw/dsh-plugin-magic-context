@@ -1,0 +1,230 @@
+{
+  "root": "_bmad-output\\initiative-dsh-magic-context\\acceptance-windows-dsh-2026-11-15-combined-0.12.2\\evidence",
+  "files": [
+    {
+      "path": "activity.log",
+      "bytes": 64003,
+      "sha256": "1940da423c4d38b4ef03681e1f0a3314142d86c636bfda118017c07bca60baef"
+    },
+    {
+      "path": "add-registry.txt",
+      "bytes": 811,
+      "sha256": "f285caa381a08ad1b74e44e81d5cd6228b0139d2729ae921ee0625e2cb68f578"
+    },
+    {
+      "path": "artifact.json",
+      "bytes": 1882,
+      "sha256": "f0dda346103a00e753348b56c8e3bc81a3b5927af54d3dc808d04eb877e76b2f"
+    },
+    {
+      "path": "bootstrap-profile.txt",
+      "bytes": 12996,
+      "sha256": "3c382717d2bf7db73fac05c36a524129e4269c6d29a03806b52ae8a167bba816"
+    },
+    {
+      "path": "combined-analysis.json",
+      "bytes": 163534,
+      "sha256": "fcc2786a46792eb24ff060469434bf1d61a72668fa7a33abc80974ddfbf5ff96"
+    },
+    {
+      "path": "combined-observer-extract.json",
+      "bytes": 78567,
+      "sha256": "b1c39094e675d3de9b745e3fa32618192e52f5100a5965923c76dba02c2230a4"
+    },
+    {
+      "path": "combined-state.json",
+      "bytes": 105364,
+      "sha256": "b21b74d33eb98d0df875c37e6d3a6c48c886a9e8d0fb146735f601fff553d52f"
+    },
+    {
+      "path": "db-probes.json",
+      "bytes": 20676,
+      "sha256": "49dddbc58d1399743243c8c0e8cb040e4f4cf95495182c731cfa030be4b40fb4"
+    },
+    {
+      "path": "driver-flush.mjs",
+      "bytes": 2022,
+      "sha256": "6f398e9efcd4787a1edccbec26d5b314ace6b5c2b16587e9896e21fd79c25af4"
+    },
+    {
+      "path": "drivers/combined-e1-tag.driver.json",
+      "bytes": 1519,
+      "sha256": "1f2f30afd97774e9ad5d87a42358aba7ca712dbead251bf7529eae8a1ba474ae"
+    },
+    {
+      "path": "drivers/combined-e2-message.driver.json",
+      "bytes": 1578,
+      "sha256": "d9142c70253883245b4dc57ae4806d682bf0eed677b43b079eba34261df2aef7"
+    },
+    {
+      "path": "drivers/combined-flush-seed.driver.json",
+      "bytes": 1711,
+      "sha256": "3163691b5a7fec8fd1bd400641309c6efeca0b66e398ba876afcbe9600f93335"
+    },
+    {
+      "path": "drivers/combined-flush.driver.json",
+      "bytes": 731,
+      "sha256": "a5c287c24159e1cc2bbf417b3c24de72310e9409d274ee1b0bfc8b6691dcdfcb"
+    },
+    {
+      "path": "drivers/combined-recovery-old-tag.driver.json",
+      "bytes": 1199,
+      "sha256": "463dbfad61af345d791b560200f3411ee557a784ffc271151a9ae5fcbc94dfde"
+    },
+    {
+      "path": "drivers/combined-recovery.driver.json",
+      "bytes": 3993,
+      "sha256": "ea127a32748df02ea9f7fb28eea1900bb6abe847779b1f1eea82ce130b748d3e"
+    },
+    {
+      "path": "drivers/combined-seed.driver.json",
+      "bytes": 10573,
+      "sha256": "8c04c3cfb865d5cdd591d7039cde65ed38283cf849ce720dd34486d741662ada"
+    },
+    {
+      "path": "drivers/combined-settle.driver.json",
+      "bytes": 988,
+      "sha256": "8b98b536d29ff6974d1246b1ae02e3e5b6bf4d7b9b859fdec472f8c75d45e887"
+    },
+    {
+      "path": "drivers/combined-vector.driver.json",
+      "bytes": 2915,
+      "sha256": "d5377a006baa7ada2444c72a68c53875295618aa0398223557c19a1d41b7d167"
+    },
+    {
+      "path": "drivers/combined-wait-1.driver.json",
+      "bytes": 990,
+      "sha256": "ca43d506ce79d7ff5d15c15979873838c30b9b666556464c01b7fac1a447bdab"
+    },
+    {
+      "path": "drivers/combined-wait-2.driver.json",
+      "bytes": 993,
+      "sha256": "c72ce9a3170f17007bfafb0f384c8f3d55a7ef364533e5b18de94481b54ccda4"
+    },
+    {
+      "path": "drivers/combined-wait-3.driver.json",
+      "bytes": 993,
+      "sha256": "cdceedbc06b6b027e788e464f4ab816a2e989eb11673561f9f0d6f7b5a3fa596"
+    },
+    {
+      "path": "drivers/combined-wait-4.driver.json",
+      "bytes": 993,
+      "sha256": "785a2ef1b703653a85c48afd7abf53f83f856a61cf4cb8dcc5cd365539e34151"
+    },
+    {
+      "path": "drivers/combined-wait-5.driver.json",
+      "bytes": 993,
+      "sha256": "745996497afdd7f2335a079a122e13d04742fb7fee5b73b93247aa7010aeca97"
+    },
+    {
+      "path": "dump-effort.txt",
+      "bytes": 14777,
+      "sha256": "2a23dd1a9b82ba0efb3335246e166103eaf9d0ae10aae1db2c98e48d66a04c7e"
+    },
+    {
+      "path": "dump-historian.txt",
+      "bytes": 14742,
+      "sha256": "6de8dfe60c59ec6f59c379827784501750f024778af9fe58bd535721121215e6"
+    },
+    {
+      "path": "engine-owners.jsonl",
+      "bytes": 1652,
+      "sha256": "2e7d9b9df467bad093e539e323303bbf1315f7aba1b96265864ba3c774504d86"
+    },
+    {
+      "path": "flush-command.jsonl",
+      "bytes": 563,
+      "sha256": "4f042287c63c8be9d16d2c4d28ed0d234e1374cf48f35678bb75eb0a271a0211"
+    },
+    {
+      "path": "host-version.txt",
+      "bytes": 167,
+      "sha256": "22c50f9c015612a0c7e36f4446fc16770045473dae88b452a4602b4bedf87d6e"
+    },
+    {
+      "path": "i18n.txt",
+      "bytes": 2051,
+      "sha256": "df9a87469f70365dfe36aed08e4836d8cafaf572fac3c5ddaf4cb590f05bbba1"
+    },
+    {
+      "path": "installed-package.json",
+      "bytes": 3168,
+      "sha256": "e6297538a7bce4000c54a02d7f87096719283bbea28451b18ab73af1587cd8b8"
+    },
+    {
+      "path": "npm-pack.txt",
+      "bytes": 3448,
+      "sha256": "ebca9dc1661160715d3a99ee95348124da0a85306676eeb36a0e77ba22bb1031"
+    },
+    {
+      "path": "npm-view-full.txt",
+      "bytes": 523,
+      "sha256": "8335d6452cc9be3facd289bb30dd46a260756a7d4a5ae875ad9f20e92d8f4836"
+    },
+    {
+      "path": "npm-view.txt",
+      "bytes": 747,
+      "sha256": "41290c5375680c83d407e79f711aa86759b0fc1f5d94a882a0aae09efc579a0f"
+    },
+    {
+      "path": "overlays/effort.yml",
+      "bytes": 1794,
+      "sha256": "da4320cbf41f4c45544de2cfdb0ee848f3c9f66b17f4248ef99ae29404af5d9e"
+    },
+    {
+      "path": "overlays/flush.yml",
+      "bytes": 1571,
+      "sha256": "46f1bc12756db4e07e3e4739ede413a69a6e0e5e91b0728a2e95d61c83800967"
+    },
+    {
+      "path": "overlays/historian.yml",
+      "bytes": 2052,
+      "sha256": "f8cab50bb27e20154d43fa2c057cc4488fc03d11ac9b31274ffec45ea3183adf"
+    },
+    {
+      "path": "overlays/recovery.yml",
+      "bytes": 1597,
+      "sha256": "6557ce6e2ef1a5d69ba372376333731348d6428a91bc73516823baf279d67068"
+    },
+    {
+      "path": "overlays/settle.yml",
+      "bytes": 1931,
+      "sha256": "5c79eedfa41bb44bb86951cc069ad59831dc67a1116f3b0e99065735d7edb3c7"
+    },
+    {
+      "path": "overlays/vector.yml",
+      "bytes": 1622,
+      "sha256": "976d6ab57b1b3bbc7003070b433ec51243dd669193228cd8b5a6ddc0f89aaa35"
+    },
+    {
+      "path": "preflight.json",
+      "bytes": 5669,
+      "sha256": "06b299efedbeb2ced6e056986b4dce678880eac558265ff6e43ba924215af87b"
+    },
+    {
+      "path": "profile-package.json",
+      "bytes": 309,
+      "sha256": "d015a3b3aaf58ca57068e7fef3dd3db66de2a8ca189d86eac64dbffa815583cf"
+    },
+    {
+      "path": "typecheck.txt",
+      "bytes": 71,
+      "sha256": "d2f6c710a09ac853a034404276d71b49965cfccd991c9219fed9158ede00154a"
+    },
+    {
+      "path": "unit-test.txt",
+      "bytes": 942,
+      "sha256": "f0d2d5390cc29c9ab8ea3f3beb8cbcfac6aa092153d36d7b4529757713aa5c83"
+    },
+    {
+      "path": "vector-first-attempt-observer.json",
+      "bytes": 6487,
+      "sha256": "73105df94243999c29a8b528c1f42747502d4aeaa59ca4be56bf790ed523d44d"
+    },
+    {
+      "path": "vector-model-download.json",
+      "bytes": 579,
+      "sha256": "d1a0f0fd6700f2829f3e1827097d3a197fd5069f4bfb7fddf8fb9ed687bafa32"
+    }
+  ]
+}

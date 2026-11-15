@@ -1,0 +1,12 @@
+{
+  "name": "@elvisw/dsh-plugin-magic-context",
+  "version": "0.12.2",
+  "dist.integrity": "sha512-1VW2Ev0tuMZsaPVnEyEbh6CfTKDyVeDJZoAyijxrolfqILuusltlldNuI6+ar4Rsgylc9nGwpQYz3htXIOj7NQ==",
+  "dist.tarball": "https://registry.npmjs.org/@elvisw/dsh-plugin-magic-context/-/dsh-plugin-magic-context-0.12.2.tgz",
+  "gitHead": "1d1dc4fe2bc7d7cf9083b0cc50cf76298d5bf118",
+  "dist.shasum": "2cf0581b3dc5de03143bc88a995d422bbc459c12",
+  "dist-tags": {
+    "bootstrap": "0.0.0-bootstrap.0",
+    "latest": "0.12.2"
+  }
+}

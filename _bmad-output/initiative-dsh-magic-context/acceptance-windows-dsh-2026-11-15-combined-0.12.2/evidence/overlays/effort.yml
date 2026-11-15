@@ -1,0 +1,62 @@
+[
+  {
+    "id": "magic-context-dsh",
+    "name": "@elvisw/dsh-plugin-magic-context",
+    "config": {
+      "dataDir": "C:/Users/elvis/AppData/Local/Temp/opencode/mc-t0-2026-11-13/tools/dsh-mc-combined-20261115-095709/plugin-data",
+      "registerCompactionEngine": false,
+      "historianEnabled": true,
+      "policy": {
+        "executeThreshold": 0,
+        "historianProtectedNodes": 1,
+        "historianMinNodes": 1,
+        "historianMinBudgetTokens": 500,
+        "historianTimeoutMs": 120000
+      },
+      "maintenance": {
+        "enabled": false
+      },
+      "memory": {
+        "embedBackfill": false,
+        "vectorBackfill": false,
+        "global": {
+          "machine": {
+            "enabled": false
+          },
+          "user": {
+            "render": false,
+            "collect": false,
+            "review": false
+          }
+        }
+      },
+      "historian": {
+        "reasoningEffort": "low"
+      }
+    }
+  },
+  {
+    "id": "session-title-llm",
+    "name": "@deepseek-ai/dsh-session-title-first-prompt-llm",
+    "disabled": true
+  },
+  {
+    "insert": [
+      {
+        "id": "acceptance-test-driver",
+        "name": "file:///C:/Users/elvis/AppData/Local/Temp/opencode/mc-t0-2026-11-13/tools/dsh-mc-combined-20261115-095709/dsh-home/profiles/headless/acceptance-test-driver.mjs"
+      }
+    ]
+  },
+  {
+    "insert": [
+      {
+        "id": "acceptance-observer",
+        "name": "file:///C:/Users/elvis/AppData/Local/Temp/opencode/mc-t0-2026-11-13/tools/dsh-mc-combined-20261115-095709/observer.mjs",
+        "config": {
+          "outDir": "C:/Users/elvis/AppData/Local/Temp/opencode/mc-t0-2026-11-13/tools/dsh-mc-combined-20261115-095709/evidence/session-observer"
+        }
+      }
+    ]
+  }
+]

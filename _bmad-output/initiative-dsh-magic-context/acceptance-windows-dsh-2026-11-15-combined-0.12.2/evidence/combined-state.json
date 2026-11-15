@@ -1,0 +1,2016 @@
+{
+  "recovery": {
+    "record": {
+      "args": [
+        "--profile",
+        "headless",
+        "--patch",
+        "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\recovery.yml",
+        "--json",
+        "--permission-mode",
+        "read-only",
+        "--approval-policy",
+        "never",
+        "This is an isolated 0.12.2 combined-build recovery lifecycle test. Follow this exact sequence, one tool call per model step. (1) Read fixture.txt once and note the actual §N§ tag on its result. (2) Call ctx_reduce with drop set to ONLY that tag. (3) In a NEW model step, call ctx_expand with tag set to that SAME old tag. (4) The ctx_expand result begins with a NEW §M§ marker; note M, then call ctx_reduce with drop set to M. (5) In a NEW step, call ctx_expand with tag set to M and note the nonce. Respond RECOVERY_OK plus the nonce; otherwise report the exact refusal. Do not read any other file."
+      ],
+      "exit_code": 0,
+      "mode": "real-host",
+      "seconds": 11.939,
+      "session_id": "session-e7c842dc-b193-4c7e-ae4b-b7bbdd5decec",
+      "final_reason": {
+        "kind": "completed"
+      },
+      "final_text": "RECOVERY_OK afd2773bb98d48eb018945d1b987a44f\n\nThe full sequence worked with no refusals:\n1. `fixture.txt` read → result tagged **§1§**\n2. `ctx_reduce` drop `1` → queued (§2§)\n3. `ctx_expand` tag `1` → returned a new **§3§** marker (M = 3)\n4. `ctx_reduce` drop `3` → queued (§4§)\n5. `ctx_expand` tag `3` → recovered the original fixture content\n\nNonce: `afd2773bb98d48eb018945d1b987a44f`",
+      "tool_calls": [
+        {
+          "tool": "read",
+          "input": {
+            "file_path": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt"
+          }
+        },
+        {
+          "tool": "ctx_reduce",
+          "input": {
+            "drop": "1"
+          }
+        },
+        {
+          "tool": "ctx_expand",
+          "input": {
+            "tag": "1"
+          }
+        },
+        {
+          "tool": "ctx_reduce",
+          "input": {
+            "drop": "3"
+          }
+        },
+        {
+          "tool": "ctx_expand",
+          "input": {
+            "tag": "3"
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "callId": "call_00_ET_yqZoF5hJWaJkNnC2OTWZ0079",
+          "status": "completed",
+          "result": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>"
+        },
+        {
+          "callId": "call_00_h0rUOmwN7r3yUkRwZyKy1105",
+          "status": "completed",
+          "result": "§2§ Queued 1 tag for reclaim."
+        },
+        {
+          "callId": "call_00_ET_mi6rOIfxLPKXYzevVVep1490",
+          "status": "completed",
+          "result": "§3§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>"
+        },
+        {
+          "callId": "call_00_E5pdmnJi3ije7oyzN4Zf1868",
+          "status": "completed",
+          "result": "§4§ Queued 1 tag for reclaim."
+        },
+        {
+          "callId": "call_00_ET_Yik1VDdn8WmutUqCn4sU4232",
+          "status": "completed",
+          "result": "§5§ §3§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>"
+        }
+      ]
+    },
+    "identity": {
+      "tag": 1,
+      "callId": "call_00_ET_yqZoF5hJWaJkNnC2OTWZ0079",
+      "tool": "read",
+      "originalSeq": 20,
+      "placeholderSeq": 28,
+      "originalText": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>",
+      "originalSha256": "5bf8df34f1b71f7380192dab8108568a6c645daa799206dc9716ce247a41a105",
+      "sourceFile": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\evidence\\session-observer\\session-e7c842dc-b193-4c7e-ae4b-b7bbdd5decec.jsonl",
+      "sourceLine": 16
+    },
+    "check": {
+      "toolCalls": [
+        "read",
+        "ctx_reduce",
+        "ctx_expand",
+        "ctx_reduce",
+        "ctx_expand"
+      ],
+      "expandCallSeqs": [
+        33,
+        47
+      ],
+      "db": {
+        "compartments": [],
+        "unlanded": [],
+        "journal": {
+          "historian": {
+            "count": 0,
+            "maxId": null,
+            "rows": []
+          },
+          "compartment-published": {
+            "count": 0,
+            "maxId": null,
+            "rows": []
+          },
+          "pass": {
+            "count": 6,
+            "maxId": 32,
+            "rows": [
+              {
+                "id": 18,
+                "at": 1794708047715,
+                "kind": "pass",
+                "summary": "defer (no-usage) at ?%",
+                "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+              },
+              {
+                "id": 22,
+                "at": 1794708049408,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 0.8%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":0.8,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":136,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":false,\"tokensBefore\":2667,\"tokensAfter\":2667,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 25,
+                "at": 1794708050640,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 0.8%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":0.8,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":257,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":false,\"tokensBefore\":2684,\"tokensAfter\":2598,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 27,
+                "at": 1794708051641,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 0.8%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":0.8,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":216,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":false,\"tokensBefore\":2700,\"tokensAfter\":2700,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 30,
+                "at": 1794708053112,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 0.8%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":0.8,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":165,\"cacheRead\":8704,\"cacheWrite\":0},\"landed\":[3],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":false,\"tokensBefore\":2727,\"tokensAfter\":2640,\"tokensDelta\":-87,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              },
+              {
+                "id": 32,
+                "at": 1794708054215,
+                "kind": "pass",
+                "summary": "execute (execute-threshold) at 0.9%",
+                "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":0.9,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":211,\"cacheRead\":8704,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":false,\"tokensBefore\":2743,\"tokensAfter\":2743,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+              }
+            ]
+          }
+        },
+        "usageTables": {
+          "usage_records": 12
+        },
+        "tags": [
+          {
+            "tag_number": 1,
+            "target_kind": "tool-result",
+            "target_id": "call_00_ET_yqZoF5hJWaJkNnC2OTWZ0079"
+          },
+          {
+            "tag_number": 2,
+            "target_kind": "tool-result",
+            "target_id": "call_00_h0rUOmwN7r3yUkRwZyKy1105"
+          },
+          {
+            "tag_number": 3,
+            "target_kind": "tool-result",
+            "target_id": "call_00_ET_mi6rOIfxLPKXYzevVVep1490"
+          },
+          {
+            "tag_number": 4,
+            "target_kind": "tool-result",
+            "target_id": "call_00_E5pdmnJi3ije7oyzN4Zf1868"
+          },
+          {
+            "tag_number": 5,
+            "target_kind": "tool-result",
+            "target_id": "call_00_ET_Yik1VDdn8WmutUqCn4sU4232"
+          }
+        ],
+        "pendingDrops": [
+          {
+            "tag_number": 1,
+            "queued_at": 1794708050591,
+            "landed_event_seq": 28,
+            "flush_requested": 0
+          },
+          {
+            "tag_number": 3,
+            "queued_at": 1794708053057,
+            "landed_event_seq": 42,
+            "flush_requested": 0
+          }
+        ],
+        "compartmentSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    "oldTagReduce": {
+      "args": [
+        "--profile",
+        "headless",
+        "--patch",
+        "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\recovery.yml",
+        "--json",
+        "--permission-mode",
+        "read-only",
+        "--approval-policy",
+        "never",
+        "--session-id",
+        "session-e7c842dc-b193-4c7e-ae4b-b7bbdd5decec",
+        "Resume the persisted combined session. Call ONLY ctx_reduce with drop set to 1, which is the already-expanded old tag. Then respond OLD_TAG_REDUCE plus the exact tool result. Do not call ctx_expand, do not read any file, and do not use other tools."
+      ],
+      "exit_code": 0,
+      "mode": "real-host",
+      "seconds": 90.787,
+      "session_id": "session-e7c842dc-b193-4c7e-ae4b-b7bbdd5decec",
+      "final_reason": {
+        "kind": "completed"
+      },
+      "final_text": "OLD_TAG_REDUCE §6§ §1§ not queued: already dropped.",
+      "tool_calls": [
+        {
+          "tool": "ctx_reduce",
+          "input": {
+            "drop": "1"
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "callId": "call_00_oyi0upsR7l6gaiTPg02e1237",
+          "status": "completed",
+          "result": "§6§ §1§ not queued: already dropped."
+        }
+      ]
+    }
+  },
+  "historian": {
+    "sessionId": "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+    "seed": {
+      "args": [
+        "--profile",
+        "headless",
+        "--patch",
+        "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\historian.yml",
+        "--json",
+        "--permission-mode",
+        "read-only",
+        "--approval-policy",
+        "never",
+        "This is an isolated 0.12.2 combined-host acceptance seed. In separate sequential model steps: read fixture.txt once and note the actual §N§ tag on its result; call ctx_reduce with drop set to ONLY that tag; read historian-fixture.txt once. Then respond only SEED_READY and that tag number. Do not call ctx_expand, do not reread, do not quote either file, and do not use other tools."
+      ],
+      "exit_code": 0,
+      "mode": "real-host",
+      "seconds": 7.977,
+      "session_id": "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+      "final_reason": {
+        "kind": "completed"
+      },
+      "final_text": "SEED_READY §1§",
+      "tool_calls": [
+        {
+          "tool": "read",
+          "input": {
+            "file_path": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt"
+          }
+        },
+        {
+          "tool": "ctx_reduce",
+          "input": {
+            "drop": "1"
+          }
+        },
+        {
+          "tool": "read",
+          "input": {
+            "file_path": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\historian-fixture.txt"
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "callId": "call_00_2s74fK99RuBwhhjoB6Ea9597",
+          "status": "completed",
+          "result": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>"
+        },
+        {
+          "callId": "call_00_2DaRPylUPK2KHo6V24vY7931",
+          "status": "completed",
+          "result": "§2§ Queued 1 tag for reclaim."
+        },
+        {
+          "callId": "call_00_i0GyXnyu52AvyXSQ4sTl2535",
+          "status": "completed",
+          "result": "§3§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\historian-fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_HISTORIAN_FIXTURE\n2: This synthetic transcript exists only so the real Historian has a stable span to publish.\n3: line 1: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n4: line 2: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n5: line 3: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n6: line 4: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n7: line 5: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n8: line 6: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n9: line 7: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n10: line 8: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n11: line 9: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n12: line 10: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n13: line 11: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n14: line 12: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n15: line 13: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n16: line 14: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n17: line 15: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n18: line 16: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n19: line 17: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n20: line 18: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n21: line 19: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n22: line 20: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n23: line 21: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n24: line 22: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n25: line 23: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n26: line 24: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n27: line 25: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n28: line 26: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n29: line 27: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n30: line 28: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n31: line 29: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n32: line 30: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n33: line 31: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n34: line 32: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n35: line 33: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n36: line 34: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n37: line 35: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n38: line 36: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n39: line 37: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n40: line 38: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n41: line 39: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n42: line 40: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n43: line 41: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n44: line 42: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n45: line 43: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n46: line 44: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n47: line 45: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n48: line 46: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n49: line 47: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n50: line 48: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n51: line 49: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n52: line 50: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n53: line 51: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n54: line 52: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n55: line 53: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n56: line 54: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n57: line 55: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n58: line 56: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n59: line 57: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n60: line 58: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n61: line 59: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n62: line 60: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n63: line 61: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n64: line 62: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n65: line 63: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n66: line 64: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n67: line 65: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n68: line 66: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n69: line 67: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n70: line 68: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n71: line 69: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n72: line 70: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n73: line 71: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n74: line 72: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n75: line 73: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n76: line 74: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n77: line 75: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n78: line 76: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n79: line 77: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n80: line 78: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n81: line 79: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n82: line 80: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n83: line 81: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n84: line 82: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n85: line 83: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n86: line 84: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n87: line 85: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n88: line 86: retain the combined-build provenance marker afd2773bb98d48eb018945d1b987a44f.\n89: line 87: retain the combined-build provenance marker afd2773bb98d48eb018945d1b"
+        }
+      ]
+    },
+    "identity": {
+      "tag": 1,
+      "callId": "call_00_2s74fK99RuBwhhjoB6Ea9597",
+      "tool": "read",
+      "originalSeq": 20,
+      "placeholderSeq": 28,
+      "originalText": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>",
+      "originalSha256": "5bf8df34f1b71f7380192dab8108568a6c645daa799206dc9716ce247a41a105",
+      "sourceFile": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\evidence\\session-observer\\session-b6619b8b-5a25-48f2-96e0-6a636789b452.jsonl",
+      "sourceLine": 19
+    },
+    "target": {
+      "ok": true,
+      "compartmentId": 1,
+      "publishSeq": 57,
+      "sourceEventSeqs": [
+        11,
+        12,
+        13,
+        18,
+        28,
+        24,
+        26,
+        32,
+        34
+      ],
+      "text": "[compacted §C1§]",
+      "sourceFile": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\evidence\\session-observer\\session-b6619b8b-5a25-48f2-96e0-6a636789b452.jsonl",
+      "sourceLine": 19
+    },
+    "waits": [
+      {
+        "args": [
+          "--profile",
+          "headless",
+          "--patch",
+          "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\historian.yml",
+          "--json",
+          "--permission-mode",
+          "read-only",
+          "--approval-policy",
+          "never",
+          "--session-id",
+          "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+          "Call acceptance_wait with seconds 20, then respond only WAIT_DONE. Do not use any other tool."
+        ],
+        "exit_code": 0,
+        "mode": "real-host",
+        "seconds": 25.267,
+        "session_id": "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+        "final_reason": {
+          "kind": "completed"
+        },
+        "final_text": "WAIT_DONE",
+        "tool_calls": [
+          {
+            "tool": "acceptance_wait",
+            "input": {
+              "seconds": 20
+            }
+          }
+        ],
+        "tool_results": [
+          {
+            "callId": "call_00_Lwrej8EpX6xGTztIMajV2199",
+            "status": "completed",
+            "result": "§4§ Waited 20 seconds."
+          }
+        ]
+      }
+    ],
+    "settle": {
+      "args": [
+        "--profile",
+        "headless",
+        "--patch",
+        "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\settle.yml",
+        "--json",
+        "--permission-mode",
+        "read-only",
+        "--approval-policy",
+        "never",
+        "--session-id",
+        "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+        "Call acceptance_wait with seconds 5, then respond only SETTLE_DONE. Do not use any other tool."
+      ],
+      "exit_code": 0,
+      "mode": "real-host",
+      "seconds": 10.084,
+      "session_id": "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+      "final_reason": {
+        "kind": "completed"
+      },
+      "final_text": "SETTLE_DONE",
+      "tool_calls": [
+        {
+          "tool": "acceptance_wait",
+          "input": {
+            "seconds": 5
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "callId": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927",
+          "status": "completed",
+          "result": "§5§ Waited 5 seconds."
+        }
+      ]
+    },
+    "precondition": {
+      "unlanded": [],
+      "target": {
+        "compartment_id": 1,
+        "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+        "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+        "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+        "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+        "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+        "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+        "importance": 88,
+        "covered_start_seq": 11,
+        "covered_end_seq": 34,
+        "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+        "covered_tokens": 2647,
+        "baseline_epoch": 0,
+        "landed_event_seq": 57,
+        "landed_reason": null,
+        "superseded": 0
+      },
+      "pass": {
+        "id": 109,
+        "at": 1794708300121,
+        "data": {
+          "decision": "execute",
+          "reason": "execute-threshold",
+          "pressure": 35.2,
+          "contextWindow": 32768,
+          "route": "deepseek-official/deepseek-flash",
+          "usage": {
+            "input": 146,
+            "cacheRead": 11392,
+            "cacheWrite": 0
+          },
+          "landed": [],
+          "published": [
+            1
+          ],
+          "forceDropped": 0,
+          "baseline": "refreshed",
+          "historianStarted": true,
+          "tokensBefore": 4660,
+          "tokensAfter": 2391,
+          "tokensDelta": -2269,
+          "factsPromoted": 4,
+          "factsSeenAgain": 0
+        }
+      }
+    },
+    "e1": {
+      "record": {
+        "args": [
+          "--profile",
+          "headless",
+          "--patch",
+          "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\settle.yml",
+          "--json",
+          "--permission-mode",
+          "read-only",
+          "--approval-policy",
+          "never",
+          "--session-id",
+          "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+          "Resume the persisted combined session. Call ONLY ctx_expand with tag set to 1. Do not call any other tool and do not read any file. Respond E1_OK plus the nonce from the restored original if it is available; otherwise report the exact refusal."
+        ],
+        "exit_code": 0,
+        "mode": "real-host",
+        "seconds": 5.185,
+        "session_id": "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+        "final_reason": {
+          "kind": "completed"
+        },
+        "final_text": "E1_OK afd2773bb98d48eb018945d1b987a44f",
+        "tool_calls": [
+          {
+            "tool": "ctx_expand",
+            "input": {
+              "tag": "1"
+            }
+          }
+        ],
+        "tool_results": [
+          {
+            "callId": "call_00_tUSa3xh4Q0zgu0C9fNfn7227",
+            "status": "completed",
+            "result": "§6§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>"
+          }
+        ]
+      },
+      "result": {
+        "callSeq": 102,
+        "callId": "call_00_tUSa3xh4Q0zgu0C9fNfn7227",
+        "resultSeq": 103,
+        "resultText": "§6§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>",
+        "eventsAfterResult": [
+          {
+            "type": "step/end",
+            "seq": 104,
+            "time": 1794708329264,
+            "data": {
+              "turn": 4,
+              "step": 1
+            }
+          },
+          {
+            "type": "step/start",
+            "seq": 105,
+            "time": 1794708329283,
+            "data": {
+              "turn": 4,
+              "step": 2
+            }
+          },
+          {
+            "type": "session-log-deepseek/delivery-accepted",
+            "seq": 106,
+            "time": 1794708329377,
+            "data": {
+              "sessionId": "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+              "sessionFormatVersion": 4,
+              "throughSeq": 105
+            }
+          },
+          {
+            "type": "assistant/message",
+            "seq": 107,
+            "time": 1794708330049,
+            "data": {
+              "turn": 4,
+              "step": 2,
+              "message": {
+                "role": "assistant",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "E1_OK afd2773bb98d48eb018945d1b987a44f"
+                  }
+                ],
+                "source": {
+                  "kind": "model",
+                  "provider": "deepseek-official",
+                  "model": "deepseek-flash",
+                  "replayState": {
+                    "response": {
+                      "kind": "deepseek-messages",
+                      "version": 1,
+                      "model": "deepseek-flash"
+                    },
+                    "blocks": [
+                      {
+                        "type": "text"
+                      }
+                    ]
+                  }
+                },
+                "id": "b1b6a599-35f6-4ca5-8680-b64cf6e3878c"
+              },
+              "usage": {
+                "inputTokens": 200,
+                "outputTokens": 21,
+                "cacheReadTokens": 9216,
+                "cacheWriteTokens": 0,
+                "totalTokens": 9437
+              },
+              "stream": [
+                {
+                  "type": "chunk",
+                  "time": 1794708329870,
+                  "chunk": {
+                    "type": "block-start",
+                    "index": 0,
+                    "blockType": "text"
+                  }
+                },
+                {
+                  "type": "text-chunks",
+                  "time0": 1794708329871,
+                  "index": 0,
+                  "dt": [
+                    116,
+                    14,
+                    1,
+                    13,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    16,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    14,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "texts": [
+                    "E",
+                    "1",
+                    "_OK",
+                    " af",
+                    "d",
+                    "277",
+                    "3",
+                    "bb",
+                    "98",
+                    "d",
+                    "48",
+                    "eb",
+                    "018",
+                    "945",
+                    "d",
+                    "1",
+                    "b",
+                    "987",
+                    "a",
+                    "44",
+                    "f"
+                  ]
+                },
+                {
+                  "type": "chunk",
+                  "time": 1794708330047,
+                  "chunk": {
+                    "type": "block-end",
+                    "index": 0,
+                    "block": {
+                      "type": "text",
+                      "text": "E1_OK afd2773bb98d48eb018945d1b987a44f"
+                    }
+                  }
+                },
+                {
+                  "type": "chunk",
+                  "time": 1794708330047,
+                  "chunk": {
+                    "type": "usage",
+                    "usage": {
+                      "inputTokens": 200,
+                      "outputTokens": 21,
+                      "cacheReadTokens": 9216,
+                      "cacheWriteTokens": 0,
+                      "totalTokens": 9437
+                    }
+                  }
+                },
+                {
+                  "type": "chunk",
+                  "time": 1794708330047,
+                  "chunk": {
+                    "type": "finish",
+                    "reason": {
+                      "kind": "stop"
+                    },
+                    "replayState": {
+                      "response": {
+                        "kind": "deepseek-messages",
+                        "version": 1,
+                        "model": "deepseek-flash"
+                      },
+                      "blocks": [
+                        {
+                          "type": "text"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            "surfaceOp": "append"
+          }
+        ]
+      },
+      "window": {
+        "label": "e1",
+        "ok": true,
+        "errors": [],
+        "agentUsageDelta": {
+          "usage_records": 2
+        },
+        "pre": {
+          "compartments": [
+            {
+              "compartment_id": 1,
+              "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+              "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+              "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+              "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+              "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+              "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+              "importance": 88,
+              "covered_start_seq": 11,
+              "covered_end_seq": 34,
+              "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+              "covered_tokens": 2647,
+              "baseline_epoch": 0,
+              "landed_event_seq": 57,
+              "landed_reason": null,
+              "superseded": 0
+            }
+          ],
+          "unlanded": [],
+          "journal": {
+            "historian": {
+              "count": 3,
+              "maxId": 105,
+              "rows": [
+                {
+                  "id": 101,
+                  "at": 1794708279365,
+                  "kind": "historian",
+                  "summary": "historian automatic run started over 9 nodes",
+                  "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+                },
+                {
+                  "id": 104,
+                  "at": 1794708282327,
+                  "kind": "historian",
+                  "summary": "historian digest ready (importance 88, 9 nodes)",
+                  "data": "{\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000,\"importance\":88,\"facts\":4,\"events\":3,\"attempts\":1,\"durationMs\":2962,\"usage\":{\"inputTokens\":5723,\"outputTokens\":591,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":7850},\"finishReason\":\"stop\"}"
+                },
+                {
+                  "id": 105,
+                  "at": 1794708282338,
+                  "kind": "historian",
+                  "summary": "compartment §C1§ stored (~2647 tokens, importance 88)",
+                  "data": "{\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":2647,\"importance\":88,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":11,\"coveredEndSeq\":34}"
+                }
+              ]
+            },
+            "compartment-published": {
+              "count": 1,
+              "maxId": 106,
+              "rows": [
+                {
+                  "id": 106,
+                  "at": 1794708300090,
+                  "kind": "compartment-published",
+                  "summary": "compartment §C1§ replaced 9 nodes on the wire",
+                  "data": "{\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":2647,\"estTokensReclaimed\":2647,\"nodeSeq\":57,\"importance\":88}"
+                }
+              ]
+            },
+            "pass": {
+              "count": 7,
+              "maxId": 116,
+              "rows": [
+                {
+                  "id": 86,
+                  "at": 1794708265542,
+                  "kind": "pass",
+                  "summary": "defer (no-usage) at ?%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+                },
+                {
+                  "id": 90,
+                  "at": 1794708266637,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 25.5%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":25.5,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":683,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2598,\"tokensAfter\":2598,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 93,
+                  "at": 1794708267908,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":151,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2606,\"tokensAfter\":2520,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 95,
+                  "at": 1794708268931,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.0%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":207,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4626,\"tokensAfter\":4626,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 102,
+                  "at": 1794708279370,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.1%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.1,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":2926,\"cacheRead\":8576,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4630,\"tokensAfter\":4630,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 109,
+                  "at": 1794708300121,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":146,\"cacheRead\":11392,\"cacheWrite\":0},\"landed\":[],\"published\":[1],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":true,\"tokensBefore\":4660,\"tokensAfter\":2391,\"tokensDelta\":-2269,\"factsPromoted\":4,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 116,
+                  "at": 1794708311887,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 26.4%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":26.4,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":975,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+                }
+              ]
+            }
+          },
+          "usageTables": {
+            "usage_records": 34
+          },
+          "tags": [
+            {
+              "tag_number": 1,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2s74fK99RuBwhhjoB6Ea9597"
+            },
+            {
+              "tag_number": 2,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2DaRPylUPK2KHo6V24vY7931"
+            },
+            {
+              "tag_number": 3,
+              "target_kind": "tool-result",
+              "target_id": "call_00_i0GyXnyu52AvyXSQ4sTl2535"
+            },
+            {
+              "tag_number": 4,
+              "target_kind": "tool-result",
+              "target_id": "call_00_Lwrej8EpX6xGTztIMajV2199"
+            },
+            {
+              "tag_number": 5,
+              "target_kind": "tool-result",
+              "target_id": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927"
+            }
+          ],
+          "pendingDrops": [
+            {
+              "tag_number": 1,
+              "queued_at": 1794708267864,
+              "landed_event_seq": 28,
+              "flush_requested": 0
+            }
+          ],
+          "compartmentSha256": "7cd2f34a0af1d9ae40fa6898d09f29471f50cf34d388bd6db5d5e87ac9f7b2ca"
+        },
+        "post": {
+          "compartments": [
+            {
+              "compartment_id": 1,
+              "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+              "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+              "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+              "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+              "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+              "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+              "importance": 88,
+              "covered_start_seq": 11,
+              "covered_end_seq": 34,
+              "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+              "covered_tokens": 2647,
+              "baseline_epoch": 0,
+              "landed_event_seq": 57,
+              "landed_reason": null,
+              "superseded": 0
+            }
+          ],
+          "unlanded": [],
+          "journal": {
+            "historian": {
+              "count": 3,
+              "maxId": 105,
+              "rows": [
+                {
+                  "id": 101,
+                  "at": 1794708279365,
+                  "kind": "historian",
+                  "summary": "historian automatic run started over 9 nodes",
+                  "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+                },
+                {
+                  "id": 104,
+                  "at": 1794708282327,
+                  "kind": "historian",
+                  "summary": "historian digest ready (importance 88, 9 nodes)",
+                  "data": "{\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000,\"importance\":88,\"facts\":4,\"events\":3,\"attempts\":1,\"durationMs\":2962,\"usage\":{\"inputTokens\":5723,\"outputTokens\":591,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":7850},\"finishReason\":\"stop\"}"
+                },
+                {
+                  "id": 105,
+                  "at": 1794708282338,
+                  "kind": "historian",
+                  "summary": "compartment §C1§ stored (~2647 tokens, importance 88)",
+                  "data": "{\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":2647,\"importance\":88,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":11,\"coveredEndSeq\":34}"
+                }
+              ]
+            },
+            "compartment-published": {
+              "count": 1,
+              "maxId": 106,
+              "rows": [
+                {
+                  "id": 106,
+                  "at": 1794708300090,
+                  "kind": "compartment-published",
+                  "summary": "compartment §C1§ replaced 9 nodes on the wire",
+                  "data": "{\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":2647,\"estTokensReclaimed\":2647,\"nodeSeq\":57,\"importance\":88}"
+                }
+              ]
+            },
+            "pass": {
+              "count": 8,
+              "maxId": 122,
+              "rows": [
+                {
+                  "id": 86,
+                  "at": 1794708265542,
+                  "kind": "pass",
+                  "summary": "defer (no-usage) at ?%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+                },
+                {
+                  "id": 90,
+                  "at": 1794708266637,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 25.5%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":25.5,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":683,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2598,\"tokensAfter\":2598,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 93,
+                  "at": 1794708267908,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":151,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2606,\"tokensAfter\":2520,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 95,
+                  "at": 1794708268931,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.0%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":207,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4626,\"tokensAfter\":4626,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 102,
+                  "at": 1794708279370,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.1%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.1,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":2926,\"cacheRead\":8576,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4630,\"tokensAfter\":4630,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 109,
+                  "at": 1794708300121,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":146,\"cacheRead\":11392,\"cacheWrite\":0},\"landed\":[],\"published\":[1],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":true,\"tokensBefore\":4660,\"tokensAfter\":2391,\"tokensDelta\":-2269,\"factsPromoted\":4,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 116,
+                  "at": 1794708311887,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 26.4%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":26.4,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":975,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+                },
+                {
+                  "id": 122,
+                  "at": 1794708328346,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 27.6%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":27.6,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":205,\"cacheRead\":8832,\"cacheWrite\":0},\"consecutive\":1}"
+                }
+              ]
+            }
+          },
+          "usageTables": {
+            "usage_records": 36
+          },
+          "tags": [
+            {
+              "tag_number": 1,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2s74fK99RuBwhhjoB6Ea9597"
+            },
+            {
+              "tag_number": 2,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2DaRPylUPK2KHo6V24vY7931"
+            },
+            {
+              "tag_number": 3,
+              "target_kind": "tool-result",
+              "target_id": "call_00_i0GyXnyu52AvyXSQ4sTl2535"
+            },
+            {
+              "tag_number": 4,
+              "target_kind": "tool-result",
+              "target_id": "call_00_Lwrej8EpX6xGTztIMajV2199"
+            },
+            {
+              "tag_number": 5,
+              "target_kind": "tool-result",
+              "target_id": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927"
+            },
+            {
+              "tag_number": 6,
+              "target_kind": "tool-result",
+              "target_id": "call_00_tUSa3xh4Q0zgu0C9fNfn7227"
+            }
+          ],
+          "pendingDrops": [
+            {
+              "tag_number": 1,
+              "queued_at": 1794708267864,
+              "landed_event_seq": 28,
+              "flush_requested": 0
+            }
+          ],
+          "compartmentSha256": "7cd2f34a0af1d9ae40fa6898d09f29471f50cf34d388bd6db5d5e87ac9f7b2ca"
+        }
+      }
+    },
+    "e2": {
+      "record": {
+        "args": [
+          "--profile",
+          "headless",
+          "--patch",
+          "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\settle.yml",
+          "--json",
+          "--permission-mode",
+          "read-only",
+          "--approval-policy",
+          "never",
+          "--session-id",
+          "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+          "Resume the persisted combined session. Call ONLY ctx_expand with message set to the decimal string \"20\". Do not pass tag or tags, do not call any other tool, and do not read any file. Respond E2_OK plus the nonce from the restored original if it is available; otherwise report the exact refusal."
+        ],
+        "exit_code": 0,
+        "mode": "real-host",
+        "seconds": 6.148,
+        "session_id": "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+        "final_reason": {
+          "kind": "completed"
+        },
+        "final_text": "E2_OK afd2773bb98d48eb018945d1b987a44f",
+        "tool_calls": [
+          {
+            "tool": "ctx_expand",
+            "input": {
+              "message": "20"
+            }
+          }
+        ],
+        "tool_results": [
+          {
+            "callId": "call_00_NvsFH2P6iNwJjYcJXEPn4686",
+            "status": "completed",
+            "result": "§7§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>"
+          }
+        ]
+      },
+      "result": {
+        "callSeq": 123,
+        "callId": "call_00_NvsFH2P6iNwJjYcJXEPn4686",
+        "resultSeq": 124,
+        "resultText": "§7§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>",
+        "eventsAfterResult": [
+          {
+            "type": "step/end",
+            "seq": 125,
+            "time": 1794708344134,
+            "data": {
+              "turn": 5,
+              "step": 1
+            }
+          },
+          {
+            "type": "step/start",
+            "seq": 126,
+            "time": 1794708344155,
+            "data": {
+              "turn": 5,
+              "step": 2
+            }
+          },
+          {
+            "type": "session-log-deepseek/delivery-accepted",
+            "seq": 127,
+            "time": 1794708344316,
+            "data": {
+              "sessionId": "session-b6619b8b-5a25-48f2-96e0-6a636789b452",
+              "sessionFormatVersion": 4,
+              "throughSeq": 126
+            }
+          },
+          {
+            "type": "assistant/message",
+            "seq": 128,
+            "time": 1794708345175,
+            "data": {
+              "turn": 5,
+              "step": 2,
+              "message": {
+                "role": "assistant",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "E2_OK afd2773bb98d48eb018945d1b987a44f"
+                  }
+                ],
+                "source": {
+                  "kind": "model",
+                  "provider": "deepseek-official",
+                  "model": "deepseek-flash",
+                  "replayState": {
+                    "response": {
+                      "kind": "deepseek-messages",
+                      "version": 1,
+                      "model": "deepseek-flash"
+                    },
+                    "blocks": [
+                      {
+                        "type": "text"
+                      }
+                    ]
+                  }
+                },
+                "id": "a773e516-1ffd-43f1-9db6-8fcb2514f5a9"
+              },
+              "usage": {
+                "inputTokens": 228,
+                "outputTokens": 21,
+                "cacheReadTokens": 9600,
+                "cacheWriteTokens": 0,
+                "totalTokens": 9849
+              },
+              "stream": [
+                {
+                  "type": "chunk",
+                  "time": 1794708345106,
+                  "chunk": {
+                    "type": "block-start",
+                    "index": 0,
+                    "blockType": "text"
+                  }
+                },
+                {
+                  "type": "text-chunks",
+                  "time0": 1794708345107,
+                  "index": 0,
+                  "dt": [
+                    12,
+                    9,
+                    0,
+                    17,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    17,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    11,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "texts": [
+                    "E",
+                    "2",
+                    "_OK",
+                    " af",
+                    "d",
+                    "277",
+                    "3",
+                    "bb",
+                    "98",
+                    "d",
+                    "48",
+                    "eb",
+                    "018",
+                    "945",
+                    "d",
+                    "1",
+                    "b",
+                    "987",
+                    "a",
+                    "44",
+                    "f"
+                  ]
+                },
+                {
+                  "type": "chunk",
+                  "time": 1794708345173,
+                  "chunk": {
+                    "type": "block-end",
+                    "index": 0,
+                    "block": {
+                      "type": "text",
+                      "text": "E2_OK afd2773bb98d48eb018945d1b987a44f"
+                    }
+                  }
+                },
+                {
+                  "type": "chunk",
+                  "time": 1794708345173,
+                  "chunk": {
+                    "type": "usage",
+                    "usage": {
+                      "inputTokens": 228,
+                      "outputTokens": 21,
+                      "cacheReadTokens": 9600,
+                      "cacheWriteTokens": 0,
+                      "totalTokens": 9849
+                    }
+                  }
+                },
+                {
+                  "type": "chunk",
+                  "time": 1794708345173,
+                  "chunk": {
+                    "type": "finish",
+                    "reason": {
+                      "kind": "stop"
+                    },
+                    "replayState": {
+                      "response": {
+                        "kind": "deepseek-messages",
+                        "version": 1,
+                        "model": "deepseek-flash"
+                      },
+                      "blocks": [
+                        {
+                          "type": "text"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            "surfaceOp": "append"
+          }
+        ]
+      },
+      "window": {
+        "label": "e2",
+        "ok": true,
+        "errors": [],
+        "agentUsageDelta": {
+          "usage_records": 2
+        },
+        "pre": {
+          "compartments": [
+            {
+              "compartment_id": 1,
+              "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+              "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+              "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+              "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+              "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+              "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+              "importance": 88,
+              "covered_start_seq": 11,
+              "covered_end_seq": 34,
+              "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+              "covered_tokens": 2647,
+              "baseline_epoch": 0,
+              "landed_event_seq": 57,
+              "landed_reason": null,
+              "superseded": 0
+            }
+          ],
+          "unlanded": [],
+          "journal": {
+            "historian": {
+              "count": 3,
+              "maxId": 105,
+              "rows": [
+                {
+                  "id": 101,
+                  "at": 1794708279365,
+                  "kind": "historian",
+                  "summary": "historian automatic run started over 9 nodes",
+                  "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+                },
+                {
+                  "id": 104,
+                  "at": 1794708282327,
+                  "kind": "historian",
+                  "summary": "historian digest ready (importance 88, 9 nodes)",
+                  "data": "{\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000,\"importance\":88,\"facts\":4,\"events\":3,\"attempts\":1,\"durationMs\":2962,\"usage\":{\"inputTokens\":5723,\"outputTokens\":591,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":7850},\"finishReason\":\"stop\"}"
+                },
+                {
+                  "id": 105,
+                  "at": 1794708282338,
+                  "kind": "historian",
+                  "summary": "compartment §C1§ stored (~2647 tokens, importance 88)",
+                  "data": "{\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":2647,\"importance\":88,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":11,\"coveredEndSeq\":34}"
+                }
+              ]
+            },
+            "compartment-published": {
+              "count": 1,
+              "maxId": 106,
+              "rows": [
+                {
+                  "id": 106,
+                  "at": 1794708300090,
+                  "kind": "compartment-published",
+                  "summary": "compartment §C1§ replaced 9 nodes on the wire",
+                  "data": "{\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":2647,\"estTokensReclaimed\":2647,\"nodeSeq\":57,\"importance\":88}"
+                }
+              ]
+            },
+            "pass": {
+              "count": 8,
+              "maxId": 122,
+              "rows": [
+                {
+                  "id": 86,
+                  "at": 1794708265542,
+                  "kind": "pass",
+                  "summary": "defer (no-usage) at ?%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+                },
+                {
+                  "id": 90,
+                  "at": 1794708266637,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 25.5%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":25.5,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":683,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2598,\"tokensAfter\":2598,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 93,
+                  "at": 1794708267908,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":151,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2606,\"tokensAfter\":2520,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 95,
+                  "at": 1794708268931,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.0%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":207,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4626,\"tokensAfter\":4626,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 102,
+                  "at": 1794708279370,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.1%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.1,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":2926,\"cacheRead\":8576,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4630,\"tokensAfter\":4630,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 109,
+                  "at": 1794708300121,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":146,\"cacheRead\":11392,\"cacheWrite\":0},\"landed\":[],\"published\":[1],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":true,\"tokensBefore\":4660,\"tokensAfter\":2391,\"tokensDelta\":-2269,\"factsPromoted\":4,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 116,
+                  "at": 1794708311887,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 26.4%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":26.4,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":975,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+                },
+                {
+                  "id": 122,
+                  "at": 1794708328346,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 27.6%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":27.6,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":205,\"cacheRead\":8832,\"cacheWrite\":0},\"consecutive\":1}"
+                }
+              ]
+            }
+          },
+          "usageTables": {
+            "usage_records": 36
+          },
+          "tags": [
+            {
+              "tag_number": 1,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2s74fK99RuBwhhjoB6Ea9597"
+            },
+            {
+              "tag_number": 2,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2DaRPylUPK2KHo6V24vY7931"
+            },
+            {
+              "tag_number": 3,
+              "target_kind": "tool-result",
+              "target_id": "call_00_i0GyXnyu52AvyXSQ4sTl2535"
+            },
+            {
+              "tag_number": 4,
+              "target_kind": "tool-result",
+              "target_id": "call_00_Lwrej8EpX6xGTztIMajV2199"
+            },
+            {
+              "tag_number": 5,
+              "target_kind": "tool-result",
+              "target_id": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927"
+            },
+            {
+              "tag_number": 6,
+              "target_kind": "tool-result",
+              "target_id": "call_00_tUSa3xh4Q0zgu0C9fNfn7227"
+            }
+          ],
+          "pendingDrops": [
+            {
+              "tag_number": 1,
+              "queued_at": 1794708267864,
+              "landed_event_seq": 28,
+              "flush_requested": 0
+            }
+          ],
+          "compartmentSha256": "7cd2f34a0af1d9ae40fa6898d09f29471f50cf34d388bd6db5d5e87ac9f7b2ca"
+        },
+        "post": {
+          "compartments": [
+            {
+              "compartment_id": 1,
+              "tier_p1": "Ran a 0.12.2 combined-host acceptance seed in workspace C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace. Read fixture.txt once (result tagged §1§), then called ctx_reduce with drop set to only tag 1 (response §2§: 'Queued 1 tag for reclaim.'), then read historian-fixture.txt once (result tagged §3§, 91 lines, provenance marker afd2773bb98d48eb018945d1b987a44f). The seed requires responding only 'SEED_READY' plus that tag number; no ctx_expand, no rereads, no quoting either file, no other tools. Open thread: emit SEED_READY and the tag number.",
+              "tier_p2": "Acceptance seed: read fixture.txt (tag §1§), ctx_reduce drop=1 (queued for reclaim), read historian-fixture.txt (§3§). Next step is to answer only 'SEED_READY' plus the tag number, with no further tool calls.",
+              "tier_p3": "Combined-host acceptance seed: three steps done (read fixture.txt, ctx_reduce its tag, read historian-fixture.txt). Only the SEED_READY reply remains.",
+              "tier_p4": "Ran the combined-host acceptance seed read/reduce/read sequence and owes only the SEED_READY reply with the tag number.",
+              "facts": "[{\"category\":\"CONSTRAINTS\",\"content\":\"Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Workspace: C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\"},{\"category\":\"CONSTRAINTS\",\"content\":\"Seed files are fixture.txt and historian-fixture.txt; both must be read once only.\"},{\"category\":\"CONFIG_VALUES\",\"content\":\"Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.txt result was tagged §3§.\"}]",
+              "events": "[\"Read fixture.txt once; result tagged §1§.\",\"Called ctx_reduce with drop set to only tag 1; got §2§ 'Queued 1 tag for reclaim.'\",\"Read historian-fixture.txt once; result tagged §3§.\"]",
+              "importance": 88,
+              "covered_start_seq": 11,
+              "covered_end_seq": 34,
+              "covered_seqs": "[11,12,13,18,28,24,26,32,34]",
+              "covered_tokens": 2647,
+              "baseline_epoch": 0,
+              "landed_event_seq": 57,
+              "landed_reason": null,
+              "superseded": 0
+            }
+          ],
+          "unlanded": [],
+          "journal": {
+            "historian": {
+              "count": 3,
+              "maxId": 105,
+              "rows": [
+                {
+                  "id": 101,
+                  "at": 1794708279365,
+                  "kind": "historian",
+                  "summary": "historian automatic run started over 9 nodes",
+                  "data": "{\"phase\":\"start\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000}"
+                },
+                {
+                  "id": 104,
+                  "at": 1794708282327,
+                  "kind": "historian",
+                  "summary": "historian digest ready (importance 88, 9 nodes)",
+                  "data": "{\"phase\":\"done\",\"trigger\":\"automatic\",\"nodes\":9,\"tokens\":2647,\"route\":\"deepseek-official/deepseek-flash\",\"maxTokens\":8192,\"timeoutMs\":120000,\"importance\":88,\"facts\":4,\"events\":3,\"attempts\":1,\"durationMs\":2962,\"usage\":{\"inputTokens\":5723,\"outputTokens\":591,\"cacheReadTokens\":1536,\"cacheWriteTokens\":0,\"totalTokens\":7850},\"finishReason\":\"stop\"}"
+                },
+                {
+                  "id": 105,
+                  "at": 1794708282338,
+                  "kind": "historian",
+                  "summary": "compartment §C1§ stored (~2647 tokens, importance 88)",
+                  "data": "{\"phase\":\"stored\",\"compartmentId\":1,\"nodes\":9,\"tokens\":2647,\"importance\":88,\"userObservations\":0,\"profileCollect\":\"off\",\"coveredStartSeq\":11,\"coveredEndSeq\":34}"
+                }
+              ]
+            },
+            "compartment-published": {
+              "count": 1,
+              "maxId": 106,
+              "rows": [
+                {
+                  "id": 106,
+                  "at": 1794708300090,
+                  "kind": "compartment-published",
+                  "summary": "compartment §C1§ replaced 9 nodes on the wire",
+                  "data": "{\"compartmentId\":1,\"nodes\":9,\"coveredTokens\":2647,\"estTokensReclaimed\":2647,\"nodeSeq\":57,\"importance\":88}"
+                }
+              ]
+            },
+            "pass": {
+              "count": 9,
+              "maxId": 129,
+              "rows": [
+                {
+                  "id": 86,
+                  "at": 1794708265542,
+                  "kind": "pass",
+                  "summary": "defer (no-usage) at ?%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+                },
+                {
+                  "id": 90,
+                  "at": 1794708266637,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 25.5%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":25.5,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":683,\"cacheRead\":7680,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2598,\"tokensAfter\":2598,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 93,
+                  "at": 1794708267908,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":151,\"cacheRead\":8448,\"cacheWrite\":0},\"landed\":[1],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":2606,\"tokensAfter\":2520,\"tokensDelta\":-86,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 95,
+                  "at": 1794708268931,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 26.0%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":26,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":207,\"cacheRead\":8320,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4626,\"tokensAfter\":4626,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 102,
+                  "at": 1794708279370,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.1%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.1,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":2926,\"cacheRead\":8576,\"cacheWrite\":0},\"landed\":[],\"published\":[],\"forceDropped\":0,\"baseline\":\"unchanged\",\"historianStarted\":true,\"tokensBefore\":4630,\"tokensAfter\":4630,\"tokensDelta\":0,\"factsPromoted\":0,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 109,
+                  "at": 1794708300121,
+                  "kind": "pass",
+                  "summary": "execute (execute-threshold) at 35.2%",
+                  "data": "{\"decision\":\"execute\",\"reason\":\"execute-threshold\",\"pressure\":35.2,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":146,\"cacheRead\":11392,\"cacheWrite\":0},\"landed\":[],\"published\":[1],\"forceDropped\":0,\"baseline\":\"refreshed\",\"historianStarted\":true,\"tokensBefore\":4660,\"tokensAfter\":2391,\"tokensDelta\":-2269,\"factsPromoted\":4,\"factsSeenAgain\":0}"
+                },
+                {
+                  "id": 116,
+                  "at": 1794708311887,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 26.4%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":26.4,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":975,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+                },
+                {
+                  "id": 122,
+                  "at": 1794708328346,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 27.6%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":27.6,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":205,\"cacheRead\":8832,\"cacheWrite\":0},\"consecutive\":1}"
+                },
+                {
+                  "id": 129,
+                  "at": 1794708342456,
+                  "kind": "pass",
+                  "summary": "defer (below-threshold) at 28.7%",
+                  "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":28.7,\"contextWindow\":32768,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":200,\"cacheRead\":9216,\"cacheWrite\":0},\"consecutive\":1}"
+                }
+              ]
+            }
+          },
+          "usageTables": {
+            "usage_records": 38
+          },
+          "tags": [
+            {
+              "tag_number": 1,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2s74fK99RuBwhhjoB6Ea9597"
+            },
+            {
+              "tag_number": 2,
+              "target_kind": "tool-result",
+              "target_id": "call_00_2DaRPylUPK2KHo6V24vY7931"
+            },
+            {
+              "tag_number": 3,
+              "target_kind": "tool-result",
+              "target_id": "call_00_i0GyXnyu52AvyXSQ4sTl2535"
+            },
+            {
+              "tag_number": 4,
+              "target_kind": "tool-result",
+              "target_id": "call_00_Lwrej8EpX6xGTztIMajV2199"
+            },
+            {
+              "tag_number": 5,
+              "target_kind": "tool-result",
+              "target_id": "call_00_C5EBUYO0FH1Ahh5ow0Hi0927"
+            },
+            {
+              "tag_number": 6,
+              "target_kind": "tool-result",
+              "target_id": "call_00_tUSa3xh4Q0zgu0C9fNfn7227"
+            },
+            {
+              "tag_number": 7,
+              "target_kind": "tool-result",
+              "target_id": "call_00_NvsFH2P6iNwJjYcJXEPn4686"
+            }
+          ],
+          "pendingDrops": [
+            {
+              "tag_number": 1,
+              "queued_at": 1794708267864,
+              "landed_event_seq": 28,
+              "flush_requested": 0
+            }
+          ],
+          "compartmentSha256": "7cd2f34a0af1d9ae40fa6898d09f29471f50cf34d388bd6db5d5e87ac9f7b2ca"
+        }
+      }
+    }
+  },
+  "flush": {
+    "sessionId": "session-79f046ad-ce89-4b17-99bd-a2428e6277ab",
+    "seed": {
+      "args": [
+        "--profile",
+        "headless",
+        "--patch",
+        "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\flush.yml",
+        "--json",
+        "--permission-mode",
+        "read-only",
+        "--approval-policy",
+        "never",
+        "This is an isolated 0.12.2 manual-flush seed. Read fixture.txt once and note the actual §N§ tag on its result; call ctx_reduce with drop set to ONLY that tag. Then respond FLUSH_SEED_READY and that tag number. Do not call ctx_expand, do not reread, and do not use other tools."
+      ],
+      "exit_code": 0,
+      "mode": "real-host",
+      "seconds": 6.325,
+      "session_id": "session-79f046ad-ce89-4b17-99bd-a2428e6277ab",
+      "final_reason": {
+        "kind": "completed"
+      },
+      "final_text": "FLUSH_SEED_READY §1§",
+      "tool_calls": [
+        {
+          "tool": "read",
+          "input": {
+            "file_path": "fixture.txt"
+          }
+        },
+        {
+          "tool": "ctx_reduce",
+          "input": {
+            "drop": "1"
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "callId": "call_00_0reFTjuaVCmL2COBfien1226",
+          "status": "completed",
+          "result": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>"
+        },
+        {
+          "callId": "call_00_ET_mrwdeC9z2ZgOWD1sPffI7569",
+          "status": "completed",
+          "result": "§2§ Queued 1 tag for reclaim."
+        }
+      ]
+    },
+    "identity": {
+      "tag": 1,
+      "callId": "call_00_0reFTjuaVCmL2COBfien1226",
+      "tool": "read",
+      "originalSeq": 21,
+      "placeholderSeq": null,
+      "originalText": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>",
+      "originalSha256": "5bf8df34f1b71f7380192dab8108568a6c645daa799206dc9716ce247a41a105",
+      "sourceFile": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\evidence\\session-observer\\session-79f046ad-ce89-4b17-99bd-a2428e6277ab.jsonl",
+      "sourceLine": 9
+    },
+    "record": {
+      "args": [
+        "--profile",
+        "headless",
+        "--patch",
+        "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\flush.yml",
+        "--json",
+        "--permission-mode",
+        "read-only",
+        "--approval-policy",
+        "never",
+        "--session-id",
+        "session-79f046ad-ce89-4b17-99bd-a2428e6277ab",
+        "Resume the persisted combined session. Do not call any tool. Respond only FLUSH_DONE."
+      ],
+      "exit_code": 0,
+      "mode": "real-host",
+      "seconds": 4.474,
+      "session_id": "session-79f046ad-ce89-4b17-99bd-a2428e6277ab",
+      "final_reason": {
+        "kind": "completed"
+      },
+      "final_text": "FLUSH_DONE",
+      "tool_calls": [],
+      "tool_results": []
+    },
+    "executions": [
+      {
+        "processId": 10968,
+        "sessionId": "session-79f046ad-ce89-4b17-99bd-a2428e6277ab",
+        "target": "session-79f046ad-ce89-4b17-99bd-a2428e6277ab",
+        "definition": {
+          "name": "ctx-flush",
+          "description": "Force this session's pending ctx_reduce drops to land on the next message (no summary or model call)."
+        },
+        "execution": {
+          "commandId": "cmd-ce6c6589-1",
+          "kind": "success",
+          "text": "Magic Context: flush queued for 1 new drop(s) (new §1§): requested 1, already marked 0, processed 0, pendingNext 1 (upper bound). Changes take effect on the next message; the current request is unchanged."
+        }
+      }
+    ],
+    "commandEvents": [
+      {
+        "type": "command/run",
+        "seq": 35,
+        "time": 1794708368881,
+        "data": {
+          "commandId": "cmd-ce6c6589-1",
+          "name": "ctx-flush",
+          "args": "",
+          "source": {
+            "kind": "user"
+          }
+        }
+      },
+      {
+        "type": "command/done",
+        "seq": 36,
+        "time": 1794708368886,
+        "data": {
+          "commandId": "cmd-ce6c6589-1",
+          "kind": "success",
+          "text": "Magic Context: flush queued for 1 new drop(s) (new §1§): requested 1, already marked 0, processed 0, pendingNext 1 (upper bound). Changes take effect on the next message; the current request is unchanged."
+        }
+      }
+    ],
+    "db": {
+      "compartments": [],
+      "unlanded": [],
+      "journal": {
+        "historian": {
+          "count": 0,
+          "maxId": null,
+          "rows": []
+        },
+        "compartment-published": {
+          "count": 0,
+          "maxId": null,
+          "rows": []
+        },
+        "pass": {
+          "count": 3,
+          "maxId": 147,
+          "rows": [
+            {
+              "id": 136,
+              "at": 1794708355483,
+              "kind": "pass",
+              "summary": "defer (no-usage) at ?%",
+              "data": "{\"decision\":\"defer\",\"reason\":\"no-usage\",\"contextWindow\":256000,\"contextWindowAssumed\":true,\"consecutive\":1}"
+            },
+            {
+              "id": 140,
+              "at": 1794708356993,
+              "kind": "pass",
+              "summary": "defer (below-threshold) at 0.8%",
+              "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":0.8,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":748,\"cacheRead\":7680,\"cacheWrite\":0},\"consecutive\":1}"
+            },
+            {
+              "id": 147,
+              "at": 1794708369217,
+              "kind": "pass",
+              "summary": "defer (below-threshold) at 0.8%",
+              "data": "{\"decision\":\"defer\",\"reason\":\"below-threshold\",\"pressure\":0.8,\"pressureStale\":true,\"contextWindow\":1048576,\"route\":\"deepseek-official/deepseek-flash\",\"usage\":{\"input\":184,\"cacheRead\":8576,\"cacheWrite\":0},\"consecutive\":1}"
+            }
+          ]
+        }
+      },
+      "usageTables": {
+        "usage_records": 42
+      },
+      "tags": [
+        {
+          "tag_number": 1,
+          "target_kind": "tool-result",
+          "target_id": "call_00_0reFTjuaVCmL2COBfien1226"
+        },
+        {
+          "tag_number": 2,
+          "target_kind": "tool-result",
+          "target_id": "call_00_ET_mrwdeC9z2ZgOWD1sPffI7569"
+        }
+      ],
+      "pendingDrops": [
+        {
+          "tag_number": 1,
+          "queued_at": 1794708357601,
+          "landed_event_seq": 43,
+          "flush_requested": 0
+        }
+      ],
+      "compartmentSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "placeholderSeen": true
+  },
+  "vector": {
+    "record": {
+      "args": [
+        "--profile",
+        "headless",
+        "--patch",
+        "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\vector.yml",
+        "--json",
+        "--permission-mode",
+        "read-only",
+        "--approval-policy",
+        "never",
+        "Isolated 0.12.2 combined vector smoke. Follow this exact sequence, one tool call per model step. (1) Call ctx_memory with action \"write\", category \"PROJECT_RULES\", content \"Always run npm test before committing changes.\". (2) Call vector_wait with seconds 120. (3) Call vector_wait with seconds 60. (4) Call ctx_memory with action \"search\", query \"npm test before committing\", limit 5. (5) Respond exactly VECTOR_OK. Do not call any other tool."
+      ],
+      "exit_code": 0,
+      "mode": "real-host",
+      "seconds": 189.404,
+      "session_id": "session-bccc5d17-b49f-40df-89c4-1473588fe67c",
+      "final_reason": {
+        "kind": "completed"
+      },
+      "final_text": "VECTOR_OK",
+      "tool_calls": [
+        {
+          "tool": "ctx_memory",
+          "input": {
+            "action": "write",
+            "category": "PROJECT_RULES",
+            "content": "Always run npm test before committing changes."
+          }
+        },
+        {
+          "tool": "vector_wait",
+          "input": {
+            "seconds": 120
+          }
+        },
+        {
+          "tool": "vector_wait",
+          "input": {
+            "seconds": 60
+          }
+        },
+        {
+          "tool": "ctx_memory",
+          "input": {
+            "action": "search",
+            "query": "npm test before committing",
+            "limit": 5
+          }
+        }
+      ],
+      "tool_results": [
+        {
+          "callId": "call_00_9xcWbueO8xAlw9lwxURf1120",
+          "status": "completed",
+          "result": "§1§ Already known (memory 5, seen 2 times)."
+        },
+        {
+          "callId": "call_00_etX7RhQzs6emzl03QFuu6622",
+          "status": "completed",
+          "result": "§2§ Waited 120 seconds."
+        },
+        {
+          "callId": "call_00_ET_BPA2fYsdCTw9diczFDkB8526",
+          "status": "completed",
+          "result": "§3§ Waited 60 seconds."
+        },
+        {
+          "callId": "call_00_ZGrP1QafxswPdlIU4HSc9919",
+          "status": "completed",
+          "result": "§4§ Found 4 results for \"npm test before committing\":\n\n[1] [memory] score=0.91 id=5 category=PROJECT_RULES match=hybrid\nAlways run npm test before committing changes.\n\n[2] [memory] score=0.24 id=1 category=CONSTRAINTS match=semantic\nCombined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quoting either file, no other tools.\n\n[3] [memory] score=0.17 id=3 category=CONSTRAINTS match=semantic\nSeed files are fixture.txt and historian-fixture.txt; both must be read once only.\n\n[4] [memory] score=0.03 id=2 category=CONFIG_VALUES match=semantic\nWorkspace: C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace"
+        }
+      ]
+    },
+    "db": {
+      "memory_db": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\plugin-data\\memories.db",
+      "memories": 5,
+      "memory_embeddings": 4,
+      "spaces": [
+        {
+          "model_id": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+          "rows": 4
+        }
+      ],
+      "active": [
+        {
+          "id": 1,
+          "status": "active",
+          "content": "Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the §N§ tag number; no ctx_expand, no rereading, no quotin"
+        },
+        {
+          "id": 2,
+          "status": "active",
+          "content": "Workspace: C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace"
+        },
+        {
+          "id": 3,
+          "status": "active",
+          "content": "Seed files are fixture.txt and historian-fixture.txt; both must be read once only."
+        },
+        {
+          "id": 4,
+          "status": "archived",
+          "content": "Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 returned 'Queued 1 tag for reclaim.'; historian-fixture.tx"
+        },
+        {
+          "id": 5,
+          "status": "active",
+          "content": "Always run npm test before committing changes."
+        }
+      ],
+      "vector_journal": [
+        {
+          "id": 163,
+          "level": "info",
+          "summary": "shared-space gate: gate-closed",
+          "data": {
+            "outcome": "gate-closed",
+            "reason": "no dominant embedding space",
+            "bootstrapModelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea"
+          }
+        },
+        {
+          "id": 164,
+          "level": "info",
+          "summary": "backfill: creating the first embedding space",
+          "data": {
+            "outcome": "backfill-bootstrap",
+            "modelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+            "total": 4
+          }
+        },
+        {
+          "id": 179,
+          "level": "info",
+          "summary": "shared-space gate: gate-closed",
+          "data": {
+            "outcome": "gate-closed",
+            "reason": "no dominant embedding space",
+            "bootstrapModelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea"
+          }
+        },
+        {
+          "id": 180,
+          "level": "info",
+          "summary": "backfill: creating the first embedding space",
+          "data": {
+            "outcome": "backfill-bootstrap",
+            "modelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+            "total": 4
+          }
+        },
+        {
+          "id": 181,
+          "level": "info",
+          "summary": "backfill: +4 vector(s) in the new space",
+          "data": {
+            "outcome": "backfill",
+            "created": 4,
+            "present": 0,
+            "skipped": 0,
+            "failed": 0,
+            "total": 4,
+            "modelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+            "batch": 4
+          }
+        },
+        {
+          "id": 185,
+          "level": "info",
+          "summary": "shared-space gate: parity-pass",
+          "data": {
+            "outcome": "parity-pass",
+            "modelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+            "parity": 1
+          }
+        }
+      ]
+    }
+  }
+}

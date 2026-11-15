@@ -1,0 +1,81 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\recovery.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "This is an isolated 0.12.2 combined-build recovery lifecycle test. Follow this exact sequence, one tool call per model step. (1) Read fixture.txt once and note the actual §N§ tag on its result. (2) Call ctx_reduce with drop set to ONLY that tag. (3) In a NEW model step, call ctx_expand with tag set to that SAME old tag. (4) The ctx_expand result begins with a NEW §M§ marker; note M, then call ctx_reduce with drop set to M. (5) In a NEW step, call ctx_expand with tag set to M and note the nonce. Respond RECOVERY_OK plus the nonce; otherwise report the exact refusal. Do not read any other file."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 11.939,
+  "session_id": "session-e7c842dc-b193-4c7e-ae4b-b7bbdd5decec",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "RECOVERY_OK afd2773bb98d48eb018945d1b987a44f\n\nThe full sequence worked with no refusals:\n1. `fixture.txt` read → result tagged **§1§**\n2. `ctx_reduce` drop `1` → queued (§2§)\n3. `ctx_expand` tag `1` → returned a new **§3§** marker (M = 3)\n4. `ctx_reduce` drop `3` → queued (§4§)\n5. `ctx_expand` tag `3` → recovered the original fixture content\n\nNonce: `afd2773bb98d48eb018945d1b987a44f`",
+  "tool_calls": [
+    {
+      "tool": "read",
+      "input": {
+        "file_path": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt"
+      }
+    },
+    {
+      "tool": "ctx_reduce",
+      "input": {
+        "drop": "1"
+      }
+    },
+    {
+      "tool": "ctx_expand",
+      "input": {
+        "tag": "1"
+      }
+    },
+    {
+      "tool": "ctx_reduce",
+      "input": {
+        "drop": "3"
+      }
+    },
+    {
+      "tool": "ctx_expand",
+      "input": {
+        "tag": "3"
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_ET_yqZoF5hJWaJkNnC2OTWZ0079",
+      "status": "completed",
+      "result": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>"
+    },
+    {
+      "callId": "call_00_h0rUOmwN7r3yUkRwZyKy1105",
+      "status": "completed",
+      "result": "§2§ Queued 1 tag for reclaim."
+    },
+    {
+      "callId": "call_00_ET_mi6rOIfxLPKXYzevVVep1490",
+      "status": "completed",
+      "result": "§3§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>"
+    },
+    {
+      "callId": "call_00_E5pdmnJi3ije7oyzN4Zf1868",
+      "status": "completed",
+      "result": "§4§ Queued 1 tag for reclaim."
+    },
+    {
+      "callId": "call_00_ET_Yik1VDdn8WmutUqCn4sU4232",
+      "status": "completed",
+      "result": "§5§ §3§ §1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>"
+    }
+  ]
+}

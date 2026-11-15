@@ -1,0 +1,26 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\flush.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "--session-id",
+    "session-79f046ad-ce89-4b17-99bd-a2428e6277ab",
+    "Resume the persisted combined session. Do not call any tool. Respond only FLUSH_DONE."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 4.474,
+  "session_id": "session-79f046ad-ce89-4b17-99bd-a2428e6277ab",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "FLUSH_DONE",
+  "tool_calls": [],
+  "tool_results": []
+}

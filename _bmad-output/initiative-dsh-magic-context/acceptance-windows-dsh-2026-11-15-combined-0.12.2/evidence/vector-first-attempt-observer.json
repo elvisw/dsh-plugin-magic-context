@@ -1,0 +1,182 @@
+{
+  "sessionId": "session-e894610c-b6ac-463c-b680-e2af29d1ec73",
+  "processId": 14956,
+  "snapshots": 11,
+  "prompt": "Isolated 0.12.2 combined vector smoke. Follow this exact sequence, one tool call per model step. (1) Call ctx_memory with action \"write\", category \"PROJECT_RULES\", content \"Always run npm test before committing changes.\". (2) Call vector_wait with seconds 100. (3) Call ctx_memory with action \"search\", query \"npm test before committing\", limit 5. (4) Respond exactly VECTOR_OK. Do not call any other tool.",
+  "events": [
+    {
+      "seq": 0,
+      "type": "permission/preset"
+    },
+    {
+      "seq": 1,
+      "type": "sandbox/mode"
+    },
+    {
+      "seq": 2,
+      "type": "approval/policy"
+    },
+    {
+      "seq": 3,
+      "type": "permission/preset"
+    },
+    {
+      "seq": 4,
+      "type": "sandbox/mode"
+    },
+    {
+      "seq": 5,
+      "type": "approval/policy"
+    },
+    {
+      "seq": 6,
+      "type": "agent/inbox/spliced"
+    },
+    {
+      "seq": 7,
+      "type": "turn/start"
+    },
+    {
+      "seq": 8,
+      "type": "agent/inbox/spliced"
+    },
+    {
+      "seq": 9,
+      "type": "step/start"
+    },
+    {
+      "seq": 10,
+      "type": "system/message",
+      "text": "You are an AI agent powered by DeepSeek Harness.\n\nYou are a coding agent powered by the deepseek-flash model.\n\n## Magic Context\n\n### You are the user's long-term partner on this project — not a one-off hire\n\nMost AI sessions are disposable: one session per task, discarded when it's done. Magic Conte"
+    },
+    {
+      "seq": 11,
+      "type": "user/message",
+      "text": "Isolated 0.12.2 combined vector smoke. Follow this exact sequence, one tool call per model step. (1) Call ctx_memory with action \"write\", category \"PROJECT_RULES\", content \"Always run npm test before committing changes.\". (2) Call vector_wait with seconds 100. (3) Call ctx_memory with action \"search\", query \"npm test before committing\", limit 5. (4) Respond exactly VECTOR_OK. Do not call any other tool."
+    },
+    {
+      "seq": 12,
+      "type": "user/message",
+      "text": "Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"C:\\\\Users\\\\elvis\\\\AppData\\\\Local\\\\Temp\\\\opencode\\\\mc-t0-2026-11-13\\\\tools\\\\dsh-mc-combined-20261115-095709\\\\workspace\".\n\nCurrent DSH file policy: read-only. Any available operation enforced by the DSH file sandbox cannot modify files in the standing mode. Do not refuse a required modification from this policy alone: try an available tool normally and follow any denial and escalation guidance it returns.\n\nApproval prompts are disabled in this session: actions that require approval a"
+    },
+    {
+      "seq": 13,
+      "type": "user/message",
+      "text": "<system-reminder>\nA skill is a reusable set of task-specific instructions. The following skills are available in this session:\n\n<available_skills>\n- `diagnose-windows-sandbox-acl`: Use on Windows for unexpected DSH sandbox access denials: workspace writes or listing fail, or an ordinarily readable path cannot be read. One bundled command inspects the path and every ancestor and repairs the ACL problems it proves in that same run. Expected confinement denials need no ACL repair.\n</available_skills>\n\nIf the user names a skill, or the task clearly matches a skill's description, call the `skill` t"
+    },
+    {
+      "seq": 14,
+      "type": "user/message",
+      "text": "<ctx-search-hint>\nYour memory may contain 3 related fragments:\n- [CONSTRAINTS] Seed files are fixture.txt and historian-fixture.txt; both must b…\n- [CONSTRAINTS] Combined-host acceptance seed: respond ONLY 'SEED_READY' plus the…\n- [CONFIG_VALUES] Tag on the fixture.txt read result was §1§; ctx_reduce drop=1 r…\nIf the fragments above seem relevant to the current request, you may run ctx_memory with action \"search\" to retrieve full context. Otherwise ignore.\n</ctx-search-hint>"
+    },
+    {
+      "seq": 15,
+      "type": "request/header"
+    },
+    {
+      "seq": 16,
+      "type": "request/context"
+    },
+    {
+      "seq": 17,
+      "type": "session/title"
+    },
+    {
+      "seq": 18,
+      "type": "session-log-deepseek/delivery-accepted"
+    },
+    {
+      "seq": 19,
+      "type": "assistant/message",
+      "text": "I'll follow the sequence exactly."
+    },
+    {
+      "seq": 20,
+      "type": "tool/call",
+      "callId": "call_00_ET_QopkuTGkqZyTsXGY6jL83727",
+      "name": "ctx_memory",
+      "input": null
+    },
+    {
+      "seq": 21,
+      "type": "tool/result",
+      "callId": "call_00_ET_QopkuTGkqZyTsXGY6jL83727",
+      "text": "§1§ Saved as memory 5 [PROJECT_RULES]."
+    },
+    {
+      "seq": 22,
+      "type": "step/end"
+    },
+    {
+      "seq": 23,
+      "type": "step/start"
+    },
+    {
+      "seq": 24,
+      "type": "session-log-deepseek/delivery-accepted"
+    },
+    {
+      "seq": 25,
+      "type": "assistant/message"
+    },
+    {
+      "seq": 26,
+      "type": "tool/call",
+      "callId": "call_00_ET_Q4f6NBq9yCbBxXcSe9cE5008",
+      "name": "vector_wait",
+      "input": null
+    },
+    {
+      "seq": 27,
+      "type": "tool/result",
+      "callId": "call_00_ET_Q4f6NBq9yCbBxXcSe9cE5008",
+      "text": "§2§ Waited 100 seconds."
+    },
+    {
+      "seq": 28,
+      "type": "step/end"
+    },
+    {
+      "seq": 29,
+      "type": "step/start"
+    },
+    {
+      "seq": 30,
+      "type": "session-log-deepseek/delivery-accepted"
+    },
+    {
+      "seq": 31,
+      "type": "assistant/message"
+    },
+    {
+      "seq": 32,
+      "type": "tool/call",
+      "callId": "call_00_ET_IxNc5EC3RsYGQKwP3JfI6539",
+      "name": "ctx_memory",
+      "input": null
+    },
+    {
+      "seq": 33,
+      "type": "tool/result",
+      "callId": "call_00_ET_IxNc5EC3RsYGQKwP3JfI6539",
+      "text": "§3§ Found 1 result for \"npm test before committing\":\n\n[1] [memory] score=0.80 id=5 category=PROJECT_RULES match=fts\nAlways run npm test before committing changes."
+    },
+    {
+      "seq": 34,
+      "type": "step/end"
+    },
+    {
+      "seq": 35,
+      "type": "step/start"
+    },
+    {
+      "seq": 36,
+      "type": "session-log-deepseek/delivery-accepted"
+    },
+    {
+      "seq": 37,
+      "type": "assistant/message",
+      "text": "VECTOR_OK"
+    }
+  ]
+}

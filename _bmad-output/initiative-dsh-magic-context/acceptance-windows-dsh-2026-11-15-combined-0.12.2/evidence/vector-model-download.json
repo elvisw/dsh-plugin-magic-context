@@ -1,0 +1,10 @@
+{
+  "path": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\plugin-data\\models\\model.onnx",
+  "relative": "plugin-data/models/model.onnx",
+  "bytes": 90387606,
+  "sha256": "759c3cd2b7fe7e93933ad23c4c9181b7396442a2ed746ec7c1d46192c469c46e",
+  "mtime": "2026-11-15T02:10:56.740714+00:00",
+  "note": "Embedding model downloaded before the bccc backfill; not committed due size.",
+  "modelId": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+  "downloadSource": "configured local embedding model cache"
+}

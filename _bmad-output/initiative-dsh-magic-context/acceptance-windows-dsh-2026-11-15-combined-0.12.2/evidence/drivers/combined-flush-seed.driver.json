@@ -1,0 +1,48 @@
+{
+  "args": [
+    "--profile",
+    "headless",
+    "--patch",
+    "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\overlays\\flush.yml",
+    "--json",
+    "--permission-mode",
+    "read-only",
+    "--approval-policy",
+    "never",
+    "This is an isolated 0.12.2 manual-flush seed. Read fixture.txt once and note the actual §N§ tag on its result; call ctx_reduce with drop set to ONLY that tag. Then respond FLUSH_SEED_READY and that tag number. Do not call ctx_expand, do not reread, and do not use other tools."
+  ],
+  "exit_code": 0,
+  "mode": "real-host",
+  "seconds": 6.325,
+  "session_id": "session-79f046ad-ce89-4b17-99bd-a2428e6277ab",
+  "final_reason": {
+    "kind": "completed"
+  },
+  "final_text": "FLUSH_SEED_READY §1§",
+  "tool_calls": [
+    {
+      "tool": "read",
+      "input": {
+        "file_path": "fixture.txt"
+      }
+    },
+    {
+      "tool": "ctx_reduce",
+      "input": {
+        "drop": "1"
+      }
+    }
+  ],
+  "tool_results": [
+    {
+      "callId": "call_00_0reFTjuaVCmL2COBfien1226",
+      "status": "completed",
+      "result": "§1§ <path>C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-combined-20261115-095709\\workspace\\fixture.txt</path>\n<type>file</type>\n<content>\n1: COMBINED_RECOVERY_FIXTURE\n2: The acceptance nonce is stored in the payload; it must survive the round trip.\n3: nonce=afd2773bb98d48eb018945d1b987a44f\n\n(End of file - total 3 lines)\n</content>"
+    },
+    {
+      "callId": "call_00_ET_mrwdeC9z2ZgOWD1sPffI7569",
+      "status": "completed",
+      "result": "§2§ Queued 1 tag for reclaim."
+    }
+  ]
+}
