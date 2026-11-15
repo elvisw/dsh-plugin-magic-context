@@ -1,7 +1,7 @@
 ---
 ticket: 14
 title: "Documentation index and contract status audit — plan"
-status: built
+status: done
 ---
 
 # Plan — Documentation index and contract status audit
