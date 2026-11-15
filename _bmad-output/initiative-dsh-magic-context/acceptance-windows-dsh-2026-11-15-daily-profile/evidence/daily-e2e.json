@@ -1,0 +1,1528 @@
+{
+  "sessionId": "session-b4699af0-7cb4-4b64-97eb-72bcc3d028fb",
+  "sessionFile": "C:\\Users\\elvis\\.dsh\\sessions\\--C-Users-elvis-Documents-deepseek-harness-default-workspace--\\session-b4699af0-7cb4-4b64-97eb-72bcc3d028fb\\session.v4.jsonl.zstd",
+  "packageVersion": "0.12.3",
+  "observedAt": "2026-11-15T06:19:54.866306+00:00",
+  "eventCount": 253,
+  "hashes": {
+    "originalSeq34Sha256": "0f856cd847fa0bc3b832d7fd445224d4616dcbcbf85907bf32af9747244b68b7",
+    "expandedSeq246Sha256": "50ff95da2001bf135110e6b2d85f9e6077737afea5ef1947f662dc0f8bf591eb",
+    "expandedSeq246StrippedSha256": "0f856cd847fa0bc3b832d7fd445224d4616dcbcbf85907bf32af9747244b68b7",
+    "originalLength": 231,
+    "expandedLength": 236
+  },
+  "selectedEvents": [
+    {
+      "seq": 4,
+      "type": "command/run",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 5,
+      "type": "command/done",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 6,
+      "type": "command/run",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 7,
+      "type": "command/done",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 25,
+      "type": "command/run",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 26,
+      "type": "command/done",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 34,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        33
+      ],
+      "toolCallId": "call_094b43974d81439ebbcfa656",
+      "text": "§1§ <path>C:\\Users\\elvis\\Documents\\deepseek-harness\\default-workspace\\mc-e2e-fixture.txt</path>\n<type>file</type>\n<content>\n1: MC_E2E_NONCE=MC_E2E_20261115_133938\n2: PAYLOAD=alpha-7f3c-9d2e\n\n(End of file - total 2 lines)\n</content>",
+      "textSha256": "0f856cd847fa0bc3b832d7fd445224d4616dcbcbf85907bf32af9747244b68b7"
+    },
+    {
+      "seq": 39,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        38
+      ],
+      "toolCallId": "call_5e61493a794144479d2b2d25",
+      "text": "§2§ Queued 1 tag for reclaim.",
+      "textSha256": "40f7a7d752fa3594ea0149bc376122069f51870c2b6e2248985f5e50c9503082"
+    },
+    {
+      "seq": 45,
+      "type": "command/run",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 46,
+      "type": "command/done",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 47,
+      "type": "command/run",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 48,
+      "type": "command/done",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 52,
+      "type": "tool/result",
+      "surfaceOp": {
+        "op": "replace",
+        "startSeq": 34,
+        "endSeq": 34
+      },
+      "sourceEventSeqs": [
+        34
+      ],
+      "toolCallId": "call_094b43974d81439ebbcfa656",
+      "text": "[dropped §1§]",
+      "textSha256": "684c5e869a9bbcbc91401d899a08fe5899b301abb8295d8db1e3cd84380e809a"
+    },
+    {
+      "seq": 60,
+      "type": "command/done",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 68,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        67
+      ],
+      "toolCallId": "call_b9da8bf7e1334a62b213e7f8",
+      "text": "§3§ §1§ <path>C:\\Users\\elvis\\Documents\\deepseek-harness\\default-workspace\\mc-e2e-fixture.txt</path>\n<type>file</type>\n<content>\n1: MC_E2E_NONCE=MC_E2E_20261115_133938\n2: PAYLOAD=alpha-7f3c-9d2e\n\n(End of file - total 2 lines)\n</content>",
+      "textSha256": "f7ebea887614ef45e2c0d2295a7ac7662f082c9e5e6180a8e70f22708f64b03b"
+    },
+    {
+      "seq": 71,
+      "type": "assistant/message",
+      "surfaceOp": "append",
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "**ctx_expand 完整结果**（新条目 §3§）：\n\n```\n§3§ §1§ <path>C:\\Users\\elvis\\Documents\\deepseek-harness\\default-workspace\\mc-e2e-fixture.txt</path>\n<type>file</type>\n<content>\n1: MC_E2E_NONCE=MC_E2E_20261115_133938\n2: PAYLOAD=alpha-7f3c-9d2e\n\n(End of file - total 2 lines)\n</content>\n```\n\n**原来的 `[dropped §1§]` 占位符是否还在？**\n\n**还在。** 按 ctx_expand 的契约，恢复的内容是作为**新的工具结果**（§3§）返回的，原位置那个 `[dropped §1§]` 占位符保持原样不动，且 tag `1` 依然是 spent 状态（不能再次 drop，也不能再次 expand）。\n\n也就是说，现在桌面上同时存在两样东西：\n- 原位置的 `[dropped §1§]` 占位符 —— 仍在，仅作标记；\n- 新条目 §3§ —— 完整的原始读取内容。\n\n（本轮按指示只调用了 ctx_expand，未调用其他工具；§3§ 尚未 stamp。）",
+      "textSha256": "a41b24d5f2839fa5fff45c6e2d768a6b2d7131d2e1858521b704f162818430b2"
+    },
+    {
+      "seq": 81,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        80
+      ],
+      "toolCallId": "call_ffade0b0a9594bd0998b0fdc",
+      "text": "§4§ §1§ not queued: already dropped.",
+      "textSha256": "47863c8e57894ed7c7091bf1da747b1cb66a21b8e8a54426dc133d737e908fd9"
+    },
+    {
+      "seq": 94,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        93
+      ],
+      "toolCallId": "call_dfaa72375c274e55946988da",
+      "text": "§5§ Queued 1 tag for reclaim.",
+      "textSha256": "04a3b542214443cc61aeaee0f1c2774e52289929d7efface35570fdabc4d19b7"
+    },
+    {
+      "seq": 99,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        98
+      ],
+      "toolCallId": "call_89c8b5a22114413bb9c69384",
+      "text": "§6§ §3§ not restored: not dropped yet.",
+      "textSha256": "b267e131a840ad8177c1486f4004d3fa82f6572d15da9d452324a379fe4c1997"
+    },
+    {
+      "seq": 106,
+      "type": "command/done",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 110,
+      "type": "tool/result",
+      "surfaceOp": {
+        "op": "replace",
+        "startSeq": 68,
+        "endSeq": 68
+      },
+      "sourceEventSeqs": [
+        68
+      ],
+      "toolCallId": "call_b9da8bf7e1334a62b213e7f8",
+      "text": "[dropped §3§]",
+      "textSha256": "43a776403f138d84a29dc2caf19e866ac6bd086612c1b2a765ec0c2a89237899"
+    },
+    {
+      "seq": 124,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        123
+      ],
+      "toolCallId": "call_48aeb4ace5e24a42bba9ef91",
+      "text": "§7§ §3§ §1§ <path>C:\\Users\\elvis\\Documents\\deepseek-harness\\default-workspace\\mc-e2e-fixture.txt</path>\n<type>file</type>\n<content>\n1: MC_E2E_NONCE=MC_E2E_20261115_133938\n2: PAYLOAD=alpha-7f3c-9d2e\n\n(End of file - total 2 lines)\n</content>",
+      "textSha256": "54dfbaf403329852cf8ce432104d019cc9c9919fb0623d516f5e3cc328944540"
+    },
+    {
+      "seq": 127,
+      "type": "assistant/message",
+      "surfaceOp": "append",
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "**ctx_expand 完整结果**（新条目 §7§）：\n\n```\n§7§ §3§ §1§ <path>C:\\Users\\elvis\\Documents\\deepseek-harness\\default-workspace\\mc-e2e-fixture.txt</path>\n<type>file</type>\n<content>\n1: MC_E2E_NONCE=MC_E2E_20261115_133938\n2: PAYLOAD=alpha-7f3c-9d2e\n\n(End of file - total 2 lines)\n</content>\n```\n\n**状态变化**：这次成功了 —— 与上一轮的 `not restored: not dropped yet` 形成对照，说明 §3§ 在这两次调用之间已被 reclaim band 清除，因此恢复得以执行。\n\n**值得注意的嵌套标记**：回执里出现了 `§7§ §3§ §1§` 三层 tag 链 —— §7§ 是本次恢复产生的新结果，§3§ 是被恢复的那个已清除条目，§1§ 是 §3§ 内部携带的原始读取条目标记。内容本身（NONCE 与 PAYLOAD）与最初读取完全一致，说明经过 drop → expand → drop → expand 两轮循环后数据无损。\n\n**当前桌面状态**：\n- `[dropped §1§]` —— 已清除，spent；\n- `[dropped §3§]` —— 现已清除，spent（其内容由 §7§ 承载）；\n- §5§、§6§ —— 两条回执，未 stamp；\n- §7§ —— 恢复出的完整内容，未 stamp。\n\n**契约确认**：expand 不复活旧 tag —— §3§ 保持 spent，恢复内容以全新条目 §7§ 的形式出现；若要回收 §7§，需 drop `7`。",
+      "textSha256": "4ad5c4bb7d64603b820628d58f865c53878333444354ab6e65f7b83b78701ad4"
+    },
+    {
+      "seq": 139,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        136
+      ],
+      "toolCallId": "call_ce353612e2564525b80191b4",
+      "text": "§8§ <path>C:\\Users\\elvis\\Documents\\deepseek-harness\\default-workspace\\mc-e2e-1.txt</path>\n<type>file</type>\n<content>\n1: MC_E2E_NONCE=MC_E2E_20261115_133938\n2: FILE=mc-e2e-1\n\n(End of file - total 2 lines)\n</content>",
+      "textSha256": "3df03010d8b704e0a9027a3b79ba928c00084a7188736d935edb47c31c4c5b00"
+    },
+    {
+      "seq": 146,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        145
+      ],
+      "toolCallId": "call_64bc743f76f54ba690481abd",
+      "text": "§11§ Queued 3 tags for reclaim.",
+      "textSha256": "3e761135c10e77f312f5b9278fa2201dc0a5b0719985dab20d818fb4ee14e8eb"
+    },
+    {
+      "seq": 153,
+      "type": "command/done",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 155,
+      "type": "command/done",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 159,
+      "type": "tool/result",
+      "surfaceOp": {
+        "op": "replace",
+        "startSeq": 139,
+        "endSeq": 139
+      },
+      "sourceEventSeqs": [
+        139
+      ],
+      "toolCallId": "call_ce353612e2564525b80191b4",
+      "text": "[dropped §8§]",
+      "textSha256": "d87d8bf83b0e4c1043fa128a51f906d135ec889e36b17d66df86e9171ed5795d"
+    },
+    {
+      "seq": 160,
+      "type": "tool/result",
+      "surfaceOp": {
+        "op": "replace",
+        "startSeq": 140,
+        "endSeq": 140
+      },
+      "sourceEventSeqs": [
+        140
+      ],
+      "toolCallId": "call_5ab6cfecfae548cca2c040f4",
+      "text": "[dropped §9§]",
+      "textSha256": "54a52e25f339c7830adcbf438afbf72109ce90d3252e30b2d40c735096f917a4"
+    },
+    {
+      "seq": 161,
+      "type": "tool/result",
+      "surfaceOp": {
+        "op": "replace",
+        "startSeq": 141,
+        "endSeq": 141
+      },
+      "sourceEventSeqs": [
+        141
+      ],
+      "toolCallId": "call_a1c0112b5172492db1d63e28",
+      "text": "[dropped §10§]",
+      "textSha256": "8a6f94b284641aacf90fb1d26095e00f62473c3e5b4fb6f7f0a4043f7faee2c7"
+    },
+    {
+      "seq": 168,
+      "type": "command/run",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 171,
+      "type": "command/done",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 180,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        179
+      ],
+      "toolCallId": "call_2acef22104ee4220802dd315",
+      "text": "§12§ Saved as memory 2 [CONFIG_VALUES].",
+      "textSha256": "ad229f87b5e9037170f9c441131df6babeb3e9409f61e08be22bfb70b801a19f"
+    },
+    {
+      "seq": 185,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        184
+      ],
+      "toolCallId": "call_7a69f4d69a2f4087a845f3db",
+      "text": "§13§ Project memories (1 shown):\n- [CONFIG_VALUES] MC_E2E_20261115_133938 — temporary E2E fact for reasoning effort picker backlog.",
+      "textSha256": "44cf8ef2d1dad265e58a7553d9024ab2dd7e3988a20ebf8151cc679d36eb1d4c"
+    },
+    {
+      "seq": 193,
+      "type": "command/done",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 216,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        215
+      ],
+      "toolCallId": "call_1d317946d2aa4c0f96a64b8f",
+      "text": "§15§ Found 1 result for \"MC_E2E_20261115_133938\":\n\n[1] [memory] score=0.65 id=2 category=CONFIG_VALUES match=hybrid\nMC_E2E_20261115_133938 — temporary E2E fact for reasoning effort picker backlog.",
+      "textSha256": "d906602aab9a04d7a3645a07d293f6073b699bf834418652b893a61f0e025c3d"
+    },
+    {
+      "seq": 230,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        229
+      ],
+      "toolCallId": "call_47a4f92e94f645199402d044",
+      "text": "§16§ Archived memory 2.",
+      "textSha256": "31cd2b27e7722005dcf7b6c14a8555b431988af5e34504344eaeb7a6203d0338"
+    },
+    {
+      "seq": 237,
+      "type": "command/done",
+      "surfaceOp": null,
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "",
+      "textSha256": null
+    },
+    {
+      "seq": 246,
+      "type": "tool/result",
+      "surfaceOp": "append",
+      "sourceEventSeqs": [
+        245
+      ],
+      "toolCallId": "call_441e3bde7397400db082a4cb",
+      "text": "§17§ §1§ <path>C:\\Users\\elvis\\Documents\\deepseek-harness\\default-workspace\\mc-e2e-fixture.txt</path>\n<type>file</type>\n<content>\n1: MC_E2E_NONCE=MC_E2E_20261115_133938\n2: PAYLOAD=alpha-7f3c-9d2e\n\n(End of file - total 2 lines)\n</content>",
+      "textSha256": "50ff95da2001bf135110e6b2d85f9e6077737afea5ef1947f662dc0f8bf591eb"
+    },
+    {
+      "seq": 249,
+      "type": "assistant/message",
+      "surfaceOp": "append",
+      "sourceEventSeqs": null,
+      "toolCallId": null,
+      "text": "**ctx_expand 完整结果**（新条目 §17§）：\n\n```\n§17§ §1§ <path>C:\\Users\\elvis\\Documents\\deepseek-harness\\default-workspace\\mc-e2e-fixture.txt</path>\n<type>file</type>\n<content>\n1: MC_E2E_NONCE=MC_E2E_20261115_133938\n2: PAYLOAD=alpha-7f3c-9d2e\n\n(End of file - total 2 lines)\n</content>\n```\n\n**原来的 `[dropped §1§]` 占位符是否还在？**\n\n**还在。** 占位符保持原位不动，tag `1` 依然是 spent 状态。恢复的内容以全新条目 §17§ 的形式出现，回执中的 `§17§ §1§` 正是\"新结果 tag + 被恢复的旧 tag\"这一对应关系。\n\n**与上一轮 expand `1` 的对比**：这是 tag `1` 的**第二次** expand（第一次在更早的回合，产生了 §3§）。两次都成功返回了相同内容，说明 expand 对已清除条目可重复调用，每次生成一个新条目，旧占位符与旧 tag 状态均不受影响。\n\n**当前桌面状态**：\n- `[dropped §1§]` —— 仍在，spent；\n- §17§ —— 本次恢复的 fixture 内容，未 stamp；\n- §3§ 已被清除（其内容曾由 §7§ 承载）；\n- §5§、§6§、§7§、§12§、§13§、§14§、§15§、§16§ —— 未 stamp 的回执与内容条目。",
+      "textSha256": "0ee2a31d6abc203144f6763e40a7851c64e4c4d836b4cd79e5b4f0ac707923b6"
+    }
+  ],
+  "pendingDrops": [
+    {
+      "tag_number": 1,
+      "queued_at": 1794721843244,
+      "landed_event_seq": 52,
+      "flush_requested": 0
+    },
+    {
+      "tag_number": 3,
+      "queued_at": 1794722092755,
+      "landed_event_seq": 110,
+      "flush_requested": 0
+    },
+    {
+      "tag_number": 8,
+      "queued_at": 1794722229920,
+      "landed_event_seq": 159,
+      "flush_requested": 0
+    },
+    {
+      "tag_number": 9,
+      "queued_at": 1794722229920,
+      "landed_event_seq": 160,
+      "flush_requested": 0
+    },
+    {
+      "tag_number": 10,
+      "queued_at": 1794722229920,
+      "landed_event_seq": 161,
+      "flush_requested": 0
+    }
+  ],
+  "tags": [
+    {
+      "tag_number": 1,
+      "target_kind": "tool-result",
+      "target_id": "call_094b43974d81439ebbcfa656",
+      "created_at": 1794721840969
+    },
+    {
+      "tag_number": 2,
+      "target_kind": "tool-result",
+      "target_id": "call_5e61493a794144479d2b2d25",
+      "created_at": 1794721843252
+    },
+    {
+      "tag_number": 3,
+      "target_kind": "tool-result",
+      "target_id": "call_b9da8bf7e1334a62b213e7f8",
+      "created_at": 1794722007427
+    },
+    {
+      "tag_number": 4,
+      "target_kind": "tool-result",
+      "target_id": "call_ffade0b0a9594bd0998b0fdc",
+      "created_at": 1794722047391
+    },
+    {
+      "tag_number": 5,
+      "target_kind": "tool-result",
+      "target_id": "call_dfaa72375c274e55946988da",
+      "created_at": 1794722092762
+    },
+    {
+      "tag_number": 6,
+      "target_kind": "tool-result",
+      "target_id": "call_89c8b5a22114413bb9c69384",
+      "created_at": 1794722097982
+    },
+    {
+      "tag_number": 7,
+      "target_kind": "tool-result",
+      "target_id": "call_48aeb4ace5e24a42bba9ef91",
+      "created_at": 1794722186640
+    },
+    {
+      "tag_number": 8,
+      "target_kind": "tool-result",
+      "target_id": "call_ce353612e2564525b80191b4",
+      "created_at": 1794722227709
+    },
+    {
+      "tag_number": 9,
+      "target_kind": "tool-result",
+      "target_id": "call_5ab6cfecfae548cca2c040f4",
+      "created_at": 1794722227714
+    },
+    {
+      "tag_number": 10,
+      "target_kind": "tool-result",
+      "target_id": "call_a1c0112b5172492db1d63e28",
+      "created_at": 1794722227719
+    },
+    {
+      "tag_number": 11,
+      "target_kind": "tool-result",
+      "target_id": "call_64bc743f76f54ba690481abd",
+      "created_at": 1794722229936
+    },
+    {
+      "tag_number": 12,
+      "target_kind": "tool-result",
+      "target_id": "call_2acef22104ee4220802dd315",
+      "created_at": 1794722408660
+    },
+    {
+      "tag_number": 13,
+      "target_kind": "tool-result",
+      "target_id": "call_7a69f4d69a2f4087a845f3db",
+      "created_at": 1794722410582
+    },
+    {
+      "tag_number": 14,
+      "target_kind": "tool-result",
+      "target_id": "call_30789116be724635882782b7",
+      "created_at": 1794722650242
+    },
+    {
+      "tag_number": 15,
+      "target_kind": "tool-result",
+      "target_id": "call_1d317946d2aa4c0f96a64b8f",
+      "created_at": 1794722711436
+    },
+    {
+      "tag_number": 16,
+      "target_kind": "tool-result",
+      "target_id": "call_47a4f92e94f645199402d044",
+      "created_at": 1794722741035
+    },
+    {
+      "tag_number": 17,
+      "target_kind": "tool-result",
+      "target_id": "call_441e3bde7397400db082a4cb",
+      "created_at": 1794723148865
+    }
+  ],
+  "journal": [
+    {
+      "id": 198,
+      "at": 1794721761408,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: no-hits",
+      "data": {
+        "action": "quiet",
+        "reason": "no-hits",
+        "ms": 102,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "id": 199,
+      "at": 1794721761481,
+      "level": "info",
+      "kind": "session-first-seen",
+      "summary": "session first seen by the adapter",
+      "data": {
+        "turn": 1,
+        "step": 1
+      }
+    },
+    {
+      "id": 200,
+      "at": 1794721761488,
+      "level": "info",
+      "kind": "pass",
+      "summary": "defer (no-usage) at ?%",
+      "data": {
+        "decision": "defer",
+        "reason": "no-usage",
+        "contextWindow": 256000,
+        "contextWindowAssumed": true,
+        "consecutive": 1
+      }
+    },
+    {
+      "id": 201,
+      "at": 1794721761522,
+      "level": "info",
+      "kind": "context-pressure",
+      "summary": "context pressure reading: 0 / 0 tok",
+      "data": {}
+    },
+    {
+      "id": 202,
+      "at": 1794721761535,
+      "level": "info",
+      "kind": "context-pressure",
+      "summary": "context pressure reading: 0 / 1000000 tok",
+      "data": {
+        "contextWindow": 1000000
+      }
+    },
+    {
+      "id": 203,
+      "at": 1794721765526,
+      "level": "info",
+      "kind": "context-pressure",
+      "summary": "context pressure reading: 14787 / 1000000 tok",
+      "data": {
+        "projectedTokens": 14787,
+        "pressureTokens": 14778,
+        "contextWindow": 1000000
+      }
+    },
+    {
+      "id": 204,
+      "at": 1794721837008,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: no-hits",
+      "data": {
+        "action": "quiet",
+        "reason": "no-hits",
+        "ms": 5,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "id": 205,
+      "at": 1794721837013,
+      "level": "info",
+      "kind": "pass",
+      "summary": "defer (below-threshold) at 1.5%",
+      "data": {
+        "decision": "defer",
+        "reason": "below-threshold",
+        "pressure": 1.5,
+        "contextWindow": 1000000,
+        "route": "commandcode/deepseek/deepseek-v4.1-flash",
+        "usage": {
+          "input": 14778,
+          "cacheRead": 0,
+          "cacheWrite": 0
+        },
+        "consecutive": 1
+      }
+    },
+    {
+      "id": 206,
+      "at": 1794721843248,
+      "level": "info",
+      "kind": "tool-call",
+      "summary": "ctx_reduce: queued 1, refused 0",
+      "data": {
+        "tool": "ctx_reduce",
+        "requested": [
+          1
+        ],
+        "queued": [
+          1
+        ],
+        "refused": [],
+        "ms": 4
+      }
+    },
+    {
+      "id": 207,
+      "at": 1794721920996,
+      "level": "info",
+      "kind": "drop-landed",
+      "summary": "landed 1 drop(s): §1§",
+      "data": {
+        "tags": [
+          1
+        ],
+        "count": 1,
+        "estTokens": 58
+      }
+    },
+    {
+      "id": 208,
+      "at": 1794721921001,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: too-short",
+      "data": {
+        "action": "quiet",
+        "reason": "too-short",
+        "chars": 15,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "id": 209,
+      "at": 1794722002076,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: no-hits",
+      "data": {
+        "action": "quiet",
+        "reason": "no-hits",
+        "ms": 1,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "id": 210,
+      "at": 1794722007422,
+      "level": "info",
+      "kind": "tool-call",
+      "summary": "ctx_expand: restored 1, refused 0",
+      "data": {
+        "tool": "ctx_expand",
+        "requested": [
+          1
+        ],
+        "restored": [
+          1
+        ],
+        "refused": [],
+        "ms": 1
+      }
+    },
+    {
+      "id": 211,
+      "at": 1794722040177,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: no-hits",
+      "data": {
+        "action": "quiet",
+        "reason": "no-hits",
+        "ms": 2,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "id": 212,
+      "at": 1794722047387,
+      "level": "info",
+      "kind": "tool-call",
+      "summary": "ctx_reduce: queued 0, refused 1",
+      "data": {
+        "tool": "ctx_reduce",
+        "requested": [
+          1
+        ],
+        "queued": [],
+        "refused": [
+          {
+            "tag": 1,
+            "reason": "already dropped"
+          }
+        ],
+        "ms": 1
+      }
+    },
+    {
+      "id": 213,
+      "at": 1794722089515,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: no-hits",
+      "data": {
+        "action": "quiet",
+        "reason": "no-hits",
+        "ms": 2,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "id": 214,
+      "at": 1794722092758,
+      "level": "info",
+      "kind": "tool-call",
+      "summary": "ctx_reduce: queued 1, refused 0",
+      "data": {
+        "tool": "ctx_reduce",
+        "requested": [
+          3
+        ],
+        "queued": [
+          3
+        ],
+        "refused": [],
+        "ms": 4
+      }
+    },
+    {
+      "id": 215,
+      "at": 1794722097977,
+      "level": "info",
+      "kind": "tool-call",
+      "summary": "ctx_expand: restored 0, refused 1",
+      "data": {
+        "tool": "ctx_expand",
+        "requested": [
+          3
+        ],
+        "restored": [],
+        "refused": [
+          {
+            "tag": 3,
+            "reason": "not dropped yet"
+          }
+        ],
+        "ms": 0
+      }
+    },
+    {
+      "id": 218,
+      "at": 1794722164222,
+      "level": "info",
+      "kind": "drop-landed",
+      "summary": "landed 1 drop(s): §3§",
+      "data": {
+        "tags": [
+          3
+        ],
+        "count": 1,
+        "estTokens": 59
+      }
+    },
+    {
+      "id": 219,
+      "at": 1794722164226,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: too-short",
+      "data": {
+        "action": "quiet",
+        "reason": "too-short",
+        "chars": 15,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "id": 220,
+      "at": 1794722184121,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: no-hits",
+      "data": {
+        "action": "quiet",
+        "reason": "no-hits",
+        "ms": 1,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "id": 221,
+      "at": 1794722186635,
+      "level": "info",
+      "kind": "tool-call",
+      "summary": "ctx_expand: restored 1, refused 0",
+      "data": {
+        "tool": "ctx_expand",
+        "requested": [
+          3
+        ],
+        "restored": [
+          3
+        ],
+        "refused": [],
+        "ms": 0
+      }
+    },
+    {
+      "id": 222,
+      "at": 1794722191890,
+      "level": "info",
+      "kind": "context-pressure",
+      "summary": "context pressure reading: 17329 / 1000000 tok",
+      "data": {
+        "projectedTokens": 17329,
+        "pressureTokens": 17043,
+        "contextWindow": 1000000
+      }
+    },
+    {
+      "id": 223,
+      "at": 1794722223607,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: no-hits",
+      "data": {
+        "action": "quiet",
+        "reason": "no-hits",
+        "ms": 3,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "id": 224,
+      "at": 1794722229931,
+      "level": "info",
+      "kind": "tool-call",
+      "summary": "ctx_reduce: queued 3, refused 0",
+      "data": {
+        "tool": "ctx_reduce",
+        "requested": [
+          8,
+          9,
+          10
+        ],
+        "queued": [
+          8,
+          9,
+          10
+        ],
+        "refused": [],
+        "ms": 11
+      }
+    },
+    {
+      "id": 225,
+      "at": 1794722267247,
+      "level": "info",
+      "kind": "drop-landed",
+      "summary": "landed 3 drop(s): §8§, §9§, §10§",
+      "data": {
+        "tags": [
+          8,
+          9,
+          10
+        ],
+        "count": 3,
+        "estTokens": 162
+      }
+    },
+    {
+      "id": 226,
+      "at": 1794722267251,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: too-short",
+      "data": {
+        "action": "quiet",
+        "reason": "too-short",
+        "chars": 15,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "id": 227,
+      "at": 1794722403002,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: no-hits",
+      "data": {
+        "action": "quiet",
+        "reason": "no-hits",
+        "ms": 3,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "id": 228,
+      "at": 1794722408655,
+      "level": "info",
+      "kind": "tool-call",
+      "summary": "ctx_memory write: Saved as memory 2 [CONFIG_VALUES].",
+      "data": {
+        "tool": "ctx_memory",
+        "action": "write",
+        "identity": "dir:0e9e9cdb27db",
+        "ms": 6,
+        "ok": true
+      }
+    },
+    {
+      "id": 229,
+      "at": 1794722410578,
+      "level": "info",
+      "kind": "tool-call",
+      "summary": "ctx_memory list: 1 line(s)",
+      "data": {
+        "tool": "ctx_memory",
+        "action": "list",
+        "identity": "dir:0e9e9cdb27db",
+        "query": "MC_E2E_20261115_133938",
+        "ms": 6,
+        "ok": true
+      }
+    },
+    {
+      "id": 236,
+      "at": 1794722644672,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: no-hits",
+      "data": {
+        "action": "quiet",
+        "reason": "no-hits",
+        "ms": 78,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "id": 237,
+      "at": 1794722644741,
+      "level": "info",
+      "kind": "session-first-seen",
+      "summary": "session first seen by the adapter",
+      "data": {
+        "turn": 12,
+        "step": 1
+      }
+    },
+    {
+      "id": 238,
+      "at": 1794722644747,
+      "level": "info",
+      "kind": "pass",
+      "summary": "defer (below-threshold) at 1.9%",
+      "data": {
+        "decision": "defer",
+        "reason": "below-threshold",
+        "pressure": 1.9,
+        "contextWindow": 1000000,
+        "route": "commandcode/deepseek/deepseek-v4.1-flash",
+        "usage": {
+          "input": 299,
+          "cacheRead": 18688,
+          "cacheWrite": 0
+        },
+        "consecutive": 1
+      }
+    },
+    {
+      "id": 239,
+      "at": 1794722644758,
+      "level": "info",
+      "kind": "context-pressure",
+      "summary": "context pressure reading: 19134 / 1000000 tok",
+      "data": {
+        "projectedTokens": 19134,
+        "pressureTokens": 18987,
+        "contextWindow": 1000000
+      }
+    },
+    {
+      "id": 240,
+      "at": 1794722650236,
+      "level": "info",
+      "kind": "tool-call",
+      "summary": "ctx_expand: restored 0, refused 1",
+      "data": {
+        "tool": "ctx_expand",
+        "requested": [
+          13
+        ],
+        "restored": [],
+        "refused": [
+          {
+            "tag": 13,
+            "reason": "not dropped"
+          }
+        ],
+        "ms": 1
+      }
+    },
+    {
+      "id": 242,
+      "at": 1794722705978,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: hinted",
+      "data": {
+        "action": "hinted",
+        "ms": 7,
+        "chars": 312,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "id": 244,
+      "at": 1794722711430,
+      "level": "info",
+      "kind": "tool-call",
+      "summary": "ctx_memory search: search: 1 result(s)",
+      "data": {
+        "tool": "ctx_memory",
+        "action": "search",
+        "identity": "dir:0e9e9cdb27db",
+        "query": "MC_E2E_20261115_133938",
+        "hits": 1,
+        "ms": 49,
+        "ok": true
+      }
+    },
+    {
+      "id": 245,
+      "at": 1794722738271,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: hinted",
+      "data": {
+        "action": "hinted",
+        "ms": 2,
+        "chars": 312,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "id": 246,
+      "at": 1794722741030,
+      "level": "info",
+      "kind": "tool-call",
+      "summary": "ctx_memory archive: Archived memory 2.",
+      "data": {
+        "tool": "ctx_memory",
+        "action": "archive",
+        "identity": "dir:0e9e9cdb27db",
+        "id": 2,
+        "ms": 4,
+        "ok": true
+      }
+    },
+    {
+      "id": 247,
+      "at": 1794723144456,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: no-hits",
+      "data": {
+        "action": "quiet",
+        "reason": "no-hits",
+        "ms": 1,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "id": 248,
+      "at": 1794723144475,
+      "level": "info",
+      "kind": "pass",
+      "summary": "execute (cache-ttl-expired) at 2.0%",
+      "data": {
+        "decision": "execute",
+        "reason": "cache-ttl-expired",
+        "pressure": 2,
+        "contextWindow": 1000000,
+        "route": "commandcode/deepseek/deepseek-v4.1-flash",
+        "usage": {
+          "input": 324,
+          "cacheRead": 19968,
+          "cacheWrite": 0
+        },
+        "landed": [],
+        "published": [],
+        "forceDropped": 0,
+        "baseline": "unchanged",
+        "historianStarted": true,
+        "tokensBefore": 9373,
+        "tokensAfter": 9373,
+        "tokensDelta": 0,
+        "factsPromoted": 0,
+        "factsSeenAgain": 0
+      }
+    },
+    {
+      "id": 249,
+      "at": 1794723148861,
+      "level": "info",
+      "kind": "tool-call",
+      "summary": "ctx_expand: restored 1, refused 0",
+      "data": {
+        "tool": "ctx_expand",
+        "requested": [
+          1
+        ],
+        "restored": [
+          1
+        ],
+        "refused": [],
+        "ms": 1
+      }
+    },
+    {
+      "id": 250,
+      "at": 1794723148891,
+      "level": "info",
+      "kind": "pass",
+      "summary": "defer (below-threshold) at 2.1%",
+      "data": {
+        "decision": "defer",
+        "reason": "below-threshold",
+        "pressure": 2.1,
+        "contextWindow": 1000000,
+        "route": "commandcode/deepseek/deepseek-v4.1-flash",
+        "usage": {
+          "input": 362,
+          "cacheRead": 20224,
+          "cacheWrite": 0
+        },
+        "consecutive": 1
+      }
+    }
+  ],
+  "meta": {
+    "schema_version": "11",
+    "corpus_bootstrap": "{\"outcome\":\"created\",\"detail\":\"v95\",\"at\":1794661095437}",
+    "compaction_engine": "magic-context-dsh",
+    "adapter_version": "phase2",
+    "memory_bridge": "ok schema v95",
+    "memory_write": "read-write auto-promote",
+    "switch_snapshot": "{\"write\":true,\"autoPromote\":true,\"embedBackfill\":true,\"vectorBackfill\":true,\"scoring\":true,\"userRender\":true,\"userCollect\":true,\"userReview\":true,\"machine\":true,\"machineAutoStage\":true,\"forceWaitMs\":0}",
+    "profile_last_review_at": "1794661687166",
+    "historian_no_progress:session-0b9c6002-d898-4fab-8ca2-0fca4810c64a": "{\"endSeq\":1431,\"at\":1794668472510,\"kind\":\"stream-error\"}"
+  },
+  "compartments": [],
+  "usageRecords": [
+    {
+      "seq": 22,
+      "turn": 1,
+      "step": 1,
+      "input_tokens": 14778,
+      "output_tokens": 3,
+      "cache_read_tokens": 0,
+      "recorded_at": 1794721765531
+    },
+    {
+      "seq": 32,
+      "turn": 2,
+      "step": 1,
+      "input_tokens": 330,
+      "output_tokens": 71,
+      "cache_read_tokens": 14592,
+      "recorded_at": 1794721840944
+    },
+    {
+      "seq": 37,
+      "turn": 2,
+      "step": 2,
+      "input_tokens": 252,
+      "output_tokens": 58,
+      "cache_read_tokens": 14848,
+      "recorded_at": 1794721843231
+    },
+    {
+      "seq": 42,
+      "turn": 2,
+      "step": 3,
+      "input_tokens": 313,
+      "output_tokens": 103,
+      "cache_read_tokens": 14848,
+      "recorded_at": 1794721845538
+    },
+    {
+      "seq": 56,
+      "turn": 3,
+      "step": 1,
+      "input_tokens": 328,
+      "output_tokens": 779,
+      "cache_read_tokens": 14848,
+      "recorded_at": 1794721929697
+    },
+    {
+      "seq": 66,
+      "turn": 4,
+      "step": 1,
+      "input_tokens": 356,
+      "output_tokens": 118,
+      "cache_read_tokens": 15104,
+      "recorded_at": 1794722007407
+    },
+    {
+      "seq": 71,
+      "turn": 4,
+      "step": 2,
+      "input_tokens": 250,
+      "output_tokens": 539,
+      "cache_read_tokens": 15360,
+      "recorded_at": 1794722013501
+    },
+    {
+      "seq": 79,
+      "turn": 5,
+      "step": 1,
+      "input_tokens": 558,
+      "output_tokens": 165,
+      "cache_read_tokens": 15360,
+      "recorded_at": 1794722047374
+    },
+    {
+      "seq": 84,
+      "turn": 5,
+      "step": 2,
+      "input_tokens": 621,
+      "output_tokens": 152,
+      "cache_read_tokens": 15360,
+      "recorded_at": 1794722051032
+    },
+    {
+      "seq": 92,
+      "turn": 6,
+      "step": 1,
+      "input_tokens": 324,
+      "output_tokens": 101,
+      "cache_read_tokens": 15872,
+      "recorded_at": 1794722092741
+    },
+    {
+      "seq": 97,
+      "turn": 6,
+      "step": 2,
+      "input_tokens": 129,
+      "output_tokens": 440,
+      "cache_read_tokens": 16128,
+      "recorded_at": 1794722097964
+    },
+    {
+      "seq": 102,
+      "turn": 6,
+      "step": 3,
+      "input_tokens": 347,
+      "output_tokens": 266,
+      "cache_read_tokens": 16128,
+      "recorded_at": 1794722102741
+    },
+    {
+      "seq": 114,
+      "turn": 7,
+      "step": 1,
+      "input_tokens": 1294,
+      "output_tokens": 546,
+      "cache_read_tokens": 15360,
+      "recorded_at": 1794722172360
+    },
+    {
+      "seq": 122,
+      "turn": 8,
+      "step": 1,
+      "input_tokens": 250,
+      "output_tokens": 40,
+      "cache_read_tokens": 16640,
+      "recorded_at": 1794722186624
+    },
+    {
+      "seq": 127,
+      "turn": 8,
+      "step": 2,
+      "input_tokens": 403,
+      "output_tokens": 467,
+      "cache_read_tokens": 16640,
+      "recorded_at": 1794722191896
+    },
+    {
+      "seq": 135,
+      "turn": 9,
+      "step": 1,
+      "input_tokens": 705,
+      "output_tokens": 179,
+      "cache_read_tokens": 16896,
+      "recorded_at": 1794722227677
+    },
+    {
+      "seq": 144,
+      "turn": 9,
+      "step": 2,
+      "input_tokens": 669,
+      "output_tokens": 46,
+      "cache_read_tokens": 17408,
+      "recorded_at": 1794722229908
+    },
+    {
+      "seq": 149,
+      "turn": 9,
+      "step": 3,
+      "input_tokens": 224,
+      "output_tokens": 256,
+      "cache_read_tokens": 17920,
+      "recorded_at": 1794722233982
+    },
+    {
+      "seq": 165,
+      "turn": 10,
+      "step": 1,
+      "input_tokens": 746,
+      "output_tokens": 1075,
+      "cache_read_tokens": 17408,
+      "recorded_at": 1794722284944
+    },
+    {
+      "seq": 178,
+      "turn": 11,
+      "step": 1,
+      "input_tokens": 813,
+      "output_tokens": 263,
+      "cache_read_tokens": 17920,
+      "recorded_at": 1794722408637
+    },
+    {
+      "seq": 183,
+      "turn": 11,
+      "step": 2,
+      "input_tokens": 183,
+      "output_tokens": 66,
+      "cache_read_tokens": 18688,
+      "recorded_at": 1794722410561
+    },
+    {
+      "seq": 188,
+      "turn": 11,
+      "step": 3,
+      "input_tokens": 299,
+      "output_tokens": 199,
+      "cache_read_tokens": 18688,
+      "recorded_at": 1794722414079
+    },
+    {
+      "seq": 200,
+      "turn": 12,
+      "step": 1,
+      "input_tokens": 270,
+      "output_tokens": 157,
+      "cache_read_tokens": 18944,
+      "recorded_at": 1794722650220
+    },
+    {
+      "seq": 205,
+      "turn": 12,
+      "step": 2,
+      "input_tokens": 332,
+      "output_tokens": 282,
+      "cache_read_tokens": 18944,
+      "recorded_at": 1794722654429
+    },
+    {
+      "seq": 214,
+      "turn": 13,
+      "step": 1,
+      "input_tokens": 469,
+      "output_tokens": 133,
+      "cache_read_tokens": 19200,
+      "recorded_at": 1794722711368
+    },
+    {
+      "seq": 219,
+      "turn": 13,
+      "step": 2,
+      "input_tokens": 359,
+      "output_tokens": 273,
+      "cache_read_tokens": 19456,
+      "recorded_at": 1794722715482
+    },
+    {
+      "seq": 228,
+      "turn": 14,
+      "step": 1,
+      "input_tokens": 487,
+      "output_tokens": 75,
+      "cache_read_tokens": 19712,
+      "recorded_at": 1794722741014
+    },
+    {
+      "seq": 233,
+      "turn": 14,
+      "step": 2,
+      "input_tokens": 324,
+      "output_tokens": 172,
+      "cache_read_tokens": 19968,
+      "recorded_at": 1794722744094
+    },
+    {
+      "seq": 244,
+      "turn": 15,
+      "step": 1,
+      "input_tokens": 362,
+      "output_tokens": 112,
+      "cache_read_tokens": 20224,
+      "recorded_at": 1794723148848
+    },
+    {
+      "seq": 249,
+      "turn": 15,
+      "step": 2,
+      "input_tokens": 256,
+      "output_tokens": 375,
+      "cache_read_tokens": 20480,
+      "recorded_at": 1794723153846
+    }
+  ],
+  "memories": [
+    {
+      "id": 2,
+      "category": "CONFIG_VALUES",
+      "status": "archived",
+      "importance": 1,
+      "content": "MC_E2E_20261115_133938 — temporary E2E fact for reasoning effort picker backlog.",
+      "created_at": 1794722408650,
+      "updated_at": 1794722741026,
+      "metadata_json": "{\"archive_reason\":\"E2E cleanup\"}"
+    }
+  ],
+  "memoryEmbeddings": [
+    {
+      "memory_id": 2,
+      "model_id": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+      "bytes": 1536
+    }
+  ]
+}
