@@ -1,5 +1,8 @@
 # DSH surface 写入点顺序安全审计（2026-10-09）
 
+> Status: historical — 2026-10-09 surface-write audit; not a current guarantee.
+> Scope: historical surface write-order safety analysis.
+
 > 触发背景：`protected first surface head` 损坏事故（两波共 10 个会话）与随后的
 > `replacement range is not on the current surface` 复发事件。事后复盘发现，两起事故的
 > 碰撞记录**都是本插件写出的 surface 记录**，而此前没有任何一处写入点有显式的顺序安全论证。

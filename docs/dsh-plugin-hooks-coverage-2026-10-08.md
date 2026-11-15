@@ -1,5 +1,8 @@
 # 上游 `hooks/` 机制覆盖摸排（2026-10-08）
 
+> Status: historical — 2026-10-08 upstream hooks coverage audit; not a current guarantee.
+> Scope: historical coverage inventory.
+
 **问题**：上游 Magic Context 的 `packages/plugin/src/hooks/` 下还有哪些机制我们没有移植？
 
 **样本**：`packages/plugin/src/hooks/magic-context/`（142 个非测试模块）+ `auto-update-checker/`（6 个）

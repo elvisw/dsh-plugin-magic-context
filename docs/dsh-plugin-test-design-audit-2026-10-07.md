@@ -1,5 +1,8 @@
 # DSH 适配器：全局测试设计审计（2026-10-07）
 
+> Status: historical — 2026-10-07 test-design audit; not a current guarantee.
+> Scope: historical test-gap analysis.
+
 > 触发事件：maintenance verify 扫描的 **6 个真实缺陷**全部逃过 222 个测试、24 个 spec，
 > 直到在实测库上跑「40 条记忆提炼」才暴露。本审计回答的不是"哪条测试没写"，
 > 而是"测试设计的哪几类盲区让整类缺陷系统性不可见"。

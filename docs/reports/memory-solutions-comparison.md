@@ -1,5 +1,8 @@
 # Agent memory systems compared: Engram, Hindsight, OpenViking, Honcho and Magic Context
 
+> Status: historical — 2026-09-29 research comparison; not a current guarantee.
+> Scope: historical agent-memory landscape comparison.
+
 **Date:** 2026-09-29
 **Scope:** research only. No product code changed. No external service was run against a real account, no data was sent anywhere, and no live Magic Context or OpenCode store was opened.
 **Method:** each repository was cloned (or pulled) into `~/Work/OSS/<repo>` and its source was read at the commit below. Claims are cited as `repo:path:line` at those commits. Where a claim rests on a README or marketing page rather than code, it says so.

@@ -1,5 +1,8 @@
 # DSH (DeepSeek Harness) 移植可行性与方案 — 2026-10-06
 
+> Status: historical — 2026-10-06 feasibility study (DSH master 5badb15); not a current guarantee.
+> Scope: historical port feasibility and seam map.
+
 状态：可行性已验证（源码级），阶段 0 PoC 进行中。
 分析对象：上游 `deepseek-ai/deepseek-harness`（master @ 5badb15，developer preview）；本仓库 `@cortexkit/opencode-magic-context` v0.45.0。
 

@@ -1,5 +1,8 @@
 # 上游 Magic Context v0.46.1 源码分析：画像机制 与 workspace 机制
 
+> Status: historical — upstream v0.46.1 source analysis (2026-10-09); not a current guarantee.
+> Scope: historical upstream source study.
+
 > **取源**：`git clone --depth 1 --branch v0.46.1 https://github.com/cortexkit/magic-context .upstream/magic-context`
 > （3696 文件 / 76 MB，已加入本仓 `.gitignore`，只读分析、不提交）。
 > 适配器自身的 parity 目标此前记为 **v0.46.0**（`PARITY.md` 头部），本次多取一个补丁版；

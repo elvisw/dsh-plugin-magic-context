@@ -1,5 +1,8 @@
 # DSH Magic Context 适配器 — 工程记录与升级跟进指南
 
+> Status: current — upgrade procedure (last verified 2026-11-16); §1 is a historical v0.49.30 baseline, not v0.49.55 parity.
+> Scope: re-alignment workflow for a future MC/DSH upgrade.
+
 > **2026-10-13 起语义变化（硬切换）**：插件数据已正式独立（自有 `memories.db`，legacy
 > `context.db` 封存不读）。MC 升级跟进从此**只评估功能**，无 DB 兼容义务——本文档中
 > 涉及 fence 余量/契约冻结/共享库比对的段落已过时，保留为历史工程记录。
@@ -30,7 +33,7 @@
 
 ---
 
-## 1. 基线锚点（本工程对齐到的版本）
+## 1. 基线锚点（历史基线：v0.49.30，非 v0.49.55 parity）
 
 | 项 | 值 | 变化时的影响 |
 |---|---|---|
@@ -51,7 +54,8 @@
 ## 2. 适配器三原则（为什么长这样）
 
 1. **存储共享**：直接读写 MC 的 `context.db`（schema v95，只读连接 + 契约式写入），
-   适配器自有库只存会话态（水位/区段/journal/tags）。
+   适配器自有库只存会话态（水位/区段/journal/tags）。**历史说明：2026-10-13 起已切换为自有
+   `memories.db`，本节保留为当时的设计依据。**
 2. **逻辑逐字节照抄**：注入、融合评分、写入契约、分块策略都从 MC 源码移植，每处
    注释带 MC 依据（`file:line`）。禁止发明语义——曾收回 ctx_note 别名、tail_hygiene
    通知化两个发明。
@@ -237,10 +241,11 @@ git -C <上游 checkout> log v0.45.0..<NEW> --oneline -- \
 
 ## 8. 相关文档
 
-- `docs/dsh-plugin-memory-write-contract.md` — 写契约（逐节 MC 依据）
-- `docs/dsh-plugin-memory-promotion-contract.md` — 提升契约
-- `docs/dsh-plugin-config-ui-contract.md` — 配置 UI 契约
-- `docs/dsh-plugin-ui-telemetry-contract.md` — 遥测/胶囊契约
+- `docs/dsh-plugin-memory-write-contract.md` — 写契约（历史快照）
+- `docs/dsh-plugin-memory-promotion-contract.md` — 提升契约（历史研究）
+- `docs/dsh-plugin-config-ui-contract.md` — 配置 UI 契约（历史；当前以 `docs/dsh-plugin-settings-ui-contract.md` 为准）
+- `docs/dsh-plugin-settings-ui-contract.md` — 当前设置界面契约
+- `docs/dsh-plugin-ui-telemetry-contract.md` — 遥测/胶囊契约（历史宿主分析）
 - 项目级记忆复盘（内部记录，未随仓库发布）
-- `docs/dsh-port-feasibility-2026-10-06.md` — 移植可行性（架构边界论证）
-- `docs/dsh-plugin-memory-acceptance.md` — 验收记录
+- `docs/dsh-port-feasibility-2026-10-06.md` — 移植可行性（历史架构边界论证）
+- `docs/dsh-plugin-memory-acceptance.md` — 验收记录（历史证据）

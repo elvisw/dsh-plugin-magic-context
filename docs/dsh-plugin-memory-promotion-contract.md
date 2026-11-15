@@ -1,5 +1,8 @@
 # DSH 适配器：historian 事实提升与 dreamer 策展契约
 
+> Status: historical — upstream MC promotion research snapshot (2026-10); not a current fork guarantee.
+> Scope: historical promotion/dreamer contract study.
+
 > 目标读者：要在本仓库里实现"记忆能产生"的工程师。
 > 证据分级：〔码〕源码行 · 〔档〕文档 · 〔测〕测试/实测取样。
 > 本文只读 MC 仓库与实测库；无任何写入（实测库以 `mode=ro` + `PRAGMA query_only=1` 探测）。

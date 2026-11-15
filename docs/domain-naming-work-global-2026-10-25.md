@@ -1,5 +1,8 @@
 # 域命名决定：machine=全局域 / org=工作域（2026-10-25）
 
+> Status: historical — 2026-10-25 naming decision; not a current guarantee.
+> Scope: historical domain-naming decision.
+
 ## 背景
 
 评估了"org 与 machine 合并为一个全局域、层级简化为 项目+全局 两级"的提议。

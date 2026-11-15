@@ -67,7 +67,7 @@ version hot-loads. In your next session:
 
 - Tool results carry `§N§` tags; a **telemetry badge** appears in the overlay showing live
   context occupancy, with a panel of live metrics and an operation record behind it.
-- A **Settings → Magic Context** page edits every volatile option; the same card is still
+- A **Settings → Magic Context** page edits the options the card exposes; the same card is still
   available on the GUI Plugins page as the legacy location/fallback.
 - The `ctx_reduce` / `ctx_expand` / `ctx_memory` tools are registered for the agent;
   project memory is **on by default** — facts distilled by the historian persist across
@@ -264,7 +264,7 @@ Both UI capabilities ride the same browser half (`src/client/index.js`, copied v
   stream (model-visible) stay English constants (to avoid cached-prefix churn from
   mid-session language switches). Mechanics in the
   [Settings UI contract](docs/dsh-plugin-settings-ui-contract.md) and the
-  [UI telemetry contract](docs/dsh-plugin-ui-telemetry-contract.md).
+  [historical UI telemetry host analysis](docs/dsh-plugin-ui-telemetry-contract.md).
 
 ## Observability & operations
 
@@ -356,31 +356,62 @@ package's structural answer):
 
 ## Documentation index
 
-(The linked documents are written in Chinese.)
+The linked documents are maintained in this repository; most are written in
+Chinese and a few are English.
 
-**Contracts**: [memory write](docs/dsh-plugin-memory-write-contract.md) ·
-[memory promotion](docs/dsh-plugin-memory-promotion-contract.md) ·
-[memory acceptance](docs/dsh-plugin-memory-acceptance.md) ·
-[config UI](docs/dsh-plugin-config-ui-contract.md) ·
-[UI telemetry](docs/dsh-plugin-ui-telemetry-contract.md) ·
-[upgrade follow-up](docs/dsh-plugin-upgrade-followup.md) ·
-[hooks coverage](docs/dsh-plugin-hooks-coverage-2026-10-08.md)
+### Current documentation maintained by this fork
 
-**Design decisions**: [port feasibility (seam map)](docs/dsh-port-feasibility-2026-10-06.md) ·
-[platform takeover & global domains](docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md) ·
-[dreamer vector decision](docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md) ·
-[memory mechanisms inventory](docs/memory-mechanisms-inventory-2026-10-09.md) ·
-[upstream source analysis](docs/upstream-source-analysis-2026-10-09.md) ·
-[global-domain source finding](docs/global-domain-source-finding-2026-10-10.md) ·
-[memory architecture challenge](docs/memory-architecture-challenge-2026-10-10.md)
+- [Magic Context Settings UI contract](docs/dsh-plugin-settings-ui-contract.md) (English) — the
+  current top-level Settings page, Plugins fallback, zh/en copy, and catalog-backed effort picker.
+- [Operations runbook](docs/dsh-plugin-operations-runbook-2026-10-10.md) — daily/weekly checks,
+  thresholds, recovery, and backup commands.
+- [Upgrade follow-up](docs/dsh-plugin-upgrade-followup.md) — the current re-alignment procedure.
+  Its §1 baseline is v0.49.30 and is **not** a v0.49.55 parity claim.
+- [Independent package release](docs/independent-package-release.md) — package identity, migration,
+  and release procedure for `@elvisw/dsh-magic-context`.
 
-**Retrospectives & runbooks**: [test design audit](docs/dsh-plugin-test-design-audit-2026-10-07.md) ·
-[operations runbook](docs/dsh-plugin-operations-runbook-2026-10-10.md) ·
-[surface write audit](docs/dsh-surface-write-audit-2026-10-09.md) ·
-[local embedding runtime audit](docs/local-embedding-runtime-audit-2026-10-15.md)
+### Historical research and upstream snapshots
 
-**Reports**: [dreamer token usage](docs/reports/dreamer-token-usage.md) ·
-[memory solutions comparison](docs/reports/memory-solutions-comparison.md)
+These are preserved for provenance. They are **not current guarantees**; each file has its own
+`> Status:` header with the evidence baseline.
+
+**Historical contracts**
+
+- [Memory write contract](docs/dsh-plugin-memory-write-contract.md) — mixed 2026-10 storage snapshot;
+  the current corpus is `memories.db`, and §8 authority is historical.
+- [Memory promotion contract](docs/dsh-plugin-memory-promotion-contract.md) — upstream promotion research.
+- [Memory acceptance](docs/dsh-plugin-memory-acceptance.md) — 2026-10 evidence (v6/v94 era).
+- [Config UI contract](docs/dsh-plugin-config-ui-contract.md) — historical; its plugin-specific
+  conclusions are superseded by the current Settings UI contract.
+- [UI telemetry contract](docs/dsh-plugin-ui-telemetry-contract.md) — historical host-seam analysis.
+- [Hooks coverage (2026-10-08)](docs/dsh-plugin-hooks-coverage-2026-10-08.md) — historical coverage audit.
+
+**Design decisions**
+
+- [Port feasibility (seam map)](docs/dsh-port-feasibility-2026-10-06.md)
+- [Platform takeover & global domains](docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md)
+- [Dreamer vector decision](docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md)
+- [Memory mechanisms inventory](docs/memory-mechanisms-inventory-2026-10-09.md)
+- [Upstream source analysis](docs/upstream-source-analysis-2026-10-09.md)
+- [Global-domain source finding](docs/global-domain-source-finding-2026-10-10.md)
+- [Memory architecture challenge](docs/memory-architecture-challenge-2026-10-10.md)
+- [Domain naming decision (2026-10-25)](docs/domain-naming-work-global-2026-10-25.md)
+
+**Audits & retrospectives**
+
+- [Test design audit](docs/dsh-plugin-test-design-audit-2026-10-07.md)
+- [Surface write audit](docs/dsh-surface-write-audit-2026-10-09.md)
+- [Local embedding runtime audit](docs/local-embedding-runtime-audit-2026-10-15.md)
+
+**Reports**
+
+- [Dreamer token usage](docs/reports/dreamer-token-usage.md)
+- [Memory solutions comparison](docs/reports/memory-solutions-comparison.md)
+
+**Upstream handoffs**
+
+- [Upstream follow-up v0.46.0 → v0.49.30](docs/upstream-followup-2026-10-30.md)
+- [/ctx-flush research handoff (0.11.1)](docs/research-handoff-ctx-flush-2026-11-11.md)
 
 ## Known limits
 

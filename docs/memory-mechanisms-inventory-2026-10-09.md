@@ -1,5 +1,8 @@
 # 记忆机制盘点（DSH Magic Context 适配器，v0.4.3 / commit 70418d40c）
 
+> Status: historical — v0.4.3 / commit 70418d40c inventory (2026-10-09); not a current guarantee.
+> Scope: historical memory-mechanism inventory.
+
 > **用途**：后续决策的事实底稿。把"当前实际生效"的记忆机制、判定条件、默认值、不变量
 > 与已知偏差按数据流整理在一处，避免再靠翻十几份时间跨度很大的文档来还原现状。
 >

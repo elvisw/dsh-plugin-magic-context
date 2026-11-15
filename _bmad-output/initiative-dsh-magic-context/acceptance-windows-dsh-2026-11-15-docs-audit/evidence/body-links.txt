@@ -1,0 +1,6 @@
+README.md:267: telemetry | [historical UI telemetry host analysis](docs/dsh-plugin-ui-telemetry-contract.md).
+README.md:384: index=True | - [Config UI contract](docs/dsh-plugin-config-ui-contract.md) — historical; its plugin-specific
+README.md:386: telemetry | - [UI telemetry contract](docs/dsh-plugin-ui-telemetry-contract.md) — historical host-seam analysis.
+README.zh-CN.md:207: telemetry | - **多语言**：浏览器侧 `magic-context` 命名空间字典（zh/en）；卡片的全部自有文案——字段 label/hint、路由占位、摘要、表单框架与选择器说明——跟随「设置 → 通用」即时切换、无需刷新。宿主 catalog 的值（provider/model/effort 名称）保持宿主原文。写进会话流、模型可见的 `session-notice` 保持英文常量（避免同会话中途换语言造成 cached prefix 抖动）。机制见[设置界面契约](docs/dsh-plugin-settings-ui-contract.md)与[主界面遥测契约（历史）](docs/dsh-plugin-ui-telemetry-contract.md)。
+README.zh-CN.md:305: index=True | - [配置界面契约](docs/dsh-plugin-config-ui-contract.md)——历史文档；插件相关结论已由当前设置界面契约取代。
+README.zh-CN.md:306: telemetry | - [主界面遥测契约](docs/dsh-plugin-ui-telemetry-contract.md)——历史宿主接缝分析。

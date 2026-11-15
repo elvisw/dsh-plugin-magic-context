@@ -43,7 +43,7 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 
 - 工具结果带上 `§N§` 标签；overlay 里出现**遥测徽标**，显示实时上下文占用，点开是
   指标面板与操作记录。
-- 「设置 → Magic Context」顶层设置页可编辑全部 volatile 选项；同一张卡片仍保留在 GUI「插件」页，作为旧位置与缺少 `settings.section` 槽位时的回退。
+- 「设置 → Magic Context」顶层设置页可编辑卡片列出的 volatile 选项；同一张卡片仍保留在 GUI「插件」页，作为旧位置与缺少 `settings.section` 槽位时的回退。
 - `ctx_reduce` / `ctx_expand` / `ctx_memory` 三个工具已注册；项目记忆**默认开启**——
   historian 提炼的事实跨会话沉淀，注入模型读取的位置。
 
@@ -204,7 +204,7 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
   - `GET /mc-telemetry/events` — SSE 实时尾
 - **安全**：路由仅 loopback、无 token 鉴权，因此**只输出计数与单行摘要**——不含消息正文、
   不含文件路径、不含凭据。
-- **多语言**：浏览器侧 `magic-context` 命名空间字典（zh/en）；卡片的全部自有文案——字段 label/hint、路由占位、摘要、表单框架与选择器说明——跟随「设置 → 通用」即时切换、无需刷新。宿主 catalog 的值（provider/model/effort 名称）保持宿主原文。写进会话流、模型可见的 `session-notice` 保持英文常量（避免同会话中途换语言造成 cached prefix 抖动）。机制见[设置界面契约](docs/dsh-plugin-settings-ui-contract.md)与[主界面遥测契约](docs/dsh-plugin-ui-telemetry-contract.md)。
+- **多语言**：浏览器侧 `magic-context` 命名空间字典（zh/en）；卡片的全部自有文案——字段 label/hint、路由占位、摘要、表单框架与选择器说明——跟随「设置 → 通用」即时切换、无需刷新。宿主 catalog 的值（provider/model/effort 名称）保持宿主原文。写进会话流、模型可见的 `session-notice` 保持英文常量（避免同会话中途换语言造成 cached prefix 抖动）。机制见[设置界面契约](docs/dsh-plugin-settings-ui-contract.md)与[主界面遥测契约（历史）](docs/dsh-plugin-ui-telemetry-contract.md)。
 
 ## 观测与运维
 
@@ -281,29 +281,57 @@ src/
 
 ## 文档索引
 
-**契约类**：[记忆写契约](docs/dsh-plugin-memory-write-contract.md) ·
-[记忆提升契约](docs/dsh-plugin-memory-promotion-contract.md) ·
-[记忆验收](docs/dsh-plugin-memory-acceptance.md) ·
-[配置界面契约](docs/dsh-plugin-config-ui-contract.md) ·
-[主界面遥测契约](docs/dsh-plugin-ui-telemetry-contract.md) ·
-[升级跟随](docs/dsh-plugin-upgrade-followup.md) ·
-[hooks 覆盖](docs/dsh-plugin-hooks-coverage-2026-10-08.md)
+链接文档随本仓库维护；多数为中文，少数为英文。
 
-**设计决策**：[移植可行性（接缝地图）](docs/dsh-port-feasibility-2026-10-06.md) ·
-[平台接管与全域](docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md) ·
-[dreamer 向量决策](docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md) ·
-[记忆机制清单](docs/memory-mechanisms-inventory-2026-10-09.md) ·
-[上游源码分析](docs/upstream-source-analysis-2026-10-09.md) ·
-[全域来源调查](docs/global-domain-source-finding-2026-10-10.md) ·
-[记忆架构挑战](docs/memory-architecture-challenge-2026-10-10.md)
+### 本 fork 维护的当前文档
 
-**复盘与运行**：[测试设计审计](docs/dsh-plugin-test-design-audit-2026-10-07.md) ·
-[运维手册](docs/dsh-plugin-operations-runbook-2026-10-10.md) ·
-[surface 写审计](docs/dsh-surface-write-audit-2026-10-09.md) ·
-[本地向量运行时审计](docs/local-embedding-runtime-audit-2026-10-15.md)
+- [Magic Context 设置界面契约](docs/dsh-plugin-settings-ui-contract.md)（英文）——当前顶层设置页、
+  Plugins 回退入口、中英文案与 catalog-backed effort 选择器。
+- [运维手册](docs/dsh-plugin-operations-runbook-2026-10-10.md)——每日/每周检查、阈值、故障处置与备份命令。
+- [升级跟随](docs/dsh-plugin-upgrade-followup.md)——当前重新对齐流程；§1 是 v0.49.30 历史基线，
+  **不**代表已经完成 v0.49.55 parity。
+- [独立包名与发布](docs/independent-package-release.md)——`@elvisw/dsh-magic-context` 的包身份、迁移与发布流程。
 
-**报告**：[dreamer token 用量](docs/reports/dreamer-token-usage.md) ·
-[记忆方案对比](docs/reports/memory-solutions-comparison.md)
+### 历史研究与上游快照
+
+以下文档仅作溯源保留，**不是当前保证**；每份文件标题后都有自己的 `> Status:` 与证据基线。
+
+**历史契约**
+
+- [记忆写契约](docs/dsh-plugin-memory-write-contract.md)——混合的 2026-10 存储快照；
+  当前语料库是 `memories.db`，§8 authority 已属历史。
+- [记忆提升契约](docs/dsh-plugin-memory-promotion-contract.md)——上游提升机制研究。
+- [记忆验收](docs/dsh-plugin-memory-acceptance.md)——2026-10 证据（v6/v94 时期）。
+- [配置界面契约](docs/dsh-plugin-config-ui-contract.md)——历史文档；插件相关结论已由当前设置界面契约取代。
+- [主界面遥测契约](docs/dsh-plugin-ui-telemetry-contract.md)——历史宿主接缝分析。
+- [hooks 覆盖（2026-10-08）](docs/dsh-plugin-hooks-coverage-2026-10-08.md)——历史覆盖审计。
+
+**设计决策**
+
+- [移植可行性（接缝地图）](docs/dsh-port-feasibility-2026-10-06.md)
+- [平台接管与全域](docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md)
+- [dreamer 向量决策](docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md)
+- [记忆机制清单](docs/memory-mechanisms-inventory-2026-10-09.md)
+- [上游源码分析](docs/upstream-source-analysis-2026-10-09.md)
+- [全域来源调查](docs/global-domain-source-finding-2026-10-10.md)
+- [记忆架构挑战](docs/memory-architecture-challenge-2026-10-10.md)
+- [域命名决定（2026-10-25）](docs/domain-naming-work-global-2026-10-25.md)
+
+**复盘与审计**
+
+- [测试设计审计](docs/dsh-plugin-test-design-audit-2026-10-07.md)
+- [surface 写审计](docs/dsh-surface-write-audit-2026-10-09.md)
+- [本地向量运行时审计](docs/local-embedding-runtime-audit-2026-10-15.md)
+
+**报告**
+
+- [dreamer token 用量](docs/reports/dreamer-token-usage.md)
+- [记忆方案对比](docs/reports/memory-solutions-comparison.md)
+
+**上游交接**
+
+- [上游跟进 v0.46.0 → v0.49.30](docs/upstream-followup-2026-10-30.md)
+- [/ctx-flush 研究交接（0.11.1）](docs/research-handoff-ctx-flush-2026-11-11.md)
 
 ## 已知边界
 

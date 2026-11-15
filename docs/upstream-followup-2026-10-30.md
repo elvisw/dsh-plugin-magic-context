@@ -1,5 +1,8 @@
 # 上游 MC 跟进分析：v0.46.0 → v0.49.30（2026-10-30）
 
+> Status: historical — v0.46.0→v0.49.30 analysis (2026-10-30); not a current guarantee and not v0.49.55 parity.
+> Scope: historical upstream follow-up.
+
 > **取源**：`git clone https://github.com/cortexkit/magic-context .upstream/magic-context`
 > （完整历史，HEAD=tag v0.49.30 = 47bcd71a2；`.upstream/` 已在 `.gitignore`，只读分析）。
 > 基线：PARITY.md / upgrade-followup §1 的对齐目标 **v0.46.0**（2026-10-08 发布）。

@@ -1,5 +1,8 @@
 # Dreamer and historian: 14-day token-use investigation
 
+> Status: historical — 2026-09-14..28 token-use investigation; not a current guarantee.
+> Scope: historical dreamer/historian token study.
+
 ## Scope and decision
 
 **Window:** 2026-09-14 14:27:20 UTC ≤ invocation start < 2026-09-28 14:27:20 UTC (exactly 14 days). Local, single-machine inventory; not fleet-wide telemetry. Code inspected at `0cae05d8bccd4997e5c5c09ae641a16a5236f00a`. This is an investigation, not a budget or batch-size change.

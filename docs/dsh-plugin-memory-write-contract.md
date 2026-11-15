@@ -1,5 +1,8 @@
 # MC 记忆写路径存储契约（DSH 适配器实现用）
 
+> Status: historical — mixed 2026-10 storage-contract snapshot; current corpus is memories.db and §8 authority is retired.
+> Not a current guarantee; current behavior is source and tests.
+
 > **2026-10-13 状态变化（先读）**：插件已切换到自有语料库 `memories.db`（形状逐列继承
 > 本文档所述 v95/v94 契约，版本续号归本插件）；legacy `context.db` 封存不读。本文档中
 > 仍然有效的部分：`memories`/`memory_mutation_log`/`project_state`/FTS/embedding 的

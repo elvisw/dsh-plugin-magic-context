@@ -1,5 +1,8 @@
 # DSH 插件「实时日志/遥测上屏」契约
 
+> Status: historical — 2026-10 upstream/DSH 0.2.0-rc.2 host analysis; not a current guarantee.
+> Scope: historical telemetry seam study; later dated appendix notes are observations, not guarantees.
+
 > 目标：回答「一个 host 侧插件如何把自己正在做什么的实时日志显示到 GUI 主界面」，并给出 magic-context 落地的最小改造配方与不可行路径的黑名单。
 >
 > 标注约定：〔码〕= 源码行号证据；〔测〕= 隔离环境实测（隔离 `DSH_HOME`，未触碰真实 profile）；〔档〕= 仓库 README/文档。

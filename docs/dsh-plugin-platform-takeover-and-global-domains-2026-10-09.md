@@ -1,5 +1,8 @@
 # 底座接管与全局域设计 v2（2026-10-09）
 
+> Status: historical — 2026-10-09 design draft v2; not a current guarantee.
+> Scope: historical platform/global-domain design.
+
 > **状态**：设计草案 v2。v1 经用户一轮评审（"你来当架构师和产品经理挑战一下"）后修订。
 > **未动代码**：本文只定义机制、不变量、阶段与验收判据。
 >

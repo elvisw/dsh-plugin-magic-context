@@ -1,0 +1,2 @@
+PASS: git diff --check clean (no whitespace errors)
+CRLF conversion warnings: 10

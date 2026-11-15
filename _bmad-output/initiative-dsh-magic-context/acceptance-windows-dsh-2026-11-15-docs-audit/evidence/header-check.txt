@@ -1,0 +1,25 @@
+docs/dsh-plugin-settings-ui-contract.md: > Status: current — last verified 2026-11-15 against DSH 0.2.2-rc.1.
+docs/dsh-plugin-operations-runbook-2026-10-10.md: > Status: current — last verified 2026-11-16; referenced scripts and store paths
+docs/dsh-plugin-upgrade-followup.md: > Status: current — upgrade procedure (last verified 2026-11-16); §1 is a histor
+docs/independent-package-release.md: > Status: current — last verified 2026-11-16 against the 0.13.0 package and rele
+docs/dsh-plugin-memory-write-contract.md: > Status: historical — mixed 2026-10 storage-contract snapshot; current corpus i
+docs/dsh-plugin-memory-promotion-contract.md: > Status: historical — upstream MC promotion research snapshot (2026-10); not a
+docs/dsh-plugin-memory-acceptance.md: > Status: historical — 2026-10 acceptance evidence (v6/v94 era); the old shared
+docs/dsh-plugin-config-ui-contract.md: > Status: historical — 2026-10 upstream/DSH 0.2.0-rc.2 research snapshot (packag
+docs/dsh-plugin-ui-telemetry-contract.md: > Status: historical — 2026-10 upstream/DSH 0.2.0-rc.2 host analysis; not a curr
+docs/dsh-plugin-hooks-coverage-2026-10-08.md: > Status: historical — 2026-10-08 upstream hooks coverage audit; not a current g
+docs/dsh-port-feasibility-2026-10-06.md: > Status: historical — 2026-10-06 feasibility study (DSH master 5badb15); not a
+docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md: > Status: historical — 2026-10-09 design draft v2; not a current guarantee.
+docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md: > Status: historical — 2026-10-08 decision record; not a current guarantee.
+docs/memory-mechanisms-inventory-2026-10-09.md: > Status: historical — v0.4.3 / commit 70418d40c inventory (2026-10-09); not a c
+docs/upstream-source-analysis-2026-10-09.md: > Status: historical — upstream v0.46.1 source analysis (2026-10-09); not a curr
+docs/global-domain-source-finding-2026-10-10.md: > Status: historical — 2026-10-10 source finding; not a current guarantee.
+docs/memory-architecture-challenge-2026-10-10.md: > Status: historical — 2026-10-10 architecture evaluation; not a current guarant
+docs/domain-naming-work-global-2026-10-25.md: > Status: historical — 2026-10-25 naming decision; not a current guarantee.
+docs/dsh-plugin-test-design-audit-2026-10-07.md: > Status: historical — 2026-10-07 test-design audit; not a current guarantee.
+docs/dsh-surface-write-audit-2026-10-09.md: > Status: historical — 2026-10-09 surface-write audit; not a current guarantee.
+docs/local-embedding-runtime-audit-2026-10-15.md: > Status: historical — 2026-10-15 ONNX telemetry audit; not a current guarantee.
+docs/reports/dreamer-token-usage.md: > Status: historical — 2026-09-14..28 token-use investigation; not a current gua
+docs/reports/memory-solutions-comparison.md: > Status: historical — 2026-09-29 research comparison; not a current guarantee.
+docs/upstream-followup-2026-10-30.md: > Status: historical — v0.46.0→v0.49.30 analysis (2026-10-30); not a current gua
+docs/research-handoff-ctx-flush-2026-11-11.md: > Status: historical — 0.11.1 baseline (2026-11-11); #15 shipped in 0.12.0; not

@@ -1,0 +1,1 @@
+PASS: all checked relative Markdown links resolve

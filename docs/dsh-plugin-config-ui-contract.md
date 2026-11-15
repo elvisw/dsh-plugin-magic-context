@@ -1,5 +1,9 @@
 # DSH 插件配置界面契约
 
+> Status: historical — 2026-10 upstream/DSH 0.2.0-rc.2 research snapshot (package-name note 2026-11-14/15); plugin-specific conclusions are superseded.
+> Superseded by: docs/dsh-plugin-settings-ui-contract.md
+> Not a current guarantee; body preserved unchanged.
+
 > 目标：回答「一个 profile 插件的配置项如何出现在 GUI 插件页并可编辑」，并给出把 magic-context 的阈值（`policy.*` / `journal.*` / `memory.*`）做成界面可改的最小改造配方。
 >
 > 标注约定：〔码〕= 源码行号证据；〔测〕= 本机实测（隔离 TEMP 目录，未触碰用户 desktop profile）；〔档〕= 仓库文档/README。

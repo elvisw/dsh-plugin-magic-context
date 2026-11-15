@@ -1,5 +1,8 @@
 # 独立包名与发布
 
+> Status: current — last verified 2026-11-16 against the 0.13.0 package and release guide.
+> Scope: package rename, user migration, and release procedure.
+
 本仓库 `0.12.0`–`0.12.3` 使用 npm 包名 **`@elvisw/dsh-plugin-magic-context`**；从 **`0.13.0`** 起改为
 **`@elvisw/dsh-magic-context`**。`0.12.1` 是同一代码线的 docs-only patch，`0.12.2` 是 historian 重试、
 reasoning effort 与两处观测口径的修复版，`0.12.3` 是 `/ctx-flush` 空队列反馈的 patch，`0.13.0` 是包名

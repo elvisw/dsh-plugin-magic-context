@@ -1,5 +1,8 @@
 # 本地 embedding 运行时审计 — onnx 遥测（opt-out）核对
 
+> Status: historical — 2026-10-15 ONNX telemetry audit; not a current guarantee.
+> Scope: historical local-embedding runtime check.
+
 日期：2026-10-15 · 触发：上游 MC 0.49.1「本地 embedding 的 ONNX Runtime 遥测 opt-out 生效」修复
 结论：**不适用——本插件不加载原生 ONNX Runtime，因此不存在上游修复所指的遥测面。** 已把该性质钉成常驻判据（spec）。
 

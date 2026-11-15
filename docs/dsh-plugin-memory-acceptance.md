@@ -1,5 +1,8 @@
 # DSH 适配器 · 记忆功能验收与实测证据
 
+> Status: historical — 2026-10 acceptance evidence (v6/v94 era); the old shared context.db path below is retained as evidence.
+> Current acceptance command uses memories.db (scripts/mc-acceptance.mjs:49-53).
+
 > 本文记录 `dsh-plugin-magic-context` 记忆功能在**实测 Magic Context 记忆库**上的
 > 端到端验收结果与可复跑方式。所有数字都来自本机实测（适配器库
 > `%USERPROFILE%\.local\share\cortexkit\magic-context-dsh-poc\dsh-magic-context.db`

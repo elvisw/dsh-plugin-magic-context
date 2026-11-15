@@ -1,5 +1,8 @@
 # 记忆机制架构挑战与评估（2026-10-10）
 
+> Status: historical — 2026-10-10 architecture evaluation; not a current guarantee.
+> Scope: historical memory-architecture challenge.
+
 > 口径：本文所有断言分三级——**[实测]** 当场在实测库/上游源码验证过；**[代码]** 读过代码锚点；
 > **[历史]** 来自既往已归档的核实记录。未验证的不写。
 > 评估对象：dsh-plugin-magic-context 全部记忆机制（召回/写入/晋升/评分/压缩/维护/检索/全局域/画像/观测）。

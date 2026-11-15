@@ -1,5 +1,8 @@
 # 全局域候选的来源问题 —— 复现检测在真实语料上是空门
 
+> Status: historical — 2026-10-10 source finding; not a current guarantee.
+> Scope: historical global-domain candidate study.
+
 > **日期**：2026-10-10 · **方法**：对共享库只读查询 + 在实测库上跑检测器 · **结论一句话**：
 > 规划里 WP9 的候选来源（"同一 normalized_hash 出现在 ≥2 个项目"）在现有 1292 行 / 33 个项目上
 > **命中 0 条**，且这不是实现缺陷——historian 产出的事实天然是项目绑定的。

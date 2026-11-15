@@ -1,5 +1,8 @@
 # Dreamer 取舍与向量回填策略（决策记录，2026-10-08）
 
+> Status: historical — 2026-10-08 decision record; not a current guarantee.
+> Scope: historical dreamer/vector decision.
+
 > **结论**：不移植 MC 的 dreamer 调度层；`promote-primers` **单独做没有意义**（它需要整条
 > primer 管线，见 §6 修正），故改为**产品决策**；单次调用类任务按触发条件逐个评估；
 > 向量回填**保持默认关**，开启时必须做成限速后台回填 + 成本上限 + telemetry。

@@ -1,5 +1,8 @@
 # 运维手册（可执行清单）
 
+> Status: current — last verified 2026-11-16; referenced scripts and store paths re-checked.
+> Scope: operator commands, thresholds, and recovery steps.
+
 > 规划 WP14 的第二个交付物（第一个是内部巡检 prompt，未随仓库发布）。
 > 来源：设计 v2 §7「稳态运维」的节拍表 —— 那份表回答"什么时候做什么"，本文回答
 > **"敲哪条命令、看到什么算正常、看到什么该动手、动不了怎么办"**。

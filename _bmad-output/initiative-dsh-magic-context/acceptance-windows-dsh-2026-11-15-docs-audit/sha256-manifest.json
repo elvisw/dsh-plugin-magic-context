@@ -1,0 +1,80 @@
+{
+  "fileCount": 15,
+  "files": [
+    {
+      "path": "acceptance-report.md",
+      "bytes": 3633,
+      "sha256": "0d875c75528aa34ef691efaf1568be84249445e63690358e33784ec7b196478a"
+    },
+    {
+      "path": "evidence/body-change-guard.txt",
+      "bytes": 2351,
+      "sha256": "9722943c681e35c9e47aac6a9cf257b7d085fe0bfce33a05ef7689c085b8a7a7"
+    },
+    {
+      "path": "evidence/body-links.txt",
+      "bytes": 1329,
+      "sha256": "4b2fe5c08fa8c6bd7a880e5eb40b8cc3ca2c7ec1ee49ddf737d568ff27776fce"
+    },
+    {
+      "path": "evidence/check_docs.py",
+      "bytes": 10746,
+      "sha256": "4f97d857efbb8f31257b3dfb45dafcdac719bb274a5b73390e27222182dcf660"
+    },
+    {
+      "path": "evidence/config-ui-check.txt",
+      "bytes": 88,
+      "sha256": "ab4b687c6de4428056e61f079c1078caede992806290fc395273741223587735"
+    },
+    {
+      "path": "evidence/current-claims.md",
+      "bytes": 841,
+      "sha256": "25769d425b6b18d12ea015d2a007a63aba148f198151b4ae866a24b439419401"
+    },
+    {
+      "path": "evidence/diff-check.txt",
+      "bytes": 83,
+      "sha256": "7d2562feb2eb53ba8acdffa4201f021b322905862e01af485ff7f01b7af4b5cc"
+    },
+    {
+      "path": "evidence/document-status-matrix.md",
+      "bytes": 5829,
+      "sha256": "87c7e9706fb52d435aad29f2ed432eedb99b881f58e68d428c8a2248148b6831"
+    },
+    {
+      "path": "evidence/header-check.txt",
+      "bytes": 3191,
+      "sha256": "5b251fe4d526855cdec91f54900b96a13130fb1fbf2ac1ffa7b61e10f0bc3fc2"
+    },
+    {
+      "path": "evidence/inventory.txt",
+      "bytes": 1373,
+      "sha256": "b9f2f1b29686597e33a0d415f5a384c9786fb403301fab07774bbfbaad27dbad"
+    },
+    {
+      "path": "evidence/link-check.txt",
+      "bytes": 51,
+      "sha256": "91f7fb73d3ea8721d0e0eba1353af510fc1cee283526136b9bbbe9f486489a08"
+    },
+    {
+      "path": "evidence/no-release.txt",
+      "bytes": 86,
+      "sha256": "245919806e2ba0097da94e973c6469b9b607995cafa2391b3486be4d038aec3c"
+    },
+    {
+      "path": "evidence/readme-parity.txt",
+      "bytes": 84,
+      "sha256": "026dcd8b60c313c184eb702328e12d526e13a254f517d353c10b89faa365fdbc"
+    },
+    {
+      "path": "evidence/readme-split.txt",
+      "bytes": 190,
+      "sha256": "01526196a076f76b5168f98bda0bb4768ffce5b81602e39f3ebd4e014c95d0d4"
+    },
+    {
+      "path": "REPRODUCE.md",
+      "bytes": 2080,
+      "sha256": "e2d9a67d9edeb7f7d1536c26b4f27fe47c9e308334f2fbeb52fc56f771503024"
+    }
+  ]
+}
