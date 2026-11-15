@@ -30,7 +30,7 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 
 > 包名说明：npm 上无 scope 的 `dsh-magic-context` 是另一位维护者的独立实现，不是本 fork，也不是它的上游；本 fork 只以 `@elvisw/dsh-magic-context` 发布。所有安装命令都必须保留 `@elvisw/` scope。
 
-`0.13.0` 是本包名下的首个版本。如果之前装过 `@elvisw/dsh-plugin-magic-context`（0.12.x）或上游
+`0.13.0` 引入本包名；当前发布是 `0.14.0`，新增顶层设置页。如果之前装过 `@elvisw/dsh-plugin-magic-context`（0.12.x）或上游
 `dsh-plugin-magic-context`，请先移除旧包：三者使用同一个 loader row id（`magic-context-dsh`），不支持共装；共装时只会加载一行，设置页可能消失。
 从 0.12.x 升级还需要一次性迁移 profile patch 的包名，见
 [docs/independent-package-release.md](docs/independent-package-release.md)；迁移脚本随 npm tarball 与 hand-out 一起发布。
@@ -361,13 +361,14 @@ typecheck → test → build → check:i18n。
 `0.13.0` 起以 **`@elvisw/dsh-magic-context`** 发布；版本与 tag 归本 fork。
 上游仓库和上游 npm 包仍由原维护者维护，本 fork 不修改它们。
 
-相对上游 `0.11.2`，累计到 `0.13.0` 的主要差异：
+相对上游 `0.11.2`，累计到 `0.14.0` 的主要差异：
 
 - **恢复语义**：`ctx_expand` 不再原地改写占位符，而是读取持久化的原始 `tool/result`，作为新的工具结果返回并分配新 tag；旧占位符保持不变，旧 tag 仍是 dropped，再次 `ctx_reduce` 是 no-op（`already dropped`）。这是 breaking change。
 - **Historian 之后仍可读原文**：`ctx_expand` 新增 `message` 定位，接受当前会话的 DSH log event seq（包括被 Historian shadow 的原始 `tool/result`）；不重跑原工具、不改写摘要或 compartment。
 - **手动 flush**：新增 `/ctx-flush`，只把当前会话已 pending 的 drop 标记为下一次 preStep 落地；不启动 Historian、recomp、摘要或模型调用。
 - **持久 drop 状态**：`ctx_reduce`/`ctx_expand` 以 `pending_drops` 的 `none`/`pending`/`landed` 状态判定，而不是依赖当前 surface 上是否还有占位符；旧 tag 在 restore 后不会再显示假的 “Queued”。
 - **tag 保留策略**：移除挂载时的 30 天 tag prune、`tags.retentionDays` 配置与 `AdapterStores.pruneTags`；旧 profile 里的该键保留但被忽略，且每进程最多告警一次。
+- **设置界面**：插件注册顶层 `settings.section`（Magic Context），字段文案与选择器支持中英文，Historian 推理强度从当前模型 catalog 读取；GUI「插件」页卡片保留为旧位置与回退。
 - **schema 与包名**：插件数据库升到 v11（`pending_drops.flush_requested`，v10 自动迁移）；npm 包名在 `0.12.x` 为
   `@elvisw/dsh-plugin-magic-context`，`0.13.0` 改为 `@elvisw/dsh-magic-context`，但 loader row id
   `magic-context-dsh`、settings namespace、插件数据目录 `magic-context-dsh-poc`、schema 与存储格式不变。

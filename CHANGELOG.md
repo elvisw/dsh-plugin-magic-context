@@ -8,7 +8,7 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
-## [Unreleased]
+## [0.14.0] - 2026-11-16
 
 ### Added
 
@@ -19,10 +19,12 @@
 ### Changed
 
 - README 与发布文档明确包名边界：npm 上无 scope 的 `dsh-magic-context` 是另一位维护者的独立实现，不是本 fork 或它的上游；本 fork 只以 `@elvisw/dsh-magic-context` 发布，安装命令必须保留 scope。
+- README 文档索引拆分为 4 篇 current 与 21 篇 historical；`docs/` 下 25 篇文档标题后统一加 `> Status:` 证据基线，旧配置 UI 契约标记为 historical 并指向当前设置界面契约。
 
 ### Fixed
 
 - 设置卡片在 `snapshot.status !== 'ready'` 时不再硬编码英文 `Magic Context adapter settings`，中文界面不会漏出英文。
+- 点过 `Default`/Reset 后再选 `自定义…` 不再被已暂存的 clear 弹回默认值；已公布的 effort id 通过 `自定义…` 输入时不再误报“不在模型目录中”；清除暂存状态后 Save 不再可点却无写入。
 
 ## [0.13.0] - 2026-11-15
 
@@ -246,6 +248,7 @@ npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布�
 
 0.12.0 之前的 tag 位于上游仓库 `wk544863858/dsh-plugin-magic-context`；从 0.12.0 起，版本与 tag 属于本 fork。
 
+[0.14.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.12.3...v0.13.0
 [0.12.3]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.12.2...v0.12.3
 [0.12.2]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.12.1...v0.12.2
