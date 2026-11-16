@@ -18,6 +18,14 @@ export interface StatusDeps {
    * numbers after a settings-form edit until restart).
    */
   readonly policy: PressurePolicy | (() => PressurePolicy)
+  /** T20: provider/space/coverage line; omitted by tests that do not mount the lane. */
+  readonly embedding?: () => {
+    readonly state: string
+    readonly provider: string
+    readonly model: string
+    readonly dimensions: number | null
+    readonly coverage: { readonly total: number; readonly covered: number } | null
+  }
 }
 
 /** Narrowed registration surface (keeps the package typecheck standalone). */
@@ -79,6 +87,21 @@ export function registerCtxStatusCommand(ctx: Context, deps: StatusDeps): void {
       } catch (error) {
         journalLine = `- journal: read failed (${error instanceof Error ? error.message : String(error)})`
       }
+      let embeddingLine = '- embedding: unavailable'
+      if (deps.embedding !== undefined) {
+        try {
+          const embedding = deps.embedding()
+          const dims = embedding.dimensions === null ? 'unknown' : `${String(embedding.dimensions)}d`
+          const coverage = embedding.coverage === null
+            ? 'coverage unknown'
+            : `${String(embedding.coverage.covered)}/${String(embedding.coverage.total)} searchable rows`
+          embeddingLine = `- embedding: ${embedding.state} · ${embedding.provider}`
+            + `${embedding.model === '' ? '' : ` · ${embedding.model}`}`
+            + ` · ${dims} · ${coverage}`
+        } catch {
+          embeddingLine = '- embedding: status read failed'
+        }
+      }
       const lines = [
         'Magic Context (dsh adapter) — status',
         `- usage: ${latest === undefined
@@ -93,6 +116,7 @@ export function registerCtxStatusCommand(ctx: Context, deps: StatusDeps): void {
         `- reclaim queue: ${pending.length === 0 ? 'empty' : pending.map(tag => `§${String(tag)}§`).join(', ')}`,
         `- historian: ${String(compartments.length)} compartment(s), ~${String(coveredTokens)} tokens digested`
           + `${unlanded.length === 0 ? '' : `, ${String(unlanded.length)} awaiting publication`}`,
+        embeddingLine,
         `- baseline: ${baseline === undefined
           ? 'not built yet'
           : `epoch ${String(baseline.epoch)}, node ${String(baseline.nodeSeq ?? '?')}, `

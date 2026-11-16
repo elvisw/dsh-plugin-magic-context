@@ -1,0 +1,10 @@
+{
+  "dsh": "0.2.2-rc.1",
+  "node": "24.21.0",
+  "plugin": "0.15.0",
+  "profile": "t20",
+  "isolated_root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t20-20261117-002740",
+  "playwright": "1.63.0",
+  "fake_embedding_provider": "local simulation (not a real model)",
+  "real_siliconflow": "provider-level probe recorded separately; this gate uses the fake server"
+}

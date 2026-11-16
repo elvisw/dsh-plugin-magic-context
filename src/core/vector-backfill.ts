@@ -63,6 +63,9 @@ export interface VectorBackfillDeps {
    * overrides a proven space.
    */
   readonly bootstrapModelId?: string
+  /** Re-checked after the embed call and before each store, so a Pause,
+   * Disarm or provider switch cannot be overtaken by an in-flight batch. */
+  readonly isCancelled?: () => boolean
 }
 
 export type VectorBackfillReason =
@@ -72,6 +75,10 @@ export type VectorBackfillReason =
   | 'no-candidates'
   | 'nothing-producible'
   | 'embed-failed'
+  | 'remote-not-started'
+  | 'remote-paused'
+  | 'remote-unprobed'
+  | 'cancelled'
 
 export interface VectorBackfillOutcome {
   /** Rows that did not exist in the space before this pass. */
@@ -158,11 +165,17 @@ export async function runVectorBackfill(deps: VectorBackfillDeps): Promise<Vecto
     return { ...empty, total: plan.total, reason: 'embed-failed' }
   }
 
+  if (deps.isCancelled?.() === true) {
+    return { ...empty, total: plan.total, reason: 'cancelled' }
+  }
   let created = 0
   let present = 0
   let skipped = 0
   let failed = 0
   for (const [index, row] of rows.entries()) {
+    if (deps.isCancelled?.() === true) {
+      return { created, present, skipped, failed, total: plan.total, reason: 'cancelled' }
+    }
     const vector = vectors[index]
     if (!isUsableVector(vector, deps.dims)) {
       skipped += 1

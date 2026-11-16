@@ -1,0 +1,122 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t20-20261117-002740",
+  "fakeRoot": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t20-fake\\20261117-002738",
+  "steps": [
+    {
+      "name": "initial",
+      "at": "2026-11-16T16:28:13.737Z",
+      "provider": "openai-compatible",
+      "model": "fixture-embed-a",
+      "hasEmbeddingSection": true,
+      "hasStart": true,
+      "hasProbe": true,
+      "statusLine": "状态: 未探测 · fixture-embed-a · — · 覆盖未知"
+    },
+    {
+      "name": "models-loaded",
+      "at": "2026-11-16T16:28:15.115Z",
+      "options": [
+        "",
+        "fixture-embed-a",
+        "fixture-embed-b"
+      ]
+    },
+    {
+      "name": "probed",
+      "at": "2026-11-16T16:28:16.659Z",
+      "statusLine": "状态: 未开始重建 · fixture-embed-a · 16d · 0/3 条可检索记忆",
+      "patchHas16": false
+    },
+    {
+      "name": "before-start-requests",
+      "at": "2026-11-16T16:28:16.668Z",
+      "requests": [
+        {
+          "at": 1794846493.891917,
+          "path": "models",
+          "inputCount": 0
+        },
+        {
+          "at": 1794846495.1391404,
+          "path": "embeddings",
+          "inputCount": 1
+        }
+      ],
+      "embeddings": 1,
+      "automatic": 0
+    },
+    {
+      "name": "started",
+      "at": "2026-11-16T16:28:20.312Z",
+      "statusLine": "状态: 迁移中 · fixture-embed-a · 16d · 2/3 条可检索记忆"
+    },
+    {
+      "name": "after-start-requests",
+      "at": "2026-11-16T16:28:20.319Z",
+      "embeddings": 2,
+      "counts": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "paused",
+      "at": "2026-11-16T16:28:21.163Z",
+      "statusLine": "状态: 已暂停 · fixture-embed-a · 16d · 2/3 条可检索记忆"
+    },
+    {
+      "name": "resumed",
+      "at": "2026-11-16T16:28:23.718Z",
+      "statusLine": "状态: 已就绪 · fixture-embed-a · 16d · 3/3 条可检索记忆"
+    },
+    {
+      "name": "rollback-staged",
+      "at": "2026-11-16T16:28:25.087Z",
+      "provider": "local",
+      "fakeRequests": 4
+    },
+    {
+      "name": "rollback-after-save",
+      "at": "2026-11-16T16:28:32.233Z",
+      "provider": "local",
+      "statusLine": "状态: 已回滚到本地 · local · — · 0/2 条可检索记忆",
+      "rollbackStateOk": true
+    }
+  ],
+  "requestsBeforeStart": [
+    {
+      "at": 1794846493.891917,
+      "path": "models",
+      "inputCount": 0
+    },
+    {
+      "at": 1794846495.1391404,
+      "path": "embeddings",
+      "inputCount": 1
+    }
+  ],
+  "requestsAfterStart": [
+    {
+      "at": 1794846493.891917,
+      "path": "models",
+      "inputCount": 0
+    },
+    {
+      "at": 1794846495.1391404,
+      "path": "embeddings",
+      "inputCount": 1
+    },
+    {
+      "at": 1794846496.805817,
+      "path": "embeddings",
+      "inputCount": 2
+    }
+  ],
+  "errors": [],
+  "final": {
+    "errors": [],
+    "patchProvider": "local",
+    "patchModel": "fixture-embed-a",
+    "patchDimensions": "0"
+  }
+}

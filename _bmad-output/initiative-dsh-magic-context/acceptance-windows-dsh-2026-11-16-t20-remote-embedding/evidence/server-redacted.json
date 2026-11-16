@@ -1,0 +1,11 @@
+{
+  "pid": 16528,
+  "port": 11139,
+  "url": "http://127.0.0.1:11139/?token=<redacted>",
+  "running": true,
+  "fake_pid": 12536,
+  "fake_port": 11130,
+  "fake_root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t20-fake\\20261117-002738",
+  "log": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t20-20261117-002740\\evidence\\server.log",
+  "log_tail": "dsh web: http://127.0.0.1:11139/?token=<redacted>\n"
+}

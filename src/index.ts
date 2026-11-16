@@ -298,6 +298,14 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
   const lane = openMemoryLane(ctx, config, stores)
   const { memoryRecall, memoryWriter, profileWriter, memorySearch, describeMemoryWrite } = lane
   const { memorySettings } = lane
+  if (journal !== undefined) {
+    // T20: an explicit Start must run one bounded pass even when no agent tool
+    // was registered (registerTools: false) or the maintenance tick is off.
+    lane.embedding.setRunner(() => lane.vectorBackfill(
+      Math.max(1, Math.floor(liveNumber(memorySettings?.vectorBackfillLimit, 24))),
+      journal,
+    ))
+  }
 
   const disposers: Array<() => void> = []
   const on = (name: string, listener: unknown): void => {
@@ -721,7 +729,23 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
     }
   }
   if (config.registerStatusCommand !== false) {
-    registerCtxStatusCommand(ctx, { stores, policy: activePolicy })
+    registerCtxStatusCommand(ctx, {
+      stores,
+      policy: activePolicy,
+      embedding: () => {
+        const status = lane.embedding.status()
+        return {
+          state: status.state,
+          provider: status.provider,
+          model: status.model,
+          dimensions: status.dimensions,
+          coverage: status.coverage === null ? null : {
+            total: status.coverage.total,
+            covered: status.coverage.covered,
+          },
+        }
+      },
+    })
     // Flush shares the slash-command gate: it is a manual queue lever, not a
     // second recovery mode. The command only writes the durable marker; the
     // next preStep lands it through the same helper as the automatic pass.
@@ -944,6 +968,18 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
     journal?.info('boot', 'telemetry route attached for the browser half', {
       telemetry: '/mc-telemetry',
       routes: ['/mc-telemetry/summary', '/mc-telemetry/events'],
+    })
+    scope.effect(() => webServer.register({
+      kind: 'prefix',
+      path: '/mc-embedding',
+      handler: (req, res) => lane.embedding.handle(
+        req as unknown as Parameters<typeof lane.embedding.handle>[0],
+        res as unknown as Parameters<typeof lane.embedding.handle>[1],
+      ),
+    }))
+    journal?.info('boot', 'embedding route attached for the browser half', {
+      embedding: '/mc-embedding',
+      routes: ['/mc-embedding/status', '/mc-embedding/models', '/mc-embedding/probe', '/mc-embedding/rebuild'],
     })
   })
 
@@ -1186,6 +1222,28 @@ export const Config = z.object({
     model: z.string().default('').volatile(),
     /** Optional provider/model-specific reasoning effort; blank = host default. */
     reasoningEffort: z.string().default('').volatile(),
+  }),
+
+  /**
+   * T20: project-memory embedding provider. Local MiniLM is the default; the
+   * remote path is OpenAI-compatible only. Declaring this block is safe: it
+   * has no side effect unless `provider` is switched away from `local`.
+   */
+  embedding: z.object({
+    provider: z.string().default('local').volatile(),
+    preset: z.string().default('siliconflow').volatile(),
+    endpoint: z.string().default('').volatile(),
+    authHeader: z.string().default('authorization').volatile(),
+    model: z.string().default('').volatile(),
+    apiKeyEnv: z.string().default('').volatile(),
+    dimensions: z.union([z.number(), z.const(null)]).default(0).volatile(),
+    queryInstruction: z.string().default('').volatile(),
+    documentPrefix: z.string().default('').volatile(),
+    // Bounds live in `resolveEmbeddingConfig` so a malformed hand-edited value
+    // falls back instead of aborting profile boot.
+    timeoutMs: z.number().default(8_000).volatile(),
+    queryTimeoutMs: z.number().default(2_500).volatile(),
+    batchSize: z.number().default(16).volatile(),
   }),
 
   journal: z.object({

@@ -38,7 +38,7 @@ The browser half registers one locale namespace (`magic-context`) with `zh` and 
 dictionaries. The slot renderer passes the namespace-bound `t` to the card as
 `props.t`; the card falls back to the shipped translator only outside a slot.
 
-- Every **card-owned** string resolves through `t(...)`: all 22 field labels and hints,
+- Every **card-owned** string resolves through `t(...)`: all 34 field labels and hints,
   the `Auto` route captions, the summary line and its not-ready fallback, the form frame
   (`unavailable` / `readOnly` / `saveFailed` / `save` / `saving` / `Modified` / `Reset` /
   `Invalid` / `Not a number`), and the effort picker captions.
@@ -170,10 +170,40 @@ this fork added its concrete use case and evidence there on 2026-11-16.
 - Headless DSH has no Settings UI; pure tests and the headless runtime smoke are
   supplementary, not a substitute for the browser gate.
 
-## 8. Boundaries
+## 8. Remote embedding fields and routes (T20)
+
+The `embedding` block is a top-level, **user-level** Settings block. It is not
+project-scoped: a project must not redirect the endpoint or the API-key
+environment name. The current host does not expose a project/tier source, so
+that rule is a design boundary rather than an enforced runtime check yet. Fields: provider (`local`/`openai-compatible`/`off`), preset
+(`siliconflow`/`custom`), endpoint, auth header, model, API-key environment name,
+dimensions override, query instruction, document prefix, background timeout,
+query timeout and batch size.
+
+- Model IDs come from `GET /mc-embedding/models` (or manual entry), never from a
+  compiled model table. Dimensions come from `POST /mc-embedding/probe` and are
+  cached per endpoint/model/override/key-presence.
+- `POST /mc-embedding/rebuild?action=start|pause|resume|disarm` manages the
+  target-space rebuild state. `disarm` clears state only; it never writes
+  config.
+- Rollback stages `provider = local` and uses the ordinary revision-fenced
+  Save. No route writes profile config.
+- POST routes require JSON content type and a matching Origin/Host when an
+  Origin is present; they return JSON errors and never return a key or provider
+  body.
+- The client disables remote actions while the form is dirty, shows only key
+  presence, warns about sending memory text to the endpoint, and labels plain
+  HTTP on non-local endpoints.
+
+## 9. Boundaries
 
 - No runtime effort mapping, clamping, validation, or fallback aliasing.
-- No new model-catalog RPC or second catalog read.
-- No host schema, database, tool, command, or release change in this contract.
+- The only model-list/probe/rebuild RPCs are the plugin-owned `/mc-embedding`
+  routes above; there is no host catalog write.
+- No vendor-specific embedding adapter or SDK. Remote support is the standard
+  OpenAI embeddings shape only.
+- No host schema, database, tool, command, or release change in this contract;
+  the plugin declares its own volatile `embedding` config block and uses only
+  its own `/mc-embedding` routes.
 - Only an isolated profile may be used for the Web gate; the daily DSH profile and its
   data are not touched.

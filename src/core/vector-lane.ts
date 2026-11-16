@@ -163,9 +163,60 @@ export function measureVectorLane(corpusDbPath: string): VectorLaneReport | unde
   }
 }
 
+export interface VectorCoverage {
+  readonly total: number
+  readonly covered: number
+  readonly missing: number
+}
+
+/**
+ * Coverage over the SEARCHABLE set (`active` + `permanent`, not expired).
+ * The local lane keeps `measureVectorLane`'s active-only contract; this is the
+ * remote target-space view used by status and the rebuild state machine.
+ */
+export function measureTargetCoverage(
+  corpusDbPath: string,
+  modelId: string,
+  options: { includePermanent?: boolean; now?: number } = {},
+): VectorCoverage | undefined {
+  if (modelId.trim() === '') return undefined
+  let db: DatabaseSync
+  try {
+    db = new DatabaseSync(corpusDbPath, { readOnly: true })
+  } catch {
+    return undefined
+  }
+  try {
+    if (!tableExists(db, 'memories')) return undefined
+    const columns = columnNames(db, 'memories')
+    const statuses = options.includePermanent === true ? "('active','permanent')" : "('active')"
+    const statusFilter = columns.has('status') ? `AND m.status IN ${statuses}` : ''
+    const expiryFilter = columns.has('expires_at')
+      ? `AND (m.expires_at IS NULL OR m.expires_at > ${Math.floor(options.now ?? Date.now())})`
+      : ''
+    const totalRow = db.prepare(
+      `SELECT COUNT(*) AS n FROM memories m WHERE 1=1 ${statusFilter} ${expiryFilter}`,
+    ).get() as { n?: number } | undefined
+    const coveredRow = tableExists(db, 'memory_embeddings')
+      ? db.prepare(
+        `SELECT COUNT(DISTINCT m.id) AS n FROM memories m
+           JOIN memory_embeddings e ON e.memory_id = m.id AND e.model_id = ?
+           WHERE 1=1 ${statusFilter} ${expiryFilter}`,
+      ).get(modelId) as { n?: number } | undefined
+      : undefined
+    const total = Number(totalRow?.n ?? 0)
+    const covered = Number(coveredRow?.n ?? 0)
+    return { total, covered, missing: Math.max(0, total - covered) }
+  } catch {
+    return undefined
+  } finally {
+    db.close()
+  }
+}
+
 export interface BackfillPlan {
   readonly modelId: string
-  /** Bounded, ascending memory ids that have no row in the dominant space. */
+  /** Bounded, ascending memory ids that have no row in the target space. */
   readonly candidates: readonly number[]
   /** How many rows need one, before the bound. */
   readonly total: number
@@ -189,7 +240,15 @@ export interface BackfillPlan {
  */
 export function planBackfill(
   corpusDbPath: string,
-  options: { limit?: number; bootstrapModelId?: string } = {},
+  options: {
+    limit?: number
+    bootstrapModelId?: string
+    /** Explicit target space; remote writes must never infer dominant. */
+    targetModelId?: string
+    /** Include `permanent` rows (the remote target's searchable set). */
+    includePermanent?: boolean
+    now?: number
+  } = {},
 ): BackfillPlan | undefined {
   const report = measureVectorLane(corpusDbPath)
   if (report === undefined) return undefined
@@ -198,16 +257,23 @@ export function planBackfill(
   const db = new DatabaseSync(corpusDbPath, { readOnly: true })
   try {
     const bootstrap = options.bootstrapModelId?.trim() ?? ''
-    // A bootstrap id may only be used when no space exists at all. Once any
-    // embedding row is present, the dominant space is the only legal target;
-    // accepting a bootstrap id here would be the third-space bug this module
-    // exists to prevent.
-    const dominant = report.dominantModelId ?? (bootstrap === '' ? undefined : bootstrap)
+    const explicit = options.targetModelId?.trim() ?? ''
+    // An explicit target (remote or local identity) is authoritative. Without
+    // one, preserve the legacy local behavior: dominant, or first-writer
+    // bootstrap when the store has no space at all.
+    const dominant = explicit !== ''
+      ? explicit
+      : report.dominantModelId ?? (bootstrap === '' ? undefined : bootstrap)
     if (dominant === undefined) {
       return { modelId: '', candidates: [], total: 0, reason: 'no embedding space exists yet — the first writer decides the space' }
     }
     const memoryColumns = columnNames(db, 'memories')
-    const activeFilter = memoryColumns.has('status') ? "AND m.status = 'active'" : ''
+    const activeFilter = memoryColumns.has('status')
+      ? `AND m.status IN ${options.includePermanent === true ? "('active','permanent')" : "('active')"}`
+      : ''
+    const expiryFilter = memoryColumns.has('expires_at')
+      ? `AND (m.expires_at IS NULL OR m.expires_at > ${Math.floor(options.now ?? Date.now())})`
+      : ''
     // Newest first (2026-10-10). The rows a session is most likely to search for
     // are the ones written most recently, so the lane closes the frontier gap
     // before it grinds through the older churn holes. The order is a policy:
@@ -216,6 +282,7 @@ export function planBackfill(
       `SELECT m.id AS id FROM memories m
         WHERE NOT EXISTS (SELECT 1 FROM memory_embeddings e WHERE e.memory_id = m.id AND e.model_id = ?)
         ${activeFilter}
+        ${expiryFilter}
         ORDER BY m.id DESC`,
     ).all(dominant) as unknown as Array<{ id: number }>
     const ids = missing.map(row => Number(row.id))

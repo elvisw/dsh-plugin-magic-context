@@ -1,0 +1,25 @@
+{
+  "probe": "real SiliconFlow /v1/models?sub_type=embedding and /v1/embeddings",
+  "command": "node %TEMP%\\opencode\\sf_probe.mjs",
+  "api_key_source": "SILICONFLOW_API_KEY (presence checked; value never read into evidence)",
+  "endpoint": "https://api.siliconflow.cn/v1",
+  "requested_model": "BAAI/bge-m3",
+  "models_returned": 8,
+  "models": [
+    "Qwen/Qwen3-VL-Embedding-8B",
+    "Qwen/Qwen3-Embedding-8B",
+    "Qwen/Qwen3-Embedding-4B",
+    "Qwen/Qwen3-Embedding-0.6B",
+    "BAAI/bge-m3",
+    "BAAI/bge-large-en-v1.5",
+    "BAAI/bge-large-zh-v1.5",
+    "Pro/BAAI/bge-m3"
+  ],
+  "has_bge_m3": true,
+  "probe_result": {
+    "model": "BAAI/bge-m3",
+    "dimensions": 1024,
+    "latency_ms": 121
+  },
+  "ok": true
+}

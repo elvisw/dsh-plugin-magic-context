@@ -22,13 +22,14 @@ import { openMemoryWriter, type MemoryWriter } from '../core/memory-write.ts'
 import { ensureOwnCorpusStore } from '../core/corpus-store.ts'
 import { syncMachineDomain } from '../core/machine-domain.ts'
 import { openProfileWriter, type ProfileWriter } from '../core/profile-write.ts'
-import { planBackfill } from '../core/vector-lane.ts'
+import { measureVectorLane, planBackfill } from '../core/vector-lane.ts'
 import { runVectorBackfill, type VectorBackfillOutcome } from '../core/vector-backfill.ts'
 import { openMemorySearch, type MemorySearch, type MemorySearchHit } from '../core/memory-search.ts'
-import { cosineSimilarity, defaultEmbeddingCacheDir, openLocalEmbedder } from '../core/embedding-local.ts'
+import { cosineSimilarity } from '../core/embedding-local.ts'
+import { openEmbeddingLane } from './embedding-lane.ts'
 import { defineCtxMemoryTool, type LocalDefineTool } from './tool-bridge.ts'
 import type { MagicContextDshConfig, MagicContextDshConfigDefineTool } from './config.ts'
-import { liveBoolean, liveValue } from './volatile.ts'
+import { liveBoolean, liveNumber, liveValue } from './volatile.ts'
 import { DEFAULT_MEMORY_SCORING, type MemoryRecallScoring, type MemoryScoringConfig } from '../core/memory-scoring.ts'
 
 /** The `ctx_memory` search closure's contract (tool-bridge's search seam). */
@@ -60,6 +61,8 @@ export interface MemoryLane {
    * the lane is not usable; the caller must not treat it as "nothing to do".
    */
   vectorBackfill: (limit: number, journal: Journal) => Promise<VectorBackfillOutcome | undefined>
+  /** T20: provider selection, probe cache, rebuild state and routes. */
+  embedding: ReturnType<typeof openEmbeddingLane>
   memorySearch: MemorySearch | undefined
   /** A2: per-session memory ids the injected block currently renders. */
   visibleMemoryIdsBySession: Map<string, Set<number>>
@@ -251,12 +254,13 @@ export function openMemoryLane(
   // MAX_IN_MEMORY_EMBEDDINGS cap, and persistence is untouched (the lane fills
   // in-memory scores only — the store's rows are never written).
   const embedBackfill = liveBoolean(config.memory?.embedBackfill, true)
-  const embedder = memorySearch === undefined
-    ? undefined
-    : openLocalEmbedder({
-      cacheDir: defaultEmbeddingCacheDir(stores.dbPath),
-      logger: { info: (message) => ctx.logger.info(message), warn: (message) => ctx.logger.warn(message) },
-    })
+  const embedding = openEmbeddingLane({
+    config,
+    corpusDbPath: memorySettings?.dbPath ?? fallbackCorpusPath(),
+    dataDir: dirname(stores.dbPath),
+    logger: { info: (message) => ctx.logger.info(message), warn: (message) => ctx.logger.warn(message) },
+  })
+  const localEmbedder = () => (memorySearch === undefined ? undefined : embedding.localEmbedder())
 
   /**
    * Shared-vector-space state, discovered once and memoized: the query-side
@@ -279,7 +283,12 @@ export function openMemoryLane(
   // it here avoids widening openMemoryLane's signature for one log line.
   let laneJournal: Journal | undefined
   const resolveSharedSpace = (): Promise<SharedSpace> => {
-    if (memorySearch === undefined || embedder === undefined) return Promise.resolve({ modelId: null })
+    if (embedding.isRemote()) {
+      // Remote query is enabled only after an armed rebuild with target rows.
+      return Promise.resolve({ modelId: embedding.remoteQueryModelId() })
+    }
+    if (embedding.providerKind() === 'off') return Promise.resolve({ modelId: null })
+    if (memorySearch === undefined || localEmbedder() === undefined) return Promise.resolve({ modelId: null })
     if (sharedSpacePromise === undefined) {
       sharedSpacePromise = (async () => {
         // The gate's outcome used to be observable ONLY through ctx.logger,
@@ -302,37 +311,47 @@ export function openMemoryLane(
           return bootstrapModelId === undefined ? { modelId } : { modelId, bootstrapModelId }
         }
         const dominant = memorySearch.dominantEmbeddingModel()
-        if (dominant === undefined) {
-          // No space exists yet. This is the ONLY case where the embedder may
-          // create one; dims mismatch and parity failure below stay closed.
-          return record('gate-closed', null, { reason: 'no dominant embedding space' }, embedder.modelId)
+        // T20: the local target is the explicit local identity, not whichever
+        // space has the most rows. A remote rebuild can outgrow the local rows;
+        // it must never become the local query space. The legacy dominant
+        // fallback is allowed only for a local (non-namespaced) space.
+        const localTarget = embedding.localTargetModelId()
+        const target = localTarget !== undefined
+          ? localTarget
+          : dominant !== undefined && !dominant.modelId.startsWith('embedding-remote:')
+            ? dominant.modelId
+            : undefined
+        if (target === undefined) {
+          // No local space exists yet. This is the ONLY case where the embedder
+          // may create one; dims mismatch and parity failure below stay closed.
+          return record('gate-closed', null, { reason: 'no local embedding space' }, localEmbedder()!.modelId)
         }
-        if (dominant.dims !== embedder.dims) {
+        if (dominant !== undefined && dominant.dims !== localEmbedder()!.dims && target === dominant.modelId) {
           return record('gate-closed', null, {
             reason: 'dims mismatch',
             dominantDims: dominant.dims,
-            embedderDims: embedder.dims,
+            embedderDims: localEmbedder()!.dims,
           })
         }
-        const sample = memorySearch.paritySample(dominant.modelId)
+        const sample = memorySearch.paritySample(target)
         if (sample === undefined) {
           // Dims agree and there is nothing to compare against: the lane is used
           // on the strength of the dimension match alone, and that is recorded.
-          return record('no-sample', dominant.modelId, { modelId: dominant.modelId })
+          return record('no-sample', target, { modelId: target })
         }
         try {
-          const [vector] = await embedder.embed([sample.content])
-          if (vector === undefined) return record('embed-empty', null, { modelId: dominant.modelId })
+          const [vector] = await localEmbedder()!.embed([sample.content])
+          if (vector === undefined) return record('embed-empty', null, { modelId: target })
           const parity = cosineSimilarity(vector, sample.embedding)
           ctx.logger.info(
             `magic-context memory search: shared-space parity ${parity.toFixed(4)} `
-              + `against ${dominant.modelId.slice(0, 48)}`,
+              + `against ${target.slice(0, 48)}`,
           )
           return parity >= 0.99
-            ? record('parity-pass', dominant.modelId, { modelId: dominant.modelId, parity: Number(parity.toFixed(6)) })
-            : record('parity-fail', null, { modelId: dominant.modelId, parity: Number(parity.toFixed(6)) })
+            ? record('parity-pass', target, { modelId: target, parity: Number(parity.toFixed(6)) })
+            : record('parity-fail', null, { modelId: target, parity: Number(parity.toFixed(6)) })
         } catch (error) {
-          return record('embed-failed', null, { modelId: dominant.modelId, error: errText(error) })
+          return record('embed-failed', null, { modelId: target, error: errText(error) })
         }
       })()
     }
@@ -357,14 +376,60 @@ export function openMemoryLane(
     limit: number,
     journal: Journal,
   ): Promise<VectorBackfillOutcome | undefined> => {
-    if (memorySearch === undefined || embedder === undefined || memoryRecall === undefined) return undefined
+    if (memorySearch === undefined || memoryRecall === undefined) return undefined
     if (memoryWriter === undefined || memoryWriter.status.ok !== true) return undefined
     laneJournal = journal
+    if (embedding.isRemote()) {
+      const target = embedding.targetModelId()
+      if (target === null) {
+        journal.info('vector-lane', 'remote backfill skipped: target is not probed', {
+          outcome: 'remote-unprobed',
+          created: 0, present: 0, skipped: 0, failed: 0, total: 0,
+        })
+        return { created: 0, present: 0, skipped: 0, failed: 0, total: 0, reason: 'remote-unprobed' }
+      }
+      if (!embedding.remoteWritable()) {
+        journal.info('vector-lane', 'remote backfill skipped: rebuild is not running', {
+          outcome: 'remote-not-started',
+          created: 0, present: 0, skipped: 0, failed: 0, total: 0,
+        })
+        return { created: 0, present: 0, skipped: 0, failed: 0, total: 0, reason: 'remote-not-started' }
+      }
+      const dims = embedding.dimensions()
+      if (dims === null) {
+        return { created: 0, present: 0, skipped: 0, failed: 0, total: 0, reason: 'remote-unprobed' }
+      }
+      const outcome = await runVectorBackfill({
+        plan: () => {
+          const plan = planBackfill(memoryRecall.dbPath, {
+            limit,
+            targetModelId: target,
+            includePermanent: true,
+          })
+          return plan === undefined
+            ? undefined
+            : { modelId: plan.modelId, candidates: plan.candidates, total: plan.total }
+        },
+        contents: (ids) => memoryWriter.readContents(ids),
+        embed: (texts) => embedding.embedPassages(texts),
+        dims,
+        store: (input) => memoryWriter.storeEmbedding(input),
+        journal,
+        limit,
+        parityModelId: target,
+        isCancelled: () => !embedding.remoteWritable(),
+      })
+      embedding.afterBackfill(outcome)
+      return outcome
+    }
+    if (embedding.providerKind() === 'off') return undefined
+    if (localEmbedder() === undefined) return undefined
     const space = await resolveSharedSpace()
     const outcome = await runVectorBackfill({
       plan: () => {
         const plan = planBackfill(memoryRecall.dbPath, {
           limit,
+          ...space.modelId === null ? {} : { targetModelId: space.modelId },
           ...space.bootstrapModelId === undefined ? {} : { bootstrapModelId: space.bootstrapModelId },
         })
         return plan === undefined
@@ -372,8 +437,8 @@ export function openMemoryLane(
           : { modelId: plan.modelId, candidates: plan.candidates, total: plan.total }
       },
       contents: (ids) => memoryWriter.readContents(ids),
-      embed: (texts) => embedder.embed(texts),
-      dims: embedder.dims,
+      embed: (texts) => localEmbedder()!.embed(texts),
+      dims: localEmbedder()!.dims,
       store: (input) => memoryWriter.storeEmbedding(input),
       journal,
       limit,
@@ -398,10 +463,19 @@ export function openMemoryLane(
         return { ok: false as const, reason: 'no project identity could be resolved for this session' }
       }
       const { modelId } = await resolveSharedSpace()
+      const remote = embedding.isRemote()
       let queryEmbedding: Float32Array | null = null
-      if (embedder !== undefined && modelId !== null) {
+      if (remote && modelId !== null) {
+        queryEmbedding = await embedding.embedQuery(request.query)
+        if (queryEmbedding === null) {
+          laneJournal?.warn('vector-lane', 'remote query embedding failed; FTS-only', {
+            outcome: 'embedding-query-failed',
+            modelId,
+          })
+        }
+      } else if (!remote && localEmbedder() !== undefined && modelId !== null) {
         try {
-          const [vector] = await embedder.embed([request.query])
+          const [vector] = await localEmbedder()!.embed([request.query])
           queryEmbedding = vector ?? null
         } catch {
           queryEmbedding = null
@@ -423,9 +497,9 @@ export function openMemoryLane(
         // default on (the WASM stack ships in-package), bounded by the
         // search lane's MAX_IN_MEMORY_EMBEDDINGS cap. `memory.embedBackfill:
         // false` turns it off for latency-sensitive setups.
-        ...embedBackfill && embedder !== undefined ? {
+        ...!remote && embedBackfill && localEmbedder() !== undefined ? {
           embedTexts: async (texts: readonly string[]) => {
-            const vectors = await embedder.embed(texts)
+            const vectors = await localEmbedder()!.embed(texts)
             return vectors.length === texts.length ? vectors : null
           },
         } : {},
@@ -554,6 +628,7 @@ export function openMemoryLane(
     memoryWriter,
     profileWriter,
     vectorBackfill,
+    embedding,
     memorySearch,
     visibleMemoryIdsBySession,
     corpusBootstrap,
@@ -565,6 +640,12 @@ export function openMemoryLane(
       // The shared-space gate runs inside the search closure below, so it needs
       // the journal this registration carries.
       laneJournal = journal
+      if (journal !== undefined) {
+        embedding.setRunner(async () => vectorBackfill(
+          Math.max(1, Math.floor(liveNumber(config.memory?.vectorBackfillLimit, 24))),
+          journal,
+        ))
+      }
       // The registration is only reached when the bridge opened (index.ts wires
       // it behind the same condition); narrowing here keeps the closures below
       // reading a defined bridge instead of re-testing it three times.

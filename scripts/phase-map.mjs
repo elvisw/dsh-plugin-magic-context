@@ -31,6 +31,8 @@ const PHASE_BASE = [
   'tests/context-pressure.spec.ts',
   'tests/ctx-reduce-render.spec.ts',
   'tests/embedding-wasm.spec.ts',
+  'tests/embedding-remote.spec.ts',
+  'tests/embedding-lane.spec.ts',
   'tests/emergency-drop.spec.ts',
   'tests/historian-chunking.spec.ts',
   'tests/historian-terminal.spec.ts',

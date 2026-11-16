@@ -127,7 +127,8 @@ dsh plugin --profile web add <本仓库路径>   # 应用自带 CLI；spec 可�
   `historianEnabled`、`registerCompactionEngine`、`journal.*`、`maintenance.*`、`historian.*` 等 volatile 字段。
   两组 provider/model **路由钉**（maintenance 的 verify、historian 的生成）优先从**宿主已配置的模型目录**
   （客户端 `remote.session.modelCatalog()`）下拉选择，并带「Auto = 跟随会话路由」与清空；宿主不提供该
-  RPC 的 shell 退回纯文本输入（值仍可手填）。Historian 推理强度字段使用同一个 catalog-backed 选择器：
+  RPC 的 shell 退回纯文本输入（值仍可手填）。`embedding` 模型由插件自己的 `/mc-embedding/models`
+  端点加载，不依赖宿主 catalog。Historian 推理强度字段使用同一个 catalog-backed 选择器：
   `默认`、路由模型实际公布的 id，以及用于旧值/未知值的 `自定义`；Auto 路由保留文本输入。写回走 settings
   链路：非 volatile 键原样保留、未触碰的字段不会 materialize 进覆盖行——**保存即生效**
   （host 侧读取一律经 `liveNumber/liveBoolean/liveString/liveRoute` 在决策点现取）。
@@ -166,12 +167,31 @@ bundle 自带配置只有一行：`registerCompactionEngine: false`——保守�
 | historian | `historianEnabled` (true) · `historian.{provider, model}`（**成对钉住**；空 = 跟随会话最后路由）· `historian.reasoningEffort`（可选，留空 = 模型默认） | 带外摘要与 `/compact` 摘要的生成路由；GUI 设置页有「Historian provider/model」下拉（Auto = 跟随会话，推荐）和 catalog-backed 推理强度选择器：`默认`、路由模型实际公布的 id，以及用于旧值/未知值的 `自定义`。Auto 路由下仍保留文本输入（此时不知道会话模型）；未公布的 id 不会被静默改写或夹取。provider 级 `OUTPUT_TOKEN_LIMIT` 空补全会走正常的预算翻倍重试。verify 之外的唯一 LLM 消耗点 |
 | 项目记忆 | `memory.{}`：`enabled`（true，0.9.0 起默认开启——`enabled: false` 退出）· `dbPath` · `project`（省略用会话 cwd）· `domainProjects` · `shareCategories` · `autoPromote` (true) · `write` (true) | `write: false` 让 `ctx_memory` 退回只读 |
 | 检索 / 向量 | `memory.embedBackfill` (true，查询侧内嵌补分) · `memory.vectorBackfill` (true，维护 tick 回填) · `memory.vectorBackfillLimit` (24 行/tick) | 向量车道任何失败 fail-open 降级 FTS |
+| 远程向量（T20） | `embedding.provider` (local) · `embedding.preset` (siliconflow) · `embedding.endpoint` · `embedding.authHeader` (authorization) · `embedding.model` · `embedding.apiKeyEnv` (空 = 自定义预设无认证；SiliconFlow 回退到 `SILICONFLOW_API_KEY`) · `embedding.dimensions` (0 = 探测) · `embedding.queryInstruction` · `embedding.documentPrefix` · `embedding.timeoutMs` (8000) · `embedding.queryTimeoutMs` (2500) · `embedding.batchSize` (16) | 可选的 OpenAI 兼容远程向量空间。模型 ID 从 `/models` 获取或手动填写，维度靠探测、不写死。整个 block 按设计只作为用户级配置；当前宿主未暴露 project/tier 来源，因此运行时尚未强制拒绝项目级覆盖。密钥只从指定环境变量读取；远程空间带 `embedding-remote:` 命名。保存远程配置不消耗额度；`开始重建` 才启用目标空间，支持暂停/继续，回滚走普通 Save。远程检索不与本地向量混用，失败降级 FTS |
 | S(t) 衰减 | `memory.scoring.{enabled (true)，alpha (0.4)，beta (0.2)，archiveThreshold (2)，halfLives}` | 统计恒收集；分发缺省 enabled=true 接管排序；profile-JSON only，不进设置卡片 |
 | 全局域 | `memory.global.machine.{enabled (true)，excludeProjects，autoStage (true)}` · `memory.global.user.{render (true)，collect (true)，review (true)}` · `memory.global.review.batchLimit` (50) | 分发缺省全开：入队可自动化（≤3 条/pass、≥10 候选待审时暂停），**发布永远是人**；LLM 分类失败 fail-closed |
 | 用户画像 | `memory.global.user.{render (true)，collect (false)，review (false)}` | 读 / 收集 / 评审三半独立；写共享库的两个半边默认关 |
 | 域解析 | `memory.domains.source` (`adapter` \| `contract`) | `contract` 是对照用的回退杆，不是支持终态 |
 | 维护 | `maintenance.{enabled，intervalMs (30 min)，verifyProvider，verifyModel}` | LLM verify 需显式路由（未钉则跟随主对话最新路线）；GUI 卡片可从宿主模型目录下拉选择，Auto = 不钉（两组 pin 同款选择器） |
 | 观测 | `journal.{enabled (true)，level (info)，retentionDays (30)，mirror (true)}` | level/mirror 对下一条写入生效；挂载时就是 off 的 journal 运行中打开需重启；`retentionDays` 有 `min(1)` 下限防误剪。§N§ tag 行没有按天 TTL；本适配器当前没有自动的消息/会话删除路径 |
+
+### 远程向量（可选）
+
+默认仍然使用本地 MiniLM 向量。若要使用 OpenAI 兼容的嵌入 API（例如硅基流动），打开
+**设置 → Magic Context → 向量检索**，选择 `OpenAI 兼容 API`，加载模型列表、选择模型，
+然后点 **测试连接**。插件会用一条短文本探测维度；模型 ID 和维度都不会写死在代码里。
+API Key 只从你填写的环境变量读取，密钥值不会进入配置、日志、数据库或浏览器。
+
+点 **开始重建向量** 才会启用目标空间并开始有界回填。在此之前，远程检索只走全文检索，
+保存配置也不会发送 embedding 请求。旧本地向量会保留；**回滚到本地** 通过普通的
+revision-fenced Save 提交 provider 变更。远程失败只会降级到全文检索，绝不会回退到本地
+向量。远程空间带独立命名，覆盖率按 `active` + `permanent` 记忆计算。
+
+这是一个 local-first 插件：启用远程端点后，你检索的记忆文本会发送到该端点。请使用可信
+或自建端点，并优先使用 HTTPS（只有 localhost/局域网服务器才适合明文 HTTP）。模型可用性与
+价格会变化，请以服务商当前页面为准，例如
+[SiliconFlow 模型接口](https://api-docs.siliconflow.cn/docs/api/models-get) 与
+[嵌入接口](https://api-docs.siliconflow.cn/docs/api/embeddings-post)。
 
 ## 工具与命令
 

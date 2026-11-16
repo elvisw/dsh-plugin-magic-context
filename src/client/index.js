@@ -391,6 +391,37 @@ window.__ModuleLoader__.load({
       {
         path: ['journal', 'mirror'], kind: 'boolean', ...fieldCopy(['journal', 'mirror']),
       },
+      {
+        path: ['embedding', 'provider'], kind: 'select', ...fieldCopy(['embedding', 'provider']),
+        options: [
+          { value: 'local', labelKey: 'settings.embedding.provider.local' },
+          { value: 'openai-compatible', labelKey: 'settings.embedding.provider.remote' },
+          { value: 'off', labelKey: 'settings.embedding.provider.off' },
+        ],
+      },
+      {
+        path: ['embedding', 'preset'], kind: 'select', ...fieldCopy(['embedding', 'preset']),
+        options: [
+          { value: 'siliconflow', labelKey: 'settings.embedding.preset.siliconflow' },
+          { value: 'custom', labelKey: 'settings.embedding.preset.custom' },
+        ],
+      },
+      { path: ['embedding', 'endpoint'], kind: 'text', ...fieldCopy(['embedding', 'endpoint']) },
+      {
+        path: ['embedding', 'authHeader'], kind: 'select', ...fieldCopy(['embedding', 'authHeader']),
+        options: [
+          { value: 'authorization', labelKey: 'settings.embedding.auth.authorization' },
+          { value: 'api-key', labelKey: 'settings.embedding.auth.apiKey' },
+        ],
+      },
+      { path: ['embedding', 'model'], kind: 'text', ...fieldCopy(['embedding', 'model']) },
+      { path: ['embedding', 'apiKeyEnv'], kind: 'text', ...fieldCopy(['embedding', 'apiKeyEnv']) },
+      { path: ['embedding', 'dimensions'], kind: 'number', ...fieldCopy(['embedding', 'dimensions']) },
+      { path: ['embedding', 'queryInstruction'], kind: 'text', ...fieldCopy(['embedding', 'queryInstruction']) },
+      { path: ['embedding', 'documentPrefix'], kind: 'text', ...fieldCopy(['embedding', 'documentPrefix']) },
+      { path: ['embedding', 'timeoutMs'], kind: 'number', ...fieldCopy(['embedding', 'timeoutMs']) },
+      { path: ['embedding', 'queryTimeoutMs'], kind: 'number', ...fieldCopy(['embedding', 'queryTimeoutMs']) },
+      { path: ['embedding', 'batchSize'], kind: 'number', ...fieldCopy(['embedding', 'batchSize']) },
     ]
 
     /** Copy owned by the form frame, summary line and effort picker. */
@@ -423,12 +454,48 @@ window.__ModuleLoader__.load({
       'settings.effort.autoHint',
       'settings.effort.noneHint',
       'settings.effort.unknownHint',
+      'settings.embedding.title',
+      'settings.embedding.privacy',
+      'settings.embedding.status',
+      'settings.embedding.savedFirst',
+      'settings.embedding.keyPresent',
+      'settings.embedding.keyAbsent',
+      'settings.embedding.loadModels',
+      'settings.embedding.refresh',
+      'settings.embedding.probe',
+      'settings.embedding.start',
+      'settings.embedding.pause',
+      'settings.embedding.resume',
+      'settings.embedding.rollback',
+      'settings.embedding.working',
+      'settings.embedding.noModels',
+      'settings.embedding.modelPlaceholder',
+      'settings.embedding.coverage',
+      'settings.embedding.coverageUnknown',
+      'settings.embedding.dimensionUnknown',
+      'settings.embedding.memoryOff',
+      'settings.embedding.plainHttp',
+      'settings.embedding.state.local',
+      'settings.embedding.state.rollbackLocal',
+      'settings.embedding.state.off',
+      'settings.embedding.state.unprobed',
+      'settings.embedding.state.notStarted',
+      'settings.embedding.state.paused',
+      'settings.embedding.state.targetMissing',
+      'settings.embedding.state.migrating',
+      'settings.embedding.state.ready',
+      'settings.embedding.state.error',
     ]
 
     /** Every card-owned key; the node-side checks assert zh/en coverage. */
     function settingsCopyKeys() {
       const keys = []
-      for (const spec of FIELDS) keys.push(spec.labelKey, spec.hintKey)
+      for (const spec of FIELDS) {
+        keys.push(spec.labelKey, spec.hintKey)
+        if (Array.isArray(spec.options)) {
+          for (const option of spec.options) keys.push(option.labelKey)
+        }
+      }
       keys.push(...SETTINGS_EXTRA_COPY_KEYS)
       return keys
     }
@@ -687,6 +754,10 @@ window.__ModuleLoader__.load({
         const [failed, setFailed] = useState(false)
         const [effortCustomOpen, setEffortCustomOpen] = useState(false)
         const catalogState = useModelCatalog(catalog)
+        const [embeddingStatus, setEmbeddingStatus] = useState(null)
+        const [embeddingModels, setEmbeddingModels] = useState([])
+        const [embeddingBusy, setEmbeddingBusy] = useState(false)
+        const [embeddingMessage, setEmbeddingMessage] = useState('')
 
         useEffect(() => scope.subscribe(() => setRevision((value) => value + 1)), [scope])
 
@@ -695,6 +766,21 @@ window.__ModuleLoader__.load({
         const t = typeof props.t === 'function' ? props.t : REFERENCE_T
         const labels = formLabels(t)
         const valueLabels = settingsValueLabels(t)
+
+        useEffect(() => {
+          if (snapshot.status !== 'ready') return undefined
+          let alive = true
+          const read = () => {
+            fetch('/mc-embedding/status', { headers: { accept: 'application/json' } })
+              .then((response) => response.json())
+              .then((body) => {
+                if (alive && body !== null && typeof body === 'object' && body.ok === true) setEmbeddingStatus(body)
+              })
+              .catch(() => {})
+          }
+          read()
+          return () => { alive = false }
+        }, [snapshot.status])
 
         // The summary view is the one-liner the Plugins page shows in its list
         // (and as a row's description fallback); it must render without the form.
@@ -835,6 +921,37 @@ window.__ModuleLoader__.load({
           if (currentModel !== '' && !modelsOf(textValue).some((model) => model.id === currentModel)) {
             stage(fieldKey(route.modelSpec.path), { clear: true })
           }
+        }
+
+        /** One enum field (provider/preset/auth header). */
+        const renderSelectField = (spec, state) => {
+          const id = 'mc-field-' + fieldKey(spec.path)
+          const options = Array.isArray(spec.options) ? spec.options : []
+          return el('div', { key: id, style: { display: 'grid', gap: 4, margin: '8px 0' } }, [
+            el('label', { key: 'label', htmlFor: id, style: { fontSize: 12 } }, t(spec.labelKey)),
+            el('select', {
+              key: 'select',
+              id,
+              'aria-label': t(spec.labelKey),
+              value: state.text,
+              disabled: !shell.writable,
+              onChange: (event) => stage(fieldKey(spec.path), { clear: false, text: event.target.value }),
+              style: {
+                width: '100%',
+                maxWidth: 520,
+                boxSizing: 'border-box',
+                height: 32,
+                padding: '0 8px',
+                borderRadius: 'var(--dsw-radius-sm, 6px)',
+                border: '1px solid var(--dsw-alias-border-secondary, rgba(127,127,127,.35))',
+                background: 'var(--dsw-alias-bg-layer-3, transparent)',
+                color: 'var(--dsw-alias-label-primary, inherit)',
+                font: 'inherit',
+                fontSize: 12.5,
+              },
+            }, options.map((option) => el('option', { key: option.value, value: option.value }, t(option.labelKey)))),
+            el('span', { key: 'hint', style: { fontSize: 11, opacity: 0.6 } }, t(spec.hintKey)),
+          ])
         }
 
         /**
@@ -1069,7 +1186,7 @@ window.__ModuleLoader__.load({
               ops.push({ op: 'set', path: spec.path.slice(), value: draft.bool === true })
               continue
             }
-            if (spec.kind === 'text') {
+            if (spec.kind === 'text' || spec.kind === 'select') {
               const text = String(draft.text ?? '').trim()
               if (text === '') ops.push({ op: 'unset', path: spec.path.slice() })
               else ops.push({ op: 'set', path: spec.path.slice(), value: text })
@@ -1110,10 +1227,24 @@ window.__ModuleLoader__.load({
           if (saving || !snapshot.writable || staged.size === 0) return
           const { ops, blocked } = plan()
           if (blocked || ops.length === 0) return
+          const turnsLocal = ops.some((op) =>
+            op.op === 'set' && op.path.length === 2
+              && op.path[0] === 'embedding' && op.path[1] === 'provider' && op.value === 'local')
+          if (turnsLocal) {
+            // Disarm is a state-only route: it never writes profile config. The
+            // revision-fenced Save below remains the only config writer.
+            void fetch('/mc-embedding/rebuild?action=disarm', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+            }).catch(() => {})
+          }
           setSaving(true)
           setFailed(false)
           Promise.resolve(scope.mutate(ops, snapshot.revision)).then((accepted) => {
-            if (accepted) staged.clear()
+            if (accepted) {
+              staged.clear()
+              setTimeout(() => { void refreshEmbeddingStatus() }, 600)
+            }
             setSaving(false)
             setFailed(!accepted)
             setRevision((value) => value + 1)
@@ -1131,6 +1262,157 @@ window.__ModuleLoader__.load({
           invalid: plan().blocked,
           saving,
           failed,
+        }
+
+        const embeddingStateKey = (value) => ({
+          local: 'settings.embedding.state.local',
+          'rollback-local': 'settings.embedding.state.rollbackLocal',
+          'remote-off': 'settings.embedding.state.off',
+          'remote-unprobed': 'settings.embedding.state.unprobed',
+          'remote-configured-not-started': 'settings.embedding.state.notStarted',
+          'remote-paused': 'settings.embedding.state.paused',
+          'remote-target-missing': 'settings.embedding.state.targetMissing',
+          'remote-migrating': 'settings.embedding.state.migrating',
+          'remote-ready': 'settings.embedding.state.ready',
+          'remote-error': 'settings.embedding.state.error',
+        }[value] ?? 'settings.embedding.state.unprobed')
+
+        const refreshEmbeddingStatus = () => fetch('/mc-embedding/status', { headers: { accept: 'application/json' } })
+          .then((response) => response.json())
+          .then((body) => {
+            if (body !== null && typeof body === 'object' && body.ok === true) setEmbeddingStatus(body)
+          })
+          .catch(() => {})
+
+        const callEmbedding = (path, action) => {
+          if (embeddingBusy || !shell.writable || shell.dirty) return
+          setEmbeddingBusy(true)
+          setEmbeddingMessage('')
+          fetch(path + (action === undefined ? '' : '?action=' + encodeURIComponent(action)), {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+          })
+            .then((response) => response.json())
+            .then((body) => {
+              if (body === null || typeof body !== 'object') throw new Error('bad-response')
+              if (body.ok !== true) {
+                setEmbeddingMessage(t('settings.embedding.state.error') + ': ' + String(body.error ?? 'error'))
+              } else {
+                setEmbeddingMessage('')
+              }
+              return refreshEmbeddingStatus()
+            })
+            .then(() => {
+              // A started/resumed bounded pass runs just after the route returns;
+              // poll twice so the panel reflects the landed state without reload.
+              setTimeout(() => { void refreshEmbeddingStatus() }, 1200)
+              setTimeout(() => { void refreshEmbeddingStatus() }, 2600)
+            })
+            .catch((error) => setEmbeddingMessage(String(error && error.message ? error.message : error)))
+            .finally(() => setEmbeddingBusy(false))
+        }
+
+        const loadEmbeddingModels = () => {
+          if (embeddingBusy || !shell.writable || shell.dirty) return
+          setEmbeddingBusy(true)
+          setEmbeddingMessage('')
+          fetch('/mc-embedding/models', { headers: { accept: 'application/json' } })
+            .then((response) => response.json())
+            .then((body) => {
+              if (body !== null && typeof body === 'object' && body.ok === true && Array.isArray(body.models)) {
+                setEmbeddingModels(body.models)
+                if (body.models.length === 0) setEmbeddingMessage(t('settings.embedding.noModels'))
+              } else {
+                setEmbeddingMessage(t('settings.embedding.state.error') + ': ' + String(body && body.error ? body.error : 'error'))
+              }
+            })
+            .catch((error) => setEmbeddingMessage(String(error && error.message ? error.message : error)))
+            .finally(() => setEmbeddingBusy(false))
+        }
+
+        const renderEmbeddingTools = () => {
+          if (!shell.available || embeddingStatus === null) return null
+          const status = embeddingStatus
+          const remote = status.provider === 'openai-compatible'
+          const coverage = status.coverage === null
+            ? t('settings.embedding.coverageUnknown')
+            : t('settings.embedding.coverage', {
+              covered: String(status.coverage.covered),
+              total: String(status.coverage.total),
+            })
+          const dimensions = status.dimensions === null ? '—' : String(status.dimensions) + 'd'
+          const progressText = status.progress === null || status.progress === undefined
+            || status.progress.processed === null || status.progress.total === null
+            ? ''
+            : String(status.progress.processed) + '/' + String(status.progress.total)
+              + (status.progress.failures > 0 ? ' · ' + String(status.progress.failures) : '')
+          const modelOptions = embeddingModels.map((id) => el('option', { key: id, value: id }, id))
+          return el('section', {
+            key: 'embedding-tools',
+            'aria-label': t('settings.embedding.title'),
+            style: { display: 'grid', gap: 6, margin: '12px 0 4px', paddingTop: 8,
+              borderTop: '1px solid var(--dsw-alias-border-secondary, rgba(127,127,127,.25))' },
+          }, [
+            el('strong', { key: 'title', style: { fontSize: 12.5 } }, t('settings.embedding.title')),
+            el('span', { key: 'status', style: { fontSize: 11.5, opacity: 0.8 } },
+              t('settings.embedding.status') + ': ' + t(embeddingStateKey(status.state))
+                + ' · ' + (status.model || '—') + ' · ' + dimensions + ' · ' + coverage),
+            el('span', { key: 'key', style: { fontSize: 11.5, opacity: 0.7 } },
+              (status.keyPresent ? t('settings.embedding.keyPresent') : t('settings.embedding.keyAbsent'))
+                + (status.keyEnv ? ' (' + status.keyEnv + ')' : '')),
+            status.httpWarning === 'plain-http'
+              ? el('span', { key: 'http', style: { fontSize: 11.5, color: 'var(--dsw-alias-label-warning, #b8860b)' } },
+                t('settings.embedding.plainHttp'))
+              : null,
+            el('span', { key: 'privacy', style: { fontSize: 11.5, opacity: 0.7 } }, t('settings.embedding.privacy')),
+            status.memoryEnabled === false
+              ? el('span', { key: 'memory-off', style: { fontSize: 11.5, color: 'var(--dsw-alias-label-warning, #b8860b)' } }, t('settings.embedding.memoryOff'))
+              : null,
+            progressText === ''
+              ? null
+              : el('span', { key: 'progress', style: { fontSize: 11.5, opacity: 0.75 } }, progressText),
+            status.lastError
+              ? el('span', { key: 'last-error', style: { fontSize: 11.5, color: 'var(--dsw-alias-label-warning, #b8860b)' } },
+                status.lastError)
+              : null,
+            !snapshot.writable || shell.dirty
+              ? el('span', { key: 'saved', style: { fontSize: 11.5, opacity: 0.7 } }, t('settings.embedding.savedFirst'))
+              : null,
+            remote ? el('div', { key: 'remote-actions', style: { display: 'flex', gap: 6, flexWrap: 'wrap' } }, [
+              el('button', { key: 'refresh', type: 'button', disabled: embeddingBusy || shell.dirty || !snapshot.writable, onClick: () => { void refreshEmbeddingStatus() } },
+                t('settings.embedding.refresh')),
+              el('button', { key: 'models', type: 'button', disabled: embeddingBusy || shell.dirty || !snapshot.writable, onClick: loadEmbeddingModels },
+                t('settings.embedding.loadModels')),
+              el('button', { key: 'probe', type: 'button', disabled: embeddingBusy || shell.dirty || !snapshot.writable, onClick: () => callEmbedding('/mc-embedding/probe') },
+                t('settings.embedding.probe')),
+              el('button', { key: 'start', type: 'button', disabled: embeddingBusy || shell.dirty || !snapshot.writable, onClick: () => callEmbedding('/mc-embedding/rebuild', 'start') },
+                t('settings.embedding.start')),
+              el('button', { key: 'pause', type: 'button', disabled: embeddingBusy || shell.dirty || !snapshot.writable, onClick: () => callEmbedding('/mc-embedding/rebuild', 'pause') },
+                t('settings.embedding.pause')),
+              el('button', { key: 'resume', type: 'button', disabled: embeddingBusy || shell.dirty || !snapshot.writable, onClick: () => callEmbedding('/mc-embedding/rebuild', 'resume') },
+                t('settings.embedding.resume')),
+              el('button', { key: 'rollback', type: 'button', disabled: embeddingBusy || shell.dirty || !snapshot.writable, onClick: () => {
+                callEmbedding('/mc-embedding/rebuild', 'disarm')
+                stage(fieldKey(['embedding', 'provider']), { clear: false, text: 'local' })
+                setEmbeddingMessage(t('settings.embedding.savedFirst'))
+              } }, t('settings.embedding.rollback')),
+            ]) : el('span', { key: 'off', style: { fontSize: 11.5, opacity: 0.7 } },
+              t(snapshot.value && snapshot.value.memory && snapshot.value.memory.enabled === false
+                ? 'settings.embedding.memoryOff'
+                : status.provider === 'off'
+                  ? 'settings.embedding.state.off'
+                  : 'settings.embedding.state.local')),
+            embeddingModels.length > 0
+              ? el('select', {
+                key: 'model-select',
+                'aria-label': t('settings.embedding.modelPlaceholder'),
+                onChange: (event) => {
+                  if (event.target.value !== '') stage(fieldKey(['embedding', 'model']), { clear: false, text: event.target.value })
+                },
+              }, [el('option', { key: 'empty', value: '' }, t('settings.embedding.modelPlaceholder')), ...modelOptions])
+              : null,
+            embeddingMessage === '' ? null : el('span', { key: 'message', style: { fontSize: 11.5 } }, embeddingMessage),
+          ])
         }
 
         // Plain-control fallback for a module table without ui-primitives: the
@@ -1156,6 +1438,7 @@ window.__ModuleLoader__.load({
               return renderRouteField(spec, state, false)
             }
             if (spec.kind === 'effort') return renderEffortField(spec, state)
+            if (spec.kind === 'select') return renderSelectField(spec, state)
             return el('div', { key: id, style: { margin: '6px 0' } }, [
               el('label', { key: 'label', htmlFor: id, style: { display: 'block', fontSize: 12 } }, t(spec.labelKey)),
               el('input', {
@@ -1172,6 +1455,7 @@ window.__ModuleLoader__.load({
             el('p', { key: 'unavailable', style: { margin: 0, fontSize: 12 } },
               shell.available ? '' : labels.unavailable),
             ...rows,
+            renderEmbeddingTools(),
             el('button', {
               key: 'save', type: 'button', disabled: !shell.dirty || shell.invalid || shell.saving || !shell.writable,
               onClick: save,
@@ -1217,6 +1501,7 @@ window.__ModuleLoader__.load({
             return renderRouteField(spec, state, true)
           }
           if (spec.kind === 'effort') return renderEffortField(spec, state)
+          if (spec.kind === 'select') return renderSelectField(spec, state)
           return el(SettingsValueField, {
             key: id,
             id,
@@ -1234,6 +1519,8 @@ window.__ModuleLoader__.load({
             onReset: () => stage(fieldKey(spec.path), { clear: true }),
           })
         })
+
+        controls.push(renderEmbeddingTools())
 
         return el(SettingsForm, {
           labels,
@@ -1745,6 +2032,68 @@ window.__ModuleLoader__.load({
         'settings.effort.autoHint': '固定 Historian provider 与 model 后，可从模型公布的 effort 列表中选择。',
         'settings.effort.noneHint': '该模型未公布 reasoning effort；留空使用模型默认值。',
         'settings.effort.unknownHint': '该 id 不在当前模型目录中；在你修改前会保留。',
+        'settings.field.embedding.provider.label': '向量提供方',
+        'settings.field.embedding.provider.hint': '本地模型是默认选项；远程只支持 OpenAI 兼容接口。',
+        'settings.field.embedding.preset.label': '服务预设',
+        'settings.field.embedding.preset.hint': '预设只提供端点和模型列表方式，不包含模型 ID 或维度。',
+        'settings.field.embedding.endpoint.label': '接口地址',
+        'settings.field.embedding.endpoint.hint': '例如 https://api.siliconflow.cn/v1；不要填写密钥。',
+        'settings.field.embedding.authHeader.label': '认证头',
+        'settings.field.embedding.authHeader.hint': '多数服务使用 Authorization；Azure 可用 api-key。',
+        'settings.field.embedding.model.label': '模型 ID',
+        'settings.field.embedding.model.hint': '从模型列表选择，或手动填写服务商公布的模型 ID。',
+        'settings.field.embedding.apiKeyEnv.label': 'API Key 环境变量',
+        'settings.field.embedding.apiKeyEnv.hint': '只写变量名，不写密钥值；填写空值表示端点不需要认证。',
+        'settings.field.embedding.dimensions.label': '向量维度',
+        'settings.field.embedding.dimensions.hint': '0 表示自动探测；只有服务支持 dimensions 参数时才填写覆盖值。',
+        'settings.field.embedding.queryInstruction.label': '查询指令前缀',
+        'settings.field.embedding.queryInstruction.hint': '可选；只影响查询向量，不写入存储。',
+        'settings.field.embedding.documentPrefix.label': '文档前缀',
+        'settings.field.embedding.documentPrefix.hint': '可选；会改变写入的文档向量，切换后需要重建。',
+        'settings.field.embedding.timeoutMs.label': '后台超时（毫秒）',
+        'settings.field.embedding.timeoutMs.hint': '后台探测/重建请求的超时；默认 8000。',
+        'settings.field.embedding.queryTimeoutMs.label': '查询超时（毫秒）',
+        'settings.field.embedding.queryTimeoutMs.hint': '交互式检索的最长等待；默认 2500，超时降级为全文检索。',
+        'settings.field.embedding.batchSize.label': '批大小',
+        'settings.field.embedding.batchSize.hint': '每次远程请求的文本条数；默认 16。',
+        'settings.embedding.provider.local': '本地 MiniLM',
+        'settings.embedding.provider.remote': 'OpenAI 兼容 API',
+        'settings.embedding.provider.off': '关闭语义检索',
+        'settings.embedding.preset.siliconflow': '硅基流动',
+        'settings.embedding.preset.custom': '自定义',
+        'settings.embedding.auth.authorization': 'Authorization: Bearer',
+        'settings.embedding.auth.apiKey': 'api-key 头',
+        'settings.embedding.title': '向量检索',
+        'settings.embedding.privacy': '启用远程向量会把你检索的记忆文本发送到该端点；请使用可信端点。',
+        'settings.embedding.status': '状态',
+        'settings.embedding.savedFirst': '先保存当前修改，再执行远程操作。',
+        'settings.embedding.keyPresent': 'API Key：已配置',
+        'settings.embedding.keyAbsent': 'API Key：未配置',
+        'settings.embedding.loadModels': '加载模型',
+        'settings.embedding.refresh': '刷新',
+        'settings.embedding.probe': '测试连接',
+        'settings.embedding.start': '开始重建向量',
+        'settings.embedding.pause': '暂停',
+        'settings.embedding.resume': '继续',
+        'settings.embedding.rollback': '回滚到本地',
+        'settings.embedding.working': '处理中…',
+        'settings.embedding.noModels': '无模型；可手动填写模型 ID',
+        'settings.embedding.modelPlaceholder': '选择或填写模型',
+        'settings.embedding.coverage': '{covered}/{total} 条可检索记忆',
+        'settings.embedding.coverageUnknown': '覆盖未知',
+        'settings.embedding.dimensionUnknown': '维度未知',
+        'settings.embedding.memoryOff': '记忆功能已关闭；向量检索不会运行。',
+        'settings.embedding.plainHttp': '该端点使用明文 HTTP，且不是本机/私网；请谨慎使用。',
+        'settings.embedding.state.local': '本地模型',
+        'settings.embedding.state.rollbackLocal': '已回滚到本地',
+        'settings.embedding.state.off': '语义检索已关闭',
+        'settings.embedding.state.unprobed': '未探测',
+        'settings.embedding.state.notStarted': '未开始重建',
+        'settings.embedding.state.paused': '已暂停',
+        'settings.embedding.state.targetMissing': '目标空间尚无向量',
+        'settings.embedding.state.migrating': '迁移中',
+        'settings.embedding.state.ready': '已就绪',
+        'settings.embedding.state.error': '远程错误',
         'settings.field.policy.executeThreshold.label': '执行阈值（%）',
         'settings.field.policy.executeThreshold.hint': '执行回收带开启时的上下文占用百分比（0-100）。',
         'settings.field.policy.forceThreshold.label': '强制阈值（%）',
@@ -1942,6 +2291,68 @@ window.__ModuleLoader__.load({
         'settings.effort.autoHint': 'Pin the Historian provider and model to pick from the model\'s advertised efforts.',
         'settings.effort.noneHint': 'This model advertises no reasoning efforts; blank uses the model default.',
         'settings.effort.unknownHint': 'This id is not in the current model catalog; it is preserved until you change it.',
+        'settings.field.embedding.provider.label': 'Embedding provider',
+        'settings.field.embedding.provider.hint': 'Local is the default; remote supports only OpenAI-compatible APIs.',
+        'settings.field.embedding.preset.label': 'Provider preset',
+        'settings.field.embedding.preset.hint': 'A preset supplies an endpoint and a model-list mode, never model IDs or dimensions.',
+        'settings.field.embedding.endpoint.label': 'Endpoint',
+        'settings.field.embedding.endpoint.hint': 'For example https://api.siliconflow.cn/v1; never put the key here.',
+        'settings.field.embedding.authHeader.label': 'Auth header',
+        'settings.field.embedding.authHeader.hint': 'Most services use Authorization; Azure can use api-key.',
+        'settings.field.embedding.model.label': 'Model ID',
+        'settings.field.embedding.model.hint': 'Pick from the model list or type a vendor-published model ID.',
+        'settings.field.embedding.apiKeyEnv.label': 'API key environment variable',
+        'settings.field.embedding.apiKeyEnv.hint': 'Name only, never the value; leave empty when the endpoint needs no auth.',
+        'settings.field.embedding.dimensions.label': 'Vector dimensions',
+        'settings.field.embedding.dimensions.hint': '0 probes automatically; override only when the service supports the dimensions parameter.',
+        'settings.field.embedding.queryInstruction.label': 'Query instruction',
+        'settings.field.embedding.queryInstruction.hint': 'Optional; affects query vectors only, never stored vectors.',
+        'settings.field.embedding.documentPrefix.label': 'Document prefix',
+        'settings.field.embedding.documentPrefix.hint': 'Optional; changes stored document vectors, so a change needs a rebuild.',
+        'settings.field.embedding.timeoutMs.label': 'Background timeout (ms)',
+        'settings.field.embedding.timeoutMs.hint': 'Probe/rebuild request timeout; default 8000.',
+        'settings.field.embedding.queryTimeoutMs.label': 'Query timeout (ms)',
+        'settings.field.embedding.queryTimeoutMs.hint': 'Longest interactive wait; default 2500, then falls back to full-text search.',
+        'settings.field.embedding.batchSize.label': 'Batch size',
+        'settings.field.embedding.batchSize.hint': 'Texts per remote request; default 16.',
+        'settings.embedding.provider.local': 'Local MiniLM',
+        'settings.embedding.provider.remote': 'OpenAI-compatible API',
+        'settings.embedding.provider.off': 'Off (full-text only)',
+        'settings.embedding.preset.siliconflow': 'SiliconFlow',
+        'settings.embedding.preset.custom': 'Custom',
+        'settings.embedding.auth.authorization': 'Authorization: Bearer',
+        'settings.embedding.auth.apiKey': 'api-key header',
+        'settings.embedding.title': 'Embedding search',
+        'settings.embedding.privacy': 'Enabling remote embeddings sends the memory text you search to that endpoint; use a trusted endpoint.',
+        'settings.embedding.status': 'Status',
+        'settings.embedding.savedFirst': 'Save the current edits before using remote actions.',
+        'settings.embedding.keyPresent': 'API key: configured',
+        'settings.embedding.keyAbsent': 'API key: not configured',
+        'settings.embedding.loadModels': 'Load models',
+        'settings.embedding.refresh': 'Refresh',
+        'settings.embedding.probe': 'Test connection',
+        'settings.embedding.start': 'Start rebuild',
+        'settings.embedding.pause': 'Pause',
+        'settings.embedding.resume': 'Resume',
+        'settings.embedding.rollback': 'Roll back to local',
+        'settings.embedding.working': 'Working…',
+        'settings.embedding.noModels': 'No models; type a model ID manually',
+        'settings.embedding.modelPlaceholder': 'Pick or type a model',
+        'settings.embedding.coverage': '{covered}/{total} searchable memories',
+        'settings.embedding.coverageUnknown': 'coverage unknown',
+        'settings.embedding.dimensionUnknown': 'dimensions unknown',
+        'settings.embedding.memoryOff': 'Memory is disabled; embedding search will not run.',
+        'settings.embedding.plainHttp': 'This endpoint uses plain HTTP and is not local/private; use with care.',
+        'settings.embedding.state.local': 'local model',
+        'settings.embedding.state.rollbackLocal': 'rolled back to local',
+        'settings.embedding.state.off': 'semantic search off',
+        'settings.embedding.state.unprobed': 'not probed',
+        'settings.embedding.state.notStarted': 'rebuild not started',
+        'settings.embedding.state.paused': 'paused',
+        'settings.embedding.state.targetMissing': 'target space has no vectors',
+        'settings.embedding.state.migrating': 'migrating',
+        'settings.embedding.state.ready': 'ready',
+        'settings.embedding.state.error': 'remote error',
         'settings.field.policy.executeThreshold.label': 'Execute threshold (%)',
         'settings.field.policy.executeThreshold.hint': 'Adoption percentage at which the execute band opens (0-100).',
         'settings.field.policy.forceThreshold.label': 'Force threshold (%)',

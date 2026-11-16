@@ -103,6 +103,24 @@ describe('runtime Config schema', () => {
       .toBe(DEFAULT_POLICY.executeThreshold)
   })
 
+  it('declares the embedding block as volatile and local by default', () => {
+    const value = Config({}) as unknown as Record<string, any>
+    expect((value.embedding.provider as Volatile).get()).toBe('local')
+    expect((value.embedding.apiKeyEnv as Volatile).get()).toBe('')
+    expect((value.embedding.dimensions as Volatile).get()).toBe(0)
+    expect((value.embedding.timeoutMs as Volatile).get()).toBe(8_000)
+    const remote = Config({
+      embedding: {
+        provider: 'openai-compatible',
+        endpoint: 'https://example.test/v1',
+        model: 'fixture-embed-a',
+      },
+    }) as unknown as Record<string, any>
+    expect((remote.embedding.provider as Volatile).get()).toBe('openai-compatible')
+    expect((remote.embedding.endpoint as Volatile).get()).toBe('https://example.test/v1')
+    expect((remote.embedding.model as Volatile).get()).toBe('fixture-embed-a')
+  })
+
   it('declares the generation pin as a volatile pair, empty by default', () => {
     const bare = Config({}) as unknown as Record<string, any>
     // Materialised, unlike `memory`: an empty pair is inert, so declaring the

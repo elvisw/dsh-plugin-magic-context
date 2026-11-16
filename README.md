@@ -168,11 +168,14 @@ Two ways to change configuration, with different semantics (see the
 
 - **GUI settings page (Settings → Magic Context)**: exposes `policy.*` (incl. historian
   generation cap / ceiling / timeout), `historianEnabled`, `registerCompactionEngine`,
-  `journal.*`, `maintenance.*`, `historian.*` and other volatile fields. The two
+  `journal.*`, `maintenance.*`, `historian.*`, `embedding.*` and other volatile
+  fields. The two
   provider/model **route pins** (maintenance verify, historian generation) prefer a
   dropdown fed by the **host's configured model catalog** (client
   `remote.session.modelCatalog()`), with "Auto = follow the session route" and clearing;
   shells without that RPC fall back to plain text (values remain hand-editable). The
+  `embedding` model list comes from the plugin's own `/mc-embedding/models` endpoint,
+  not the host catalog. The
   Historian reasoning-effort field is the same catalog-backed picker: `Default`, the
   routed model's advertised ids, and `Custom` for legacy/unknown values; an Auto route
   keeps the text input. Writes go through the settings chain: non-volatile keys are
@@ -220,12 +223,37 @@ writable as profile override rows unless noted):
 | historian | `historianEnabled` (true) · `historian.{provider, model}` (**pinned as a pair**; empty = follow the session's last route) · `historian.reasoningEffort` (optional, blank = model default) | Generation route for out-of-band digests and `/compact` summaries; the GUI Settings page has "Historian provider/model" dropdowns (Auto = follow session, recommended) and a catalog-backed reasoning-effort picker: `Default`, the routed model's advertised ids, and `Custom` for legacy/unknown values. The Auto route keeps a text input because the session model is unknown there; an unadvertised id is never silently remapped or clamped. A provider-level `OUTPUT_TOKEN_LIMIT` empty completion is retried with the normal cap escalation. The only LLM spend besides verify |
 | Project memory | `memory.{}`: `enabled` (true, on by default since 0.9.0 — opt out with `enabled: false`) · `dbPath` · `project` (omitted = session cwd) · `domainProjects` · `shareCategories` · `autoPromote` (true) · `write` (true) | `write: false` makes `ctx_memory` read-only |
 | Retrieval / vectors | `memory.embedBackfill` (true, query-side inline backfill) · `memory.vectorBackfill` (true, maintenance-tick backfill) · `memory.vectorBackfillLimit` (24 rows/tick) | Any vector-lane failure fails open to FTS |
+| Remote embeddings (T20) | `embedding.provider` (local) · `embedding.preset` (siliconflow) · `embedding.endpoint` · `embedding.authHeader` (authorization) · `embedding.model` · `embedding.apiKeyEnv` (empty = no auth for custom; SiliconFlow falls back to `SILICONFLOW_API_KEY`) · `embedding.dimensions` (0 = probe) · `embedding.queryInstruction` · `embedding.documentPrefix` · `embedding.timeoutMs` (8000) · `embedding.queryTimeoutMs` (2500) · `embedding.batchSize` (16) | Optional OpenAI-compatible remote space. Model IDs are discovered through `/models` or typed manually; dimensions are probed, never compiled in. The block is declared user-level; the current host does not expose a project/tier source, so project-level rejection is not enforced at runtime. The key is read from the named environment variable, and remote space is namespaced `embedding-remote:…`. Saving remote config does not spend quota; `Start rebuild` arms the target, `Pause/Resume` and rollback (via the normal Save) manage it. Remote search never mixes local vectors and fails open to FTS |
 | S(t) decay | `memory.scoring.{enabled (true), alpha (0.4), beta (0.2), archiveThreshold (2), halfLives}` | Stats are always collected; the distribution default enabled=true takes over ranking; profile-JSON only, not on the settings card |
 | Global domains | `memory.global.machine.{enabled (true), excludeProjects, autoStage (true)}` · `memory.global.user.{render (true), collect (true), review (true)}` · `memory.global.review.batchLimit` (50) | Defaults all on: staging can be automated (≤3/pass, paused at ≥10 pending candidates), **publishing is always human**; LLM classification failure is fail-closed |
 | User profile | `memory.global.user.{render (true), collect (false), review (false)}` | Read / collect / review are independent halves; the two halves that write to the shared store are off by default |
 | Domain resolution | `memory.domains.source` (`adapter` \| `contract`) | `contract` is a fallback pole for comparison, not a supported end state |
 | Maintenance | `maintenance.{enabled, intervalMs (30 min), verifyProvider, verifyModel}` | LLM verify needs an explicit route (unpinned = follow the conversation's latest route); the GUI card offers host-catalog dropdowns, Auto = unpinned (same picker for both pins) |
 | Observability | `journal.{enabled (true), level (info), retentionDays (30), mirror (true)}` | level/mirror apply to the next write; a journal that was off at mount needs a restart to turn on at runtime; `retentionDays` has a `min(1)` floor against accidental pruning. §N§ tag rows have no age-based TTL; this adapter has no automatic message/session deletion path today |
+
+### Remote embedding (optional)
+
+The default vector lane stays local MiniLM. To use an OpenAI-compatible embedding
+API (for example SiliconFlow), open **Settings → Magic Context → Embedding
+search**, choose `OpenAI-compatible API`, load the model list, select a model and
+press **Test connection**. The server probes one short input to learn the
+dimension; model IDs and dimensions are not compiled into the plugin. The API
+key is read from the environment variable you name — the value is never written
+to config, logs, the database or the browser.
+
+Press **Start rebuild** to arm the target space and begin a bounded backfill.
+Until then, remote search is full-text only and saving the config sends no
+embedding request. Old local vectors are kept, and **Roll back to local** stages
+the provider change through the normal revision-fenced Save. Remote failures
+degrade to full-text search; they never fall back to local vectors. The target
+space is namespaced, and coverage covers `active` plus `permanent` memories.
+
+This is a local-first plugin: enabling a remote endpoint sends the memory text
+you search to that endpoint. Use a trusted or self-hosted endpoint, and prefer
+HTTPS (plain HTTP is only expected for localhost/LAN servers). Model availability
+and pricing change; check the vendor's current pages, for example the
+[SiliconFlow API docs](https://api-docs.siliconflow.cn/docs/api/models-get) and
+[embeddings docs](https://api-docs.siliconflow.cn/docs/api/embeddings-post).
 
 ## Tools & commands
 

@@ -1,0 +1,17 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t20-20261117-002740",
+  "profile": "t20",
+  "overlay": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t20-20261117-002740\\overlays\\t20.yml",
+  "profile_patch": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t20-20261117-002740\\dsh-home\\profiles\\t20\\cordis.patch.yml",
+  "tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t20-pack\\elvisw-dsh-magic-context-0.15.0.tgz",
+  "tarball_sha256": "b40b824885a0a6cf5e1fe7628fa9ad2ecae7a89d03624d7de5a12d2add09f762",
+  "tarball_bytes": 4047745,
+  "tarball_files": 68,
+  "profile_dependency": "file:C:/Users/elvis/AppData/Local/Temp/opencode/t20-pack/elvisw-dsh-magic-context-0.15.0.tgz",
+  "fake_port": 11130,
+  "bootstrap_exit_code": 0,
+  "add_exit_code": 0,
+  "dump_exit_code": 0,
+  "dump_has_embedding": true,
+  "deepseek_key_present": true
+}

@@ -18,7 +18,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import { afterEach, describe, expect, it } from 'vitest'
-import { describeVectorLane, measureVectorLane, planBackfill } from '../src/core/vector-lane.ts'
+import { describeVectorLane, measureTargetCoverage, measureVectorLane, planBackfill } from '../src/core/vector-lane.ts'
 
 const dirs: string[] = []
 
@@ -80,6 +80,33 @@ function makeStore(seeds: Seed[]): string {
   }
   return path
 }
+
+describe('target-space coverage (T20)', () => {
+  it('counts the searchable set active + permanent and keeps local active-only', () => {
+    const path = makeStore([
+      { id: 1, spaces: [MODEL_A] },
+      { id: 2, status: 'permanent' },
+      { id: 3, status: 'archived' },
+    ])
+    expect(measureTargetCoverage(path, MODEL_A, { includePermanent: true })).toEqual({
+      total: 2,
+      covered: 1,
+      missing: 1,
+    })
+    expect(measureTargetCoverage(path, MODEL_A)).toEqual({ total: 1, covered: 1, missing: 0 })
+  })
+
+  it('plans an explicit target and includes permanent rows only on request', () => {
+    const path = makeStore([
+      { id: 1, spaces: [MODEL_A] },
+      { id: 2, status: 'permanent' },
+      { id: 3, status: 'archived' },
+    ])
+    expect(planBackfill(path, { targetModelId: MODEL_A }).candidates).toEqual([])
+    expect(planBackfill(path, { targetModelId: MODEL_A, includePermanent: true }).candidates).toEqual([2])
+    expect(planBackfill(path, { targetModelId: MODEL_B, includePermanent: true }).candidates).toEqual([2, 1])
+  })
+})
 
 describe('measuring the lane', () => {
   const fixture = [

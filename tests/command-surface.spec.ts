@@ -14,6 +14,8 @@ import { DatabaseSync } from 'node:sqlite'
 import { afterEach, describe, expect, it } from 'vitest'
 import { openStores } from '../src/index.ts'
 import { planGlobalCommand, planProfileCommand } from '../src/dsh/command-surface.ts'
+import { registerCtxStatusCommand } from '../src/dsh/status-command.ts'
+import { DEFAULT_POLICY } from '../src/core/policy.ts'
 import { gateProfileCandidate } from '../src/core/profile-confirmation.ts'
 import { defaultDomainCap } from '../src/core/domains.ts'
 import { makeMemoryDb } from './helpers/memory-db.ts'
@@ -410,5 +412,33 @@ describe('/ctx-global promote --domain', () => {
     const result = planGlobalCommand(s, 'promote 10 --domain dir:global:nope', NOW, contract)
     expect(result.kind).toBe('error')
     expect(s.listGlobalCandidates()).toEqual([])
+  })
+})
+
+describe('/ctx-status embedding line (T20)', () => {
+  it('reports space, model, dimensions and coverage', () => {
+    const s = store()
+    let definition: { handler: (invocation: never) => { text?: string } } | undefined
+    const ctx = {
+      logger: { warn: () => {} },
+      get: (name: string) => name === 'commands'
+        ? { register: (value: typeof definition) => { definition = value } }
+        : undefined,
+    }
+    registerCtxStatusCommand(ctx as never, {
+      stores: s,
+      policy: DEFAULT_POLICY,
+      embedding: () => ({
+        state: 'remote-ready',
+        provider: 'openai-compatible',
+        model: 'fixture-embed-a',
+        dimensions: 16,
+        coverage: { total: 3, covered: 3 },
+      }),
+    })
+    const text = definition!.handler({
+      agent: { session: { id: 'session-status', snapshotEvents: () => [], surface: { nodes: [] }, requestContext: () => undefined } },
+    } as never).text ?? ''
+    expect(text).toContain('- embedding: remote-ready · openai-compatible · fixture-embed-a · 16d · 3/3 searchable rows')
   })
 })

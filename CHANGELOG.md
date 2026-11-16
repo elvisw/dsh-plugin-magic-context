@@ -10,6 +10,12 @@
 
 ## [Unreleased]
 
+### Added
+
+- 远程向量（T20）：可选的 OpenAI 兼容 embed endpoint，设置页支持 provider/preset/endpoint/auth header/model/维度探测/查询前缀/超时/批大小；模型列表动态加载，维度靠 `POST /embeddings` 探测并缓存。远程空间带 `embedding-remote:` 命名，保存配置不自动消耗额度，必须点「开始重建向量」；支持暂停/继续、完整后继续维护新记忆，以及通过普通 Save 回滚到本地。远程失败降级 FTS，不与本地向量混用。
+- `/ctx-status` 增加 embedding 状态行（状态、provider/model、维度、可检索覆盖率）。
+- `/mc-embedding` 插件路由：status/models/probe/rebuild（start/pause/resume/disarm），带方法、Origin/Host、JSON content-type 与请求体上限防护。
+
 ## [0.15.0] - 2026-11-16
 
 ### Added

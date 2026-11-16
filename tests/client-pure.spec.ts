@@ -549,7 +549,7 @@ describe('settings copy — every field key is dictionary-backed', () => {
   const { settingsCopyKeys, fieldSpecs } = api.__diagnostics
 
   it('derives a label and hint key for every field spec', () => {
-    expect(fieldSpecs).toHaveLength(22)
+    expect(fieldSpecs).toHaveLength(34)
     for (const spec of fieldSpecs) {
       expect(settingsCopyKeys()).toContain(spec.labelKey)
       expect(settingsCopyKeys()).toContain(spec.hintKey)
@@ -563,6 +563,23 @@ describe('settings copy — every field key is dictionary-backed', () => {
     expect(keys).toContain('settings.form.invalidNumber')
     expect(keys).toContain('settings.effort.customCurrent')
     expect(keys).toContain('settings.route.notInCatalog')
+    expect(keys).toContain('settings.embedding.start')
+    expect(keys).toContain('settings.embedding.state.ready')
+    expect(keys).toContain('settings.embedding.provider.remote')
+  })
+
+  it('exposes provider/preset/auth selects with dictionary-backed options', () => {
+    const selects = fieldSpecs.filter((spec) => spec.kind === 'select')
+    expect(selects.map((spec) => spec.path.join('.')).sort()).toEqual([
+      'embedding.authHeader',
+      'embedding.preset',
+      'embedding.provider',
+    ])
+    for (const spec of selects) {
+      const options = (spec as unknown as { options?: Array<{ labelKey: string }> }).options ?? []
+      expect(options.length).toBeGreaterThan(0)
+      for (const option of options) expect(settingsCopyKeys()).toContain(option.labelKey)
+    }
   })
 
   it('every key resolves in both dictionaries', () => {

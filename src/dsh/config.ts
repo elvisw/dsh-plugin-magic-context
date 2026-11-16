@@ -35,6 +35,26 @@ export interface MagicContextDshConfig {
   /** Turn the historian's out-of-band digests off (default: on). */
   historianEnabled?: boolean
   /**
+   * T20: project-memory embeddings. Local MiniLM remains the default. A remote
+   * provider is OpenAI-compatible only and is user-level by contract: a
+   * project must not redirect the endpoint or the API-key environment name.
+   */
+  embedding?: {
+    provider?: 'local' | 'openai-compatible' | 'off'
+    preset?: 'siliconflow' | 'custom'
+    endpoint?: string
+    authHeader?: 'authorization' | 'api-key'
+    model?: string
+    apiKeyEnv?: string
+    /** 0/null = probe the width; a positive value is an explicit override. */
+    dimensions?: number | null
+    queryInstruction?: string
+    documentPrefix?: string
+    timeoutMs?: number
+    queryTimeoutMs?: number
+    batchSize?: number
+  }
+  /**
    * Write one notice entry (`user/message`, producer kind `magic-context`,
    * form `notice`) into the session stream after each management pass that
    * actually did something — publish, force-drop, or fact promotion. The
