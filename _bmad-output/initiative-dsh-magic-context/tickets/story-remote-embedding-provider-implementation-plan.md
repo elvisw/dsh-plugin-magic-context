@@ -1,7 +1,7 @@
 ---
 ticket: 20
 title: "Remote embedding provider implementation — plan"
-status: built
+status: done
 ---
 
 # Plan — Remote embedding provider implementation
