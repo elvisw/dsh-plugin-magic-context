@@ -491,12 +491,12 @@ and reliable; **P2** = deferred or `/ctx-status` only. “Surface” uses
 | ID | Requirement | Meaning / source | Truth | Priority | Surface | Empty / error state |
 |---|---|---|---|---|---|---|
 | TEL-01 | Pressure headline | `projectedTokens / contextWindow`; provider-anchored | provider-anchored | P0 | P/D/S | `—` when no usage; `unknown window` when denominator absent |
-| TEL-02 | Threshold pair | configured `executeThreshold` / `forceThreshold` | exact | P0 | D/S | show configured values; `assumed` only for an assumed context window, never a clamp |
+| TEL-02 | Threshold pair | configured `executeThreshold` / `forceThreshold` from `health.policy` | exact | P0 | D/S | show configured values; `assumed` only for an assumed context window, never a clamp |
 | TEL-03 | Token pair | projected / window in compact units | provider-anchored | P0 | P/D | `—`; never `0/0` |
 | TEL-04 | Pressure tone | green below execute, amber at execute, red at force | derived | P0 | P/D | neutral when unknown |
 | TEL-05 | Host token bar | `contextBreakdown` three segments, 100% stacked composition | host-heuristic | P0 | D | hide bar when breakdown absent; occupancy headline is separate; note covered history absent |
 | TEL-06 | System / Tool definitions / Messages | host `contextBreakdown`; the only bar segments | host-heuristic | P0 | D | omit only a measured zero; legend shares are composition shares of the three segments, not window percentages |
-| TEL-07 | Message composition sub-list | split `messageTokens` using surface text estimates; Conversation, Tool calls, Compartments, Memories, Profile, Other | adapter-estimate | P1 | D | omit rows without a source; sub-rows must not exceed `messageTokens`; never peers of the host bar |
+| TEL-07 | Message composition sub-list | server `messageComposition` built from `messageTokens` + surface text + current-tier compartments + recall `estTokens`; Conversation, Tool calls, Compartments, Memories, Profile, Other | adapter-estimate | P1 | D | omit rows with no source; sub-rows must not exceed `messageTokens`; never peers of the host bar |
 | TEL-08 | Compartment row | current replacement cost estimate, not `coveredTokens` | adapter-estimate | P1 | D | omit if no replacement text; count is TEL-13 |
 | TEL-09 | Memories / profile tokens | last `memory-recall.estTokens` / `profile-recall.estTokens` | adapter-estimate | P1 | D | omit if no recall row; do not show row count as tokens |
 | TEL-10 | Conversation / tool calls split | split host `messageTokens` using surface estimates | adapter-estimate | P1 | D | remainder goes to Other; never claim provider-exact categories |
@@ -595,10 +595,23 @@ Proposed `health` additions:
 ```jsonc
 {
   "adapterVersion": "0.14.0",
+  "policy": {
+    "executeThreshold": 70,
+    "forceThreshold": 85
+  },
   "contextBreakdown": {
     "systemTokens": 12000,
     "toolsTokens": 8000,
     "messageTokens": 33000
+  },
+  "messageComposition": {
+    "conversation": 14000,
+    "toolCalls": 9000,
+    "compartments": 6000,
+    "memories": 3000,
+    "profile": 1000,
+    "other": 0,
+    "residualTokens": 0
   },
   "historian": {
     "running": false,
@@ -646,6 +659,11 @@ Optional P2 block, only when the host exposes `tokenUsage`:
 - `contextBreakdown` is `null` when the projection is missing; when present, all
   three numbers are measured and may legitimately be zero (for example, no
   system prompt).
+- `messageComposition` is `null` only when `messageTokens` is missing, the
+  session is finished, or `messageTokens` is 0; individual rows are `null` when
+  their source is missing. If only a residual `other` exists, return the object
+  with `other > 0` rather than null. `other` is the residual, never a fabricated
+  category; `residualTokens` is the amount removed by proportional scaling.
 - `historian` is `null` when the session is not live and no journal fallback is
   available; `lastPublishedAt` is `null` when nothing has been published.
 - `queue` is always present for a session scope; an empty queue is
@@ -666,21 +684,38 @@ Optional P2 block, only when the host exposes `tokenUsage`:
   (`dsh-session-projection/lib/types/index.d.ts:163-166`) and cache the last
   value. Do not re-snapshot on every poll.
 - **Finished session:** no live projection; `contextPressure` and
-  `contextBreakdown` are null unless a cached value exists. `historian.running`
-  is `false` (the in-memory map cannot know about a finished run), while
-  `compartments`, `coveredTokens` and `lastPublishedAt` come from stores/journal.
-  `queue` and `memory` come from stores/journal. `surface` is `null`: enumerating
-  it needs a live `Session`, and `reclaimableTokens` must not be claimed without
-  one.
+  `contextBreakdown` are null unless a cached value exists. `messageComposition`
+  is null (no live surface to classify). `historian.running` is `false` (the
+  in-memory map cannot know about a finished run), while `compartments`,
+  `coveredTokens` and `lastPublishedAt` come from stores/journal. `queue` and
+  `memory` come from stores/journal. `surface` is `null`: enumerating it needs a
+  live `Session`, and `reclaimableTokens` must not be claimed without one.
 - **Global scope:** the existing top-level `summary.sessionId` is absent and
   all session-derived projection fields are omitted; keep only
   adapter/version/global counters. Do not duplicate `sessionId` inside `health`.
 - `historian.lastPublishedAt`: latest journal `compartment-published` row's
   `at` (epoch milliseconds, matching `lastEventAt` / `maintenanceLast.at`; the
   client formats it).
-- `adapterVersion`: add the package version to adapter meta (the current payload
-  has `schemaVersion` and `uptimeMs` but no package version); source it from
-  `package.json` at build time or from the adapter meta dependency.
+- `adapterVersion`: read the package version at runtime fail-open (omit/null on
+  failure); no build-time metadata and no build-step change. The current payload
+  has `schemaVersion` and `uptimeMs` but no package version.
+- `policy`: the configured `executeThreshold` / `forceThreshold` from the
+  effective plugin config, not the hardcoded pill or panel numbers.
+- `messageComposition`: server-side estimate; `conversation` from user/assistant
+  surface text with the baseline block stripped first, `toolCalls` from surface
+  tool-result text (call arguments are not counted; they fall into `other`),
+  `compartments` from landed/current `renderCompartment()` at the current tier,
+  `memories` / `profile` from the newest `memory-recall` / `profile-recall`
+  `estTokens`, `other` as the remainder of `contextBreakdown.messageTokens`, and
+  `residualTokens` as the amount removed by proportional scaling (0 when no
+  scaling). If classification exceeds `messageTokens`, scale the rows
+  proportionally, set `other` to zero, and expose the removed amount in
+  `residualTokens`; the view model turns a non-zero residual into a warning.
+  Each row is `null` when its source is unavailable; the object is `null` only
+  when `messageTokens` is unavailable, the session is finished, or
+  `messageTokens` is 0. If only a residual `other` exists, return the object with
+  `other > 0` rather than null; `Other` renders only when `other > 0`. The sum
+  must not exceed `messageTokens`.
 - `surface.reclaimableTokens`: `enumerateSurfaceToolResults`
   (`src/dsh/seams.ts:145-179`) plus the existing estimate.
 - `memory.total` / `injected`: `memoryStats` (`src/index.ts:746-763`) and

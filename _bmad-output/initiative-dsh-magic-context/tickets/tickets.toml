@@ -204,3 +204,15 @@ after = [16]
 hitl = false
 risk = "medium"
 refine = true
+
+[[entry]]
+id = 18
+type = "story"
+title = "Telemetry v2: host composition, sections and localized popover"
+description = "Implement the v1 telemetry UI defined by `research-telemetry-ui-requirements.md` (T17). Server: add the minimum additive `/mc-telemetry/summary` fields for `adapterVersion`, `policy` (execute/force thresholds), `contextBreakdown` (three host segments), `messageComposition` (server-estimated Conversation/Tool calls/Compartments/Memories/Profile/Other), `historian` (running/compartments/coveredTokens/lastPublishedAt), `queue` (pendingDrops/tags), `memory` (total/injected/estTokens/profileEstTokens) and `surface` (tagged/dropped/reclaimableTokens), with omitted vs null vs 0 semantics and live/finished/global session resolution. Client: rebuild the Web pill and popover around a pure view model: 100% stacked System/Tool definitions/Messages bar, estimated message sub-list (Conversation/Tool calls/Compartments/Memories/Profile/Other), policy-driven thresholds, Historian/Memory/Queue/Maintenance/Hygiene/Warnings/Operations sections, 120s stale state, narrow-width shrink order, keyboard/aria with focus trap, a /ctx-status footer link, and complete zh/en dictionaries. Preserve current `/ctx-status` as the full diagnostic surface. Tests: additive telemetry shape/fail-open behavior, pure view-model calculations and null/omitted handling, regression tests for existing summary keys, i18n parity, and one real DSH Web browser gate that opens the popover and checks the three host segments, sections, locale switch and console errors. No dsh-go port, remote embeddings, cache TTL, smart-note or recomp-progress fiction; no package/release/profile mutation."
+verify = "Independent ticket validation passes. The implementation follows the T17 requirements document without widening scope; the telemetry payload adds only the listed fields and preserves existing keys, with missing dependencies returning null/omission rather than zero; the pure view model is tested without a browser; the client renders the three host segments and the server-provided message sub-list without double-counting; thresholds come from policy rather than hardcoded 50/65 or 60/85; zh/en strings are dictionary-backed and check:i18n passes; unknown measurements never render as 0, and unavailable cache TTL/smart notes/recomp progress remain absent; one real DSH Web browser gate opens the popover, checks the three segments, sections, locale switch, aria/focus trap, /ctx-status footer and console errors; `/ctx-status` remains the full fallback; no dsh-go, package, release or daily-profile change."
+covers = ["src/client/index.js", "src/dsh/telemetry.ts", "src/index.ts", "tests/client-pure.spec.ts", "tests/telemetry.spec.ts", "tests/telemetry-view.spec.ts", "CHANGELOG.md", "scripts/phase-map.mjs", "scripts/mc-i18n-check.mjs"]
+after = [17]
+hitl = false
+risk = "high"
+refine = true

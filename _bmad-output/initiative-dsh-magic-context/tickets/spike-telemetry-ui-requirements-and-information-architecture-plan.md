@@ -1,7 +1,7 @@
 ---
 ticket: 17
 title: "Telemetry UI requirements and information architecture — plan"
-status: in-progress
+status: done
 ---
 
 # Plan — Telemetry UI requirements and information architecture
