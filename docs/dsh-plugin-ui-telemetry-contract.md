@@ -2,6 +2,7 @@
 
 > Status: historical — 2026-10 upstream/DSH 0.2.0-rc.2 host analysis; not a current guarantee.
 > Scope: historical telemetry seam study; later dated appendix notes are observations, not guarantees.
+> Current v2 pill/panel behavior: README §UI & telemetry; this file remains the seam study, not the shipped UI contract.
 
 > 目标：回答「一个 host 侧插件如何把自己正在做什么的实时日志显示到 GUI 主界面」，并给出 magic-context 落地的最小改造配方与不可行路径的黑名单。
 >

@@ -72,7 +72,8 @@ After installing, restart the profile unless it has HMR enabled; with HMR the ne
 version hot-loads. In your next session:
 
 - Tool results carry `§N§` tags; a **telemetry badge** appears in the overlay showing live
-  context occupancy, with a panel of live metrics and an operation record behind it.
+  context occupancy, with a panel of host token composition, estimated message breakdown,
+  localized sections and an operation record behind it.
 - A **Settings → Magic Context** page edits the options the card exposes; the same card is still
   available on the GUI Plugins page as the legacy location/fallback.
 - The `ctx_reduce` / `ctx_expand` / `ctx_memory` tools are registered for the agent;
@@ -112,7 +113,7 @@ last five manage the context window (full design in [Architecture](#architecture
 | **Pressure scheduling** | Persistent usage (incl. cache reads/writes) → pressure score → execute/defer decisions (65% threshold, 5 min cache TTL, 85% force band); `CONTEXT_WINDOW_EXCEEDED` triggers emergency reclaim + retry; tiered reduce-guidance nudges |
 | **Historian (out-of-band digest)** | One LLM call replays the real prefix (KV cache preserved) → four-tier p1–p4 summary + facts/events, **writes the store only, never touches the wire**; published in the execute band as a `[compacted §C<n>§]` range replacement; `/ctx-recomp` redoes compacted history in place |
 | **Compaction seam** | `registerCompactionEngine` can take over root `ctx.compaction` (real `compaction/start\|summary\|replace\|end` protocol); **off by default** — the host compaction-basic (root or preset) stays in place. **Flat/headless only**: in DSH 0.2.2-rc.1, Web and Desktop agent presets mount their own compaction engine, so this switch does not replace a preset engine |
-| **UI integration** | Top-level **Settings → Magic Context** page plus the legacy Plugins-page card (volatile fields, save = live); catalog-backed Historian reasoning-effort picker; `shell.overlay` telemetry badge + capsule panel (live metrics + operation record); `session-notice` rows in the session stream; Chinese/English instant switching for every card-owned string |
+| **UI integration** | Top-level **Settings → Magic Context** page plus the legacy Plugins-page card (volatile fields, save = live); catalog-backed Historian reasoning-effort picker; `shell.overlay` telemetry badge + capsule panel (host token composition, estimated message breakdown, localized sections, operation record); `session-notice` rows in the session stream; Chinese/English instant switching for card labels and panel section/empty-state copy (operation detail values stay as recorded) |
 
 ## Installation
 
@@ -260,26 +261,39 @@ Both UI capabilities ride the same browser half (`src/client/index.js`, copied v
 
   ![Lower part of the Magic Context Settings page — journal retention, verify/historian routes, catalog-backed reasoning effort picker, journal switches](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-bottom.png)
 
-- **`shell.overlay` telemetry badge + capsule panel**: collapsed state shows the occupancy
-  percentage; the panel holds two metric rows, the beat, and a **live operation record**
-  (up to 12 entries, adjacent identical operations folded as `×N`): 🧠 memory write ·
-  🔎 memory load · 🗑️ reclaim queued · 🧭 original restored · ✂️ context compacted ·
-  🗑️ context dropped · 🧭 archived-stored · 🧰 maintenance sweep · ⚠️ failure. Clicking
-  outside the panel/badge, Esc, or window blur closes it.
+- **`shell.overlay` telemetry badge + capsule panel**: the collapsed pill keeps the live
+  pressure, token pair, Historian state and reclaim queue (`H` / `Q<n>`) visible, and
+  switches to an icon-width variant on narrow composers. The panel shows:
+  - a 100% host token bar split into **System / Tool definitions / Messages**, with the
+    absolute token pair (`11.8k / 1M`);
+  - an **estimated message composition** (Conversation, Tool calls, Compartments, Memories,
+    Profile, Other); rows with no estimate are omitted rather than shown as `0`;
+  - **Historian / Memory / Queue / Maintenance / Hygiene / Warnings** sections, using
+    `—` / `empty` / `never run` for values the host did not report;
+  - the **live operation record** (up to 12 entries, adjacent identical operations folded
+    as `×N`): 🧠 memory write · 🔎 memory load · 🗑️ reclaim queued · 🧭 original restored ·
+    ✂️ context compacted · 🗑️ context dropped · 🧭 archived-stored · 🧰 maintenance sweep ·
+    ⚠️ failure.
 
-  ![Telemetry capsule panel — live context pressure, occupancy metrics and a running record of recent reclaim and archive operations](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/telemetry-panel.png)
+  Focus stays inside the panel while it is open; clicking outside the panel/badge, Esc,
+  window blur, or the close button closes it and returns focus to the pill. The footer
+  offers `/ctx-status` for the full diagnostic view.
+
+  ![Telemetry capsule panel v2 — host token composition (System, Tool definitions, Messages), estimated message breakdown, Historian/Memory/Queue/Maintenance/Hygiene/Warnings sections and the live operation record](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/telemetry-panel-v2-en.png)
 - Data comes from the plugin's own HTTP routes (the harness's Remote event whitelist is a
   compile-time constant; the supported seam for third-party bundles is
   `ctx.webServer.register`):
   - `GET /mc-telemetry/summary` — one-shot snapshot (adapter / project / health + recent
-    events)
+    events). The v2 payload adds `adapterVersion`, `policy`, `contextBreakdown`,
+    `messageComposition`, `historian`, `queue`, `memory` and `surface`.
   - `GET /mc-telemetry/events` — SSE live tail
 - **Security**: the routes are loopback-only with no token auth, so they **emit counts and
   one-line summaries only** — no message bodies, no file paths, no credentials.
 - **Languages**: browser-side `magic-context` namespace dictionaries (zh/en); every
   card-owned label, hint, route placeholder, summary, form frame and picker caption follows
-  Settings → General instantly without a refresh. Host catalog values (provider/model/effort
-  names) stay as the host sends them. The `session-notice` rows written into the session
+  Settings → General instantly without a refresh. The telemetry pill and panel use the same
+  dictionary, so their labels, section names and empty-state copy switch with the host
+  language too. Host catalog values (provider/model/effort names) stay as the host sends them. The `session-notice` rows written into the session
   stream (model-visible) stay English constants (to avoid cached-prefix churn from
   mid-session language switches). Mechanics in the
   [Settings UI contract](docs/dsh-plugin-settings-ui-contract.md) and the

@@ -17,6 +17,7 @@
 ### Changed
 
 - README 的设置页截图更新为 0.14.0 的顶层「设置 → Magic Context」页面，包含 catalog-backed Historian 推理强度选择器；旧「插件」页卡片截图保留，供已发布旧版本引用。
+- README 双语「界面与遥测」章节与能力表更新到遥测 v2：宿主 token 构成、估算消息构成、Historian/记忆/队列/维护/可回收/警告分区与中英截图（`docs/img/telemetry-panel-v2*.png`）；旧 `telemetry-panel.png` 保留，供已发布旧版本引用。
 - `registerCompactionEngine` 明确为 flat/headless 宿主的根 seam：DSH Web 与桌面端的 agent preset 自带 compaction 引擎，设置页提示与 README 不再把它描述成通用接管。无运行时行为变更；上游 README 的同一说法已反馈为 [issue #16](https://github.com/wk544863858/dsh-plugin-magic-context/issues/16)。
 
 ## [0.14.0] - 2026-11-16

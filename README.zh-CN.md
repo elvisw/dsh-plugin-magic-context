@@ -43,7 +43,7 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 装好后重启 profile；如果该 profile 启用了 HMR，则会热加载。下一个会话里你会看到：
 
 - 工具结果带上 `§N§` 标签；overlay 里出现**遥测徽标**，显示实时上下文占用，点开是
-  指标面板与操作记录。
+  宿主 token 构成、估算消息构成、中英分区与操作记录。
 - 「设置 → Magic Context」顶层设置页可编辑卡片列出的 volatile 选项；同一张卡片仍保留在 GUI「插件」页，作为旧位置与缺少 `settings.section` 槽位时的回退。
 - `ctx_reduce` / `ctx_expand` / `ctx_memory` 三个工具已注册；项目记忆**默认开启**——
   historian 提炼的事实跨会话沉淀，注入模型读取的位置。
@@ -78,7 +78,7 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 | **压力调度** | 持久 usage（含 cache 读写）→ 压力分 → execute/defer 决策（65% 阈值、5 min cache TTL、85% 强制带）；`CONTEXT_WINDOW_EXCEEDED` 触发紧急回收 + retry；reduce-guidance 分级引导 |
 | **historian（带外摘要）** | 一次 LLM 调用重放真前缀（保 KV cache）→ 四层摘要 p1–p4 + facts/events，**只写 store 不动线缆**；execute 带内发布为 `[compacted §C<n>§]` 范围替换；`/ctx-recomp` 原地重做已压缩历史 |
 | **压缩接缝** | `registerCompactionEngine` 可接管 `ctx.compaction`（真实 `compaction/start\|summary\|replace\|end` 协议）；**默认关**，宿主 compaction-basic（根或 preset）保持原位。**仅 flat/headless**：在 DSH 0.2.2-rc.1 中，DSH Web 与桌面端的 agent preset 自己挂载压缩引擎，本开关不会替换 preset 引擎 |
-| **界面集成** | 顶层「设置 → Magic Context」页 + 旧「插件」页卡片（volatile 字段保存即生效）；catalog-backed Historian 推理强度选择器；`shell.overlay` 遥测徽标 + 胶囊面板（实时指标 + 操作记录）；`session-notice` 会话流提示；卡片自有文案中英即时切换 |
+| **界面集成** | 顶层「设置 → Magic Context」页 + 旧「插件」页卡片（volatile 字段保存即生效）；catalog-backed Historian 推理强度选择器；`shell.overlay` 遥测徽标 + 胶囊面板（宿主 token 构成、估算消息构成、中英分区、操作记录）；`session-notice` 会话流提示；卡片文案与面板分区/空状态中英即时切换（操作明细保持记录原文） |
 
 ## 安装
 
@@ -203,19 +203,31 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
 
   ![Magic Context 设置页下半部——journal 保留天数、verify/historian 路由、catalog-backed 推理强度选择器、journal 开关](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-bottom.png)
 
-- **`shell.overlay` 遥测徽标 + 胶囊面板**：收起态显示占用百分比；面板里是两行指标、节拍与
-  **实时操作记录**（最多 12 条，相邻同操作折叠 `×N`）：🧠 写入记忆 · 🔎 加载记忆 · 🗑️ 回收入队 ·
-  🧭 恢复原文 · ✂️ 压缩上下文 · 🗑️ 丢弃上下文 · 🧭 归档已存 · 🧰 维护巡检 · ⚠️ 失败。
-  点击面板/徽标之外、按 Esc、窗口失焦即关闭。
+- **`shell.overlay` 遥测徽标 + 胶囊面板**：收起态保留实时压力、token 对、Historian 状态与回收队列
+  （`H` / `Q<n>`）；composer 变窄时切换成图标宽度变体。面板里是：
+  - **100% 宿主 token 构成条**，分成 **系统 / 工具定义 / 消息**，旁边是绝对 token 对
+    （`11.8k / 1M`）；
+  - **估算的消息构成**（对话 / 工具调用 / 压缩段 / 记忆 / 用户画像 / 其他）；没有估算来源的行
+    直接省略，不显示成 `0`；
+  - **历史摘要 / 记忆 / 回收队列 / 维护 / 可回收 / 警告**分区；宿主没上报的值用
+    `—` / `空` / `尚未运行`，不伪造 0；
+  - **实时操作记录**（最多 12 条，相邻同操作折叠 `×N`）：🧠 写入记忆 · 🔎 加载记忆 ·
+    🗑️ 回收入队 · 🧭 恢复原文 · ✂️ 压缩上下文 · 🗑️ 丢弃上下文 · 🧭 归档已存 ·
+    🧰 维护巡检 · ⚠️ 失败。
 
-  ![遥测胶囊面板——实时上下文压力、占用指标与最近的回收/归档操作记录](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/telemetry-panel.png)
+  打开时焦点锁在面板内；点击面板/徽标之外、按 Esc、窗口失焦或点关闭按钮即关闭，并把焦点
+  还给徽标。底部提供 `/ctx-status`，用于查看完整诊断。
+
+  ![遥测胶囊面板 v2——宿主 token 构成（系统/工具定义/消息）、估算的消息构成、历史摘要/记忆/回收队列/维护/可回收/警告分区与实时操作记录](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/telemetry-panel-v2.png)
 - 数据来自本插件自己的 HTTP 路由（harness 的 Remote 事件白名单是编译期常量，第三方 bundle 的
   受支持口子是 `ctx.webServer.register`）：
-  - `GET /mc-telemetry/summary` — 一次性快照（适配器 / 项目 / 健康状态 + 最近事件）
+  - `GET /mc-telemetry/summary` — 一次性快照（适配器 / 项目 / 健康状态 + 最近事件）；v2
+    payload 增加 `adapterVersion`、`policy`、`contextBreakdown`、`messageComposition`、
+    `historian`、`queue`、`memory` 与 `surface`。
   - `GET /mc-telemetry/events` — SSE 实时尾
 - **安全**：路由仅 loopback、无 token 鉴权，因此**只输出计数与单行摘要**——不含消息正文、
   不含文件路径、不含凭据。
-- **多语言**：浏览器侧 `magic-context` 命名空间字典（zh/en）；卡片的全部自有文案——字段 label/hint、路由占位、摘要、表单框架与选择器说明——跟随「设置 → 通用」即时切换、无需刷新。宿主 catalog 的值（provider/model/effort 名称）保持宿主原文。写进会话流、模型可见的 `session-notice` 保持英文常量（避免同会话中途换语言造成 cached prefix 抖动）。机制见[设置界面契约](docs/dsh-plugin-settings-ui-contract.md)与[主界面遥测契约（历史）](docs/dsh-plugin-ui-telemetry-contract.md)。
+- **多语言**：浏览器侧 `magic-context` 命名空间字典（zh/en）；卡片的全部自有文案——字段 label/hint、路由占位、摘要、表单框架与选择器说明——跟随「设置 → 通用」即时切换、无需刷新。遥测徽标与面板共用同一份字典，分区名、标签和空状态文案也随宿主语言切换。宿主 catalog 的值（provider/model/effort 名称）保持宿主原文。写进会话流、模型可见的 `session-notice` 保持英文常量（避免同会话中途换语言造成 cached prefix 抖动）。机制见[设置界面契约](docs/dsh-plugin-settings-ui-contract.md)与[主界面遥测契约（历史）](docs/dsh-plugin-ui-telemetry-contract.md)。
 
 ## 观测与运维
 
