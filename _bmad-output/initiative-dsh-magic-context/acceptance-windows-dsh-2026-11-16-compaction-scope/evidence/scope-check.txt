@@ -1,0 +1,36 @@
+README.zh-CN.md:21:> 状态：**已在真实 DSH Web（web profile）日常运行**，仓内测试门禁与真实宿主证据见下文；Desktop profile 未单独验收。
+README.zh-CN.md:25:profile；Desktop profile 未单独验收。可选的压缩接管只适用于 flat/headless 组合，**在 DSH Web 和桌面端都无效**。包内自带编译产物，
+README.zh-CN.md:63:根 compaction-basic 行已停用的 flat/headless profile 生效，不适用于 Web 或桌面端的 agent preset。
+README.zh-CN.md:80:| **压缩接缝** | `registerCompactionEngine` 可接管 `ctx.compaction`（真实 `compaction/start\|summary\|replace\|end` 协议）；**默认关**，宿主 compaction-basic（根或 preset）保持原位。**仅 flat/headless**：在 DSH 0.2.2-rc.1 中，DSH Web 与桌面端的 agent preset 自己挂载压缩引擎，本开关不会替换 preset 引擎 |
+README.zh-CN.md:140:> **适用范围：** GUI 开关只控制根 `ctx.compaction` seam。在 DSH 0.2.2-rc.1 里，Web 与桌面端的
+README.zh-CN.md:141:> agent 运行在各自的 agent preset 内，每个 preset 自己挂载 `compaction` group；profile patch 顶层的
+README.zh-CN.md:142:> `compaction-basic` 行不会替换 preset 内的引擎。因此本开关**只适用于 flat/headless 宿主**，
+README.zh-CN.md:147:对于没有 preset 自有压缩引擎的 flat/headless profile，可以手写 profile 覆盖行接管压缩：
+README.zh-CN.md:156:  disabled: true          # 仅 flat/headless；不是 DSH Web/桌面端 preset 的覆盖行
+README.zh-CN.md:164:| 压缩接缝 | `registerCompactionEngine`（代码默认可解析即挂；**bundle 随发 false**）· `compactionBase`（宿主注入基类） | 仅 flat/headless 根 seam；该组合下接管需同时禁用根 compaction-basic。在 DSH 0.2.2-rc.1 中，Web 与桌面端的 agent preset 自带压缩引擎，本键不会替换 preset 引擎。pre-step 每步 `reconcileEngine` 动态挂/卸 |
+README.zh-CN.md:222:Desktop **不持久化 `ctx.logger` 输出**，所以插件把决策与结果写进自己的 append-only journal：
+README.zh-CN.md:353:- Desktop 不持久化 harness logger——可观测性完全由自记 journal 承担。
+docs/dsh-plugin-settings-ui-contract.md:127:**flat/headless host** switch, not a general compaction takeover.
+docs/dsh-plugin-settings-ui-contract.md:129:- In DSH 0.2.2-rc.1, the Web and Desktop bundles disable the root `compaction-basic` row,
+docs/dsh-plugin-settings-ui-contract.md:130:  and every agent preset mounts its own nested `compaction` group with
+docs/dsh-plugin-settings-ui-contract.md:135:- The switch only takes effect in a flat/headless composition after that composition's
+docs/dsh-plugin-settings-ui-contract.md:136:  root `compaction-basic` row is disabled. Web and Desktop users should leave it off.
+docs/dsh-plugin-settings-ui-contract.md:141:general takeover. That recipe is flat-only and does not work on DSH Web/Desktop; it was
+README.md:35:  you explicitly opt in; in DSH 0.2.2-rc.1, Web and Desktop agent presets own their own
+README.md:36:  compaction engine, so `registerCompactionEngine` is a flat/headless-host seam, not a
+README.md:37:  Web/Desktop preset override.
+README.md:40:a `web` profile). The quick start below uses the Web profile; the Desktop profile is not
+README.md:41:separately verified. The optional compaction takeover is for flat/headless compositions
+README.md:42:and is **not effective on DSH Web or Desktop**. The package ships compiled — install
+README.md:95:flat/headless profiles whose root compaction-basic row is disabled, not to Web or Desktop
+README.md:96:agent presets.
+README.md:114:| **Compaction seam** | `registerCompactionEngine` can take over root `ctx.compaction` (real `compaction/start\|summary\|replace\|end` protocol); **off by default** — the host compaction-basic (root or preset) stays in place. **Flat/headless only**: in DSH 0.2.2-rc.1, Web and Desktop agent presets mount their own compaction engine, so this switch does not replace a preset engine |
+README.md:191:> 0.2.2-rc.1, Web and Desktop agents run inside per-agent presets; each preset mounts its
+README.md:193:> replace the preset engine. The switch is therefore **flat/headless-host only**, and it
+README.md:198:For a flat/headless profile that does not mount a preset-owned compaction engine, a
+README.md:208:  disabled: true          # flat/headless only; not a DSH Web/Desktop preset override
+README.md:217:| Compaction seam | `registerCompactionEngine` (code default: mount when resolvable; **ships false in the bundle**) · `compactionBase` (host-injected base class) | Flat/headless root seam only; that composition must disable its root compaction-basic row. In DSH 0.2.2-rc.1, Web and Desktop agent presets own their own compaction engine, so this key does not replace a preset engine. Pre-step `reconcileEngine` mounts/unmounts dynamically every step |
+README.md:290:Desktop **does not persist `ctx.logger` output**, so the plugin writes its decisions and
+README.md:444:- Desktop does not persist the harness logger — observability rests entirely on the
+src/client/index.js:1522:        'settings.field.registerCompactionEngine.hint': '把适配器注册为压缩引擎 seam；在 DSH Web 和桌面端都无效。只对 flat/headless profile 生效，且必须先停用该组合的根 compaction-basic 行；Web 与桌面端的每个 agent preset 自带 compaction 引擎，本开关不会替换它。下一次 agent step 挂载或卸载。',
+src/client/index.js:1681:        'settings.field.registerCompactionEngine.hint': 'Register the adapter as the compaction engine seam. This switch has no effect on DSH Web or Desktop. It is only effective on a flat/headless profile whose root compaction-basic row is disabled and whose host composition does not already provide compaction through an agent preset; Web and Desktop presets own their compaction engine and this switch does not replace it. Mounts or unmounts on the next agent step.',

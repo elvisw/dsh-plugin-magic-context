@@ -21,7 +21,8 @@
 > 状态：**已在真实 DSH Web（web profile）日常运行**，仓内测试门禁与真实宿主证据见下文；Desktop profile 未单独验收。
 > 仓库历史与出处见 [NOTICE](NOTICE)；数据目录见[观测与运维](#观测与运维)。
 
-需要 **Node ≥ 22.19** 与带 Web 客户端的 **DSH 0.2.x 宿主**（桌面应用或 `web` profile）。包内自带编译产物，
+需要 **Node ≥ 22.19** 与带 Web 客户端的 **DSH 0.2.x 宿主**（桌面应用或 `web` profile）。下面的快速上手使用 Web
+profile；可选的压缩接管只适用于 flat/headless 组合，**在 DSH Web 和桌面端都无效**。包内自带编译产物，
 直接从 npm registry 安装：
 
 ```bash
@@ -58,7 +59,8 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 结果： §5 的原文作为新工具结果返回；§5 占位符保持 dropped
 ```
 
-唯一需要主动开启的是压缩接管（`registerCompactionEngine`，默认关，见[配置](#配置)）。
+唯一需要主动开启的是压缩接管（`registerCompactionEngine`，默认关，见[配置](#配置)）；在 DSH 0.2.2-rc.1 中，它只对
+根 compaction-basic 行已停用的 flat/headless profile 生效，不适用于 Web 或桌面端的 agent preset。
 
 ## 它做什么
 
@@ -75,7 +77,7 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 | **可逆上下文回收** | 工具结果打 `§N§` 标签；`ctx_reduce` **只入队**——落地发生在 execute 带内，成为引用原文的 `[dropped §N§]` 占位符；`ctx_expand` 把原文作为新结果返回，占位符保持 dropped。绝不自发打断缓存前缀 |
 | **压力调度** | 持久 usage（含 cache 读写）→ 压力分 → execute/defer 决策（65% 阈值、5 min cache TTL、85% 强制带）；`CONTEXT_WINDOW_EXCEEDED` 触发紧急回收 + retry；reduce-guidance 分级引导 |
 | **historian（带外摘要）** | 一次 LLM 调用重放真前缀（保 KV cache）→ 四层摘要 p1–p4 + facts/events，**只写 store 不动线缆**；execute 带内发布为 `[compacted §C<n>§]` 范围替换；`/ctx-recomp` 原地重做已压缩历史 |
-| **压缩接缝** | `registerCompactionEngine` 可接管 `ctx.compaction`（真实 `compaction/start\|summary\|replace\|end` 协议）；**默认关**，宿主 compaction-basic 保持原位 |
+| **压缩接缝** | `registerCompactionEngine` 可接管 `ctx.compaction`（真实 `compaction/start\|summary\|replace\|end` 协议）；**默认关**，宿主 compaction-basic（根或 preset）保持原位。**仅 flat/headless**：在 DSH 0.2.2-rc.1 中，DSH Web 与桌面端的 agent preset 自己挂载压缩引擎，本开关不会替换 preset 引擎 |
 | **界面集成** | 顶层「设置 → Magic Context」页 + 旧「插件」页卡片（volatile 字段保存即生效）；catalog-backed Historian 推理强度选择器；`shell.overlay` 遥测徽标 + 胶囊面板（实时指标 + 操作记录）；`session-notice` 会话流提示；卡片自有文案中英即时切换 |
 
 ## 安装
@@ -133,7 +135,16 @@ dsh plugin --profile web add <本仓库路径>   # 应用自带 CLI；spec 可�
   `memory:` 会把 `registerCompactionEngine: false` 抹掉。手写覆盖时必须把要保留的键一并写出。
 
 bundle 自带配置只有一行：`registerCompactionEngine: false`——保守首装，宿主压缩引擎保持原位
-（记忆、回收与 historian 均默认开启）。要接管压缩时：
+（记忆、回收与 historian 均默认开启）。
+
+> **适用范围：** GUI 开关只控制根 `ctx.compaction` seam。在 DSH 0.2.2-rc.1 里，Web 与桌面端的
+> agent 运行在各自的 agent preset 内，每个 preset 自己挂载 `compaction` group；profile patch 顶层的
+> `compaction-basic` 行不会替换 preset 内的引擎。因此本开关**只适用于 flat/headless 宿主**，
+> 且必须先停用该组合的根 `compaction-basic` 行。上游 0.11.2 的两行接管方案也有同样的 flat-only
+> 限制；已反馈到
+> [上游 issue #16](https://github.com/wk544863858/dsh-plugin-magic-context/issues/16)。
+
+对于没有 preset 自有压缩引擎的 flat/headless profile，可以手写 profile 覆盖行接管压缩：
 
 ```yaml
 - id: magic-context-dsh
@@ -142,7 +153,7 @@ bundle 自带配置只有一行：`registerCompactionEngine: false`——保守�
     registerCompactionEngine: true
 - id: compaction-basic
   name: '@deepseek-ai/dsh-compaction-basic'
-  disabled: true          # 二者互斥，接管时必须同时禁用宿主引擎
+  disabled: true          # 仅 flat/headless；不是 DSH Web/桌面端 preset 的覆盖行
 ```
 
 配置参考（完整类型见 [src/dsh/config.ts](src/dsh/config.ts)；除注明外均为 profile 覆盖行可写）：
@@ -150,7 +161,7 @@ bundle 自带配置只有一行：`registerCompactionEngine: false`——保守�
 | 组 | 键（默认值） | 说明 |
 |---|---|---|
 | 总开关 | `enabled` (true) · `registerTools` (true) · `registerStatusCommand` (true) · `sessionNotices` (true) · `reduceGuidance` (true) · `searchHint` (true) | `enabled: false` 保持加载但完全惰性；`sessionNotices` 控制会话流内的管理提示行 |
-| 压缩接缝 | `registerCompactionEngine`（代码默认可解析即挂；**bundle 随发 false**）· `compactionBase`（宿主注入基类） | 接管需同时禁用 compaction-basic；pre-step 每步 `reconcileEngine` 动态挂/卸 |
+| 压缩接缝 | `registerCompactionEngine`（代码默认可解析即挂；**bundle 随发 false**）· `compactionBase`（宿主注入基类） | 仅 flat/headless 根 seam；该组合下接管需同时禁用根 compaction-basic。在 DSH 0.2.2-rc.1 中，Web 与桌面端的 agent preset 自带压缩引擎，本键不会替换 preset 引擎。pre-step 每步 `reconcileEngine` 动态挂/卸 |
 | 压力策略 | `policy.*`：`executeThreshold` (65) · `forceThreshold` (85) · `ttlMs` (5 min) · `assumedContextWindow` (256k) · `protectedToolResults` (8) · `historianTimeoutMs` (120 s) · `historianMaxTokens` (8192，低于会被抬到 8192) · `historianMaxTokensCeiling` (32768) · `baselineTokens` (2000) · `memoryBudgetTokens` (8000) · `memoryLimit` (40) · `forceWaitReadyMs` (0) | 阈值在下一个决策点生效（含 `/ctx-status` 与 compaction engine 路径）。`compartmentGuardMode` / `compartmentEntrantTokens`（发布护栏）已退役，不再是可配置项 |
 | historian | `historianEnabled` (true) · `historian.{provider, model}`（**成对钉住**；空 = 跟随会话最后路由）· `historian.reasoningEffort`（可选，留空 = 模型默认） | 带外摘要与 `/compact` 摘要的生成路由；GUI 设置页有「Historian provider/model」下拉（Auto = 跟随会话，推荐）和 catalog-backed 推理强度选择器：`默认`、路由模型实际公布的 id，以及用于旧值/未知值的 `自定义`。Auto 路由下仍保留文本输入（此时不知道会话模型）；未公布的 id 不会被静默改写或夹取。provider 级 `OUTPUT_TOKEN_LIMIT` 空补全会走正常的预算翻倍重试。verify 之外的唯一 LLM 消耗点 |
 | 项目记忆 | `memory.{}`：`enabled`（true，0.9.0 起默认开启——`enabled: false` 退出）· `dbPath` · `project`（省略用会话 cwd）· `domainProjects` · `shareCategories` · `autoPromote` (true) · `write` (true) | `write: false` 让 `ctx_memory` 退回只读 |

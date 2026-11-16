@@ -180,3 +180,15 @@ after = [12]
 hitl = true
 risk = "high"
 refine = true
+
+[[entry]]
+id = 16
+type = "story"
+title = "Compaction takeover scope and Web/Desktop warning"
+description = "Correct the public scope of registerCompactionEngine after independent validation found that DSH Web/Desktop disable the root compaction-basic row and mount compaction inside each agent preset. Keep the runtime switch unchanged, but change the Settings hint, README.md/README.zh-CN.md, the Settings UI contract and CHANGELOG so they no longer present the switch as a universal takeover. The hint must say it has no effect on DSH Web or Desktop, is flat/headless-only, and that Web/Desktop agent presets own their compaction engine; the manual two-row YAML snippet may remain only under an explicit flat/headless profile heading. Do not implement automatic profile-patch writing, comment toggling or preset-aware takeover: the top-level profile row cannot reach a preset's config.plugins, settings saves rewrite YAML and normalize line endings, and the proposed live-refresh path does not exist. Link upstream issue wk544863858/dsh-plugin-magic-context#16, which reports the same flat-only recipe in 0.11.2. No runtime, schema, data, package, release or daily-profile change."
+verify = "Independent ticket validation passes. tests/client-pure.spec.ts asserts both dictionaries contain the registerCompactionEngine hint with the flat/headless, root compaction-basic, and Desktop/Web agent-preset scope wording; dictionary completeness stays green. npm run check:i18n passes. rg shows the unconditional two-row takeover snippet is gone or explicitly scoped to flat/headless in both READMEs, the Settings UI contract has a Compaction takeover scope section and upstream issue link, and no src code introduces profile-patch writing, compaction-basic editing, ctx.loader.update or automatic host-row management. npm test, typecheck, check:i18n and build pass. No host gate is required for this copy-only change; if run, only assert the hint is visible in Settings -> Magic Context, not the full T13 matrix. No release, profile mutation, schema or data change."
+covers = ["src/index.ts", "src/dsh/config.ts", "src/client/index.js", "tests/client-pure.spec.ts", "README.md", "README.zh-CN.md", "CHANGELOG.md", "docs/dsh-plugin-settings-ui-contract.md", "cordis.patch.yml"]
+after = [14]
+hitl = false
+risk = "medium"
+refine = true

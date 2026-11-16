@@ -245,13 +245,15 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
   // Occupying `ctx.compaction` is what makes this adapter authoritative over
   // reclaim. The seam is FIRST-COME-FIRST-SERVED — measured on the real host
   // stack (tests/compaction-conflict.spec.ts, 2026-10-14): when compaction-
-  // basic mounts first (the stock composition — the base bundle ships it),
-  // OUR engine's registration is rejected and the adapter stands down (warn
-  // log + `unavailable:` meta; compaction-basic keeps compaction; everything
-  // else about the adapter is unaffected). When the adapter mounts first,
-  // compaction-basic cannot mount at all. Takeover therefore needs a profile
-  // that does not mount compaction-basic — defaulting the switch on cannot
-  // win on stock and stays opt-in.
+  // basic mounts first (a flat/headless stock composition — the base bundle
+  // ships it), OUR engine's registration is rejected and the adapter stands
+  // down (warn log + `unavailable:` meta; compaction-basic keeps compaction;
+  // everything else about the adapter is unaffected). When the adapter mounts
+  // first, compaction-basic cannot mount at all. Takeover therefore needs a
+  // flat/headless profile that does not mount compaction-basic — defaulting the
+  // switch on cannot win on stock and stays opt-in. On DSH Web and Desktop,
+  // agents run in per-agent presets that own their own compaction groups; this
+  // root switch does not replace a preset engine.
   // `registerCompactionEngine` is a LIVE switch: the pre-step band calls
   // `reconcileEngine` on every step, so a settings-form toggle mounts or
   // unmounts the engine without a restart. The switch is volatile, and a

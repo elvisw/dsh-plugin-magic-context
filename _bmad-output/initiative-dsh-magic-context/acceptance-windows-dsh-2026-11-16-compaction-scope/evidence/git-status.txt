@@ -1,0 +1,14 @@
+ M CHANGELOG.md
+ M README.md
+ M README.zh-CN.md
+ M _bmad-output/initiative-dsh-magic-context/tickets/tickets.toml
+ M cordis.patch.yml
+ M docs/dsh-plugin-settings-ui-contract.md
+ M src/client/index.js
+ M src/dsh/config.ts
+ M src/index.ts
+ M tests/client-pure.spec.ts
+?? .codegraph/
+?? _bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-16-compaction-scope/
+?? _bmad-output/initiative-dsh-magic-context/tickets/story-settings-managed-host-compaction-row-plan.md
+?? _bmad-output/initiative-dsh-magic-context/tickets/story-settings-managed-host-compaction-row.md

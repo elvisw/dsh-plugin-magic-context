@@ -47,6 +47,7 @@ const api = factory((name) => {
     recordsOf: (rows: readonly unknown[]) => Array<{ category: string; text: string; detail: string; count: number }>
     recordCategories: Record<string, { icon: string; labelKey: string; tone: string }>
     dictionaryKeys: () => { zh: string[]; en: string[] }
+    dictionaries: { zh: Record<string, string>; en: Record<string, string> }
     createModelCatalog: () => {
       attach: (context: unknown) => void
       getSnapshot: () => {
@@ -571,6 +572,27 @@ describe('settings copy — every field key is dictionary-backed', () => {
       expect(catalog.zh).toContain(key)
       expect(catalog.en).toContain(key)
     }
+  })
+
+  it('scopes registerCompactionEngine to flat/headless hosts', () => {
+    const { dictionaries } = api.__diagnostics
+    const key = 'settings.field.registerCompactionEngine.hint'
+    const zh = dictionaries.zh[key]
+    const en = dictionaries.en[key]
+    expect(zh).toContain('flat/headless')
+    expect(zh).toContain('agent preset')
+    expect(zh).toContain('桌面端')
+    expect(zh).toContain('compaction-basic')
+    expect(zh).toMatch(/根/)
+    expect(zh).toContain('Web')
+    expect(en).toContain('flat/headless')
+    expect(en).toContain('agent preset')
+    expect(en).toMatch(/desktop/i)
+    expect(en).toContain('compaction-basic')
+    expect(en).toContain('root')
+    expect(en).toContain('Web')
+    expect(zh).not.toContain('先禁用宿主压缩行')
+    expect(en).not.toContain('disable the host compaction row first')
   })
 
   it('field specs carry dictionary keys instead of hardcoded copy', () => {

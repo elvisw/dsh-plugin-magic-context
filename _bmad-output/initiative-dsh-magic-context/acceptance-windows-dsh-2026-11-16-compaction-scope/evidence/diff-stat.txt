@@ -1,0 +1,11 @@
+ CHANGELOG.md                                       |  1 +
+ README.md                                          | 32 +++++++++++++++++-----
+ README.zh-CN.md                                    | 23 ++++++++++++----
+ .../tickets/tickets.toml                           | 12 ++++++++
+ cordis.patch.yml                                   |  5 ++--
+ docs/dsh-plugin-settings-ui-contract.md            | 29 +++++++++++++++++---
+ src/client/index.js                                |  4 +--
+ src/dsh/config.ts                                  |  6 ++--
+ src/index.ts                                       | 16 ++++++-----
+ tests/client-pure.spec.ts                          | 22 +++++++++++++++
+ 10 files changed, 120 insertions(+), 30 deletions(-)

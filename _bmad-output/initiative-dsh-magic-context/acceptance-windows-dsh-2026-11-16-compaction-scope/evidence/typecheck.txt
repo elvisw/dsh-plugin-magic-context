@@ -1,0 +1,3 @@
+
+> @elvisw/dsh-magic-context@0.14.0 typecheck
+> tsc --noEmit

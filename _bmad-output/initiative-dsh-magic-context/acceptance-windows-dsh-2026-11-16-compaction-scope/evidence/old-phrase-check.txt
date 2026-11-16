@@ -1,0 +1,2 @@
+tests\client-pure.spec.ts:594:    expect(zh).not.toContain('先禁用宿主压缩行')
+tests\client-pure.spec.ts:595:    expect(en).not.toContain('disable the host compaction row first')

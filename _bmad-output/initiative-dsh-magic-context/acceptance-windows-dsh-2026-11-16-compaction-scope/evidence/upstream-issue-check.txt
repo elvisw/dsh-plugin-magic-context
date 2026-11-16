@@ -1,0 +1,4 @@
+README.md:196:> [upstream issue #16](https://github.com/wk544863858/dsh-plugin-magic-context/issues/16).
+docs/dsh-plugin-settings-ui-contract.md:143:[wk544863858/dsh-plugin-magic-context#16](https://github.com/wk544863858/dsh-plugin-magic-context/issues/16).
+CHANGELOG.md:16:- `registerCompactionEngine` 明确为 flat/headless 宿主的根 seam：DSH Web 与桌面端的 agent preset 自带 compaction 引擎，设置页提示与 README 不再把它描述成通用接管。无运行时行为变更；上游 README 的同一说法已反馈为 [issue #16](https://github.com/wk544863858/dsh-plugin-magic-context/issues/16)。
+README.zh-CN.md:145:> [上游 issue #16](https://github.com/wk544863858/dsh-plugin-magic-context/issues/16)。

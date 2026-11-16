@@ -8,8 +8,9 @@
 # Conservative first install: `registerCompactionEngine: false` leaves the
 # host's own compaction engine in place, so this layer reclaims context
 # (tags, drops, the historian, the baseline) without seizing `ctx.compaction`.
-# Flip it to true *and* disable the host engine row in the profile patch to
-# let Magic Context own compaction:
+# Flat/headless compositions only: flip it to true *and* disable the root host
+# engine row there. DSH Web and Desktop use per-agent presets that own their
+# own compaction engine; a top-level row below does not replace those.
 #   - id: compaction-basic
 #     name: '@deepseek-ai/dsh-compaction-basic'
 #     disabled: true

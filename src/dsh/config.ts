@@ -220,8 +220,10 @@ export interface MagicContextDshConfig {
    */
   compactionBase?: unknown
   /** Mount the adapter's CompactionEngine on the `compaction` seam (default false —
-   *  the seam is first-come-first-served, so takeover needs a profile that does
-   *  not mount compaction-basic; see tests/compaction-conflict.spec.ts). */
+   *  the seam is first-come-first-served, so takeover needs a flat/headless
+   *  profile that does not mount compaction-basic; see
+   *  tests/compaction-conflict.spec.ts). DSH Web and Desktop agent presets own
+   *  their own compaction engine; this root switch does not replace one. */
   registerCompactionEngine?: boolean
   /**
    * Validation-period observability. The Desktop app does not persist the

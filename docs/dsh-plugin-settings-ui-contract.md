@@ -1,6 +1,6 @@
 # Magic Context Settings UI contract
 
-> Status: current — last verified 2026-11-15 against DSH 0.2.2-rc.1.
+> Status: current — host baseline DSH 0.2.2-rc.1; the compaction-scope section is source-checked 2026-11-16, without a new browser gate.
 
 This document is the **current** contract for the Magic Context browser settings
 surface. It replaces the settings-card portion of the historical
@@ -121,7 +121,28 @@ than a mirrored implementation.
 - The native select and text input carry `aria-label`/`htmlFor` associations and are
   disabled when the deployment is read-only.
 
-## 5. Compatibility and fallback
+## 5. Compaction takeover scope
+
+`registerCompactionEngine` only mounts the adapter's root `ctx.compaction` seam. It is a
+**flat/headless host** switch, not a general compaction takeover.
+
+- In DSH 0.2.2-rc.1, the Web and Desktop bundles disable the root `compaction-basic` row,
+  and every agent preset mounts its own nested `compaction` group with
+  `isolate.compaction: true`.
+- A profile-patch top-level `compaction-basic` row does not reach a preset's
+  `config.plugins`; only overriding the preset row itself reaches that composition, which
+  this plugin does not do. The top-level row therefore does not replace a preset engine.
+- The switch only takes effect in a flat/headless composition after that composition's
+  root `compaction-basic` row is disabled. Web and Desktop users should leave it off.
+- The Settings hint carries this limitation, and there is no automatic profile-patch
+  writer.
+
+The upstream `dsh-plugin-magic-context` 0.11.2 README shows the same two-row recipe as a
+general takeover. That recipe is flat-only and does not work on DSH Web/Desktop; it was
+reported upstream as
+[wk544863858/dsh-plugin-magic-context#16](https://github.com/wk544863858/dsh-plugin-magic-context/issues/16).
+
+## 6. Compatibility and fallback
 
 - A host without the `settings.section` slot simply does not render the primary page; the
   Plugins-page card remains available.
@@ -131,7 +152,7 @@ than a mirrored implementation.
 - A shell without `remote.session.modelCatalog()` keeps the route and effort fields on
   plain text; no catalog data is invented.
 
-## 6. Evidence baseline
+## 7. Evidence baseline
 
 - Host: DSH 0.2.2-rc.1 with a real Web client.
 - The Web gate installs a local tarball into a **fresh isolated profile**, starts the
@@ -144,7 +165,7 @@ than a mirrored implementation.
 - Headless DSH has no Settings UI; pure tests and the headless runtime smoke are
   supplementary, not a substitute for the browser gate.
 
-## 7. Boundaries
+## 8. Boundaries
 
 - No runtime effort mapping, clamping, validation, or fallback aliasing.
 - No new model-catalog RPC or second catalog read.

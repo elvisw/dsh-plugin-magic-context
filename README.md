@@ -32,10 +32,15 @@
   `[dropped §N§]` placeholders and `ctx_expand` returns the original as a new result; history digests into
   p1–p4 summaries published as range replacements — never a spontaneous prefix bust.
 - **Conservative by default** — the host `compaction-basic` engine stays in place unless
-  you explicitly opt in.
+  you explicitly opt in; in DSH 0.2.2-rc.1, Web and Desktop agent presets own their own
+  compaction engine, so `registerCompactionEngine` is a flat/headless-host seam, not a
+  Web/Desktop preset override.
 
 Requires **Node ≥ 22.19** and a **DSH 0.2.x host with the Web client** (the desktop app or
-a `web` profile). The package ships compiled — install straight from the npm registry:
+a `web` profile). The quick start below uses the Web profile; the Desktop profile is not
+separately verified. The optional compaction takeover is for flat/headless compositions
+and is **not effective on DSH Web or Desktop**. The package ships compiled — install
+straight from the npm registry:
 
 ```bash
 dsh plugin --profile web add @elvisw/dsh-magic-context
@@ -86,7 +91,9 @@ tool:  the original text of §5, as a new result — the §5 placeholder stays d
 ```
 
 The only opt-in surface is the compaction takeover (`registerCompactionEngine`, off by
-default — see [Configuration](#configuration)).
+default — see [Configuration](#configuration)); in DSH 0.2.2-rc.1 it applies to
+flat/headless profiles whose root compaction-basic row is disabled, not to Web or Desktop
+agent presets.
 
 ## What it does
 
@@ -104,7 +111,7 @@ last five manage the context window (full design in [Architecture](#architecture
 | **Reversible context reclaim** | Tool results get `§N§` tags; `ctx_reduce` **only queues** — drops land in the execute band as `[dropped §N§]` placeholders referencing the originals; `ctx_expand` returns the original text as a new result while the placeholder stays dropped. The cached prefix is never busted spontaneously |
 | **Pressure scheduling** | Persistent usage (incl. cache reads/writes) → pressure score → execute/defer decisions (65% threshold, 5 min cache TTL, 85% force band); `CONTEXT_WINDOW_EXCEEDED` triggers emergency reclaim + retry; tiered reduce-guidance nudges |
 | **Historian (out-of-band digest)** | One LLM call replays the real prefix (KV cache preserved) → four-tier p1–p4 summary + facts/events, **writes the store only, never touches the wire**; published in the execute band as a `[compacted §C<n>§]` range replacement; `/ctx-recomp` redoes compacted history in place |
-| **Compaction seam** | `registerCompactionEngine` can take over `ctx.compaction` (real `compaction/start\|summary\|replace\|end` protocol); **off by default** — the host compaction-basic stays in place |
+| **Compaction seam** | `registerCompactionEngine` can take over root `ctx.compaction` (real `compaction/start\|summary\|replace\|end` protocol); **off by default** — the host compaction-basic (root or preset) stays in place. **Flat/headless only**: in DSH 0.2.2-rc.1, Web and Desktop agent presets mount their own compaction engine, so this switch does not replace a preset engine |
 | **UI integration** | Top-level **Settings → Magic Context** page plus the legacy Plugins-page card (volatile fields, save = live); catalog-backed Historian reasoning-effort picker; `shell.overlay` telemetry badge + capsule panel (live metrics + operation record); `session-notice` rows in the session stream; Chinese/English instant switching for every card-owned string |
 
 ## Installation
@@ -178,7 +185,18 @@ Two ways to change configuration, with different semantics (see the
 
 The bundle's built-in config is one line: `registerCompactionEngine: false` — a
 conservative first install that keeps the host compaction engine in place (memory, reclaim
-and historian are on by default). To take over compaction:
+and historian are on by default).
+
+> **Scope:** the GUI switch only controls the root `ctx.compaction` seam. In DSH
+> 0.2.2-rc.1, Web and Desktop agents run inside per-agent presets; each preset mounts its
+> own `compaction` group, so a profile-patch top-level `compaction-basic` row does not
+> replace the preset engine. The switch is therefore **flat/headless-host only**, and it
+> only takes effect after the root `compaction-basic` row in that composition is disabled.
+> The upstream 0.11.2 README's two-row recipe has the same flat-only limitation; see
+> [upstream issue #16](https://github.com/wk544863858/dsh-plugin-magic-context/issues/16).
+
+For a flat/headless profile that does not mount a preset-owned compaction engine, a
+manual profile override can take over compaction:
 
 ```yaml
 - id: magic-context-dsh
@@ -187,7 +205,7 @@ and historian are on by default). To take over compaction:
     registerCompactionEngine: true
 - id: compaction-basic
   name: '@deepseek-ai/dsh-compaction-basic'
-  disabled: true          # mutually exclusive; taking over requires disabling the host engine too
+  disabled: true          # flat/headless only; not a DSH Web/Desktop preset override
 ```
 
 Configuration reference (full types in [src/dsh/config.ts](src/dsh/config.ts); all keys
@@ -196,7 +214,7 @@ writable as profile override rows unless noted):
 | Group | Keys (defaults) | Notes |
 |---|---|---|
 | Master switches | `enabled` (true) · `registerTools` (true) · `registerStatusCommand` (true) · `sessionNotices` (true) · `reduceGuidance` (true) · `searchHint` (true) | `enabled: false` stays loaded but fully inert; `sessionNotices` controls the management notice rows in the session stream |
-| Compaction seam | `registerCompactionEngine` (code default: mount when resolvable; **ships false in the bundle**) · `compactionBase` (host-injected base class) | Taking over requires disabling compaction-basic too; pre-step `reconcileEngine` mounts/unmounts dynamically every step |
+| Compaction seam | `registerCompactionEngine` (code default: mount when resolvable; **ships false in the bundle**) · `compactionBase` (host-injected base class) | Flat/headless root seam only; that composition must disable its root compaction-basic row. In DSH 0.2.2-rc.1, Web and Desktop agent presets own their own compaction engine, so this key does not replace a preset engine. Pre-step `reconcileEngine` mounts/unmounts dynamically every step |
 | Pressure policy | `policy.*`: `executeThreshold` (65) · `forceThreshold` (85) · `ttlMs` (5 min) · `assumedContextWindow` (256k) · `protectedToolResults` (8) · `historianTimeoutMs` (120 s) · `historianMaxTokens` (8192, raised to 8192 if set lower) · `historianMaxTokensCeiling` (32768) · `baselineTokens` (2000) · `memoryBudgetTokens` (8000) · `memoryLimit` (40) · `forceWaitReadyMs` (0) | Thresholds take effect at the next decision point (incl. `/ctx-status` and the compaction-engine paths). `compartmentGuardMode` / `compartmentEntrantTokens` (publish guards) were retired and are no longer configurable |
 | historian | `historianEnabled` (true) · `historian.{provider, model}` (**pinned as a pair**; empty = follow the session's last route) · `historian.reasoningEffort` (optional, blank = model default) | Generation route for out-of-band digests and `/compact` summaries; the GUI Settings page has "Historian provider/model" dropdowns (Auto = follow session, recommended) and a catalog-backed reasoning-effort picker: `Default`, the routed model's advertised ids, and `Custom` for legacy/unknown values. The Auto route keeps a text input because the session model is unknown there; an unadvertised id is never silently remapped or clamped. A provider-level `OUTPUT_TOKEN_LIMIT` empty completion is retried with the normal cap escalation. The only LLM spend besides verify |
 | Project memory | `memory.{}`: `enabled` (true, on by default since 0.9.0 — opt out with `enabled: false`) · `dbPath` · `project` (omitted = session cwd) · `domainProjects` · `shareCategories` · `autoPromote` (true) · `write` (true) | `write: false` makes `ctx_memory` read-only |
