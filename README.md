@@ -289,6 +289,8 @@ Both UI capabilities ride the same browser half (`src/client/index.js`, copied v
 
   ![Lower part of the Magic Context Settings page — journal retention, verify/historian routes, catalog-backed reasoning effort picker, journal switches](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-bottom.png)
 
+  ![Vector search section — provider/preset, endpoint, auth header, model ID, API-key environment variable, probed dimensions, timeouts and batch size, with Load models / Probe / Start rebuild / Pause / Resume / Roll back](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-embedding.png)
+
 - **`shell.overlay` telemetry badge + capsule panel**: the collapsed pill keeps the live
   pressure, token pair, Historian state and reclaim queue (`H` / `Q<n>`) visible, and
   switches to an icon-width variant on narrow composers. The panel shows:

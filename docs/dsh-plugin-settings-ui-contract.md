@@ -175,7 +175,11 @@ this fork added its concrete use case and evidence there on 2026-11-16.
 The `embedding` block is a top-level, **user-level** Settings block. It is not
 project-scoped: a project must not redirect the endpoint or the API-key
 environment name. The current host does not expose a project/tier source, so
-that rule is a design boundary rather than an enforced runtime check yet. Fields: provider (`local`/`openai-compatible`/`off`), preset
+that rule is a design boundary rather than an enforced runtime check yet.
+
+![Vector search section in the Magic Context Settings card](img/settings-page-embedding.png)
+
+Fields: provider (`local`/`openai-compatible`/`off`), preset
 (`siliconflow`/`custom`), endpoint, auth header, model, API-key environment name,
 dimensions override, query instruction, document prefix, background timeout,
 query timeout and batch size.

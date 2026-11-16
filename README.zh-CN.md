@@ -223,6 +223,8 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
 
   ![Magic Context 设置页下半部——journal 保留天数、verify/historian 路由、catalog-backed 推理强度选择器、journal 开关](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-bottom.png)
 
+  ![向量检索分区——向量提供方/服务预设、接口地址、认证头、模型 ID、API Key 环境变量、探测维度、超时与批大小，以及加载模型/测试连接/开始重建/暂停/继续/回滚到本地](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-embedding.png)
+
 - **`shell.overlay` 遥测徽标 + 胶囊面板**：收起态保留实时压力、token 对、Historian 状态与回收队列
   （`H` / `Q<n>`）；composer 变窄时切换成图标宽度变体。面板里是：
   - **100% 宿主 token 构成条**，分成 **系统 / 工具定义 / 消息**，旁边是绝对 token 对
