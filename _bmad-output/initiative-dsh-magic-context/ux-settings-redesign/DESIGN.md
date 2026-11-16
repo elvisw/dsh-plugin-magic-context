@@ -159,7 +159,7 @@ Vertical rhythm:
 - Jump row: 8px vertical, horizontal scroll on narrow widths.
 - Section: 16px top and bottom; 12px between fields; 8px between a label and its control.
 - Advanced group: 12px padding inside a hairline-bordered well, 8px between rows.
-- Status strip: 8px vertical padding, sits above the host `SettingsForm` footer. The host footer remains the only Save/Reset surface; the card never renders a second Save.
+- Status strip: 8px vertical padding, rendered as the last child before the fixed host footer. `SettingsForm` has no footer slot; the strip is not sticky. The footer contains only Save; there is no global Reset, and the card never renders a second Save.
 
 Breakpoints are defined once here and reused verbatim in `EXPERIENCE.md`:
 

@@ -33,13 +33,18 @@ The first three ran against the draft snapshot; Prose ran against the snapshot w
 - Added a release-blocking Chinese localization contract with a shared exception list.
 - Moved Decision Gates before the field appendix and made the main file request the decision before implementation.
 
+## Confirmed host facts
+
+- `@deepseek-ai/dsh-client-ui-primitives@0.2.2-rc.1` `SettingsFormProps` has **no footer slot** and **no `busy` prop**; it renders a fixed footer with one Save button. There is no global Reset.
+- `SettingsForm` disables Save when `!dirty || invalid || saving`; `saving` is the only busy-like flag.
+- `onDiscard` runs on unmount; there is no close interception. Closing Settings drops drafts.
+- `src/client/index.js` registers `settings.section`, `plugins.item` and `plugins.row.config` today. T21 will register only `settings.section` and remove the legacy seats; this requires the 0.2.2-rc.1 `settings.section` slot.
+
 ## Deferred or host-dependent
 
-- Whether the host `SettingsForm` exposes a footer slot or busy state; if not, the status strip is non-sticky.
-- Whether the host exposes a close interception; if not, unsaved drafts are lost on close and the design says so.
 - A full per-key zh/en copy table belongs in the T21 implementation ticket; this design defines the contract, not the final string catalog.
 - No HTML mock or browser screenshot gate was produced for the redesign yet; those belong to T21.
-- The legacy `plugins.item` / `plugins.row.config` cards are intentionally not redesigned.
+- Final host version support policy for removing the legacy seats belongs in the T21 ticket; the design assumes 0.2.2-rc.1+.
 
 ## Verdict
 

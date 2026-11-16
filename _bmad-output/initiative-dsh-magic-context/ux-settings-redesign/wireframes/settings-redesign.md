@@ -69,7 +69,7 @@ These are layout wireframes, not visual comps. All colors, type and radii come f
 │                                                                             │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ 3 项未保存                                                                  │
-│                                      host footer: [重置]   [保存]           │
+│                                      host footer: [保存]           │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -109,7 +109,7 @@ These are layout wireframes, not visual comps. All colors, type and radii come f
 │ [回滚到本地]                                  │
 ├───────────────────────────────────────────────┤
 │ 3 项未保存                                    │
-│                         host footer: [重置] [保存] │
+│                         host footer: [保存] │
 └───────────────────────────────────────────────┘
 ```
 

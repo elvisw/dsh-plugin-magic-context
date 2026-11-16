@@ -17,7 +17,7 @@ updated: 2026-11-17
 - **Form factor:** desktop-first DSH Web Settings dialog, usable in a narrow split-screen window.
 - **UI system:** DeepSeek Harness Settings shell and DSH alias tokens. A plugin-owned React render function renders the card; the card does not own the outer dialog, host navigation or the placement of the host Save button.
 - **Existing contract:** one top-level `settings.section` card, one revision-fenced Save, volatile config values, no plugin-owned config write. The redesign keeps the existing field set, validation and Save semantics.
-- **Host constraint:** the card is rendered inside a scrollable dialog. The host `SettingsForm` footer is the only Save/Reset surface; this design does not add a second Save.
+- **Host constraint:** the card is rendered inside a scrollable dialog. `SettingsForm` has no footer prop and no `busy` prop. It renders a fixed footer containing only **Save** (no global Reset), disables that Save when `!dirty || invalid || saving`, and calls `onDiscard` when the page unmounts. The design does not add a second Save.
 - **Why this redesign:** the current form is a flat list of 22 core fields plus 12 vector fields. The controls work, but state and actions are discoverable only by scrolling. The exact current height is not a requirement; the success metric is that the first viewport answers four questions and every section is one jump away.
 
 ### Success criteria
@@ -36,7 +36,7 @@ The first viewport must also show the unsaved state without rendering a second S
 | Surface / block | Reached from | Purpose |
 |---|---|---|
 | Summary strip | Top of card | Four metrics: reclaim policy, Historian, vector space, rebuild coverage |
-| Status strip | Above host footer | Unsaved count, validation count, busy or saved state |
+| Status strip | Last child before the fixed footer | Unsaved count, validation count, busy or saved state; not a footer slot and not sticky |
 | Jump row | Below summary | Move to a section without losing draft state |
 | 常规 | Default visible | Execute/force thresholds, assumed window, reclaim TTL, protected results, budgets |
 | Historian | Jump / scroll | Enable switch, route pins, reasoning effort, node/token/timeout limits |
@@ -69,10 +69,10 @@ The card never presents a live context-pressure metric because that value is not
 | Host seat | Treatment |
 |---|---|
 | `settings.section` | Full redesign: summary, jump row, sections, advanced disclosures, status strip |
-| `plugins.item` | Legacy flat card; unchanged in T21, no summary/jump/sticky treatment |
-| `plugins.row.config` | Legacy flat form; unchanged in T21 |
+| `plugins.item` | Removed in T21; the old Plugins card is deprecated |
+| `plugins.row.config` | Removed in T21; the old row-config card is deprecated |
 
-The legacy seats are preserved because they are the fallback for hosts without `settings.section`. They must not inherit a layout that assumes the wide Settings dialog.
+T21 requires a host that provides `settings.section` (the 0.2.2-rc.1 shell used by current gates). Removing the legacy registrations is a deliberate, release-noted breaking change for older hosts, not a silent fallback.
 
 ## Voice and Tone
 
@@ -104,7 +104,7 @@ Chinese is required for every surface in this design and is **release-blocking**
 | Component | Use | Behavioral rules |
 |---|---|---|
 | Summary metric | Top strip | Values come from the table above. Unknown is `—`, never `0`. The vector metric is a button: Enter/Space jumps to 向量检索; it is not the only way to reach the section. |
-| Status strip | Above host footer | Text only: `已保存`, `3 项未保存`, `2 项无效`, `保存中…`, `迁移中，暂停后可保存`. It never renders Save/Reset. |
+| Status strip | Last child before the fixed footer | Text only: `已保存`, `3 项未保存`, `2 项无效`, `保存中…`, `迁移中，暂停后可保存`. It never renders Save or Reset. It scrolls with the form; the host footer is not a slot. |
 | Jump button | Below summary | Scrolls the target section into view; keeps drafts; sets `aria-current` only on the topmost intersecting section; a bottom sentinel clears the last target. |
 | Section header | Every section | Title + optional status chip. The chip conveys state through text, not through color alone. |
 | Field row | All fields | Label and control are programmatically associated. Hints are always visible for common fields; security and limitation hints are never truncated. Advanced fields may put detail behind a help disclosure. |
@@ -123,8 +123,8 @@ Chinese is required for every surface in this design and is **release-blocking**
 | Loading snapshot | Whole card | Skeleton summary strip; fields disabled; do not render a half-filled form. |
 | Snapshot error | Whole card | Error text + `重试`; fields disabled; preserve any draft already in memory. |
 | Read-only / not writable | Whole card | Values are readable and copyable via `readOnly` + `aria-disabled`; config-writing actions disabled; Pause remains available if the host transport permits it, so a read-only user can stop remote spend. |
-| Clean | Status strip | `已保存`; host Save disabled; Reset disabled. |
-| Dirty | Status strip | `N 项未保存`; host Save enabled; Reset enabled. |
+| Clean | Status strip | `已保存`; host Save disabled. There is no global Reset. |
+| Dirty | Status strip | `N 项未保存`; host Save enabled. There is no global Reset. |
 | Invalid | Field + status strip | Inline error, `aria-invalid`, message linked by `aria-describedby`; host Save disabled; strip says `N 项无效`; the first invalid advanced field opens its disclosure and receives focus on save attempt. |
 | Saving | Status strip | `保存中…`; fields read-only; one submit only; host Save unavailable. |
 | Save failed | Status strip | Inline alert with retry; drafts retained; no optimistic clean state. |
@@ -201,13 +201,13 @@ Only one alert is expanded at a time. Order: blocking failure (auth, unsupported
 - **Scroll:** jump buttons use `scrollIntoView({ block: 'start' })`; the status strip does not overlap the last field; add 12px scroll padding. If the host has no stable scroll container, use a non-sticky status strip rather than a bar that covers host chrome.
 - **Dirty guard:** changing provider or preset may clear a model that does not belong to the new provider; the cleared model appears as a staged change and is never saved silently. A draft provider/preset/model change resets the probe display to `未探测` and dimensions to `—`; the previous probe result is not attached to the new draft.
 - **Historian off:** when `historianEnabled` is false, route/effort/budget controls stay readable and disabled; drafts are preserved and are not silently cleared on save.
-- **Read-only and busy:** config-writing controls are read-only; Pause remains available while migrating, subject to host transport permissions.
+- **Read-only and busy:** config-writing controls are read-only; Pause remains available while migrating, subject to host transport permissions. Because `SettingsForm` has no `busy` prop, the card's `onSave` guard refuses to write while a probe or migration is in flight and shows a notice; the host Save is never silently accepted.
 - **Remote actions:** Load models/Test use saved config. When dirty, their labels become `保存并加载模型` / `保存并测试`; the client performs one revision-fenced Save, then the action. Start/Rollback require a clean form; Pause/Resume do not depend on config draft state.
 - **Rollback order:** confirm → stage provider `local` → host Save → call the `disarm` action only after Save succeeds → show `已回滚到本地`. If Save fails, remote remains armed; do not call disarm.
 - **Destructive actions:** Starting a rebuild warns when coverage > 0, because remote quota may be spent. Resume also warns with the remaining row count. Rollback explains that remote rows are kept and local search may be partial until the local rebuild completes.
 - **Copy:** `/ctx-status` is a text button that copies the command; clipboard failure shows a selectable fallback. It does not execute the command.
 - **Polling:** while visible, poll embedding status every 2s during migrating, else every 15s; stop on ready/paused/off/error and when `document.visibilityState !== 'visible'`; deduplicate in-flight requests and back off on repeated failure.
-- **Host close:** drafts live only while the dialog is open. If the host exposes a close interception, use it; otherwise show `未保存` and do not claim drafts are persisted. This is a known host boundary, not a hidden save.
+- **Host close:** `SettingsForm` calls `onDiscard` on unmount and exposes no before-close hook. Closing the Settings page therefore drops drafts; the design does not promise an unsaved-exit confirmation. While the page is open, the strip must say `未保存`; it must never imply drafts are persisted.
 
 ## Accessibility Floor
 
@@ -267,13 +267,14 @@ Climax: rollback is a deliberate, explained action, not a silent config flip.
 - **Narrow (< 560px):** summary one column; labels above controls; action buttons wrap; jump row scrolls.
 - **Desktop only in this ticket:** DSH Web and Desktop share the same renderer. No mobile-specific gestures.
 
-## Decision Gates
+## Confirmed host constraints
 
-These must be answered before T21 implementation:
+These are verified against `@deepseek-ai/dsh-client-ui-primitives@0.2.2-rc.1`:
 
-1. Does the host `SettingsForm` expose a footer slot or a busy state? If not, the status strip is non-sticky and the host footer is left untouched.
-2. Does the host expose a close interception? If not, unsaved drafts are lost on close; the design must not pretend otherwise.
-3. Can the legacy `plugins.item` / `plugins.row.config` seats keep the current flat form? This design assumes yes.
+1. **No footer slot.** `SettingsFormProps` has no `footer`; it renders a fixed footer with one Save button. `children` render above it. There is no global Reset; field-level `重置` belongs to `SettingsValueField`.
+2. **No `busy` state.** `SettingsFormShell` exposes `available`, `writable`, `dirty`, `invalid`, `saving` and `failed`. Save is disabled when `!dirty || invalid || saving`. Probe/migration busy must be handled inside the card (`onSave` guard + read-only fields); the host footer cannot be disabled through a separate busy prop.
+3. **No close interception.** `SettingsForm` calls `onDiscard` on unmount; closing the Settings page drops drafts. T21 does not add a fake unsaved-exit prompt.
+4. **Legacy seats are deprecated.** T21 registers only `settings.section`; `plugins.item` and `plugins.row.config` are removed. This requires a host with `settings.section` (0.2.2-rc.1 in the gate).
 
 ## Appendix A — Field inventory
 
@@ -314,4 +315,4 @@ These must be answered before T21 implementation:
 | 维护与诊断 | `registerCompactionEngine` | boolean | common |
 | 维护与诊断 | maintenance route provider/model | route-provider + route-model | common |
 
-Count: 34 fields. The two route pairs count as four field paths. `/ctx-status` copy is an action, not a `FIELDS` entry. The legacy `plugins.item` card keeps the current flat layout.
+Count: 34 fields. The two route pairs count as four field paths. `/ctx-status` copy is an action, not a `FIELDS` entry. Only `settings.section` is registered in T21; the legacy Plugins seats are removed.
