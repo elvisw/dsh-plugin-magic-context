@@ -21,7 +21,7 @@
  * file paths, never credentials. Everything here already lives in the journal,
  * which stores no message text by construction.
  */
-import type { Journal, JournalLevel } from '../core/journal.ts'
+import type { Journal, JournalKind, JournalLevel } from '../core/journal.ts'
 import type { AdapterStores } from '../core/stores.ts'
 import { SCHEMA_VERSION } from '../core/stores.ts'
 
@@ -39,6 +39,35 @@ export interface TelemetryResponse {
   on?(event: string, listener: () => void): unknown
 }
 
+export interface ContextBreakdownSnapshot {
+  readonly systemTokens?: number
+  readonly toolsTokens?: number
+  readonly messageTokens?: number
+}
+
+export interface MessageCompositionSnapshot {
+  readonly conversation?: number | null
+  readonly toolCalls?: number | null
+  readonly compartments?: number | null
+  readonly memories?: number | null
+  readonly profile?: number | null
+  readonly other?: number | null
+  readonly residualTokens?: number | null
+}
+
+export interface HistorianSnapshot {
+  readonly running?: boolean
+  readonly compartments?: number
+  readonly coveredTokens?: number
+  readonly lastPublishedAt?: number | null
+}
+
+export interface SurfaceSnapshot {
+  readonly tagged?: number
+  readonly dropped?: number
+  readonly reclaimableTokens?: number | null
+}
+
 export interface TelemetryDeps {
   readonly stores: AdapterStores
   readonly journal?: Journal
@@ -53,6 +82,18 @@ export interface TelemetryDeps {
   readonly now?: () => number
   /** Stream poll interval; tests shrink it. */
   readonly pollMs?: number
+  /** Package version, read fail-open by the composition root. */
+  readonly adapterVersion?: () => string | undefined
+  /** Effective policy thresholds (settings-form edits apply immediately). */
+  readonly policy?: () => { readonly executeThreshold?: number; readonly forceThreshold?: number } | undefined
+  /** Live host composition projection, cached by the composition root. */
+  readonly projection?: (sessionId: string) => { readonly contextBreakdown?: ContextBreakdownSnapshot } | undefined
+  /** Server-side message split; needs a live Session, so the root computes it. */
+  readonly messageComposition?: (sessionId: string, messageTokens: number) => MessageCompositionSnapshot | undefined
+  /** Historian state from the in-flight map + stores. */
+  readonly historian?: (sessionId: string) => HistorianSnapshot | undefined
+  /** Surface accounting; needs a live Session. */
+  readonly surface?: (sessionId: string) => SurfaceSnapshot | undefined
   /**
    * Dreamer-slice KPIs for the panel: the session's project verification
    * coverage and the newest maintenance tick's tally. Receives the summary's
@@ -97,6 +138,61 @@ export function sessionOf(raw: string | null | undefined): string | undefined {
   return value === '' ? undefined : value
 }
 
+/** Normalize the server-side message split: clamp to messageTokens, keep nulls. */
+export function normalizeMessageComposition(
+  raw: MessageCompositionSnapshot | undefined,
+  messageTokens: number,
+): Record<string, number | null> | null {
+  if (raw === undefined) return null
+  if (!Number.isFinite(messageTokens) || messageTokens <= 0) return null
+  const num = (value: unknown): number | null =>
+    typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : null
+  const rows = {
+    conversation: num(raw?.conversation),
+    toolCalls: num(raw?.toolCalls),
+    compartments: num(raw?.compartments),
+    memories: num(raw?.memories),
+    profile: num(raw?.profile),
+    other: num(raw?.other),
+  }
+  const classified = ['conversation', 'toolCalls', 'compartments', 'memories', 'profile'] as const
+  const sum = classified.reduce((total, key) => total + (rows[key] ?? 0), 0)
+  if (sum > messageTokens) {
+    const ratio = messageTokens / sum
+    const scaled: Record<string, number> = {}
+    const fractions: Array<{ key: string; fraction: number }> = []
+    let used = 0
+    for (const key of classified) {
+      const value = rows[key]
+      if (value === null) continue
+      const exact = value * ratio
+      const base = Math.floor(exact)
+      scaled[key] = base
+      used += base
+      fractions.push({ key, fraction: exact - base })
+    }
+    fractions.sort((a, b) => b.fraction - a.fraction)
+    let remaining = Math.max(0, messageTokens - used)
+    for (const entry of fractions) {
+      if (remaining <= 0) break
+      scaled[entry.key] = (scaled[entry.key] ?? 0) + 1
+      remaining -= 1
+    }
+    for (const key of classified) {
+      if (rows[key] !== null) rows[key] = scaled[key] ?? 0
+    }
+    return { ...rows, other: 0, residualTokens: Math.max(0, Math.round(sum - messageTokens)) }
+  }
+  // `other` and `residualTokens` are derived from the host total, never
+  // trusted from the caller: the contract is classified + other <=
+  // messageTokens, and residualTokens only reports scaling that actually ran.
+  return {
+    ...rows,
+    other: Math.max(0, messageTokens - sum),
+    residualTokens: 0,
+  }
+}
+
 export function createTelemetryService(deps: TelemetryDeps): TelemetryService {
   const now = deps.now ?? Date.now
   const pollMs = deps.pollMs ?? 2_000
@@ -123,11 +219,11 @@ export function createTelemetryService(deps: TelemetryDeps): TelemetryService {
     }
   }
 
-  /** The newest `memory-recall` row of a scope, or undefined. */
-  const latestRecall = (sessionId?: string): { data?: Record<string, unknown> } | undefined => {
+  /** The newest journal row of one kind in a scope, or undefined. */
+  const latestKind = (kind: JournalKind, sessionId?: string): { at?: number; data?: Record<string, unknown> } | undefined => {
     try {
       return deps.stores.listJournal({
-        kinds: ['memory-recall'],
+        kinds: [kind],
         limit: 1,
         ...sessionId === undefined ? {} : { sessionId },
       })[0]
@@ -135,6 +231,15 @@ export function createTelemetryService(deps: TelemetryDeps): TelemetryService {
       return undefined
     }
   }
+
+  /** One numeric field of the newest kind row, or null when unavailable. */
+  const latestNumber = (kind: JournalKind, field: string, sessionId?: string): number | null => {
+    const value = latestKind(kind, sessionId)?.data?.[field]
+    return typeof value === 'number' && Number.isFinite(value) ? value : null
+  }
+
+  /** The newest `memory-recall` row of a scope, or undefined. */
+  const latestRecall = (sessionId?: string): { data?: Record<string, unknown> } | undefined => latestKind('memory-recall', sessionId)
 
   /**
    * The project this scope is working on, read from the newest recall: the
@@ -257,6 +362,81 @@ export function createTelemetryService(deps: TelemetryDeps): TelemetryService {
     } catch {
       /* stats are panel decoration; never let them break the summary */
     }
+    // ── v2 additive fields ────────────────────────────────────────────────
+    // Every field is fail-open. Session-derived fields are omitted for the
+    // global scope; a session gets explicit nulls when its source is absent.
+    let adapterVersion: string | undefined
+    try {
+      adapterVersion = deps.adapterVersion?.()
+    } catch {
+      adapterVersion = undefined
+    }
+    let policy: { readonly executeThreshold?: number; readonly forceThreshold?: number } | undefined
+    try {
+      policy = deps.policy?.()
+    } catch {
+      policy = undefined
+    }
+    let contextBreakdown: Record<string, number> | null = null
+    let messageComposition: Record<string, number | null> | null = null
+    let historian: Record<string, unknown> | null = null
+    let queue: Record<string, unknown> | null = null
+    let memory: Record<string, number | null> | null = null
+    let surface: Record<string, number | null> | null = null
+    if (sessionId !== undefined) {
+      try {
+        const raw = deps.projection?.(sessionId)?.contextBreakdown
+        if (typeof raw?.systemTokens === 'number'
+          && typeof raw.toolsTokens === 'number'
+          && typeof raw.messageTokens === 'number') {
+          contextBreakdown = {
+            systemTokens: raw.systemTokens,
+            toolsTokens: raw.toolsTokens,
+            messageTokens: raw.messageTokens,
+          }
+          messageComposition = normalizeMessageComposition(
+            deps.messageComposition?.(sessionId, raw.messageTokens),
+            raw.messageTokens,
+          )
+        }
+      } catch {
+        contextBreakdown = null
+        messageComposition = null
+      }
+      try {
+        const raw = deps.historian?.(sessionId)
+        historian = raw === undefined ? null : {
+          running: raw.running === true,
+          compartments: typeof raw.compartments === 'number' ? raw.compartments : null,
+          coveredTokens: typeof raw.coveredTokens === 'number' ? raw.coveredTokens : null,
+          lastPublishedAt: typeof raw.lastPublishedAt === 'number' ? raw.lastPublishedAt : null,
+        }
+      } catch {
+        historian = null
+      }
+      try {
+        const pending = deps.stores.listPendingDrops(sessionId)
+        queue = { pendingDrops: pending.length, tags: pending }
+      } catch {
+        queue = null
+      }
+      memory = memoryStats === undefined ? null : {
+        total: typeof memoryStats.total === 'number' ? memoryStats.total : null,
+        injected: latestNumber('memory-recall', 'rows', sessionId),
+        estTokens: latestNumber('memory-recall', 'estTokens', sessionId),
+        profileEstTokens: latestNumber('profile-recall', 'estTokens', sessionId),
+      }
+      try {
+        const raw = deps.surface?.(sessionId)
+        surface = raw === undefined ? null : {
+          tagged: typeof raw.tagged === 'number' ? raw.tagged : null,
+          dropped: typeof raw.dropped === 'number' ? raw.dropped : null,
+          reclaimableTokens: typeof raw.reclaimableTokens === 'number' ? raw.reclaimableTokens : null,
+        }
+      } catch {
+        surface = null
+      }
+    }
     return {
       journalRows,
       journalRowsAll: boundsRows,
@@ -282,6 +462,16 @@ export function createTelemetryService(deps: TelemetryDeps): TelemetryService {
       ...(surfaceTokens !== undefined ? { surfaceLedger: { tokens: surfaceTokens, ...(surfaceWindow !== undefined ? { window: surfaceWindow } : {}) } } : {}),
       ...(memoryStats !== undefined ? { memoryStats } : {}),
       ...(maintenanceLast !== undefined ? { maintenanceLast } : {}),
+      ...(adapterVersion === undefined ? {} : { adapterVersion }),
+      ...(policy === undefined ? {} : { policy }),
+      ...(sessionId === undefined ? {} : {
+        contextBreakdown,
+        messageComposition,
+        historian,
+        queue,
+        memory,
+        surface,
+      }),
     }
   }
 

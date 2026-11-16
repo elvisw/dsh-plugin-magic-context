@@ -1,0 +1,11 @@
+DSH: 0.2.2-rc.1
+Node: 24.21.0 (C:/Users/elvis/AppData/Local/Author Software/nvm/installs/v24.21.0/node.exe)
+Profile: t18
+Isolated root: C:/Users/elvis/AppData/Local/Temp/opencode/dsh-mc-t18-20261116-162514
+Host URL: http://127.0.0.1:8928/ (token redacted)
+Tarball: C:/Users/elvis/AppData/Local/Temp/opencode/t18-pack/elvisw-dsh-magic-context-0.14.0.tgz
+Tarball SHA-256: 2058d50a29c8ae249f8e05aacd539204f81127444fd5a5d33794d7d849140c13
+Tarball bytes/files: 4,026,819 / 66
+Playwright: 1.63.0
+Chromium: C:/Users/elvis/AppData/Local/ms-playwright/chromium-1254/chrome-win64/chrome.exe
+DeepSeek key present: true (value never recorded)

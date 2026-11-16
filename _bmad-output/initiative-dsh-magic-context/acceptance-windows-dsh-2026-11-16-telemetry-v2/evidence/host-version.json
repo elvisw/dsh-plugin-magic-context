@@ -1,0 +1,13 @@
+{
+  "dsh": "0.2.2-rc.1",
+  "node": "24.21.0",
+  "profile": "t18",
+  "isolatedRoot": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t18-20261116-162514",
+  "tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t18-pack\\elvisw-dsh-magic-context-0.14.0.tgz",
+  "tarballSha256": "2058d50a29c8ae249f8e05aacd539204f81127444fd5a5d33794d7d849140c13",
+  "tarballBytes": 4026819,
+  "tarballFiles": 66,
+  "playwright": "1.63.0",
+  "chromium": "C:/Users/elvis/AppData/Local/ms-playwright/chromium-1254/chrome-win64/chrome.exe",
+  "deepseekKeyPresent": true
+}

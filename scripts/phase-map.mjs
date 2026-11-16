@@ -67,6 +67,7 @@ const PHASE_BASE = [
   'tests/ctx-expand-result.spec.ts',
   'tests/ctx-flush.spec.ts',
   'tests/telemetry.spec.ts',
+  'tests/telemetry-view.spec.ts',
   'tests/wire-repair.spec.ts',
 ]
 

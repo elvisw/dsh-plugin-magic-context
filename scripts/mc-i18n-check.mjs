@@ -149,7 +149,7 @@ check('每个分支都有记录（boot 为噪声）', zhRecords.length === event
 check('英文渲染无中文残留', enRecords.every((r) => !CJK.test(r.text + r.detail)),
   enRecords.filter((r) => CJK.test(r.text + r.detail)).map((r) => r.text).join(', ') || `${enRecords.length} 行`)
 check('中文渲染与旧文案一致', zhRecords[0].text === '执行回收' && zhRecords[0].detail.includes('−70.7k tok')
-  && zhRecords[6].text === '线材修复' && zhRecords[9].text === '历史归档失败')
+  && zhRecords[6].text === '线材修复' && zhRecords[9].text === '历史摘要失败')
 check('英文标题正确', enRecords[0].text === 'Reclaim pass' && enRecords[3].text === 'Context compacted'
   && enRecords[6].text === 'Wire repair' && enRecords[8].text === 'Compartment stored'
   && enRecords[10].text === 'Maintenance sweep',

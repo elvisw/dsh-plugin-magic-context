@@ -1,0 +1,8 @@
+{
+  "pid": 24928,
+  "port": 8928,
+  "url": "http://127.0.0.1:8928/?token=<redacted>",
+  "running": true,
+  "log": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t18-20261116-162514\\evidence\\server.log",
+  "log_tail": "dsh web: http://127.0.0.1:8928/?token=<redacted>\n"
+}

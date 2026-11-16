@@ -754,3 +754,31 @@ describe('effortDraftOf — the render-state seam', () => {
       .toMatchObject({ mode: 'default', value: '', customOpen: false })
   })
 })
+
+describe('telemetry v2 copy — every new label is dictionary-backed', () => {
+  const KEYS = [
+    'bar.system', 'bar.tools', 'bar.messages', 'bar.aria', 'bar.unavailable',
+    'composition.head', 'composition.unavailable', 'composition.conversation', 'composition.toolCalls',
+    'composition.compartments', 'composition.memories', 'composition.profile',
+    'composition.other', 'composition.lastInjection',
+    'section.historian', 'section.memory', 'section.queue', 'section.maintenance',
+    'section.hygiene', 'section.warnings',
+    'historian.running', 'historian.idle', 'historian.line',
+    'memory.line', 'queue.line', 'queue.empty',
+    'maintenance.line', 'maintenance.never', 'hygiene.line',
+    'warnings.residual', 'warnings.recent', 'warnings.none', 'footer.ctxStatus', 'panel.close',
+  ]
+
+  it('resolves every key in zh and en with no English fallback', () => {
+    const { dictionaries, dictionaryKeys } = api.__diagnostics
+    const catalog = dictionaryKeys()
+    for (const key of KEYS) {
+      expect(catalog.zh).toContain(key)
+      expect(catalog.en).toContain(key)
+      expect(dictionaries.zh[key]).not.toBe('')
+      expect(dictionaries.en[key]).not.toBe('')
+    }
+    expect(dictionaries.zh['record.historianFailed']).toBe('历史摘要失败')
+    expect(dictionaries.en['record.historianFailed']).toBe('Historian failed')
+  })
+})

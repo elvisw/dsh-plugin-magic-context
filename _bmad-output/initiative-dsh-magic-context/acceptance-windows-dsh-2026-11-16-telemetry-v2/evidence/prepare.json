@@ -1,0 +1,19 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t18-20261116-162514",
+  "profile": "t18",
+  "overlay": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t18-20261116-162514\\overlays\\t18.yml",
+  "profile_patch": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t18-20261116-162514\\dsh-home\\profiles\\t18\\cordis.patch.yml",
+  "tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t18-pack\\elvisw-dsh-magic-context-0.14.0.tgz",
+  "tarball_sha256": "2058d50a29c8ae249f8e05aacd539204f81127444fd5a5d33794d7d849140c13",
+  "tarball_bytes": 4026819,
+  "tarball_files": 66,
+  "profile_dependency": "file:C:/Users/elvis/AppData/Local/Temp/opencode/t18-pack/elvisw-dsh-magic-context-0.14.0.tgz",
+  "bootstrap_exit_code": 0,
+  "add_exit_code": 0,
+  "dump_exit_code": 0,
+  "dump_has_scoped_package": true,
+  "dump_has_loader_row": true,
+  "dump_has_data_dir": true,
+  "dump_has_deepseek_route": true,
+  "deepseek_key_present": true
+}

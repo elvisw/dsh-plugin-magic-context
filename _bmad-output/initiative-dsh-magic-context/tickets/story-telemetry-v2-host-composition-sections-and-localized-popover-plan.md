@@ -1,7 +1,7 @@
 ---
 ticket: 18
 title: "Telemetry v2: host composition, sections and localized popover — plan"
-status: ready-for-dev
+status: done
 ---
 
 # Plan — Telemetry v2

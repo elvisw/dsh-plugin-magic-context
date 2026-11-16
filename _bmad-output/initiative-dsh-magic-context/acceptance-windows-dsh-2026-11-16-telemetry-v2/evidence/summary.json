@@ -1,0 +1,148 @@
+{
+  "scope": "session",
+  "sessionId": "session-dfe13628-a1e7-403f-9b8d-a0596e1724ee",
+  "adapter": {
+    "schemaVersion": 11,
+    "uptimeMs": 32164,
+    "sseClients": 1,
+    "sseAttachedTotal": 1,
+    "sseLastAttachedAt": 1794817544886,
+    "engine": "disabled-by-config",
+    "memory": "ok schema v95",
+    "memoryWrite": "read-write auto-promote",
+    "toolsMode": "dynamic-import"
+  },
+  "project": {},
+  "health": {
+    "journalRows": 6,
+    "journalRowsAll": 9,
+    "lastEventAt": 1794817546230,
+    "passes24h": 1,
+    "errors24h": 0,
+    "errorsSinceBoot": 0,
+    "drops24h": 0,
+    "compartments24h": 0,
+    "emergency24h": 0,
+    "promote24h": 0,
+    "reclaimed24h": 0,
+    "lastPressure": 1.1241912841796875,
+    "lastTokens": 11788,
+    "lastContextWindow": 1048576,
+    "memoriesRecalled": 0,
+    "memoryStats": {
+      "total": 0,
+      "verified": 0,
+      "unverified": 0
+    },
+    "adapterVersion": "0.14.0",
+    "policy": {
+      "executeThreshold": 100,
+      "forceThreshold": 85
+    },
+    "contextBreakdown": {
+      "systemTokens": 2786,
+      "toolsTokens": 8804,
+      "messageTokens": 618
+    },
+    "messageComposition": {
+      "conversation": 574,
+      "toolCalls": 0,
+      "compartments": 0,
+      "memories": null,
+      "profile": null,
+      "other": 44,
+      "residualTokens": 0
+    },
+    "historian": {
+      "running": false,
+      "compartments": 0,
+      "coveredTokens": 0,
+      "lastPublishedAt": null
+    },
+    "queue": {
+      "pendingDrops": 0,
+      "tags": []
+    },
+    "memory": {
+      "total": 0,
+      "injected": null,
+      "estTokens": null,
+      "profileEstTokens": null
+    },
+    "surface": {
+      "tagged": 0,
+      "dropped": 0,
+      "reclaimableTokens": 0
+    }
+  },
+  "recent": [
+    {
+      "at": 1794817544294,
+      "level": "info",
+      "kind": "search-hint",
+      "summary": "auto-search hint: no-hits",
+      "sessionId": "session-dfe13628-a1e7-403f-9b8d-a0596e1724ee",
+      "data": {
+        "action": "quiet",
+        "reason": "no-hits",
+        "ms": 488,
+        "trigger": "pre-step"
+      }
+    },
+    {
+      "at": 1794817544365,
+      "level": "info",
+      "kind": "session-first-seen",
+      "summary": "session first seen by the adapter",
+      "sessionId": "session-dfe13628-a1e7-403f-9b8d-a0596e1724ee",
+      "data": {
+        "turn": 1,
+        "step": 1
+      }
+    },
+    {
+      "at": 1794817544369,
+      "level": "info",
+      "kind": "pass",
+      "summary": "defer (no-usage) at ?%",
+      "sessionId": "session-dfe13628-a1e7-403f-9b8d-a0596e1724ee",
+      "data": {
+        "decision": "defer",
+        "reason": "no-usage",
+        "contextWindow": 256000,
+        "contextWindowAssumed": true,
+        "consecutive": 1
+      }
+    },
+    {
+      "at": 1794817544378,
+      "level": "info",
+      "kind": "context-pressure",
+      "summary": "context pressure reading: 0 / 0 tok",
+      "sessionId": "session-dfe13628-a1e7-403f-9b8d-a0596e1724ee",
+      "data": {}
+    },
+    {
+      "at": 1794817544387,
+      "level": "info",
+      "kind": "context-pressure",
+      "summary": "context pressure reading: 0 / 1048576 tok",
+      "sessionId": "session-dfe13628-a1e7-403f-9b8d-a0596e1724ee",
+      "data": {
+        "contextWindow": 1048576
+      }
+    },
+    {
+      "at": 1794817546230,
+      "level": "info",
+      "kind": "context-pressure",
+      "summary": "context pressure reading: 11788 / 1048576 tok",
+      "sessionId": "session-dfe13628-a1e7-403f-9b8d-a0596e1724ee",
+      "data": {
+        "projectedTokens": 11788,
+        "pressureTokens": 11775,
+        "contextWindow": 1048576
+      }
+    }
+  ]
+}

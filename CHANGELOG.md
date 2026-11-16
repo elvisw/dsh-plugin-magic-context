@@ -10,6 +10,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- 遥测面板 v2：胶囊保留压力、token 对、Historian 与回收队列；弹层新增 100% 宿主 token 构成（系统 / 工具定义 / 消息）、估算的消息构成、Historian / 记忆 / 回收队列 / 维护 / 可回收 / 警告分区，全部中英文案走 `magic-context` 字典。服务端 `health` 增量提供 `adapterVersion`、`policy`、`contextBreakdown`、`messageComposition`、`historian`、`queue`、`memory`、`surface`，缺失值用 `null`/省略而不是 0。
+
 ### Changed
 
 - README 的设置页截图更新为 0.14.0 的顶层「设置 → Magic Context」页面，包含 catalog-backed Historian 推理强度选择器；旧「插件」页卡片截图保留，供已发布旧版本引用。

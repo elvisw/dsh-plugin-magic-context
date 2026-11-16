@@ -1,0 +1,81 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t18-20261116-162514",
+  "steps": [
+    {
+      "name": "onboarding",
+      "at": "2026-11-16T08:25:42.404Z",
+      "dismissed": true
+    },
+    {
+      "name": "language-initial",
+      "at": "2026-11-16T08:25:43.483Z",
+      "result": "already"
+    },
+    {
+      "name": "prompt-sent",
+      "at": "2026-11-16T08:25:44.757Z"
+    },
+    {
+      "name": "panel-zh",
+      "at": "2026-11-16T08:25:58.115Z",
+      "text": "Magic Context 正常 · v0.14.0 1% × 1.12% / 100% 11.8k / 1M 系统 2.8k 工具定义 8.8k 消息 618 消息构成（估算） 对话 574 其他 44 历史摘要 空闲 · 0 个压缩段 · 0 已消化 · 上次发布 — 记忆 0 总计 · — 已注入 · — 上次注入 · — 画像上次注入 回收队列 空 维护 尚未运行 可回收 0 已打标 · 0 已回收 · 0 可回收 警告 无 最近操作 近 1 项 历史归档 auto-search hint: no-hits 16:25 悬停条目看详情 · /ctx-status",
+      "barAria": "上下文构成：系统 2.8k，工具定义 8.8k，消息 618",
+      "expanded": "true"
+    },
+    {
+      "name": "focus-trap",
+      "at": "2026-11-16T08:25:58.413Z",
+      "panelOpen": true,
+      "count": 2,
+      "activeIndex": 0,
+      "shiftTabIndex": 1,
+      "tabBackIndex": 0,
+      "panelStillOpen": true
+    },
+    {
+      "name": "escape-focus-return",
+      "at": "2026-11-16T08:25:58.740Z",
+      "activeIsPill": true,
+      "panelClosed": true
+    },
+    {
+      "name": "outside-focus-return",
+      "at": "2026-11-16T08:25:59.158Z",
+      "activeIsPill": true,
+      "panelClosed": true,
+      "active": {
+        "tag": "BUTTON",
+        "data": "1",
+        "aria": "Magic Context 遥测 · 1% · 11.8k/1M · H 空闲",
+        "text": "MC · 1% · 11.8k/1M · H 空闲"
+      }
+    },
+    {
+      "name": "language-switch",
+      "at": "2026-11-16T08:26:02.251Z",
+      "result": "switched"
+    },
+    {
+      "name": "panel-en",
+      "at": "2026-11-16T08:26:02.296Z",
+      "text": "Magic Context healthy · v0.14.0 1% × 1.12% / 100% 11.8k / 1M System 2.8k Tool definitions 8.8k Messages 618 MESSAGE COMPOSITION (ESTIMATED) Conversation 574 Other 44 Historian idle · 0 compartments · 0 digested · last published — Memory 0 total · — injected · — last injection · — profile last injection Queue empty Maintenance never run Hygiene 0 tagged · 0 dropped · 0 reclaimable Warnings none RECENT OPERATIONS last 1 Archived auto-search hint: no-hits 16:25 Hover a row for detail · /ctx-status"
+    }
+  ],
+  "errors": [],
+  "assertions": {
+    "zhHasSections": true,
+    "zhHasValues": true,
+    "zhCompositionOmitsRecallRows": true,
+    "zhHasBarAria": true,
+    "expanded": true,
+    "focusTrap": true,
+    "escapeFocusReturn": true,
+    "outsideFocusReturn": true,
+    "enHasSections": true,
+    "languageSwitch": true,
+    "noConsoleErrors": true,
+    "noRouteErrors": true,
+    "summaryCaptured": true
+  },
+  "pass": true
+}

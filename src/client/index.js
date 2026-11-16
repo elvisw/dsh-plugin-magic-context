@@ -1313,6 +1313,223 @@ window.__ModuleLoader__.load({
       }
     }
 
+    /**
+     * The pure telemetry view model (T18).
+     *
+     * It receives the RAW summary (not `trimSummary` output), because the new
+     * v2 fields are additive and the legacy whitelist would drop them. Every
+     * number is kept as a number here; the UI owns formatting/placement. The
+     * builder is exported through `__diagnostics` so tests do not need a DOM.
+     */
+    /** A healthy transport with a payload that has no `health` is unavailable. */
+    function displayStatusOf(transportStatus, viewStatus) {
+      return transportStatus === 'ok' ? viewStatus : transportStatus
+    }
+
+    function buildTelemetryView(summary, locale, now, width, lastUpdateAt, t, recent) {
+      const translate = typeof t === 'function' ? t : dictionaryTranslator(locale)
+      const health = summary !== null && typeof summary === 'object'
+        && summary.health !== null && typeof summary.health === 'object' ? summary.health : {}
+      const number = (value) => (typeof value === 'number' && Number.isFinite(value) ? value : null)
+      const pressureRaw = number(health.lastPressure)
+      const used = number(health.lastTokens)
+      const window = number(health.lastContextWindow)
+      const policy = health.policy !== null && typeof health.policy === 'object' ? health.policy : {}
+      const executeThreshold = number(policy.executeThreshold)
+      const forceThreshold = number(policy.forceThreshold)
+      const percent = pressureRaw !== null
+        ? pressureRaw
+        : used !== null && window !== null && window > 0 ? used / window * 100 : null
+      const tone = percent === null || executeThreshold === null ? 'inherit'
+        : forceThreshold !== null && percent >= forceThreshold ? '#e5484d'
+          : percent >= executeThreshold ? '#d08700' : '#22a06b'
+
+      const breakdown = health.contextBreakdown !== null && typeof health.contextBreakdown === 'object'
+        ? health.contextBreakdown : null
+      const segmentDefs = [
+        ['system', 'bar.system', number(breakdown?.systemTokens)],
+        ['tools', 'bar.tools', number(breakdown?.toolsTokens)],
+        ['messages', 'bar.messages', number(breakdown?.messageTokens)],
+      ]
+      const barAvailable = breakdown !== null && segmentDefs.every(([, , tokens]) => tokens !== null)
+      const barTotal = barAvailable ? segmentDefs.reduce((total, [, , tokens]) => total + tokens, 0) : null
+      const segments = segmentDefs.map(([id, labelKey, tokens]) => ({
+        id,
+        labelKey,
+        tokens,
+        share: barAvailable && barTotal > 0 ? tokens / barTotal : barAvailable ? 0 : null,
+      }))
+      const barAria = barAvailable
+        ? translate('bar.aria', {
+          system: compactTok(segments[0].tokens),
+          tools: compactTok(segments[1].tokens),
+          messages: compactTok(segments[2].tokens),
+        })
+        : translate('bar.unavailable')
+
+      const composition = health.messageComposition !== null && typeof health.messageComposition === 'object'
+        ? health.messageComposition : null
+      const messageRows = composition === null ? [] : [
+        ['conversation', 'composition.conversation'],
+        ['toolCalls', 'composition.toolCalls'],
+        ['compartments', 'composition.compartments'],
+        ['memories', 'composition.memories', 'composition.lastInjection'],
+        ['profile', 'composition.profile', 'composition.lastInjection'],
+        ['other', 'composition.other'],
+      ].flatMap(([id, labelKey, suffixKey]) => {
+        const tokens = number(composition[id])
+        if (tokens === null || tokens <= 0) return []
+        return [{ id, labelKey, tokens, ...(suffixKey === undefined ? {} : { suffixKey }) }]
+      })
+
+      const residual = composition === null ? null : number(composition.residualTokens)
+      const errorSource = Array.isArray(recent) ? recent : Array.isArray(summary?.recent) ? summary.recent : []
+      const errors = countRecentErrors(errorSource, now)
+      const warningRows = []
+      if (residual !== null && residual > 0) {
+        warningRows.push({ id: 'residual', text: translate('warnings.residual', { tokens: compactTok(residual) }) })
+      }
+      if (errors > 0) {
+        warningRows.push({ id: 'recent', text: translate('warnings.recent', { n: errors }) })
+      }
+      const dashInt = (value) => {
+        const count = number(value)
+        return count === null ? '—' : fmtInt(count)
+      }
+
+      const sections = []
+      const historian = health.historian !== null && typeof health.historian === 'object' ? health.historian : null
+      if (historian !== null) {
+        const at = number(historian.lastPublishedAt)
+        const state = historian.running === true ? translate('historian.running') : translate('historian.idle')
+        sections.push({
+          id: 'historian',
+          labelKey: 'section.historian',
+          value: translate('historian.line', {
+            state,
+            compartments: dashInt(historian.compartments),
+            digested: number(historian.coveredTokens) === null ? '—' : compactTok(historian.coveredTokens),
+            at: at === null ? '—' : timeShort(at),
+          }),
+        })
+      }
+      const memory = health.memory !== null && typeof health.memory === 'object' ? health.memory : null
+      if (memory !== null) {
+        const total = number(memory.total)
+        const injected = number(memory.injected)
+        const est = number(memory.estTokens)
+        const profile = number(memory.profileEstTokens)
+        sections.push({
+          id: 'memory',
+          labelKey: 'section.memory',
+          value: translate('memory.line', {
+            total: total === null ? '—' : fmtInt(total),
+            injected: injected === null ? '—' : fmtInt(injected),
+            est: est === null ? '—' : compactTok(est),
+            profile: profile === null ? '—' : compactTok(profile),
+          }),
+        })
+      }
+      const queue = health.queue !== null && typeof health.queue === 'object' ? health.queue : null
+      if (queue !== null) {
+        const pendingRaw = number(queue.pendingDrops)
+        const tags = Array.isArray(queue.tags) ? queue.tags.map(String) : []
+        sections.push({
+          id: 'queue',
+          labelKey: 'section.queue',
+          value: pendingRaw === null
+            ? '—'
+            : pendingRaw === 0 ? translate('queue.empty') : translate('queue.line', {
+              pending: fmtInt(pendingRaw),
+              tags: tags.length === 0 ? '—' : tags.join(', '),
+            }),
+        })
+      }
+      const maintenance = health.maintenanceLast !== null && typeof health.maintenanceLast === 'object'
+        ? health.maintenanceLast : null
+      sections.push({
+        id: 'maintenance',
+        labelKey: 'section.maintenance',
+        value: maintenance === null ? translate('maintenance.never') : translate('maintenance.line', {
+          at: number(maintenance.at) === null ? '—' : timeShort(maintenance.at),
+          expired: dashInt(maintenance.expired),
+          verified: dashInt(maintenance.verified),
+          updated: dashInt(maintenance.updated),
+          archived: dashInt(maintenance.archived),
+        }),
+      })
+      const surface = health.surface !== null && typeof health.surface === 'object' ? health.surface : null
+      if (surface !== null) {
+        sections.push({
+          id: 'hygiene',
+          labelKey: 'section.hygiene',
+          value: translate('hygiene.line', {
+            tagged: dashInt(surface.tagged),
+            dropped: dashInt(surface.dropped),
+            reclaimable: number(surface.reclaimableTokens) === null
+              ? '—' : compactTok(surface.reclaimableTokens),
+          }),
+        })
+      }
+      sections.push({
+        id: 'warnings',
+        labelKey: 'section.warnings',
+        value: warningRows.length === 0
+          ? translate('warnings.none')
+          : warningRows.map(row => row.text).join(' · '),
+      })
+
+      const pressureText = percent === null ? '—' : Math.round(percent) + '%'
+      const tokenPair = used !== null && window !== null ? compactTok(used) + '/' + compactTok(window) : ''
+      const historianState = historian === null ? ''
+        : historian.running === true ? translate('historian.running') : translate('historian.idle')
+      const pending = queue === null ? null : number(queue.pendingDrops)
+      const queueText = pending === null || pending <= 0 ? '' : 'Q' + String(pending)
+      const historianText = historian === null ? '' : 'H ' + historianState
+      const queueSuffix = errors > 0 ? errors + ' err' : queueText
+      const suffix = [historianText, queueSuffix].filter(Boolean).join(' · ')
+      const iconSuffix = [historian === null ? '' : 'H', queueSuffix].filter(Boolean).join(' · ')
+      const narrow = typeof width === 'number' ? width : 999
+      let variant = 'full'
+      if (narrow < 220) variant = 'minimal'
+      else if (narrow < 280) variant = 'icon'
+      else if (narrow < 360) variant = 'compact'
+      let body = ''
+      if (variant === 'minimal') body = pressureText
+      else if (variant === 'icon') {
+        body = pressureText + (iconSuffix === '' ? '' : ' · ' + iconSuffix)
+      } else if (variant === 'compact') {
+        body = pressureText + (suffix === '' ? '' : ' · ' + suffix)
+      } else {
+        body = pressureText + (tokenPair === '' ? '' : ' · ' + tokenPair) + (suffix === '' ? '' : ' · ' + suffix)
+      }
+      const stale = typeof lastUpdateAt === 'number' && now - lastUpdateAt > 120_000
+      const unavailable = summary !== null && summary !== undefined
+        && (summary.health === null || summary.health === undefined)
+      const status = summary === null || summary === undefined ? 'connecting' : unavailable ? 'unavailable' : 'ok'
+
+      return {
+        status,
+        unavailable,
+        stale,
+        pressure: percent === null ? null : {
+          percent,
+          used,
+          window,
+          executeThreshold,
+          forceThreshold,
+          tone,
+        },
+        bar: { available: barAvailable, total: barTotal, segments, aria: barAria },
+        messageRows,
+        compositionAvailable: composition !== null,
+        compositionResidual: residual,
+        sections,
+        warnings: warningRows,
+        pill: { variant, text: body, label: translate('label.telemetry') },
+      }
+    }
+
     /** `HH:MM` for an epoch-millisecond stamp — the record row's stamp. */
     function timeShort(at) {
       const full = timeOf(at)
@@ -1396,7 +1613,7 @@ window.__ModuleLoader__.load({
         'record.expandRestored': '恢复原文',
         'record.expandRange': '读取上下文',
         'record.remountRecovery': '重挂载恢复',
-        'record.historianFailed': '历史归档失败',
+        'record.historianFailed': '历史摘要失败',
         'record.archived': '归档已存',
         'record.maintenance': '维护巡检',
         'record.failed': '执行失败',
@@ -1452,13 +1669,51 @@ window.__ModuleLoader__.load({
         'ledger.V': '维护验证通过',
         'ledger.R': '维护修订',
         'ledger.E': '本进程错误',
+        // Telemetry v2: composition, sections and empty states.
+        'telemetry.pressureLine': '{percent}% / {threshold}%',
+        'telemetry.tokens': '{used} / {window}',
+        'telemetry.stale': '已过期',
+        'bar.system': '系统',
+        'bar.tools': '工具定义',
+        'bar.messages': '消息',
+        'bar.aria': '上下文构成：系统 {system}，工具定义 {tools}，消息 {messages}',
+        'bar.unavailable': '上下文构成不可用',
+        'composition.head': '消息构成（估算）',
+        'composition.unavailable': '消息构成不可用',
+        'composition.conversation': '对话',
+        'composition.toolCalls': '工具调用',
+        'composition.compartments': '压缩段',
+        'composition.memories': '记忆',
+        'composition.profile': '用户画像',
+        'composition.other': '其他',
+        'composition.lastInjection': '上次注入',
+        'section.historian': '历史摘要',
+        'section.memory': '记忆',
+        'section.queue': '回收队列',
+        'section.maintenance': '维护',
+        'section.hygiene': '可回收',
+        'section.warnings': '警告',
+        'historian.running': '运行中',
+        'historian.idle': '空闲',
+        'historian.line': '{state} · {compartments} 个压缩段 · {digested} 已消化 · 上次发布 {at}',
+        'memory.line': '{total} 总计 · {injected} 已注入 · {est} 上次注入 · {profile} 画像上次注入',
+        'queue.line': '{pending} 待回收 · 标签 {tags}',
+        'queue.empty': '空',
+        'maintenance.line': '最近 {at} · 过期 {expired} · 验证 {verified} · 更新 {updated} · 归档 {archived}',
+        'maintenance.never': '尚未运行',
+        'hygiene.line': '{tagged} 已打标 · {dropped} 已回收 · {reclaimable} 可回收',
+        'warnings.residual': '消息构成超出宿主估算，已按比例缩放 {tokens} tok',
+        'warnings.recent': '最近 15 分钟有 {n} 条错误',
+        'warnings.none': '无',
+        'footer.ctxStatus': '查看完整账本',
+        'panel.close': '关闭',
         // Operation feed.
         'records.empty': '暂无操作记录',
         'records.noRoute': '此宿主未挂遥测路由',
         'records.folded': '{n} 次',
         'records.head': '最近操作',
         'records.count': '近 {n} 项',
-        'records.foot': '悬停条目看详情 · /ctx-status 看全量',
+        'records.foot': '悬停条目看详情',
         'records.beats': '节拍: {beats}',
         // Slot labels (ledger rows the shell projects).
         // Settings card copy.
@@ -1613,12 +1868,50 @@ window.__ModuleLoader__.load({
         'ledger.V': 'Maintenance verifications passed',
         'ledger.R': 'Maintenance revisions',
         'ledger.E': 'Errors in this process',
+        // Telemetry v2: composition, sections and empty states.
+        'telemetry.pressureLine': '{percent}% / {threshold}%',
+        'telemetry.tokens': '{used} / {window}',
+        'telemetry.stale': 'stale',
+        'bar.system': 'System',
+        'bar.tools': 'Tool definitions',
+        'bar.messages': 'Messages',
+        'bar.aria': 'Context composition: system {system}, tool definitions {tools}, messages {messages}',
+        'bar.unavailable': 'Context composition unavailable',
+        'composition.head': 'Message composition (estimated)',
+        'composition.unavailable': 'Message composition unavailable',
+        'composition.conversation': 'Conversation',
+        'composition.toolCalls': 'Tool calls',
+        'composition.compartments': 'Compartments',
+        'composition.memories': 'Memories',
+        'composition.profile': 'Profile',
+        'composition.other': 'Other',
+        'composition.lastInjection': 'last injection',
+        'section.historian': 'Historian',
+        'section.memory': 'Memory',
+        'section.queue': 'Queue',
+        'section.maintenance': 'Maintenance',
+        'section.hygiene': 'Hygiene',
+        'section.warnings': 'Warnings',
+        'historian.running': 'running',
+        'historian.idle': 'idle',
+        'historian.line': '{state} · {compartments} compartments · {digested} digested · last published {at}',
+        'memory.line': '{total} total · {injected} injected · {est} last injection · {profile} profile last injection',
+        'queue.line': '{pending} pending · tags {tags}',
+        'queue.empty': 'empty',
+        'maintenance.line': 'last {at} · expired {expired} · verified {verified} · updated {updated} · archived {archived}',
+        'maintenance.never': 'never run',
+        'hygiene.line': '{tagged} tagged · {dropped} dropped · {reclaimable} reclaimable',
+        'warnings.residual': 'Message composition exceeded the host estimate and was scaled by {tokens} tok',
+        'warnings.recent': 'Recent errors in the last 15 minutes: {n}',
+        'warnings.none': 'none',
+        'footer.ctxStatus': '/ctx-status for the full ledger',
+        'panel.close': 'Close',
         'records.empty': 'No operations recorded yet',
         'records.noRoute': 'This host exposes no telemetry route',
         'records.folded': '×{n}',
         'records.head': 'Recent operations',
         'records.count': 'last {n}',
-        'records.foot': 'Hover a row for detail · /ctx-status for the full ledger',
+        'records.foot': 'Hover a row for detail',
         'records.beats': 'Beats: {beats}',
         // Settings card copy.
         'settings.summary.notReady': 'Magic Context adapter settings',
@@ -2104,11 +2397,45 @@ window.__ModuleLoader__.load({
       const t = props !== undefined && typeof props.t === 'function' ? props.t : REFERENCE_T
       const eventsUrl = telemetryUrl(EVENTS_URL, sessionId)
       const summaryUrl = telemetryUrl(SUMMARY_URL, sessionId)
-      const [state, setState] = useState({ status: 'connecting', summary: null, recent: [] })
+      const [state, setState] = useState({ status: 'connecting', summary: null, recent: [], updatedAt: undefined })
       const [open, setOpen] = useState(false)
       const [anchor, setAnchor] = useState(null)
       const [hovered, setHovered] = useState(false)
+      const [pillWidth, setPillWidth] = useState(undefined)
       const pillRef = useRef(null)
+      useEffect(() => {
+        const node = pillRef.current
+        if (node === null || node === undefined) return undefined
+        // The immediate parent is the pill's shrink-wrapped anchor; climb to
+        // the first ancestor wide enough to be the composer seat, so the pill
+        // does not mistake its own text width for the available width.
+        let target = node.parentElement !== null && node.parentElement !== undefined ? node.parentElement : node
+        try {
+          while (target.parentElement !== null && target.parentElement !== undefined
+            && target.getBoundingClientRect().width < 200) target = target.parentElement
+        } catch { /* measurement is cosmetic */ }
+        const measure = () => {
+          try {
+            const width = target.getBoundingClientRect().width
+            if (Number.isFinite(width) && width > 0) setPillWidth(Math.round(width))
+          } catch { /* measurement is cosmetic */ }
+        }
+        measure()
+        let observer
+        if (typeof ResizeObserver === 'function') {
+          observer = new ResizeObserver(measure)
+          observer.observe(target)
+        }
+        if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+          window.addEventListener('resize', measure)
+        }
+        return () => {
+          if (observer !== undefined) observer.disconnect()
+          if (typeof window !== 'undefined' && typeof window.removeEventListener === 'function') {
+            window.removeEventListener('resize', measure)
+          }
+        }
+      }, [])
       // Computed here (not down with the other render-time values) because the decay
       // timer below has to know whether the badge is currently red.
       const recentErrors = countRecentErrors(state.recent, Date.now())
@@ -2137,13 +2464,13 @@ window.__ModuleLoader__.load({
           if (disposed || payload === null || typeof payload !== 'object') return
           sawSnapshot = true
           const recent = Array.isArray(payload.recent) ? payload.recent.slice(-MAX_RECENT).reverse() : []
-          setState({ status: 'ok', summary: payload, recent })
+          setState({ status: 'ok', summary: payload, recent, updatedAt: Date.now() })
         }
         const acceptEvent = (event) => {
           if (disposed || event === null || typeof event !== 'object') return
           setState((previous) => {
             if (previous.status === 'unavailable') return previous
-            return { status: 'ok', summary: previous.summary, recent: [event, ...previous.recent].slice(0, MAX_RECENT) }
+            return { status: 'ok', summary: previous.summary, recent: [event, ...previous.recent].slice(0, MAX_RECENT), updatedAt: Date.now() }
           })
         }
         // One tolerant reader for both framings: the Host's named `snapshot` /
@@ -2165,7 +2492,7 @@ window.__ModuleLoader__.load({
           fetchSummaryJson().then((payload) => {
             if (!disposed) acceptSummary(payload)
           }, () => {
-            if (!disposed && !sawSnapshot) setState((previous) => (previous.summary !== null ? previous : { status: 'unavailable', summary: null, recent: [] }))
+            if (!disposed && !sawSnapshot) setState((previous) => (previous.summary !== null ? previous : { status: 'unavailable', summary: null, recent: [], updatedAt: undefined }))
           })
         }
 
@@ -2210,7 +2537,7 @@ window.__ModuleLoader__.load({
           if (typeof fetch !== 'function') return
           fetchSummaryJson().then((payload) => {
             if (disposed || payload === null || typeof payload !== 'object') return
-            setState((previous) => ({ status: 'ok', summary: payload, recent: previous.recent }))
+            setState((previous) => ({ status: 'ok', summary: payload, recent: previous.recent, updatedAt: Date.now() }))
           }, () => {
             /* the last good header stays on screen */
           })
@@ -2233,7 +2560,18 @@ window.__ModuleLoader__.load({
           const target = event === null || event === undefined ? null : event.target
           const inside = target !== null && target !== undefined
             && typeof target.closest === 'function' && target.closest('[data-mc-surface]') !== null
-          if (!inside) setOpen(false)
+          if (!inside) {
+            // Keep the browser from moving focus to the element under the
+            // pointer; the popover's cleanup hands focus back to the pill.
+            if (typeof event.preventDefault === 'function') event.preventDefault()
+            setOpen(false)
+            const button = pillRef === null || pillRef === undefined ? null : pillRef.current
+            if (button !== null && button !== undefined && typeof button.focus === 'function') {
+              if (typeof window !== 'undefined' && typeof window.setTimeout === 'function') {
+                window.setTimeout(() => button.focus(), 0)
+              } else button.focus()
+            }
+          }
         }
         const onKeyDown = (event) => {
           if (event !== null && event !== undefined && event.key === 'Escape') setOpen(false)
@@ -2249,45 +2587,91 @@ window.__ModuleLoader__.load({
         }
       }, [open])
 
+      // Focus trap + return: the panel is a dialog-like popover, so Tab stays
+      // inside while it is open and Escape/outside returns focus to the pill.
+      useEffect(() => {
+        const previous = typeof document !== 'undefined' ? document.activeElement : null
+        if (!open) return undefined
+        const panel = typeof document !== 'undefined'
+          ? document.querySelector('[data-mc-panel]') : null
+        const focusables = panel === null ? [] : Array.from(panel.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        ))
+        if (focusables.length > 0 && typeof focusables[0].focus === 'function') focusables[0].focus()
+        else if (panel !== null && typeof panel.focus === 'function') panel.focus()
+        const onTab = (event) => {
+          if (event.key !== 'Tab' || panel === null || focusables.length === 0) return
+          const first = focusables[0]
+          const last = focusables[focusables.length - 1]
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault()
+            last.focus()
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault()
+            first.focus()
+          }
+        }
+        document.addEventListener('keydown', onTab, true)
+        return () => {
+          document.removeEventListener('keydown', onTab, true)
+          const target = pillRef === null || pillRef === undefined ? null : pillRef.current
+          if (target !== null && target !== undefined && typeof target.focus === 'function') target.focus()
+          else if (previous !== null && previous !== undefined && typeof previous.focus === 'function') previous.focus()
+        }
+      }, [open])
+
       const summary = state.summary
       const health = trimSummary(summary)
+      const rawHealth = summary !== null && typeof summary === 'object'
+        && summary.health !== null && typeof summary.health === 'object' ? summary.health : {}
+      const adapterVersion = typeof rawHealth.adapterVersion === 'string' ? rawHealth.adapterVersion : undefined
+      const view = buildTelemetryView(
+        state.summary,
+        typeof document !== 'undefined' && document.documentElement !== null ? document.documentElement.lang : 'zh',
+        Date.now(),
+        typeof pillWidth === 'number' ? pillWidth : undefined,
+        state.updatedAt,
+        t,
+        state.recent,
+      )
       // The pill answers "is anything wrong NOW": a RECENT error (`recentErrors`,
       // 15-minute window), not the cumulative `errorsSinceBoot` — that count in a
       // long-lived process kept the badge red for a whole day on provider-side
       // failures the adapter itself had already classified and retried. The
-      // cumulative number is still what the panel's ledger `E` cell reports.
-      const errorsSinceBoot = typeof health.errorsSinceBoot === 'number' ? health.errorsSinceBoot : 0
+      // cumulative number is still what `/ctx-status` reports.
       const errors = recentErrors
-      const passes = typeof health.passes24h === 'number' ? health.passes24h : 0
+      // The transport can be healthy while the payload has no `health` object;
+      // `view.status` is the payload-level verdict and must win in that case.
+      const displayStatus = displayStatusOf(state.status, view.status)
       // The one number that matters is the context pressure, not the pass
-      // count (92% of passes are defers — noise). Tone follows it: green
-      // below the execute band, amber approaching, orange inside it.
-      const pressure = health.lastPressure
-      const tone = state.status === 'unavailable' ? '#d08700'
-        : state.status !== 'ok' ? '#8a8f98'
+      // count (92% of passes are defers — noise). Tone follows the configured
+      // policy thresholds from the payload, never the old 50/65 constants.
+      const pressure = view.pressure === null ? undefined : view.pressure.percent
+      const tone = displayStatus === 'unavailable' ? '#d08700'
+        : displayStatus !== 'ok' ? '#8a8f98'
         : errors > 0 ? '#e5484d'
-        : pressure === undefined ? '#22a06b'
-        : pressure >= 65 ? '#e5484d'
-        : pressure >= 50 ? '#d08700'
-        : '#22a06b'
+        : view.pressure === null ? '#22a06b'
+        : view.pressure.tone
       const pressureText = pressure === undefined ? '' : Math.round(pressure) + '%'
-      // Shortest possible line: the pressure, or the error count when red.
-      const collapsed = state.status === 'unavailable'
+      // Shortest possible line; the error suffix replaces the queue suffix but
+      // pressure, token pair and historian state stay visible.
+      const collapsed = displayStatus === 'unavailable'
         ? 'MC · —'
-        : state.status !== 'ok'
+        : displayStatus !== 'ok'
           ? 'MC · …'
-          : errors > 0
-            ? 'MC · ' + errors + ' err'
-            : pressureText !== ''
-              ? 'MC · ' + pressureText
-              : 'MC · ' + passes + ' pass'
+          : (view.pill.variant === 'minimal' ? '' : 'MC · ') + view.pill.text
+      const ariaText = displayStatus === 'unavailable'
+        ? t('tip.unavailable')
+        : displayStatus !== 'ok'
+          ? t('tip.connecting')
+          : t('label.telemetry') + ' · ' + view.pill.text
       const lastSeen = timeOf(health.lastEventAt)
       const scopeLabel = health.scope === 'session' ? 'this session' : 'all sessions'
       // The pill's hover bubble mirrors the native pills' tooltip (one dark
       // rounded line); the full diagnostic title lives on the panel only.
-      const tipText = state.status === 'unavailable'
+      const tipText = displayStatus === 'unavailable'
         ? t('tip.unavailable')
-        : state.status !== 'ok'
+        : displayStatus !== 'ok'
           ? t('tip.connecting')
           : errors > 0
             ? t('tip.errors', { n: errors })
@@ -2305,7 +2689,7 @@ window.__ModuleLoader__.load({
         type: 'button',
         'data-mc-surface': '1',
         ref: pillRef,
-        'aria-label': tipText,
+        'aria-label': ariaText,
         'aria-expanded': open,
         onClick: () => {
           if (!open) setAnchor(anchorAbove(pillRef === null || pillRef === undefined ? null : pillRef.current))
@@ -2337,7 +2721,7 @@ window.__ModuleLoader__.load({
           background: inDock
             ? (hovered || open ? 'var(--dsw-alias-interactive-bg-hover, rgba(127,127,127,.16))' : 'transparent')
             : 'transparent',
-          color: errors > 0 && state.status === 'ok'
+          color: errors > 0 && displayStatus === 'ok'
             ? 'var(--dsw-alias-label-error, #e5484d)'
             : inDock
               ? 'var(--dsw-alias-label-tertiary, currentColor)'
@@ -2392,84 +2776,87 @@ window.__ModuleLoader__.load({
         connecting: [t('status.connecting'), '#d08700'],
         unavailable: [t('status.unavailable'), '#e5484d'],
       }
-      const [statusLabel, statusTone] = statusMeta[state.status] ?? [String(state.status), '#8a8f98']
+      const [statusLabel, statusTone] = statusMeta[displayStatus] ?? [String(displayStatus), '#8a8f98']
       const pressureValue = pressure === undefined ? undefined : Math.round(pressure)
       /** Ledger precision: two decimals, so O and the big %-age can differ
        * honestly (73.00% vs the rounded 73%). */
       const pressureExact = pressure === undefined ? undefined : pressure.toFixed(2)
-      const pressureTone = pressureValue === undefined ? 'inherit' : pressureValue >= 85 ? '#e5484d' : pressureValue >= 60 ? '#d08700' : '#22a06b'
+      const pressureTone = view.pressure === null ? 'inherit' : view.pressure.tone
+      const pressureThreshold = view.pressure?.executeThreshold
 
-      /** Ledger cell → the full name a hover shows (official Tooltip). */
-      const LEDGER_LABELS = {
-        O: t('ledger.O'),
-        L: t('ledger.L'),
-        M: t('ledger.M'),
-        P: t('ledger.P'),
-        U: t('ledger.U'),
-        T: t('ledger.T'),
-        K: t('ledger.K'),
-        V: t('ledger.V'),
-        R: t('ledger.R'),
-        E: t('ledger.E'),
-      }
-
-      /** One dense single-letter line; every cell is hoverable and shows its
-       * full name through the official Tooltip (when the primitives module
-       * exists). Cells stay on one line, wrapping only as a last resort. */
-      const kv = (cells) => {
-        const parts = []
-        cells.forEach((cell) => {
-          if (cell === '' || cell === undefined || cell === null) return
-          const label = LEDGER_LABELS[cell.charAt(0)]
-          const span = el('span', { style: { minWidth: 0 } }, cell)
-          parts.push(label !== undefined && Tooltip !== undefined
-            ? el(Tooltip, { key: 't-' + cell, label, side: 'top', delayMs: 200 }, span)
-            : span)
-        })
-        if (parts.length === 0) return null
-        const withSeparators = []
-        parts.forEach((part, index) => {
-          if (index > 0) withSeparators.push(el('span', { key: 'sep-' + index, style: { opacity: 0.45 } }, '·'))
-          withSeparators.push(part)
-        })
-        return el('div', {
-          key: 'kv-' + cells.filter(Boolean).join('').slice(0, 10),
-          style: { display: 'flex', flexWrap: 'wrap', columnGap: 6, rowGap: 2, padding: '2.5px 0', fontVariantNumeric: 'tabular-nums', alignItems: 'baseline', minWidth: 0 },
-        }, withSeparators)
-      }
-
-      // The single-letter ledger (compact enough to stay on ONE line):
-      //   O occupancy % (native projection, 2dp)   L post-compaction ledger
-      //   M memories in this project               P promoted in 24h
-      //   U unverified rows                        T last maintenance tick
-      //   K ttl-killed / V verified / R revised    E errors
-      const projectTotal = health.memoryStats !== undefined && health.memoryStats.total !== undefined
-        ? health.memoryStats.total
-        : health.projectMemories
-      const mt = health.maintenanceLast
-      const summaryRows = [
-        kv([
-          pressureExact !== undefined ? 'O ' + pressureExact + '%' : '',
-          health.lastTokens !== undefined && health.lastContextWindow
-            ? 'L ' + compactTok(health.lastTokens) + '/' + compactTok(health.lastContextWindow)
-            : '',
-          projectTotal !== undefined ? 'M ' + fmtInt(projectTotal) : '',
-          health.promote24h > 0 ? 'P ' + fmtInt(health.promote24h) : '',
-          health.memoryStats !== undefined && health.memoryStats.unverified !== undefined
-            ? 'U ' + fmtInt(health.memoryStats.unverified)
-            : '',
-          mt === undefined ? '' : typeof mt.at === 'number' ? 'T ' + timeShort(mt.at) : 'T',
-          mt !== undefined && mt.expired ? 'K ' + fmtInt(mt.expired) : '',
-          mt !== undefined && mt.verified ? 'V ' + fmtInt(mt.verified) : '',
-          mt !== undefined && mt.updated ? 'R ' + fmtInt(mt.updated) : '',
-          errorsSinceBoot > 0 ? 'E ' + fmtInt(errorsSinceBoot) : '',
+      // The v2 panel: pressure + 100% host composition + estimated message
+      // sub-list + named sections. The old single-letter ledger is gone; the
+      // numbers it carried now live in the sections or `/ctx-status`.
+      const barColors = { system: '#8250df', tools: '#2f81f7', messages: '#22a06b' }
+      const barNode = view.bar.available
+        ? el('div', {
+          key: 'bar',
+          role: 'img',
+          'aria-label': view.bar.aria,
+          style: { display: 'flex', height: 10, borderRadius: 5, overflow: 'hidden', marginTop: 6, background: 'rgba(127,127,127,.14)' },
+        }, view.bar.segments.map(segment => el('span', {
+          key: segment.id,
+          title: t(segment.labelKey) + ' · ' + compactTok(segment.tokens),
+          style: {
+            width: (segment.share === null ? 0 : segment.share * 100) + '%',
+            background: barColors[segment.id],
+            opacity: 0.9,
+          },
+        })))
+        : el('div', { key: 'bar-empty', style: { marginTop: 6, opacity: 0.5 } }, t('bar.unavailable'))
+      const barLegend = view.bar.available
+        ? view.bar.segments.map(segment => el('div', {
+          key: 'legend-' + segment.id,
+          style: { display: 'flex', justifyContent: 'space-between', gap: 8, padding: '2px 0', fontVariantNumeric: 'tabular-nums' },
+        }, [
+          el('span', { key: 'label', style: { display: 'inline-flex', alignItems: 'center', gap: 5 } }, [
+            el('span', { key: 'swatch', style: { width: 7, height: 7, borderRadius: 2, background: barColors[segment.id] } }),
+            t(segment.labelKey),
+          ]),
+          el('span', { key: 'value', style: { opacity: 0.65 } }, compactTok(segment.tokens)),
+        ]))
+        : []
+      const compositionRows = view.messageRows.map(row => el('div', {
+        key: 'composition-' + row.id,
+        style: { display: 'flex', justifyContent: 'space-between', gap: 8, padding: '1px 0', fontVariantNumeric: 'tabular-nums' },
+      }, [
+        el('span', { key: 'label', style: { opacity: 0.8 } }, [
+          t(row.labelKey),
+          row.suffixKey === undefined ? '' : ' · ' + t(row.suffixKey),
         ]),
+        el('span', { key: 'value', style: { opacity: 0.6 } }, compactTok(row.tokens)),
+      ]))
+      const sectionRows = view.sections.map(section => el('div', {
+        key: 'section-' + section.id,
+        style: { display: 'flex', justifyContent: 'space-between', gap: 10, padding: '2px 0', alignItems: 'baseline' },
+      }, [
+        el('span', { key: 'label', style: { flex: '0 0 auto', opacity: 0.55 } }, t(section.labelKey)),
+        el('span', { key: 'value', style: { textAlign: 'right', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' } }, section.value),
+      ]))
+      const summaryRows = [
+        el('div', { key: 'pressure', style: { display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'baseline' } }, [
+          el('span', { key: 'p', style: { fontSize: 17, fontWeight: 600, color: pressureTone, fontVariantNumeric: 'tabular-nums' } },
+            pressureExact === undefined ? '—' : t('telemetry.pressureLine', { percent: pressureExact, threshold: pressureThreshold == null ? '—' : String(pressureThreshold) })),
+          el('span', { key: 'tokens', style: { opacity: 0.55, fontVariantNumeric: 'tabular-nums' } },
+            health.lastTokens !== undefined && health.lastContextWindow
+              ? t('telemetry.tokens', { used: compactTok(health.lastTokens), window: compactTok(health.lastContextWindow) })
+              : ''),
+        ]),
+        barNode,
+        ...barLegend,
+        el('div', { key: 'composition-head', style: { marginTop: 8, fontSize: 10, letterSpacing: '.06em', textTransform: 'uppercase', opacity: 0.45 } }, t('composition.head')),
+        compositionRows.length > 0
+          ? el('div', { key: 'composition', style: { marginTop: 2 } }, compositionRows)
+          : view.compositionAvailable
+            ? el('div', { key: 'composition-zero', style: { opacity: 0.45, padding: '2px 0' } }, '0')
+            : el('div', { key: 'composition-empty', style: { opacity: 0.45, padding: '2px 0' } }, t('composition.unavailable')),
+        el('div', { key: 'sections', style: { marginTop: 8, paddingTop: 6, borderTop: '1px solid rgba(127,127,127,.14)' } }, sectionRows),
       ]
 
       const records = recordsOf(state.recent, t)
       const noise = noiseLine(state.recent, t)
       const recordNodes = records.length === 0
-        ? [el('div', { key: 'empty', style: { padding: '4px 0', opacity: 0.55 } }, state.status === 'unavailable' ? t('records.noRoute') : t('records.empty'))]
+        ? [el('div', { key: 'empty', style: { padding: '4px 0', opacity: 0.55 } }, displayStatus === 'unavailable' ? t('records.noRoute') : t('records.empty'))]
         : records.slice(0, MAX_RECORDS).map((record, index) => {
           const meta = RECORD_CATEGORIES[record.category] === undefined ? RECORD_CATEGORIES.archive : RECORD_CATEGORIES[record.category]
           const label = t(meta.labelKey)
@@ -2506,6 +2893,8 @@ window.__ModuleLoader__.load({
 
       const panel = el('div', {
         'data-mc-surface': '1',
+        'data-mc-panel': '1',
+        tabIndex: -1,
         style: {
           position: 'fixed',
           right: place.right,
@@ -2529,7 +2918,10 @@ window.__ModuleLoader__.load({
           el('div', { key: 'who', style: { display: 'flex', alignItems: 'center', gap: 7 } }, [
             el('span', { key: 'dot', style: { width: 8, height: 8, borderRadius: 4, background: statusTone, boxShadow: '0 0 6px ' + statusTone } }),
             el('strong', { key: 'title', style: { fontSize: 12.5, fontWeight: 600, letterSpacing: '.01em' } }, 'Magic Context'),
-            el('span', { key: 'status', style: { fontSize: 10.5, opacity: 0.55 } }, statusLabel),
+            el('span', { key: 'status', style: { fontSize: 10.5, opacity: 0.55 } },
+              statusLabel
+              + (adapterVersion === undefined ? '' : ' · v' + adapterVersion)
+              + (view.stale ? ' · ' + t('telemetry.stale') : '')),
           ]),
           pressureValue === undefined
             ? el('span', { key: 'p', style: { fontSize: 10.5, opacity: 0.4 } }, '—')
@@ -2537,6 +2929,16 @@ window.__ModuleLoader__.load({
               key: 'p',
               style: { fontSize: 17, fontWeight: 600, lineHeight: 1, color: pressureTone, fontVariantNumeric: 'tabular-nums' },
             }, pressureValue + '%'),
+          el('button', {
+            key: 'close',
+            type: 'button',
+            'aria-label': t('panel.close'),
+            onClick: () => setOpen(false),
+            style: {
+              border: 'none', background: 'transparent', color: 'inherit', cursor: 'pointer',
+              opacity: 0.55, fontSize: 15, lineHeight: 1, padding: '0 2px',
+            },
+          }, '×'),
         ]),
         el('div', { key: 'summary', style: { marginTop: 8, paddingTop: 8, borderTop: '1px solid rgba(127,127,127,.14)' } }, summaryRows),
         sectionTitle('records-head', t('records.head'), records.length === 0 ? undefined : t('records.count', { n: records.length })),
@@ -2545,7 +2947,22 @@ window.__ModuleLoader__.load({
           key: 'foot',
           title: noise === '' ? undefined : t('records.beats', { beats: noise }),
           style: { marginTop: 8, paddingTop: 6, borderTop: '1px solid rgba(127,127,127,.14)', opacity: 0.45, fontSize: 10.5 },
-        }, t('records.foot')),
+        }, [
+          el('span', { key: 'hint' }, t('records.foot')),
+          ' · ',
+          el('button', {
+            key: 'ctx-status',
+            type: 'button',
+            title: t('footer.ctxStatus'),
+            onClick: () => {
+              try { void navigator.clipboard?.writeText('/ctx-status') } catch { /* clipboard is optional */ }
+            },
+            style: {
+              border: 'none', background: 'transparent', color: 'inherit', cursor: 'pointer',
+              padding: 0, font: 'inherit', textDecoration: 'underline',
+            },
+          }, '/ctx-status'),
+        ]),
       ])
 
       return placement === 'overlay'
@@ -2741,7 +3158,7 @@ window.__ModuleLoader__.load({
         // The number/text formatters are the panel's display contract; the
         // node-side spec pins them so a formatting regression (the scope bug
         // that briefly unmounted the pill) cannot come back silently.
-        compactTok, fmtInt, spanOf, trimSummary, timeShort,
+        compactTok, fmtInt, spanOf, trimSummary, timeShort, buildTelemetryView, displayStatusOf,
         // The pill's "is anything wrong NOW" window: pinned by
         // tests/client-pure.spec.ts so the badge cannot silently fall back to the
         // cumulative count (it stayed red for 21.5 h of uptime on provider-side

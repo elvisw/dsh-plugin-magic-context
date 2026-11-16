@@ -40,9 +40,11 @@
  *    checkpoint-summarizing engine competes with the reclaim lanes.
  */
 import type { Context } from '@deepseek-ai/cordis'
+import { readFileSync } from 'node:fs'
 import {
   CONTEXT_WINDOW_EXCEEDED_CODE,
   DSH_EVENTS,
+  enumerateSurfaceNodes,
   enumerateSurfaceToolResults,
   probeDshSeams,
   readUsageFields,
@@ -52,6 +54,7 @@ import {
   type Session,
   type SessionEvent,
 } from './dsh/seams.ts'
+import { estimateTokens, estimateTokensFromLength, renderCompartment, stripBaseline, type Compartment } from './core/compartments.ts'
 import { reclaimForEmergency } from './dsh/emergency.ts'
 import type { HistorianLlm } from './dsh/historian.ts'
 import { historianInFlight } from './dsh/historian.ts'
@@ -67,7 +70,7 @@ import { promoteMemoryToCandidate } from './core/global-domains.ts'
 import { SearchHintTracker } from './dsh/search-hint.ts'
 import { registerMagicCompactionEngine, type EngineHandle } from './dsh/compaction-engine.ts'
 import { liveJournal } from './dsh/live-journal.ts'
-import { createTelemetryService } from './dsh/telemetry.ts'
+import { createTelemetryService, type MessageCompositionSnapshot } from './dsh/telemetry.ts'
 import { openMemoryLane } from './dsh/memory-lane.ts'
 import { injectReduceGuidance, preStepListener, type PreStepProjects } from './dsh/pre-step.ts'
 import { wireMaintenance } from './dsh/maintenance-wiring.ts'
@@ -81,7 +84,7 @@ import {
 import { DEFAULT_POLICY, type PressurePolicy } from './core/policy.ts'
 import z from '@deepseek-ai/schemastery'
 import { ensureTag, tagPrefix } from './core/tagger.ts'
-import { recoverOrphanHistorianRuns, type Journal } from './core/journal.ts'
+import { recoverOrphanHistorianRuns, type Journal, type JournalKind } from './core/journal.ts'
 import { defaultDataDir, openStores, SCHEMA_VERSION } from './core/stores.ts'
 import { errText, type UsageRecord } from './core/types.ts'
 import { liveBoolean, liveNumber, liveRoute, liveString, policyOf } from './dsh/volatile.ts'
@@ -142,6 +145,66 @@ interface Registrar {
 
 /** One legacy-config note per process, not one per mount. */
 let legacyTagsWarningEmitted = false
+
+/** Cached package version for the telemetry header; read once, fail-open. */
+let adapterVersionCache: string | undefined
+let adapterVersionRead = false
+function adapterVersionOf(): string | undefined {
+  if (adapterVersionRead) return adapterVersionCache
+  adapterVersionRead = true
+  try {
+    const parsed = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as { version?: unknown }
+    if (typeof parsed.version === 'string' && parsed.version !== '') adapterVersionCache = parsed.version
+  } catch {
+    /* a version read must never break the summary */
+  }
+  return adapterVersionCache
+}
+
+/**
+ * Server-side split of `contextBreakdown.messageTokens`.
+ *
+ * This runs in the composition root because it needs the live `Session`
+ * surface; the telemetry service only sees counts. The baseline block is
+ * stripped before user/assistant text is counted, so Compartments, Memories and
+ * Profile are not counted twice. Compartments are counted only when their
+ * landed placeholder is still on the current surface.
+ */
+export function messageCompositionOf(
+  session: Session,
+  compartments: readonly Compartment[],
+  now: number,
+  memories: number | null,
+  profile: number | null,
+): MessageCompositionSnapshot {
+  const surfaceSeqs = new Set<number>(session.surface.nodes)
+  const nodes = enumerateSurfaceNodes(session)
+  let conversation = 0
+  let toolCalls = 0
+  for (const node of nodes) {
+    if (node.isPlaceholder) continue
+    if (node.role === 'user' || node.role === 'assistant') {
+      const text = stripBaseline(node.text)
+      if (text.trim() !== '') conversation += estimateTokens(text)
+    } else if (node.role === 'tool') {
+      toolCalls += estimateTokens(node.text)
+    }
+  }
+  const compartmentTokens = compartments.reduce((total, compartment) => {
+    if (compartment.landedEventSeq === undefined || compartment.landedReason !== undefined) return total
+    if (!surfaceSeqs.has(compartment.landedEventSeq)) return total
+    return total + estimateTokens(renderCompartment(compartment, now))
+  }, 0)
+  return {
+    conversation,
+    toolCalls,
+    compartments: compartmentTokens,
+    memories,
+    profile,
+    other: null,
+    residualTokens: 0,
+  }
+}
 
 export async function apply(ctx: Context, config: MagicContextDshConfig = {}): Promise<void> {
   if (config.enabled === false) {
@@ -720,6 +783,40 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
   // isolated profile while the desktop instance happened to win the race).
   // `ctx.inject` waits for the service and re-runs on its lifecycle, which is
   // how @deepseek-ai/dsh-client-modules attaches its own route.
+  let sessionsRef: { get(id: string): Session | undefined } | undefined
+  let projectionRegistryRef: {
+    snapshot(session: Session, keys?: readonly string[]): { values: { contextBreakdown?: { systemTokens?: number; toolsTokens?: number; messageTokens?: number } } }
+    onChanged(listener: (session: { id?: string }, key: string, value: unknown) => void): () => void
+  } | undefined
+  const projectionCache = new Map<string, { systemTokens?: number; toolsTokens?: number; messageTokens?: number }>()
+  const projectionMisses = new Set<string>()
+  const rememberProjectionMiss = (sessionId: string): void => {
+    projectionMisses.add(sessionId)
+    if (projectionMisses.size > 64) {
+      const oldest = projectionMisses.values().next().value
+      if (oldest !== undefined) projectionMisses.delete(oldest)
+    }
+  }
+  const cacheProjection = (sessionId: string | undefined, value: unknown): void => {
+    if (sessionId === undefined || sessionId === '' || value === null || typeof value !== 'object') return
+    const raw = value as { systemTokens?: unknown; toolsTokens?: unknown; messageTokens?: unknown }
+    if (typeof raw.systemTokens !== 'number' || typeof raw.toolsTokens !== 'number' || typeof raw.messageTokens !== 'number') return
+    projectionCache.set(sessionId, {
+      systemTokens: raw.systemTokens,
+      toolsTokens: raw.toolsTokens,
+      messageTokens: raw.messageTokens,
+    })
+    projectionMisses.delete(sessionId)
+    if (projectionCache.size > 64) {
+      const oldest = projectionCache.keys().next().value
+      if (oldest !== undefined) projectionCache.delete(oldest)
+    }
+  }
+  ctx.inject(['sessions'], (scope) => {
+    const sessions = (scope as unknown as { sessions?: { get(id: string): Session | undefined } }).sessions
+    sessionsRef = sessions
+    return () => { sessionsRef = undefined }
+  })
   let telemetry: ReturnType<typeof createTelemetryService> | undefined
   ctx.inject(['webServer'], (scope) => {
     const webServer = (scope as unknown as {
@@ -740,6 +837,77 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
         memoryWrite: stores.getMeta('memory_write'),
         toolsMode: toolMode,
       }),
+      adapterVersion: adapterVersionOf,
+      policy: () => {
+        const current = activePolicy()
+        return {
+          executeThreshold: current.executeThreshold,
+          forceThreshold: current.forceThreshold,
+        }
+      },
+      projection: (sessionId: string) => {
+        const session = sessionsRef?.get(sessionId)
+        if (session === undefined) return undefined
+        const cached = projectionCache.get(sessionId)
+        if (cached !== undefined) return { contextBreakdown: cached }
+        if (projectionMisses.has(sessionId)) return undefined
+        if (projectionRegistryRef === undefined) return undefined
+        try {
+          const snapshot = projectionRegistryRef.snapshot(session, ['contextBreakdown'])
+          const value = snapshot.values.contextBreakdown
+          if (value === undefined) {
+            rememberProjectionMiss(sessionId)
+            return undefined
+          }
+          cacheProjection(sessionId, value)
+          return { contextBreakdown: value }
+        } catch {
+          return undefined
+        }
+      },
+      messageComposition: (sessionId: string, _messageTokens: number) => {
+        const session = sessionsRef?.get(sessionId)
+        if (session === undefined) return undefined
+        const latest = (kind: JournalKind): Record<string, unknown> | undefined =>
+          stores.listJournal({ kinds: [kind], limit: 1, sessionId })[0]?.data
+        const numberField = (data: Record<string, unknown> | undefined, field: string): number | null => {
+          const value = data?.[field]
+          return typeof value === 'number' && Number.isFinite(value) ? value : null
+        }
+        return messageCompositionOf(
+          session,
+          stores.listCompartments(sessionId),
+          Date.now(),
+          numberField(latest('memory-recall'), 'estTokens'),
+          numberField(latest('profile-recall'), 'estTokens'),
+        )
+      },
+      historian: (sessionId: string) => {
+        const compartments = stores.listCompartments(sessionId)
+        const published = stores.listJournal({
+          kinds: ['compartment-published'],
+          limit: 1,
+          sessionId,
+        })[0]
+        return {
+          running: historianInFlight(sessionId) !== undefined,
+          compartments: compartments.length,
+          coveredTokens: compartments.reduce((total, compartment) => total + compartment.coveredTokens, 0),
+          lastPublishedAt: published?.at ?? null,
+        }
+      },
+      surface: (sessionId: string) => {
+        const session = sessionsRef?.get(sessionId)
+        if (session === undefined) return undefined
+        const nodes = enumerateSurfaceToolResults(session, callId =>
+          stores.getTag(sessionId, { kind: 'tool-result', callId }))
+        return {
+          tagged: nodes.filter(node => node.tagNumber !== undefined).length,
+          dropped: nodes.filter(node => node.isPlaceholder).length,
+          reclaimableTokens: nodes.reduce((total, node) =>
+            total + (node.isPlaceholder ? 0 : estimateTokensFromLength(node.textLength)), 0),
+        }
+      },
       // Dreamer-slice KPIs for the panel: the viewed session's project
       // verification coverage + the newest maintenance tally. Lazy getters —
       // the panel polls them, nothing runs at mount.
@@ -810,15 +978,21 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
     // merge-extensible and `contextPressure` is registered at runtime by the
     // token meter, so the host type's key union cannot name our key.
     const registry = (scope as { sessionProjections?: {
+      snapshot(session: Session, keys?: readonly string[]): { values: { contextBreakdown?: { systemTokens?: number; toolsTokens?: number; messageTokens?: number } } }
       onChanged(listener: (session: { id?: string }, key: string, value: unknown) => void): () => void
     } }).sessionProjections
-    if (journal === undefined || registry === undefined) return
+    if (registry === undefined) return
+    projectionRegistryRef = registry
     const lastBySession = new Map<string, LoggedPressureReading>()
     const disposeListener = registry.onChanged((session, key, value) => {
       try {
-        if (key !== 'contextPressure') return
-        const reading = value as ContextPressureReading
         const sid = typeof session?.id === 'string' ? session.id : ''
+        if (key === 'contextBreakdown') {
+          cacheProjection(sid === '' ? undefined : sid, value)
+          return
+        }
+        if (journal === undefined || key !== 'contextPressure') return
+        const reading = value as ContextPressureReading
         if (!shouldLogContextPressure(lastBySession.get(sid), reading)) return
         lastBySession.set(sid, { used: pressureUsedTokens(reading), window: reading.contextWindow ?? 0 })
         if (lastBySession.size > 64) {
@@ -837,7 +1011,10 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
     })
     // The listener's disposer rides this inject fiber — a scope reload
     // re-runs the whole inject and swaps listeners cleanly.
-    void disposeListener
+    return () => {
+      disposeListener()
+      if (projectionRegistryRef === registry) projectionRegistryRef = undefined
+    }
   })
 
   // Config-drift alarm (2026-10-12): the profile's `config` block is REPLACE
