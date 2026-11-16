@@ -51,8 +51,8 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 > is published only as `@elvisw/dsh-magic-context`; keep the `@elvisw/` scope in
 > every install command.
 
-`0.13.0` introduced this package name; the current release is `0.14.0`, which adds the
-top-level Settings page. If you installed
+`0.13.0` introduced this package name; the current release is `0.15.0`, which adds the
+telemetry v2 panel (`0.14.0` added the top-level Settings page). If you installed
 `@elvisw/dsh-plugin-magic-context` (0.12.x) or the upstream
 `dsh-plugin-magic-context`, remove it first: all three use the same loader row id
 (`magic-context-dsh`), so co-install is unsupported: the loader keeps one row and
@@ -480,7 +480,7 @@ and publishes as **`@elvisw/dsh-magic-context`** from `0.13.0`. Its versions and
 fork. The upstream repository and npm package remain under their original maintainer; this fork does
 not modify them.
 
-Differences from upstream `0.11.2`, accumulated through `0.14.0`:
+Differences from upstream `0.11.2`, accumulated through `0.15.0`:
 
 - **Recovery semantics**: `ctx_expand` no longer rewrites placeholders in place. It reads the persisted
   original `tool/result`, returns it as a new tool result, and assigns a new tag. The old placeholder is
@@ -500,6 +500,10 @@ Differences from upstream `0.11.2`, accumulated through `0.14.0`:
 - **Settings UI**: the plugin registers a top-level `settings.section` (Magic Context) with
   zh/en copy and a catalog-backed Historian reasoning-effort picker; the card on the GUI Plugins
   page remains as the legacy location/fallback.
+- **Telemetry v2**: the overlay pill keeps pressure, the token pair, Historian state and queue
+  visible; the panel adds a 100% host token composition bar, an estimated message breakdown,
+  Historian/Memory/Queue/Maintenance/Hygiene/Warnings sections, and localized chrome. Missing
+  host values render as `—` / `empty` / `never run`, never as fabricated zeroes.
 - **Schema and package name**: the plugin DB moves to v11 (`pending_drops.flush_requested`, automatic v10
   migration). The npm package was `@elvisw/dsh-plugin-magic-context` in `0.12.x`; `0.13.0` renames it to
   `@elvisw/dsh-magic-context` without changing the loader row id `magic-context-dsh`, the settings

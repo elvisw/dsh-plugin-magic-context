@@ -10,6 +10,8 @@
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-11-16
+
 ### Added
 
 - 遥测面板 v2：胶囊保留压力、token 对、Historian 与回收队列；弹层新增 100% 宿主 token 构成（系统 / 工具定义 / 消息）、估算的消息构成、Historian / 记忆 / 回收队列 / 维护 / 可回收 / 警告分区，全部中英文案走 `magic-context` 字典。服务端 `health` 增量提供 `adapterVersion`、`policy`、`contextBreakdown`、`messageComposition`、`historian`、`queue`、`memory`、`surface`，缺失值用 `null`/省略而不是 0。
@@ -260,6 +262,7 @@ npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布�
 
 0.12.0 之前的 tag 位于上游仓库 `wk544863858/dsh-plugin-magic-context`；从 0.12.0 起，版本与 tag 属于本 fork。
 
+[0.15.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.12.3...v0.13.0
 [0.12.3]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.12.2...v0.12.3

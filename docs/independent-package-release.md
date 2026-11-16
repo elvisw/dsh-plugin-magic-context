@@ -1,12 +1,12 @@
 # 独立包名与发布
 
-> Status: current — last verified 2026-11-16 against the 0.14.0 package and release guide.
+> Status: current — last verified 2026-11-16 against the 0.15.0 package and release guide.
 > Scope: package rename, user migration, and release procedure.
 
 本仓库 `0.12.0`–`0.12.3` 使用 npm 包名 **`@elvisw/dsh-plugin-magic-context`**；从 **`0.13.0`** 起改为
 **`@elvisw/dsh-magic-context`**。`0.12.1` 是同一代码线的 docs-only patch，`0.12.2` 是 historian 重试、
 reasoning effort 与两处观测口径的修复版，`0.12.3` 是 `/ctx-flush` 空队列反馈的 patch，`0.13.0` 是包名
-迁移 + `ctx_expand` range/verbose，`0.14.0` 是顶层设置页、全量中文化与 catalog-backed effort 选择器（已发布）。上游包 `dsh-plugin-magic-context` 属于另一位
+迁移 + `ctx_expand` range/verbose，`0.14.0` 是顶层设置页、全量中文化与 catalog-backed effort 选择器，`0.15.0` 是遥测 v2 面板与中英截图（均已发布）。上游包 `dsh-plugin-magic-context` 属于另一位
 维护者，本 fork 不修改、不覆盖它。
 
 ## 用户迁移
@@ -70,14 +70,14 @@ npm 的 Trusted Publishing 只能绑定到已经存在的包，因此首次发�
    ```
 
 5. 用 `npm trust list @elvisw/dsh-magic-context` 确认 repo、workflow 与 publish 权限。
-6. 恢复仓库内 `package.json` 与 `package-lock.json` 的正式版本（当前 `0.14.0`，以仓库为准），提交并推送 `main`；只有确认 `main` 全绿后才创建并推送对应的 `v<version>` tag。
+6. 恢复仓库内 `package.json` 与 `package-lock.json` 的正式版本（当前 `0.15.0`，以仓库为准），提交并推送 `main`；只有确认 `main` 全绿后才创建并推送对应的 `v<version>` tag。
 
 正式发布必须由 tag 触发 `.github/workflows/release.yml` 的 OIDC 流程；不要手工 `npm publish <version>`，否则会消耗版本号且没有 provenance，release workflow 的“already published”守卫会拒绝再次发布。
 
 ## 发布后核对
 
 ```bash
-npm view @elvisw/dsh-magic-context@0.14.0 version dist.integrity
+npm view @elvisw/dsh-magic-context@0.15.0 version dist.integrity
 npm view @elvisw/dsh-magic-context dist-tags
 npm trust list @elvisw/dsh-magic-context
 ```
