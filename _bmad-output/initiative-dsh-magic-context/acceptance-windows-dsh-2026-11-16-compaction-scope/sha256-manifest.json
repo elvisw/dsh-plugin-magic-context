@@ -5,8 +5,8 @@
   "files": [
     {
       "path": "acceptance-report.md",
-      "bytes": 5833,
-      "sha256": "d8eb15de64809f4305c49c09b5cdc61e473e1570c97199f8c21351f051056bff"
+      "bytes": 6037,
+      "sha256": "4cfa5f94974a8f3815ebec6b0e696c3870295e110be059c020ed1203424c5ea0"
     },
     {
       "path": "evidence/build.txt",
@@ -15,18 +15,18 @@
     },
     {
       "path": "evidence/diff-check.txt",
-      "bytes": 600,
-      "sha256": "266b7b2608c9685c4c46422344fc7632c58fcb00939e29b8747d57dd09af8f68"
+      "bytes": 608,
+      "sha256": "4da85a1c760f98a70e9ad2ebce57d1906e41c16b58c2211871c70457672e7ad4"
     },
     {
       "path": "evidence/diff-stat.txt",
-      "bytes": 749,
-      "sha256": "fcf292c99573c90e95599b62a3411ecd5219736cdc633d55d6799686db7fbf37"
+      "bytes": 2304,
+      "sha256": "20b80b42d912a4c490b34ec6f401c076b83ef940a111352ec37528b6369b72e9"
     },
     {
       "path": "evidence/git-status.txt",
-      "bytes": 595,
-      "sha256": "4104f0d3f03b5736f10ad09c9163a2b643b8c636e2d856915924e2302769809f"
+      "bytes": 519,
+      "sha256": "9801cba1d9669fc89d7780e350a4c1e01440dd77e38060793131b2e7e13e717b"
     },
     {
       "path": "evidence/i18n.txt",

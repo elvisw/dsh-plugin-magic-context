@@ -1,11 +1,37 @@
- CHANGELOG.md                                       |  1 +
- README.md                                          | 32 +++++++++++++++++-----
- README.zh-CN.md                                    | 23 ++++++++++++----
- .../tickets/tickets.toml                           | 12 ++++++++
- cordis.patch.yml                                   |  5 ++--
- docs/dsh-plugin-settings-ui-contract.md            | 29 +++++++++++++++++---
- src/client/index.js                                |  4 +--
- src/dsh/config.ts                                  |  6 ++--
- src/index.ts                                       | 16 ++++++-----
- tests/client-pure.spec.ts                          | 22 +++++++++++++++
- 10 files changed, 120 insertions(+), 30 deletions(-)
+8f6a113 docs(settings): scope compaction takeover to flat/headless hosts (#16)
+ CHANGELOG.md                                       |   1 +
+ README.md                                          |  32 +++-
+ README.zh-CN.md                                    |  23 ++-
+ .../REPRODUCE.md                                   |  48 +++++
+ .../acceptance-report.md                           | 114 ++++++++++++
+ .../evidence/build.txt                             |   5 +
+ .../evidence/diff-check.txt                        |   5 +
+ .../evidence/diff-stat.txt                         |  11 ++
+ .../evidence/git-status.txt                        |  14 ++
+ .../evidence/i18n.txt                              |  38 ++++
+ .../evidence/old-phrase-check.txt                  |   2 +
+ .../evidence/scope-check.txt                       |  36 ++++
+ .../evidence/typecheck.txt                         |   3 +
+ .../evidence/unit-test.txt                         |  18 ++
+ .../evidence/upstream-issue-check.txt              |   4 +
+ .../sha256-manifest.json                           |  67 +++++++
+ ...ry-settings-managed-host-compaction-row-plan.md | 200 +++++++++++++++++++++
+ .../story-settings-managed-host-compaction-row.md  | 179 ++++++++++++++++++
+ .../tickets/tickets.toml                           |  12 ++
+ cordis.patch.yml                                   |   5 +-
+ docs/dsh-plugin-settings-ui-contract.md            |  29 ++-
+ src/client/index.js                                |   4 +-
+ src/dsh/config.ts                                  |   6 +-
+ src/index.ts                                       |  16 +-
+ tests/client-pure.spec.ts                          |  22 +++
+ 25 files changed, 864 insertions(+), 30 deletions(-)
+
+Follow-up docs (uncommitted at capture):
+ .../acceptance-report.md                           |  4 ++-
+ .../evidence/diff-check.txt                        |  8 ++---
+ .../evidence/diff-stat.txt                         | 40 ++++++++++++++++------
+ .../evidence/git-status.txt                        | 16 +++------
+ .../sha256-manifest.json                           | 16 ++++-----
+ .../story-settings-managed-host-compaction-row.md  |  3 +-
+ docs/dsh-plugin-settings-ui-contract.md            |  5 +++
+ 7 files changed, 54 insertions(+), 38 deletions(-)

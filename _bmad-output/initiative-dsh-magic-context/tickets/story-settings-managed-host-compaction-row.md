@@ -174,6 +174,7 @@ These are comment-only edits, no behavior change.
 
 - Writing or commenting `compaction-basic` rows.
 - Web/Desktop preset-aware compaction takeover (explicitly dropped; a future design
-  ticket would be required).
+  ticket would be required). The relevant DSH feature request is
+  [deepseek-ai/deepseek-harness#11127](https://github.com/deepseek-ai/deepseek-harness/discussions/11127).
 - Changing `registerCompactionEngine` runtime behavior or engine ordering.
 - A new settings field or status card.

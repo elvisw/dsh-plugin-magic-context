@@ -142,6 +142,11 @@ general takeover. That recipe is flat-only and does not work on DSH Web/Desktop;
 reported upstream as
 [wk544863858/dsh-plugin-magic-context#16](https://github.com/wk544863858/dsh-plugin-magic-context/issues/16).
 
+A preset-scoped compaction backend is not available today. The relevant DSH feature
+request is the Ideas discussion
+[deepseek-ai/deepseek-harness#11127](https://github.com/deepseek-ai/deepseek-harness/discussions/11127);
+this fork added its concrete use case and evidence there on 2026-11-16.
+
 ## 6. Compatibility and fallback
 
 - A host without the `settings.section` slot simply does not render the primary page; the

@@ -107,7 +107,9 @@ only assert the hint text is visible in Settings → Magic Context.
   string, and the card render path is unchanged.
 - No automatic profile-patch management; that design was rejected.
 - No preset-aware Web/Desktop takeover; it was explicitly dropped as a
-  host-level design change.
+  host-level design change. The relevant DSH feature request is
+  [deepseek-ai/deepseek-harness#11127](https://github.com/deepseek-ai/deepseek-harness/discussions/11127);
+  this fork added its concrete use case there on 2026-11-16.
 - No release, version bump, tag, publish or daily-profile mutation.
 - The local daily `web` profile still contains a top-level `compaction-basic`
   row and an older comment from before this correction; this ticket does not
