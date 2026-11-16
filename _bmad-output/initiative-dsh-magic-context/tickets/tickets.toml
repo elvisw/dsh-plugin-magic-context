@@ -192,3 +192,15 @@ after = [14]
 hitl = false
 risk = "medium"
 refine = true
+
+[[entry]]
+id = 17
+type = "spike"
+title = "Telemetry UI requirements and information architecture"
+description = "Research and specify the telemetry UI before implementation. Compare the upstream Magic Context OpenCode TUI sidebar (v0.49.56, packages/plugin/src/tui/slots/sidebar-content.tsx and shared/status-view.ts) with the current DSH Web telemetry pill/popover (src/client/index.js), the telemetry summary/SSE service (src/dsh/telemetry.ts) and /ctx-status. Produce a requirements document defining the information architecture: context pressure and threshold; token composition (three host segments plus an estimated message sub-list; assess the upstream system/docs/compartments/facts/memories/profile/conversation/tool calls/tool defs categories); Historian state, compartments and recomp progress; memory counts and injected count; pending queue, session notices and the unavailable smart-note concept; dreamer/maintenance state; cache/tag/hygiene/config warnings; operations feed. For each item record meaning, source, truth level, priority, empty/stale/error state, and whether it belongs in the compact pill, expanded panel or full /ctx-status. Define responsive behavior for narrow/wide Web layouts and a future dsh-go native renderer (composer.strip + panels), interaction/collapse model, localization/accessibility, refresh cadence and acceptance criteria. Identify telemetry fields that /mc-telemetry/summary does not currently expose and specify the minimum additive API changes; do not implement them. Resolve DSH-specific tradeoffs rather than copying the OpenCode layout verbatim: upstream is a persistent sidebar, DSH is a dock pill with a popover. Do not change runtime, UI, schema, package, release, profile or tests; no implementation authorization."
+verify = "Independent ticket validation passes. The requirements document cites upstream v0.49.56 sidebar/status sources and current DSH files with file:line evidence; contains English and Chinese static wireframes and a prioritized matrix with meaning, source, one truth level per row, compact/popover/full placement, and empty/stale/error behavior; covers context pressure, token breakdown, historian/recomp, memory, queue/notes, dreamer/maintenance, cache/tags/hygiene, warnings and operations; separates must-have v1 from deferred; lists unavailable fields and proposed additive /mc-telemetry API changes; defines responsive behavior for DSH Web and dsh-go native; defines refresh/event behavior, localization, accessibility and acceptance criteria; explicitly states it is research/requirements only with no code or host change; git diff shows no runtime or package changes."
+covers = ["src/client/index.js", "src/index.ts", "src/dsh/telemetry.ts", "docs/dsh-plugin-ui-telemetry-contract.md", "docs/dsh-plugin-settings-ui-contract.md"]
+after = [16]
+hitl = false
+risk = "medium"
+refine = true
