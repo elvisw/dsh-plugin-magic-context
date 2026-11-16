@@ -1,0 +1,22 @@
+{
+  "previousTarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t18-pack\\elvisw-dsh-magic-context-0.14.0.tgz",
+  "previousSha256": "2058d50a29c8ae249f8e05aacd539204f81127444fd5a5d33794d7d849140c13",
+  "previousBytes": 4026819,
+  "releaseTarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\v0150-pack-final\\elvisw-dsh-magic-context-0.15.0.tgz",
+  "releaseSha256": "cf0965b3c791c462e49c5b5cd3be31a141f4644fc43c8e619622b7c7d4e965eb",
+  "releaseBytes": 4027461,
+  "releaseFiles": 66,
+  "rawChangedMembers": [
+    "package/README.md",
+    "package/README.zh-CN.md",
+    "package/lib/client.js",
+    "package/package.json"
+  ],
+  "normalizedChangedMembers": [
+    "package/README.md",
+    "package/README.zh-CN.md",
+    "package/package.json"
+  ],
+  "libNormalizedChanged": [],
+  "note": "0.15.0 is a version/docs release. The T18-gated 0.14.0 candidate and the 0.15.0 candidate have identical normalized library content; README/README.zh-CN/package.json are the only semantic changes."
+}

@@ -1,0 +1,19 @@
+{
+  "node": "24.21.0",
+  "dsh": "0.2.2-rc.1",
+  "profile": "headless",
+  "isolationRoot": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-v0150-release-20261116-171435",
+  "dailyProfile": "C:/Users/elvis/.dsh/profiles/web",
+  "registry": {
+    "name": "@elvisw/dsh-magic-context",
+    "version": "0.15.0",
+    "specifier": "@elvisw/dsh-magic-context@0.15.0"
+  },
+  "installedIndexSha256": "c83cb6a22bcf4f1a2493cb2a84505e874679f1e3d800f8441b75b863ea7ab35a",
+  "installedHelperSha256": "ffd1a2b42351f2cce16a07300c6c729d002e2db3bdbaaeff48f67f8ad7a19716",
+  "dumpConfigMentionsPackage": true,
+  "dumpConfigMentionsRowId": true,
+  "modelSmoke": "V0150_REGISTRY_OK",
+  "note": "The smoke ran in an isolated DSH_HOME/HOME/USERPROFILE/XDG/APPDATA/LOCALAPPDATA root and did not modify the daily web profile.",
+  "derivedFrom": "evidence/registry-host/registry-e2e.json and evidence/registry-host/smoke.txt"
+}

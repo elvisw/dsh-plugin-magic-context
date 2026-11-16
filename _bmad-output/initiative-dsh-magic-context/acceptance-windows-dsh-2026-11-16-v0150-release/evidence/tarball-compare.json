@@ -1,0 +1,15 @@
+{
+  "registryTarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\v0150-registry\\elvisw-dsh-magic-context-0.15.0.tgz",
+  "registrySha256": "cf0965b3c791c462e49c5b5cd3be31a141f4644fc43c8e619622b7c7d4e965eb",
+  "registrySha1": "99c0fa7d6b13a828484e7725ae8459201007b60d",
+  "registryBytes": 4027461,
+  "registryIntegritySha512": "KbaSs7fKIBUzYOtChS8Na2aPCNJ1q2na+v399tenfOHuffFaMkwLnRaZH/yVpKEWjzdt15GgaX8lHg2zur0Www==",
+  "registryFiles": 66,
+  "localTarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\v0150-pack-final\\elvisw-dsh-magic-context-0.15.0.tgz",
+  "localSha256": "cf0965b3c791c462e49c5b5cd3be31a141f4644fc43c8e619622b7c7d4e965eb",
+  "localSha1": "99c0fa7d6b13a828484e7725ae8459201007b60d",
+  "localBytes": 4027461,
+  "localFiles": 66,
+  "byteIdentical": true,
+  "memberContentDiff": []
+}

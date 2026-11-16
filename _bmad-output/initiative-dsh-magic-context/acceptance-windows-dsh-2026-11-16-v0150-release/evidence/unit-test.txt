@@ -1,0 +1,20 @@
+
+> @elvisw/dsh-magic-context@0.15.0 test
+> vitest run
+
+
+ RUN  v4.1.12 C:/Users/elvis/Documents/dev/plugin/dsh-plugin-magic-context
+
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+
+ Test Files  78 passed (78)
+      Tests  939 passed (939)
+   Start at  17:06:36
+   Duration  19.11s (transform 8.89s, setup 0ms, import 28.02s, tests 232.92s, environment 9ms)
+
+exit_code=0

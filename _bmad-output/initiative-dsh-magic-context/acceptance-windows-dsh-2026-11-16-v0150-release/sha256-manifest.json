@@ -1,0 +1,135 @@
+{
+  "fileCount": 26,
+  "files": [
+    {
+      "path": "acceptance-report.md",
+      "bytes": 5472,
+      "sha256": "2060f307c5a2a5c8de7b600f2b1589f25f9f3d6b838f0d741c85563eb1e0ee87"
+    },
+    {
+      "path": "compare_tarballs.py",
+      "bytes": 3451,
+      "sha256": "97508d0555b3eaae5c00e0c8843084ba49deb42179d5729995e2e36bde2b2c58"
+    },
+    {
+      "path": "evidence/attestation.json",
+      "bytes": 14917,
+      "sha256": "85a7df50600b9099abf0eb0a0853c4759dc01645612b4bd06d3b279002777bf1"
+    },
+    {
+      "path": "evidence/build.txt",
+      "bytes": 288,
+      "sha256": "34305d440725d98d9b5012bf89f4c8c947c2f73728d93bef627e5b9ae482f585"
+    },
+    {
+      "path": "evidence/host-state.json",
+      "bytes": 935,
+      "sha256": "12598a3e3c235203a0f3a3fb656ab666b1349ad7489ce4bc99542a3cc9f44832"
+    },
+    {
+      "path": "evidence/i18n.txt",
+      "bytes": 2191,
+      "sha256": "cd37234c7bae25eadd7773ff2cf5100ec05add9a7aa450bd063e9fd5e928540c"
+    },
+    {
+      "path": "evidence/npm-pack-dry-run.txt",
+      "bytes": 3242,
+      "sha256": "d180ecec893ef668e0fee680923ccd5d6733bd7573db9d39f19f8195afc5e673"
+    },
+    {
+      "path": "evidence/npm-pack.txt",
+      "bytes": 3242,
+      "sha256": "d180ecec893ef668e0fee680923ccd5d6733bd7573db9d39f19f8195afc5e673"
+    },
+    {
+      "path": "evidence/pack-compare.json",
+      "bytes": 1004,
+      "sha256": "3b60a6bebaf0274d9b8cc1a6a58e5f675c9dcbb746c4afeced5fd5b9277d1f77"
+    },
+    {
+      "path": "evidence/registry-e2e-run.txt",
+      "bytes": 948,
+      "sha256": "a879bdb1ebd4f2bd1f31609a77680a446c07dc663d3f53b752358841b1c8a418"
+    },
+    {
+      "path": "evidence/registry-host/add-registry.txt",
+      "bytes": 756,
+      "sha256": "e91a06911b269c8adbe96403f775a4a31287746eb721d0a40858c6ad9f60aa83"
+    },
+    {
+      "path": "evidence/registry-host/bootstrap.txt",
+      "bytes": 12597,
+      "sha256": "e2a13420918e366827e045126d8842ffb94c2e736c2f28a16b243dd285681d9b"
+    },
+    {
+      "path": "evidence/registry-host/dump-config.txt",
+      "bytes": 13563,
+      "sha256": "28a9e76372d6dcbdd46957bdc582b8bf2676cbbf2b96b9362d2ca8a7b263458e"
+    },
+    {
+      "path": "evidence/registry-host/registry-e2e.json",
+      "bytes": 935,
+      "sha256": "de1466473a4b404674051eb4f1383ca0668438a989238ce7471615f856adb9aa"
+    },
+    {
+      "path": "evidence/registry-host/smoke.txt",
+      "bytes": 885,
+      "sha256": "0e3af5c43cc3bad3171776f92ecb01a0506a063f8889e6ae57603b752a1b28b8"
+    },
+    {
+      "path": "evidence/registry-view.json",
+      "bytes": 661,
+      "sha256": "e9d2f09200985467cf04907a52f89540b2d98e09f4d1c2f0fea6d181da029b42"
+    },
+    {
+      "path": "evidence/release-run.json",
+      "bytes": 2967,
+      "sha256": "df5d5e190edafcff51de280888763c8a923bf54753386dafe4fbc212658aeb0d"
+    },
+    {
+      "path": "evidence/secret-scan.txt",
+      "bytes": 146,
+      "sha256": "bbb8b8a9b855e2dd723a33bc5e9e37ddcaf859b697318f2c4df1c016e0110cb2"
+    },
+    {
+      "path": "evidence/tag.txt",
+      "bytes": 41,
+      "sha256": "f9595718928516fb19810b204044f6fdac2c31d25043478f38542cdde77e29ba"
+    },
+    {
+      "path": "evidence/tarball-compare.json",
+      "bytes": 817,
+      "sha256": "8025e820fe97934e3808571cc66c74d0a16391752f7b5ee691eba3dd76ad8592"
+    },
+    {
+      "path": "evidence/typecheck.txt",
+      "bytes": 74,
+      "sha256": "6d521be01369d1853eed9a66fd5eb71dcd156bd085ae51ff4bd606e0b79eefb5"
+    },
+    {
+      "path": "evidence/unit-test.txt",
+      "bytes": 928,
+      "sha256": "6634b28460205d58015670a47934774df659272dba93c9e184d78dd135b03354"
+    },
+    {
+      "path": "REPRODUCE.md",
+      "bytes": 4687,
+      "sha256": "7ef71b8445ee28cbaad49243df5e7e8ae01c62f4863a3cf771e8673246bfe9e2"
+    },
+    {
+      "path": "run_registry_e2e.py",
+      "bytes": 6795,
+      "sha256": "15c687b40739bdd6bdbb0174d28f4deb18c86795ec8a56c7c19cec6605624b9b"
+    },
+    {
+      "path": "scan_release_secrets.py",
+      "bytes": 1349,
+      "sha256": "243f3be413af0494b6e100059664aaa53b6d6e9a08b24a08c40ad2be57990431"
+    },
+    {
+      "path": "write_manifest.py",
+      "bytes": 1136,
+      "sha256": "f168e276e7141712c1535dfa8fc441db6bc9e74f3ef2555d06fe89c60ba8d70d"
+    }
+  ]
+}
