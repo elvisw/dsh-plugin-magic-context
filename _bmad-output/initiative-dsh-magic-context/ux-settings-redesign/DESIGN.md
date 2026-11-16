@@ -74,7 +74,7 @@ components:
     control-height: 32px
     control-radius: '{rounded.sm}'
     gap: '{spacing.xxs}'
-  action-bar:
+  status-strip:
     background: '{colors.canvas}'
     border-top: '0.5px solid {colors.border-subtle}'
     padding: '{spacing.sm} 0'
@@ -110,12 +110,12 @@ Magic Context is a settings surface inside DeepSeek Harness, not a standalone pr
 
 The posture is **calm operator console**. The user is here to answer four questions quickly:
 
-1. Is Magic Context healthy?
-2. What policy is running?
-3. Which model and vector space am I using?
-4. What can I safely change now?
+1. What policy is running?
+2. Is the Historian enabled, and at which effort?
+3. Which vector space is active?
+4. Is a rebuild running, paused, complete or absent?
 
-The design answers those before it shows thirty-five controls. It should feel like a well-organized DSH settings page, not a dashboard or a marketing page.
+The design answers those before it shows the 34 controls. It should feel like a well-organized DSH settings page, not a dashboard or a marketing page.
 
 No custom fonts. No gradient. No ornamental icons. No second accent color. If a component needs emphasis, use hierarchy, spacing and the host's existing primary button.
 
@@ -128,7 +128,7 @@ All colors are DSH alias tokens. The plugin defines no palette of its own.
 - **Borders** use the thin host border (`border-l2` or `border-secondary`); section separation is a hairline, not a card shadow.
 - **Accent** is the host brand blue, reserved for the primary action and the active jump target.
 - **Danger** is only for rollback and destructive confirmation; never for ordinary remote errors.
-- **Warning** is for degraded states such as key missing, coverage incomplete or a paused rebuild.
+- **Warning** is for degraded states such as a missing key, incomplete coverage or a paused rebuild.
 
 Dark mode follows automatically because every value is a host token. No hardcoded white, black or gray in card CSS.
 
@@ -138,10 +138,16 @@ Inherit the host sans-serif. The only deliberate typographic moves are:
 
 - **Section title** at 14px/600, with a short one-line description in 11.5px muted text.
 - **Field label** at 12.5px/500; the value control keeps the host 12.5–14px size.
-- **Hint** at 11.5px, muted, max two lines by default; longer explanations live behind the field's help disclosure.
-- **Metric** at 16px/600 with tabular numerals for pressure, coverage and token counts.
+- **Hint** at 11.5px, muted, max two lines by default; longer reference explanations live behind the field's help disclosure. Security and limitation hints (for example compaction scope and remote-embedding privacy) are never truncated.
+- **Metric** at 16px/600 with tabular numerals for thresholds, coverage and token counts.
 
 Do not use all-caps labels, letter-spaced eyebrows, or serif display type. The host dialog is a utility surface.
+
+## Localization
+
+Chinese is a first-class, release-blocking locale, not a translation afterthought. Every visible string in the card — section titles, field labels, hints, buttons, status chips, empty states, alerts, confirmations and `aria-label`/tooltip text — must exist in both `zh` and `en`. Switching the host locale must update the card immediately without a reload.
+
+Shared exception list: model IDs, endpoint URLs, header names, environment-variable names and protocol terms such as `OpenAI-compatible`. Everything else must be Chinese in the Chinese locale. Outside those exceptions, no English fallback may appear in a Chinese panel.
 
 ## Layout & Spacing
 
@@ -153,13 +159,19 @@ Vertical rhythm:
 - Jump row: 8px vertical, horizontal scroll on narrow widths.
 - Section: 16px top and bottom; 12px between fields; 8px between a label and its control.
 - Advanced group: 12px padding inside a hairline-bordered well, 8px between rows.
-- Action bar: 8px vertical padding, sticky to the bottom of the card's scroll container.
+- Status strip: 8px vertical padding, sits above the host `SettingsForm` footer. The host footer remains the only Save/Reset surface; the card never renders a second Save.
 
-At **≤ 720px**, field rows become a single column; at **≤ 420px**, buttons may wrap to two rows and the jump row scrolls horizontally. Do not introduce horizontal page scroll.
+Breakpoints are defined once here and reused verbatim in `EXPERIENCE.md`:
+
+- **≥ 760px:** summary four-up; fields two columns; full jump row.
+- **560–759px:** summary two-by-two; fields one column; jump row scrolls.
+- **< 560px:** summary one column; labels above controls; action buttons wrap; jump row scrolls.
+
+At 800px content width, two columns are roughly 380px each; 520px is a maximum, not a minimum. Do not introduce horizontal page scroll.
 
 ## Elevation & Depth
 
-Use the host's panel elevation only for the sticky action bar and any confirmation dialog. Section cards are flat; hierarchy comes from hairline separators, spacing and type weight. Avoid stacked shadows inside a dialog that already sits on an overlay.
+Use the host's panel elevation only for the status strip and any confirmation dialog. Section cards are flat; hierarchy comes from hairline separators, spacing and type weight. Avoid stacked shadows inside a dialog that already sits on an overlay.
 
 ## Shapes
 
@@ -167,12 +179,12 @@ Use host radii: `sm` for inputs and buttons, `md` for small wells, `lg` for the 
 
 ## Components
 
-- **Summary strip** — four compact metrics: context pressure, Historian state, vector space, rebuild coverage. Each metric has a label, a value and an optional one-word state. Degraded states use warning/danger text, not a colored background.
+- **Summary strip** — four compact metrics: reclaim policy (`execute / force`), Historian state, vector space, rebuild coverage. Each metric has a label, a value and an optional one-word state. These values come from the config snapshot and the embedding status route; the card does not invent a live pressure metric. Degraded states use warning/danger text, not a colored background.
 - **Jump row** — text buttons for `常规`, `Historian`, `Journal`, `向量检索`, `维护与诊断`. They scroll to a section; they do not change draft state. The current target may show a 2px accent underline.
 - **Section card** — title, one-line description, optional inline badge, fields, optional advanced disclosure.
 - **Field row** — label, control, hint. Override/reset affordances sit on the label line, right-aligned, and appear only when the value is overridden.
-- **Advanced disclosure** — a full-width text button with a chevron; expanded area uses a subtle surface well. It holds auth header, dimensions override, query/document prefixes, timeouts and batch size.
-- **Remote action bar** — `加载模型` / `测试连接` as secondary, `开始重建向量` as primary, `暂停`/`继续` contextual, `回滚到本地` as danger outline. One primary action at a time.
+- **Advanced disclosure** — a full-width text button with a chevron; expanded area uses a subtle surface well. It appears in 常规 (baseline/memory budgets), Historian (node/token/timeout limits), Journal (mirror) and 向量检索 (auth header, dimensions override, prefixes, timeouts, batch size).
+- **Remote action bar** — `刷新` (status only), `加载模型` / `测试连接` as secondary, `开始重建向量` as primary, `暂停`/`继续` contextual, `回滚到本地` as danger outline. One primary action at a time; visibility and disabled reasons follow the state matrix in `EXPERIENCE.md`.
 - **Inline alert** — icon plus text, one line of detail and an optional action. Used for missing key, probe failure, unsupported dimensions and incomplete coverage.
 - **Confirmation dialog** — only for rollback and for starting a rebuild that will spend remote quota.
 
@@ -186,6 +198,7 @@ Do:
 - Hide timeouts, prefixes and overrides behind `高级`.
 - Use plain language for consequences: “这会重新计算 N 条记忆的向量”.
 - Keep Chinese and English copy visually equivalent.
+- Treat a missing or English-only Chinese string as release-blocking.
 
 Don't:
 

@@ -1,5 +1,5 @@
 ---
-name: Magic Context Settings
+name: Magic Context Settings Experience
 description: Experience contract for the host-native redesign of the Magic Context Settings card.
 status: draft
 sources:
@@ -10,37 +10,69 @@ updated: 2026-11-17
 
 # Magic Context Settings — Experience Spine
 
-> Paired with `DESIGN.md`. Visual tokens live there; this file specifies behavior, information architecture, states and flows. Spines win on conflict with any wireframe.
+> Paired with `DESIGN.md`. Visual tokens live there; this file specifies behavior, information architecture, states and flows. Where this file conflicts with a wireframe, this file wins. Where it conflicts with `DESIGN.md` on visual treatment, `DESIGN.md` wins. `FIELDS` wins on the field inventory.
 
 ## Foundation
 
-- **Form factor:** desktop-first DSH Web Settings dialog; usable down to a narrow single-column layout.
-- **UI system:** DeepSeek Harness Settings shell and DSH alias tokens. The card is a plugin-owned React render function; it does not own the outer dialog, navigation or global Save geometry.
-- **Existing contract:** one top-level `settings.section` card, one revision-fenced Save, volatile config values, no plugin-owned config write. The redesign must preserve the existing field set and Save semantics.
-- **Host constraints:** the settings card is rendered inside a scrollable dialog. Sticky elements must stay inside the card's scroll container and must not cover host chrome.
-- **Why this redesign:** the current form is a flat list of ~22 core fields plus ~13 vector fields. The controls work, but the page has no summary, no grouping and no action hierarchy. The user must scroll a 3,400px form to discover state and actions.
+- **Form factor:** desktop-first DSH Web Settings dialog, usable in a narrow split-screen window.
+- **UI system:** DeepSeek Harness Settings shell and DSH alias tokens. A plugin-owned React render function renders the card; the card does not own the outer dialog, host navigation or the placement of the host Save button.
+- **Existing contract:** one top-level `settings.section` card, one revision-fenced Save, volatile config values, no plugin-owned config write. The redesign keeps the existing field set, validation and Save semantics.
+- **Host constraint:** the card is rendered inside a scrollable dialog. The host `SettingsForm` footer is the only Save/Reset surface; this design does not add a second Save.
+- **Why this redesign:** the current form is a flat list of 22 core fields plus 12 vector fields. The controls work, but state and actions are discoverable only by scrolling. The exact current height is not a requirement; the success metric is that the first viewport answers four questions and every section is one jump away.
+
+### Success criteria
+
+At 1280×900, without scrolling the card:
+
+1. What is the reclaim policy?
+2. Is the Historian enabled, and which effort is pinned?
+3. Which vector space is active?
+4. Is a rebuild running, paused, complete or absent?
+
+The first viewport must also show the unsaved state without rendering a second Save.
 
 ## Information Architecture
 
 | Surface / block | Reached from | Purpose |
 |---|---|---|
-| Summary strip | Top of card | Answer: health, pressure policy, Historian, vector space, rebuild coverage |
+| Summary strip | Top of card | Four metrics: reclaim policy, Historian, vector space, rebuild coverage |
+| Status strip | Above host footer | Unsaved count, validation count, busy or saved state |
 | Jump row | Below summary | Move to a section without losing draft state |
-| 常规 | Default visible | Execute/force thresholds, assumed window, reclaim TTL, protected results |
-| Historian | Jump / scroll | Route pins, reasoning effort, node/token limits, enable switch |
-| Journal | Jump / scroll | Retention, text mirror, log level |
+| 常规 | Default visible | Execute/force thresholds, assumed window, reclaim TTL, protected results, budgets |
+| Historian | Jump / scroll | Enable switch, route pins, reasoning effort, node/token/timeout limits |
+| Journal | Jump / scroll | Enable switch, retention, mirror |
 | 向量检索 | Jump / scroll | Provider, preset, endpoint, model, key env, probe, rebuild, rollback |
-| 维护与诊断 | Jump / scroll | Verify route, maintenance switches, recent operations, `/ctx-status` hint |
-| 高级（within sections） | Disclosure | Auth header, dimensions override, prefixes, timeouts, batch size |
+| 维护与诊断 | Jump / scroll | Maintenance route, compaction switch, `/ctx-status` hint |
 
-The card remains a **single page**. The jump row is a set of anchor buttons, not tabs: all sections stay mounted, drafts survive, and browser find still works.
+The card is a **single page**. The jump row is a set of anchor buttons, not tabs: all sections stay mounted, drafts survive, and browser find still works.
 
 Ordering rationale:
 
-1. Health and policy first, because they explain whether the plugin is working.
+1. Policy and health-adjacent state first.
 2. Common configuration next.
-3. Vector search after memory/historian settings, because it is opt-in and has the most consequences.
+3. Vector search after memory and Historian, because it is opt-in and has the most consequences.
 4. Diagnostics last, because it is consulted when something is wrong.
+
+### Summary data sources
+
+| Metric | Source | Unavailable display |
+|---|---|---|
+| Reclaim policy | Config snapshot: `policy.executeThreshold` / `policy.forceThreshold` | `—` |
+| Historian | Config snapshot: `historianEnabled`, `historian.reasoningEffort` | `—` |
+| Vector space | Embedding status when remote; config provider/model when local | `本地` without a model, never `0d` |
+| Rebuild | Embedding status: state + `covered / total` | `未启用` when provider is local/off; `—/N` when total unknown |
+
+The card never presents a live context-pressure metric because that value is not part of the Settings snapshot. It may show the configured thresholds; it must not invent a percentage.
+
+### Seat variants
+
+| Host seat | Treatment |
+|---|---|
+| `settings.section` | Full redesign: summary, jump row, sections, advanced disclosures, status strip |
+| `plugins.item` | Legacy flat card; unchanged in T21, no summary/jump/sticky treatment |
+| `plugins.row.config` | Legacy flat form; unchanged in T21 |
+
+The legacy seats are preserved because they are the fallback for hosts without `settings.section`. They must not inherit a layout that assumes the wide Settings dialog.
 
 ## Voice and Tone
 
@@ -55,116 +87,231 @@ Ordering rationale:
 
 Microcopy is short, concrete and consequence-first. Chinese and English are written as peers, not translated word-for-word.
 
+## Localization Contract
+
+Chinese is required for every surface in this design and is **release-blocking**, not a follow-up.
+
+- The card must be fully usable in `zh-CN`: every section, field label, hint, status, empty state, alert, confirmation, action button and `aria-label` has a Chinese string.
+- Switching the host locale updates all copy immediately, without remounting the host or losing drafts.
+- The shared exception list is: model IDs, endpoint URLs, header names, environment-variable names and protocol terms such as `OpenAI-compatible`. Outside those exceptions, no English fallback may appear in a Chinese panel.
+- No sentence is assembled by concatenating English fragments in the client. Use complete dictionary entries so Chinese grammar stays correct.
+- Error codes map to localized copy; raw provider bodies are never shown.
+- The Chinese and English layouts are both checked at wide and narrow widths.
+- A missing Chinese key, a hardcoded English label, or an English toast/alert in the Chinese panel is release-blocking.
+
 ## Component Patterns
 
 | Component | Use | Behavioral rules |
 |---|---|---|
-| Summary metric | Top strip | Value comes from the server snapshot. Unknown is `—`, never `0`. Clicking the vector metric jumps to 向量检索. |
-| Jump button | Below summary | Scrolls the target section into view; keeps drafts; sets `aria-current` only while the target is in view. |
-| Section header | Every section | Title + optional status chip. The chip is text, not color alone. |
-| Field row | All fields | Label and control are programmatically associated. Hint is always visible for common fields; advanced fields may put detail behind a help disclosure. |
-| Override marker | Field label line | `已修改` and `重置` appear only when the field is overridden. Reset unstages that field; it does not save. |
-| Advanced disclosure | Vector, Journal, Maintenance | Closed by default. Opening it must not change any value. |
-| Remote action bar | 向量检索 | Buttons reflect current state: Start only when startable; Pause only while running; Resume only while paused; Rollback only when a remote target is armed or has remote rows. |
-| Inline alert | Above action bar or field | One error class and one next action. Raw provider bodies never appear. |
-| Save bar | Bottom of card | Sticky inside the dialog scroller. Save disabled when clean or busy; Reset disabled when no drafts. |
+| Summary metric | Top strip | Values come from the table above. Unknown is `—`, never `0`. The vector metric is a button: Enter/Space jumps to 向量检索; it is not the only way to reach the section. |
+| Status strip | Above host footer | Text only: `已保存`, `3 项未保存`, `2 项无效`, `保存中…`, `迁移中，暂停后可保存`. It never renders Save/Reset. |
+| Jump button | Below summary | Scrolls the target section into view; keeps drafts; sets `aria-current` only on the topmost intersecting section; a bottom sentinel clears the last target. |
+| Section header | Every section | Title + optional status chip. The chip conveys state through text, not through color alone. |
+| Field row | All fields | Label and control are programmatically associated. Hints are always visible for common fields; security and limitation hints are never truncated. Advanced fields may put detail behind a help disclosure. |
+| Override marker | Field label line | `已覆盖` and `重置` appear only when a user-level override exists. It is distinct from `未保存`, which belongs to drafts. Reset reverts that field's draft to the saved value; it does not write defaults. |
+| Advanced disclosure | 常规, Historian, Journal, 向量检索 | Closed by default. Opening it does not change any value. The expanded area holds baseline/memory budgets, historian limits, journal mirror, auth header, dimensions override, prefixes, timeouts and batch size. |
+| Remote action bar | 向量检索 | `刷新` refreshes status only. `加载模型` and `测试连接` use the saved config. `开始重建向量` is the only primary action; `暂停`/`继续` are contextual; `回滚到本地` is a danger outline. The full matrix is below. |
+| Inline alert | Above status strip or field | One primary alert per region, ordered by severity. Raw provider bodies never appear. |
+| Confirmation dialog | Rebuild and rollback | `role="dialog" aria-modal="true"`, labelled and described, initial focus on Cancel, Escape closes only the dialog. |
 
 ## State Patterns
 
+### Card states
+
 | State | Where | Treatment |
 |---|---|---|
-| Loading snapshot | Whole card | Skeleton summary strip and disabled fields. Do not render a half-filled form. |
-| Read-only / not writable | Whole card | Fields remain readable, actions disabled, a single explanation appears above Save. |
-| Clean | Save bar | Save disabled; Reset disabled. |
-| Dirty | Save bar | Save enabled; count of changed fields in the bar (“3 项未保存”). |
-| Saving | Save bar | Save label becomes “保存中…”, controls read-only, no duplicate submit. |
-| Save failed | Save bar | Inline alert above bar; drafts retained; retry available. |
-| Missing key | 向量检索 | Warning alert: “未找到环境变量 SILICONFLOW_API_KEY”; Test/Start disabled. |
-| Not probed | 向量检索 | Status chip “未探测”; dimensions `—`; Start disabled until probe succeeds. |
-| Not started | 向量检索 | Status “未开始重建”; Start primary; coverage 0/N or unknown. |
-| Migrating | 向量检索 | Status “迁移中”; progress `processed / total`; Pause secondary; no second Start. |
-| Paused | 向量检索 | Status “已暂停”; Resume primary; Start not shown. |
-| Ready | 向量检索 | Status “已就绪”; coverage N/N; Start hidden; maintenance continues in background. |
-| Partial / stale | 向量检索 | Status “部分可用” or “覆盖率下降”; alert explains which rows are FTS-only. |
-| Remote error | 向量检索 | Error class + “重试探测” action; no raw provider body. |
-| Rollback confirm | Dialog | Explains that local rows are kept, remote rows are not deleted, and current search may fall back to FTS until local rebuild completes. |
-| Rollback complete | 向量检索 | Status “已回滚到本地”; local coverage shown; remote values remain editable but inactive. |
-| Memory disabled | Whole card | A single notice: vector settings are preserved but inactive until memory is enabled. |
+| Loading snapshot | Whole card | Skeleton summary strip; fields disabled; do not render a half-filled form. |
+| Snapshot error | Whole card | Error text + `重试`; fields disabled; preserve any draft already in memory. |
+| Read-only / not writable | Whole card | Values are readable and copyable via `readOnly` + `aria-disabled`; config-writing actions disabled; Pause remains available if the host transport permits it, so a read-only user can stop remote spend. |
+| Clean | Status strip | `已保存`; host Save disabled; Reset disabled. |
+| Dirty | Status strip | `N 项未保存`; host Save enabled; Reset enabled. |
+| Invalid | Field + status strip | Inline error, `aria-invalid`, message linked by `aria-describedby`; host Save disabled; strip says `N 项无效`; the first invalid advanced field opens its disclosure and receives focus on save attempt. |
+| Saving | Status strip | `保存中…`; fields read-only; one submit only; host Save unavailable. |
+| Save failed | Status strip | Inline alert with retry; drafts retained; no optimistic clean state. |
+| Revision mismatch | Status strip | `配置已过期`; offer reload; do not retry the same revision blindly. |
+| Busy (probe/migration) | Status strip | `测试中…` or `迁移中，暂停后可保存`; mutating controls disabled; Pause remains available while migrating. |
+| Memory disabled | Whole card | One notice: vector settings are preserved but inactive until memory is enabled; vector actions disabled. |
+
+### Remote states
+
+| State | Where | Treatment |
+|---|---|---|
+| Local | Summary + section | Local vector space; no remote actions; advanced vector fields hidden. |
+| Off | Summary + section | `语义检索已关闭`; remote fields hidden; no probe/start. |
+| Missing key | Section alert | `未找到环境变量 SILICONFLOW_API_KEY`; Load models/Test/Start disabled; editing the env name is allowed. |
+| Not probed | Status chip | `未探测`; dimensions `—`; Start disabled; Load models and Test enabled if endpoint and model are saved. |
+| Probe running | Status + button | `测试中…`; Test/Load disabled; timeout and cancel are visible; duplicate click is ignored. |
+| Model list loading | Model field | Spinner/`加载中…`; Test disabled until a model exists; previous list stays selectable. |
+| Model list empty | Model field | `没有返回可用模型` + manual entry remains available; retry action. |
+| Model list error | Model field | Classified error + `重试`; the saved model is not cleared. |
+| Probe error | Alert | Classified as auth, not-found, rate-limit, timeout, network, invalid-response or unsupported-dimensions; next action is `重试探测`. |
+| Configured, not started | Status | `未开始重建`; coverage `0/N` or `—/N`; Start primary; no quota has been spent on embeddings. |
+| Migrating | Status + progress | `迁移中 · processed/total`; Pause available; Start hidden; host Save disabled while embedding config is dirty. |
+| Paused | Status | `已暂停 · processed/total`; Resume primary; Start hidden. |
+| Ready | Status | `已就绪 · N/N`; Start hidden; maintenance continues in the background. |
+| Coverage incomplete | Status | `覆盖率不足 · N/M`; explain that remaining rows are FTS-only; `增量重建` (Start) re-runs the missing set. No historical trend is claimed. |
+| Remote error | Alert | Separate `探测错误` and `重建错误`; rebuild error offers Resume/Retry, not `重试探测`. |
+| Unsupported dimensions | Alert | `维度不符`; Start blocked; next actions are re-probe or change the model/dimensions override. |
+| Rollback pending save | Status | `待保存回滚`; provider staged local, remote still armed until the host Save succeeds. |
+| Rollback complete | Status | `已回滚到本地`; remote actions disabled until provider is remote and saved again; local coverage shown; local backfill continues in the background. |
+| Remote inactive | Section | Remote fields readable but not actionable after rollback; Test/Start disabled with a one-line reason. |
+
+### Status enumeration
+
+The client derives the summary short label and section chip from one mapping, not from separate literals.
+
+| Server state | zh chip | en chip | Summary short label |
+|---|---|---|---|
+| `off` | 语义检索已关闭 | Semantic search off | 关闭 |
+| `local` | 本地就绪 | Local ready | 本地 |
+| `remote-unprobed` | 未探测 | Not probed | 未探测 |
+| `remote-configured-not-started` | 未开始重建 | Not started | 未开始 |
+| `remote-migrating` | 迁移中 | Migrating | N/M |
+| `remote-paused` | 已暂停 | Paused | 暂停 |
+| `remote-ready` | 已就绪 | Ready | N/N |
+| `remote-error` | 远程错误 | Remote error | 错误 |
+| `rollback-local` | 已回滚到本地 | Rolled back | 本地 |
+
+`coverage incomplete` and `missing key` are derived presentation states, not additional server states.
+
+### Alert priority
+
+Only one alert is expanded at a time. Order: blocking failure (auth, unsupported dimensions, save failed) → missing configuration (key/model) → degraded operation (coverage incomplete, paused) → informational (probe succeeded). Lower-priority alerts remain collapsed with a count.
+
+### Button matrix
+
+| State | 刷新 | 加载模型 | 测试连接 | 开始重建 | 暂停 | 继续 | 回滚到本地 |
+|---|---|---|---|---|---|---|---|
+| Local / off | enabled | hidden | hidden | hidden | hidden | hidden | hidden |
+| Remote, dirty | enabled | `保存并加载模型` | `保存并测试` | disabled, reason | contextual | contextual | disabled, reason |
+| Not probed | enabled | enabled | enabled | disabled | hidden | hidden | enabled if armed |
+| Configured, not started | enabled | enabled | enabled | enabled (0 memories: disabled) | hidden | hidden | enabled if armed |
+| Migrating | enabled | disabled | disabled | hidden | enabled | hidden | disabled, `先暂停` |
+| Paused | enabled | disabled | disabled | hidden | hidden | enabled | enabled |
+| Ready | enabled | enabled | enabled | hidden / `增量重建` if incomplete | hidden | hidden | enabled if armed |
+| Remote error | enabled | enabled | enabled | disabled / retry | contextual | contextual | enabled if armed |
+| Rolled back | enabled | disabled | disabled | disabled | hidden | hidden | hidden |
+
+`刷新` only refreshes status; it never discards drafts. `保存并…` performs the existing revision-fenced Save first, then the action; if Save fails, the action never fires. `开始重建` always asks for confirmation when memories exist, including the first rebuild.
 
 ## Interaction Primitives
 
-- **Keyboard:** Tab follows visual order; Space/Enter activates buttons; Escape closes the host Settings dialog, not an inner section. Advanced disclosures use native buttons with `aria-expanded`.
-- **Focus:** opening an advanced disclosure moves focus into the first control; closing returns focus to the disclosure button. Rollback confirmation traps focus and returns it to the rollback button.
-- **Scroll:** jump buttons use `scrollIntoView({ block: 'start' })`; sticky Save bar does not overlap the last field; add 12px scroll padding at the bottom.
-- **Dirty guard:** changing provider/preset may clear a model that does not belong to the new provider; this is shown as a staged change, never silently saved.
-- **Remote actions:** Test connection and Load models act on the saved config, not the unsaved draft. If the form is dirty, the action bar shows “先保存再测试/加载” and the buttons are disabled.
-- **Destructive actions:** Rollback requires confirmation. Starting a rebuild warns when coverage > 0 and remote quota may be spent.
-- **Copy:** `/ctx-status` is offered as a text button in diagnostics; it copies the command, it does not execute it.
+- **Keyboard:** Tab follows visual order; Space/Enter activates buttons; Escape closes the host Settings dialog only when no inner dialog is open. Advanced disclosures use native buttons with `aria-expanded`.
+- **Focus:** opening an advanced disclosure moves focus into the first control; closing returns focus to the disclosure button. Confirmation traps focus, initial focus is Cancel, and closing returns focus to the trigger or, if it unmounted, the section heading.
+- **Scroll:** jump buttons use `scrollIntoView({ block: 'start' })`; the status strip does not overlap the last field; add 12px scroll padding. If the host has no stable scroll container, use a non-sticky status strip rather than a bar that covers host chrome.
+- **Dirty guard:** changing provider or preset may clear a model that does not belong to the new provider; the cleared model appears as a staged change and is never saved silently. A draft provider/preset/model change resets the probe display to `未探测` and dimensions to `—`; the previous probe result is not attached to the new draft.
+- **Historian off:** when `historianEnabled` is false, route/effort/budget controls stay readable and disabled; drafts are preserved and are not silently cleared on save.
+- **Read-only and busy:** config-writing controls are read-only; Pause remains available while migrating, subject to host transport permissions.
+- **Remote actions:** Load models/Test use saved config. When dirty, their labels become `保存并加载模型` / `保存并测试`; the client performs one revision-fenced Save, then the action. Start/Rollback require a clean form; Pause/Resume do not depend on config draft state.
+- **Rollback order:** confirm → stage provider `local` → host Save → call the `disarm` action only after Save succeeds → show `已回滚到本地`. If Save fails, remote remains armed; do not call disarm.
+- **Destructive actions:** Starting a rebuild warns when coverage > 0, because remote quota may be spent. Resume also warns with the remaining row count. Rollback explains that remote rows are kept and local search may be partial until the local rebuild completes.
+- **Copy:** `/ctx-status` is a text button that copies the command; clipboard failure shows a selectable fallback. It does not execute the command.
+- **Polling:** while visible, poll embedding status every 2s during migrating, else every 15s; stop on ready/paused/off/error and when `document.visibilityState !== 'visible'`; deduplicate in-flight requests and back off on repeated failure.
+- **Host close:** drafts live only while the dialog is open. If the host exposes a close interception, use it; otherwise show `未保存` and do not claim drafts are persisted. This is a known host boundary, not a hidden save.
 
 ## Accessibility Floor
 
 - Every input has a visible label and a programmatic association; hints use `aria-describedby`.
+- Read-only values use `readOnly` + `aria-disabled="true"` so they remain focusable and copyable; action groups use `<fieldset disabled>` with one global status announcement.
 - Status is communicated by text plus icon/shape, never color alone.
-- Focus indicator uses the host focus ring and remains visible on sticky surfaces.
+- Focus indicator uses the host focus ring and remains visible on the status strip.
 - Buttons and selects have a minimum 32px height; touch targets are at least 32×32, preferably 40×40 on narrow layouts.
-- Disabled controls are not removed from the reading order; disabled reasons are announced once, not repeated per field.
+- Disabled reasons are announced once globally, not repeated per field.
 - Error alerts use `role="alert"` only for newly surfaced failures; persistent state uses `role="status"`.
 - Reduced motion: disclosures and scroll behavior respect `prefers-reduced-motion`.
 - Contrast follows host tokens; no custom low-contrast text.
+- The jump row is a focusable scroll region on narrow widths; the active target is scrolled into view.
 
 ## Key Flows
 
 ### Flow 1 — First local setup (protagonist: 林, independent developer, 23:10)
 
-1. 林 opens Settings → Magic Context. The summary says “本地模型 · 已就绪”, pressure `41%`, Historian `开 · low`.
-2. He scans 常规, changes execute threshold from 65 to 70. The Save bar says “1 项未保存”.
-3. He saves; the bar returns to clean. He never scrolls through vector fields.
+1. 林 opens Settings → Magic Context. The summary says `本地 · 已就绪`, policy `65% / 85%`, Historian `开 · low`.
+2. He scans 常规, changes execute threshold from 65 to 70. The status strip says `1 项未保存`.
+3. He saves with the host footer; the strip returns to `已保存`. He never scrolls through vector fields.
 
-Climax: the page answers “is it healthy and what did I change?” without reading every hint.
+Climax: he gets an answer to “is it healthy and what did I change?” without reading every hint.
 
 ### Flow 2 — Configure remote embeddings (protagonist: 林, next morning)
 
-1. He jumps to 向量检索. Provider is `本地模型`; the summary says “本地 · 384d”.
-2. He selects `OpenAI 兼容 API`, preset `硅基流动`. Endpoint fills, model stays empty.
-3. He enters `SILICONFLOW_API_KEY`, clicks `加载模型`, picks `BAAI/bge-m3`.
-4. He clicks `测试连接`. Status becomes “未开始重建 · 1024d · 0/12”. A note says only one short probe was sent.
-5. He clicks `开始重建向量`. A confirmation says 12 memories will be sent to the endpoint and may cost quota.
-6. He confirms. Status becomes “迁移中 · 2/12”; Pause is available. He leaves.
+1. He jumps to 向量检索. Provider is `本地模型`; the summary says `本地`.
+2. He selects `OpenAI 兼容 API`, preset `硅基流动`. Endpoint fills; model stays empty.
+3. He enters `SILICONFLOW_API_KEY` and saves. The strip says `已保存`.
+4. He clicks `加载模型`, picks `BAAI/bge-m3`, and saves again.
+5. He clicks `测试连接`. Status becomes `未开始重建 · 1024d · 0/12`; a note says only one short probe was sent.
+6. He clicks `开始重建向量`. A confirmation says 12 memories will be sent to the endpoint and may cost quota.
+7. He confirms. Status becomes `迁移中 · 2/12`; Pause is available. He leaves.
 
 Climax: he understands exactly what will be sent and what will be spent before the first remote batch.
 
 ### Flow 3 — Pause and rollback (protagonist: 林, after a rate-limit error)
 
-1. The status turns “远程错误 · rate-limited”; search falls back to FTS.
-2. He pauses. The status is “已暂停 · 7/12”; already landed rows remain searchable.
-3. He chooses `回滚到本地`. The confirmation explains that remote rows are kept and local search may be partial until local rebuild.
-4. He confirms; the provider stages `本地模型`, then he saves. The status says “已回滚到本地”; vector settings remain visible but inactive.
+1. The status turns `远程错误 · rate-limited`; search falls back to FTS.
+2. He pauses. The status is `已暂停 · 7/12`; already landed rows remain searchable.
+3. He saves nothing — Pause is a server action, not a config change.
+4. He chooses `回滚到本地`. The confirmation explains that remote rows are kept and local search may be partial until the local rebuild completes.
+5. The client stages provider `local`, saves, then calls `disarm`. The status says `已回滚到本地`; vector settings remain visible but inactive.
 
 Climax: rollback is a deliberate, explained action, not a silent config flip.
 
 ### Flow 4 — Narrow host (protagonist: 陈, support engineer, laptop split-screen)
 
 1. The dialog is 560px wide. The jump row scrolls horizontally; fields stack.
-2. The summary becomes two rows; the Save bar stays at the bottom.
+2. The summary becomes two rows; the status strip stays above the host footer.
 3. All controls remain keyboard reachable; no horizontal page scroll.
 
 ## Responsive & Platform
 
-- **Wide (≥ 900px):** summary four metrics in one row; two-column field grid inside each section; full jump row.
-- **Medium (720–899px):** summary two-by-two; fields one column; jump row scrolls.
-- **Narrow (< 720px):** summary two rows; labels above controls; action buttons wrap; save bar remains sticky.
+- **Wide (≥ 760px):** summary four-up; fields two columns; full jump row.
+- **Medium (560–759px):** summary two-by-two; fields one column; jump row scrolls.
+- **Narrow (< 560px):** summary one column; labels above controls; action buttons wrap; jump row scrolls.
 - **Desktop only in this ticket:** DSH Web and Desktop share the same renderer. No mobile-specific gestures.
 
-## Open Questions
+## Decision Gates
 
-- Should the summary strip be clickable as a whole, or only the vector metric?
-- Is a “density” preference needed for expert users, or does progressive disclosure suffice?
-- Do we keep the legacy Plugins-page card visually identical, or give it a summary-only variant?
-- Does the host expose a stable scroll container for sticky Save, or must the card use its own?
+These must be answered before T21 implementation:
 
-## Assumptions
+1. Does the host `SettingsForm` expose a footer slot or a busy state? If not, the status strip is non-sticky and the host footer is left untouched.
+2. Does the host expose a close interception? If not, unsaved drafts are lost on close; the design must not pretend otherwise.
+3. Can the legacy `plugins.item` / `plugins.row.config` seats keep the current flat form? This design assumes yes.
 
-- [ASSUMPTION] The host Settings dialog continues to provide a scrollable content region and a global Save button; we add a sticky action bar inside that region.
-- [ASSUMPTION] All fields remain the same; no new config keys are introduced by the redesign.
-- [ASSUMPTION] The existing DSH alias tokens remain stable across 0.2.x.
-- [ASSUMPTION] Chinese and English are the only locales for this iteration.
+## Appendix A — Field inventory
+
+`src/client/index.js` `FIELDS` remains the source of truth for keys, defaults, validation and labels. This inventory proves that every current field has a home; it does not move defaults into the design.
+
+| Section | Field key | Control | Placement |
+|---|---|---|---|
+| 常规 | `policy.executeThreshold` | number | common |
+| 常规 | `policy.forceThreshold` | number | common |
+| 常规 | `policy.assumedContextWindow` | number | common |
+| 常规 | `policy.ttlMs` | number | common |
+| 常规 | `policy.protectedToolResults` | number | common |
+| 常规 | `policy.baselineTokens` | number | 高级 |
+| 常规 | `policy.memoryBudgetTokens` | number | 高级 |
+| 常规 | `policy.memoryLimit` | number | 高级 |
+| Historian | `historianEnabled` | boolean | common |
+| Historian | historian route provider/model | route-provider + route-model | common |
+| Historian | `historian.reasoningEffort` | effort | common |
+| Historian | `policy.historianMinNodes` | number | 高级 |
+| Historian | `policy.historianMaxTokens` | number | 高级 |
+| Historian | `policy.historianMaxTokensCeiling` | number | 高级 |
+| Historian | `policy.historianTimeoutMs` | number | 高级 |
+| Journal | `journal.enabled` | boolean | common |
+| Journal | `journal.retentionDays` | number | common |
+| Journal | `journal.mirror` | boolean | 高级 |
+| 向量检索 | `embedding.provider` | select | common |
+| 向量检索 | `embedding.preset` | select | common |
+| 向量检索 | `embedding.endpoint` | text | common |
+| 向量检索 | `embedding.authHeader` | select | 高级 |
+| 向量检索 | `embedding.model` | text | common |
+| 向量检索 | `embedding.apiKeyEnv` | text | common |
+| 向量检索 | `embedding.dimensions` | number | 高级 |
+| 向量检索 | `embedding.queryInstruction` | text | 高级 |
+| 向量检索 | `embedding.documentPrefix` | text | 高级 |
+| 向量检索 | `embedding.timeoutMs` | number | 高级 |
+| 向量检索 | `embedding.queryTimeoutMs` | number | 高级 |
+| 向量检索 | `embedding.batchSize` | number | 高级 |
+| 维护与诊断 | `registerCompactionEngine` | boolean | common |
+| 维护与诊断 | maintenance route provider/model | route-provider + route-model | common |
+
+Count: 34 fields. The two route pairs count as four field paths. `/ctx-status` copy is an action, not a `FIELDS` entry. The legacy `plugins.item` card keeps the current flat layout.

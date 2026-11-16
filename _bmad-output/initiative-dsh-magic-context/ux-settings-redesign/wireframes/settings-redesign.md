@@ -1,18 +1,17 @@
 # Settings redesign — static wireframes
 
-These are layout wireframes, not visual comps. All colors, type and radii come from `DESIGN.md` and DSH alias tokens.
+These are layout wireframes, not visual comps. All colors, type and radii come from `DESIGN.md` and DSH alias tokens. Behavior, states and button visibility come from `EXPERIENCE.md`; if this file disagrees, `EXPERIENCE.md` wins.
 
-## Wide (≥ 900px)
+## Wide (≥ 760px)
 
 ```text
 ┌─ Magic Context ─────────────────────────────────────────────────────────────┐
-│ 上下文压力   Historian       向量空间         重建                          │
-│ 41%         开 · low        本地 · 384d      未启用                        │
-│ 执行 65% / 强制 85%                                                        │
+│ 回收策略        Historian       向量空间        重建                         │
+│ 65% / 85%       开 · low        本地            未启用                       │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ 常规   Historian   Journal   向量检索   维护与诊断                          │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ 常规                                                    [已修改 3]          │
+│ 常规                                                                        │
 │ 决定什么时候回收、什么时候强制回收。                                        │
 │                                                                             │
 │ 执行阈值                          强制阈值                                 │
@@ -25,15 +24,25 @@ These are layout wireframes, not visual comps. All colors, type and radii come f
 │ 保护结果条数                                                               │
 │ [ 8                           ]                                              │
 │                                                                             │
+│ ▸ 高级（baseline / memory budget / memory limit）                           │
+│                                                                             │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ Historian                                                [开]                │
+│ Historian                                                    [开]            │
 │ 用哪个模型写历史摘要、何时触发。                                            │
 │                                                                             │
 │ 生成路由                          推理强度                                 │
 │ [ Auto — 先选择 provider   ▾ ]   [ Default (model decides)     ▾ ]        │
 │                                                                             │
-│ 节点数                            最小预算                                 │
-│ [ 4                           ]   [ 8k                         ]          │
+│ ▸ 高级（节点数、token 上限、timeout）                                       │
+│                                                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Journal                                                                     │
+│ 决定是否保留操作日志、保留多久。                                            │
+│                                                                             │
+│ [x] 启用 Journal                 保留天数                                  │
+│                                  [ 14                          ]           │
+│                                                                             │
+│ ▸ 高级（文本镜像）                                                          │
 │                                                                             │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ 向量检索                                              [未开始重建]          │
@@ -56,20 +65,22 @@ These are layout wireframes, not visual comps. All colors, type and radii come f
 │                                                                             │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ 维护与诊断                                                                  │
-│ verify 路由 / 最近操作 / 复制 /ctx-status                                  │
+│ 维护路由 / 压缩引擎开关 / 复制 /ctx-status                                  │
+│                                                                             │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ 3 项未保存                                          [重置]   [保存]         │
+│ 3 项未保存                                                                  │
+│                                      host footer: [重置]   [保存]           │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Narrow (< 720px)
+## Narrow (< 560px)
 
 ```text
 ┌─ Magic Context ───────────────────────────────┐
-│ 上下文压力            41%                     │
-│ 执行 65% / 强制 85%                           │
+│ 回收策略              65% / 85%               │
 │ Historian             开 · low                │
-│ 向量空间              本地 · 384d             │
+│ 向量空间              本地                    │
+│ 重建                  未启用                  │
 ├───────────────────────────────────────────────┤
 │ 常规  Historian  Journal  向量检索  维护 →    │
 ├───────────────────────────────────────────────┤
@@ -97,13 +108,11 @@ These are layout wireframes, not visual comps. All colors, type and radii come f
 │ [开始重建向量]                                │
 │ [回滚到本地]                                  │
 ├───────────────────────────────────────────────┤
-│ 3 项未保存                       [重置] [保存]│
+│ 3 项未保存                                    │
+│                         host footer: [重置] [保存] │
 └───────────────────────────────────────────────┘
 ```
 
 ## Section behavior
 
-- Jump row scrolls; it does not filter or unmount sections.
-- Only one section needs to be visually dominant; the others remain reachable by scroll.
-- Advanced is closed by default and remembers its open state for the current mount.
-- The sticky action bar never covers the last field; 12px scroll padding is reserved at the bottom.
+See `EXPERIENCE.md`. The jump row scrolls and never filters or unmounts sections; advanced is closed by default; the status strip never covers the last field.
