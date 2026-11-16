@@ -1,7 +1,7 @@
 ---
 ticket: 16
 title: "Compaction takeover scope and Web/Desktop warning — plan"
-status: built
+status: done
 ---
 
 # Plan — Compaction takeover scope and Web/Desktop warning
