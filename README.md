@@ -51,8 +51,9 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 > is published only as `@elvisw/dsh-magic-context`; keep the `@elvisw/` scope in
 > every install command.
 
-`0.13.0` introduced this package name; the current release is `0.15.0`, which adds the
-telemetry v2 panel (`0.14.0` added the top-level Settings page). If you installed
+`0.13.0` introduced this package name; the current release is `0.16.0`, which adds
+remote vector search and the host-native Settings redesign (`0.15.0` added the
+telemetry v2 panel; `0.14.0` added the top-level Settings page). If you installed
 `@elvisw/dsh-plugin-magic-context` (0.12.x) or the upstream
 `dsh-plugin-magic-context`, remove it first: all three use the same loader row id
 (`magic-context-dsh`), so co-install is unsupported: the loader keeps one row and
@@ -511,7 +512,7 @@ and publishes as **`@elvisw/dsh-magic-context`** from `0.13.0`. Its versions and
 fork. The upstream repository and npm package remain under their original maintainer; this fork does
 not modify them.
 
-Differences from upstream `0.11.2`, accumulated through `0.15.0`:
+Differences from upstream `0.11.2`, accumulated through `0.16.0`:
 
 - **Recovery semantics**: `ctx_expand` no longer rewrites placeholders in place. It reads the persisted
   original `tool/result`, returns it as a new tool result, and assigns a new tag. The old placeholder is
