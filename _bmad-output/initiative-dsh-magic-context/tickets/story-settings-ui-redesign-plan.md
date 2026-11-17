@@ -1,7 +1,7 @@
 ---
 ticket: 21
 title: "Settings UI redesign — plan"
-status: built
+status: done
 ---
 
 # Plan — Settings UI redesign
