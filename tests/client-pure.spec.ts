@@ -68,7 +68,30 @@ const api = factory((name) => {
       modelPath: string[],
     ) => Array<{ op: string; path: string[]; value?: string }>
     settingsCopyKeys: () => string[]
+    settingsSeats: string[]
     fieldSpecs: Array<{ path: string[]; kind: string; labelKey: string; hintKey: string }>
+    fieldSections: () => Array<{
+      id: string
+      titleKey: string
+      descKey: string
+      common: Array<{ path: string[]; kind: string; labelKey: string; hintKey: string }>
+      advanced: Array<{ path: string[]; kind: string; labelKey: string; hintKey: string }>
+    }>
+    layoutOf: (spec: { path: string[] }) => { section: string; placement: string }
+    settingsSummary: (snapshot: unknown, status: unknown) => {
+      ready: boolean
+      policy: { execute: string; force: string }
+      historian: { enabled: boolean; effort: string }
+      vector: { kind: string; model: string }
+      rebuild: { state: string; covered: number | null; total: number | null; missing: number | null; local: boolean }
+    }
+    embeddingActionState: (input: Record<string, unknown>) => Record<string, { hidden: boolean; disabled: boolean }> & { remote: boolean }
+    embeddingStatusFlags: (status: unknown) => {
+      keyPresent: boolean
+      memoryEnabled: boolean
+      dimensionsUnsupported: boolean
+    }
+    embeddingStateKeys: Record<string, string>
     reasoningEffortsOf: (
       groups: Array<{ id: string; models: Array<{ id: string; name?: string; reasoning?: unknown }> }>,
       provider: string,
@@ -545,6 +568,170 @@ describe('routePairOps — the pin-pair write semantics', () => {
   })
 })
 
+describe('settings information architecture (T21)', () => {
+  const { fieldSpecs, fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingStateKeys } = api.__diagnostics
+
+  it('gives every field exactly one section and one placement', () => {
+    const sections = fieldSections()
+    expect(sections.map((section) => section.id)).toEqual([
+      'general', 'historian', 'journal', 'embedding', 'maintenance',
+    ])
+    const placed = sections.flatMap((section) => [
+      ...section.common.map((spec) => ({ key: spec.path.join('.'), section: section.id, placement: 'common' })),
+      ...section.advanced.map((spec) => ({ key: spec.path.join('.'), section: section.id, placement: 'advanced' })),
+    ])
+    expect(placed).toHaveLength(34)
+    expect(new Set(placed.map((entry) => entry.key)).size).toBe(34)
+    expect(new Set(fieldSpecs.map((spec) => spec.path.join('.')))).toEqual(new Set(placed.map((entry) => entry.key)))
+    for (const spec of fieldSpecs) {
+      const layout = layoutOf(spec)
+      expect(layout.section).toBe(placed.find((entry) => entry.key === spec.path.join('.'))?.section)
+      expect(layout.placement).toBe(placed.find((entry) => entry.key === spec.path.join('.'))?.placement)
+    }
+  })
+
+  it('keeps the advanced groups on the sections the design names', () => {
+    const sections = fieldSections()
+    expect(sections.find((section) => section.id === 'general')?.advanced.map((spec) => spec.path.join('.'))).toEqual([
+      'policy.baselineTokens', 'policy.memoryBudgetTokens', 'policy.memoryLimit',
+    ])
+    expect(sections.find((section) => section.id === 'embedding')?.advanced.map((spec) => spec.path.join('.'))).toEqual([
+      'embedding.authHeader', 'embedding.dimensions', 'embedding.queryInstruction',
+      'embedding.documentPrefix', 'embedding.timeoutMs', 'embedding.queryTimeoutMs', 'embedding.batchSize',
+    ])
+    expect(layoutOf({ path: ['embedding', 'queryInstruction'] })).toEqual({ section: 'embedding', placement: 'advanced' })
+    expect(layoutOf({ path: ['policy', 'executeThreshold'] })).toEqual({ section: 'general', placement: 'common' })
+  })
+
+  it('renders the ten real remote states, not an invented off state', () => {
+    expect(Object.keys(embeddingStateKeys).sort()).toEqual([
+      'local', 'remote-configured-not-started', 'remote-error', 'remote-migrating',
+      'remote-off', 'remote-paused', 'remote-ready', 'remote-target-missing',
+      'remote-unprobed', 'rollback-local',
+    ].sort())
+  })
+
+  it('builds the four summary metrics and keeps unknown values empty', () => {
+    const snapshot = {
+      status: 'ready',
+      value: {
+        policy: { executeThreshold: 65, forceThreshold: 85 },
+        historianEnabled: true,
+        historian: { reasoningEffort: 'low' },
+      },
+    }
+    const status = {
+      provider: 'openai-compatible',
+      state: 'remote-configured-not-started',
+      model: 'BAAI/bge-m3',
+      coverage: { covered: 0, total: 12 },
+      dimensions: 1024,
+    }
+    expect(settingsSummary(snapshot, status)).toMatchObject({
+      ready: true,
+      policy: { execute: '65', force: '85' },
+      historian: { enabled: true, effort: 'low' },
+      vector: { kind: 'remote', model: 'BAAI/bge-m3' },
+      rebuild: { state: 'remote-configured-not-started', covered: 0, total: 12, missing: 12, local: false },
+    })
+    const empty = settingsSummary({ status: 'ready', value: {} }, null)
+    expect(empty.policy).toEqual({ execute: '', force: '' })
+    expect(empty.historian).toEqual({ enabled: false, effort: '' })
+    expect(empty.vector.kind).toBe('unknown')
+    expect(empty.rebuild.state).toBe('')
+
+    const local = settingsSummary(
+      { status: 'ready', value: {} },
+      { provider: 'local', state: 'local', model: 'local', coverage: { covered: 2, total: 2 } },
+    )
+    expect(local.vector).toEqual({ kind: 'local', model: '' })
+    expect(local.rebuild).toMatchObject({ state: 'local', local: true, covered: 2, total: 2 })
+    const rolledBack = settingsSummary(
+      { status: 'ready', value: {} },
+      { provider: 'local', state: 'rollback-local', model: 'local', coverage: { covered: 0, total: 2 } },
+    )
+    expect(rolledBack.vector.kind).toBe('local')
+    expect(rolledBack.rebuild.local).toBe(true)
+  })
+
+  it('keeps remote actions behind saved-model/endpoint preconditions', () => {
+    const base = {
+      state: 'remote-configured-not-started', dirty: false, writable: true, busy: false,
+      model: 'BAAI/bge-m3', endpointResolvable: true, total: 12, probeOk: true,
+    }
+    const ready = embeddingActionState(base)
+    expect(ready.remote).toBe(true)
+    expect(ready.load.disabled).toBe(false)
+    expect(ready.test.disabled).toBe(false)
+    expect(ready.start.disabled).toBe(false)
+
+    const dirty = embeddingActionState({ ...base, dirty: true })
+    expect(dirty.load.disabled).toBe(false)
+    expect(dirty.test.disabled).toBe(false)
+    expect(dirty.start.disabled).toBe(true)
+    expect(dirty.rollback.disabled).toBe(true)
+    expect(ready.rollback.hidden).toBe(true)
+
+    const missingEndpoint = embeddingActionState({ ...base, endpointResolvable: false })
+    expect(missingEndpoint.load.disabled).toBe(true)
+    expect(missingEndpoint.test.disabled).toBe(true)
+
+    const noMemory = embeddingActionState({ ...base, total: 0 })
+    expect(noMemory.start.disabled).toBe(true)
+
+    const noKey = embeddingActionState({ ...base, keyPresent: false })
+    expect(noKey.load.disabled).toBe(true)
+    expect(noKey.test.disabled).toBe(true)
+    expect(noKey.start.disabled).toBe(true)
+
+    const memoryOff = embeddingActionState({ ...base, memoryEnabled: false })
+    expect(memoryOff.load.disabled).toBe(true)
+    expect(memoryOff.test.disabled).toBe(true)
+    expect(memoryOff.start.disabled).toBe(true)
+
+    const dimensionsUnsupported = embeddingActionState({ ...base, dimensionsUnsupported: true })
+    expect(dimensionsUnsupported.start.disabled).toBe(true)
+
+    expect(embeddingStatusFlags({ keyPresent: false, keyEnv: '' })).toEqual({
+      keyPresent: true, memoryEnabled: true, dimensionsUnsupported: false,
+    })
+    expect(embeddingStatusFlags({ keyPresent: false, keyEnv: 'MISSING_KEY' })).toEqual({
+      keyPresent: false, memoryEnabled: true, dimensionsUnsupported: false,
+    })
+    expect(embeddingStatusFlags({ lastError: 'dimensions-unsupported', memoryEnabled: false })).toEqual({
+      keyPresent: true, memoryEnabled: false, dimensionsUnsupported: true,
+    })
+
+    const migrating = embeddingActionState({ ...base, state: 'remote-migrating' })
+    expect(migrating.start.hidden).toBe(true)
+    expect(migrating.pause.hidden).toBe(false)
+    expect(migrating.load.disabled).toBe(true)
+    expect(migrating.test.disabled).toBe(true)
+    expect(migrating.rollback.disabled).toBe(true)
+
+    const paused = embeddingActionState({ ...base, state: 'remote-paused' })
+    expect(paused.start.hidden).toBe(true)
+    expect(paused.resume.hidden).toBe(false)
+    expect(paused.load.disabled).toBe(true)
+    expect(paused.test.disabled).toBe(true)
+
+    const local = embeddingActionState({ ...base, state: 'local' })
+    expect(local.remote).toBe(false)
+    expect(local.load.hidden).toBe(true)
+    expect(local.test.hidden).toBe(true)
+    expect(local.start.hidden).toBe(true)
+  })
+
+  it('registers only the top-level Settings seat and no legacy Plugins seats', () => {
+    const { settingsSeats, PKG_NAME } = api.__diagnostics
+    expect(settingsSeats).toEqual(['settings.section'])
+    expect(PKG_NAME).toBe(PACKAGE_JSON.name)
+    expect(CLIENT_SOURCE).not.toMatch(/plugins\.item/)
+    expect(CLIENT_SOURCE).not.toMatch(/plugins\.row\.config/)
+    expect(CLIENT_SOURCE).not.toMatch(/ROW_CONFIG_KEY/)
+  })
+})
+
 describe('settings copy — every field key is dictionary-backed', () => {
   const { settingsCopyKeys, fieldSpecs } = api.__diagnostics
 
@@ -633,7 +820,7 @@ describe('settings copy — every field key is dictionary-backed', () => {
     }
     expect(card).toContain('formLabels(t)')
     expect(card).toContain('settingsValueLabels(t)')
-    for (const key of ['settings.summary.line', 'settings.effort.default', 'settings.route.autoSession']) {
+    for (const key of ['settings.effort.default', 'settings.route.autoSession']) {
       expect(card).toContain(`t('${key}'`)
     }
     const formStart = CLIENT_SOURCE.indexOf('function formLabels')

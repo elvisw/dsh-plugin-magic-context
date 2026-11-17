@@ -1,0 +1,18 @@
+{
+  "plugin": "file:C:/Users/elvis/AppData/Local/Temp/opencode/t21-pack/elvisw-dsh-magic-context-0.15.0.tgz",
+  "package": "@elvisw/dsh-magic-context",
+  "version": "0.15.0",
+  "tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t21-pack\\elvisw-dsh-magic-context-0.15.0.tgz",
+  "tarball_sha256": "5454554bf51e7d7c0b3a19e9e34fa2f95064c4ed97f4fe0d1b1a650080d950f0",
+  "tarball_bytes": 4054369,
+  "tarball_files": 68,
+  "dsh": "0.2.2-rc.1",
+  "node": "24.21.0",
+  "playwright": "1.63.0",
+  "profile": "t21",
+  "gate_steps": 45,
+  "gate_assertions": 45,
+  "gate_records": 0,
+  "gate_failures": 0,
+  "gate_errors": 0
+}

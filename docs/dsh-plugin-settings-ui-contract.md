@@ -1,6 +1,6 @@
 # Magic Context Settings UI contract
 
-> Status: current — host baseline DSH 0.2.2-rc.1; the compaction-scope section is source-checked 2026-11-16, without a new browser gate.
+> Status: current — host baseline DSH 0.2.2-rc.1. The T21 settings layout and actions were checked in the isolated Web gate recorded in `_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-17-settings-redesign/` (2026-11-17); the compaction-scope section remains source-checked 2026-11-16 without a new browser gate.
 
 This document is the **current** contract for the Magic Context browser settings
 surface. It replaces the settings-card portion of the historical
@@ -11,30 +11,25 @@ description of the shipped UI.
 ## 1. Entry points
 
 The client half (`src/client/index.js`, copied verbatim to `lib/client.js`) registers
-one React component through three slots while the `magic-context-dsh` ConfigForm is
-served (`ctx.configForms.whileServed([CFG_NS])`):
+**one** React component while the `magic-context-dsh` ConfigForm is served
+(`ctx.configForms.whileServed([CFG_NS])`):
 
 | Slot | Purpose | Identity |
 |---|---|---|
-| `settings.section` | Primary page: **Settings → Magic Context**, a sibling of the host's "内置插件 / Built-in plugins" navigation item | `id: 'magic-context'`, `order: 30` |
-| `plugins.item` | Legacy card on the GUI **Plugins page/panel** | `id: 'magic-context-dsh'`, `order: 20` |
-| `plugins.row.config` | Per-row configuration card on the Plugins page | `key: '<package name>#magic-context-dsh'`, `order: 20` |
+| `settings.section` | **Settings → Magic Context**, a sibling of the host's "内置插件 / Built-in plugins" navigation item | `id: 'magic-context'`, `order: 30` |
 
-All three render the same `Card` and the same `ConfigForm` scope. The Plugins-page
-entries are kept as the legacy location and as the fallback for a host that does not
-declare `settings.section`; they are **not** inside the Settings → Built-in plugins
-section (that is a separate `settings.plugins.tab` surface).
+The former `plugins.item` and `plugins.row.config` entries were removed in T21 and
+are no longer registered; the old Plugins-page card is not maintained. This is a
+breaking change: a host that does not declare `settings.section` has no Magic
+Context configuration card at all. The card does not fall back to a second seat or
+to a plain-control form.
 
-> Planned T21: the settings redesign removes the two legacy Plugins seats and keeps
-> only `settings.section`; that release also drops the plain-control fallback. Until
-> T21 ships, 0.15.x still registers all three seats as described above.
-
-Each registration declares `locale: 'magic-context'` and the section uses
+The single registration declares `locale: 'magic-context'` and the section uses
 `label: () => t('title')`, so the navigation label follows the active DSH language.
-Every registration is disposed with the `whileServed` effect.
+It is disposed with the `whileServed` effect.
 
-Each mount owns its own drafts. A hidden Plugins-page card can therefore keep a stale
-draft until it is remounted; there is no hidden second settings store.
+Each mount owns its own drafts. The host footer Save is the only user-visible Save;
+the card never renders a second Save, a global Reset or a footer slot.
 
 ## 2. Localization contract
 
@@ -43,9 +38,10 @@ dictionaries. The slot renderer passes the namespace-bound `t` to the card as
 `props.t`; the card falls back to the shipped translator only outside a slot.
 
 - Every **card-owned** string resolves through `t(...)`: all 34 field labels and hints,
-  the `Auto` route captions, the summary line and its not-ready fallback, the form frame
-  (`unavailable` / `readOnly` / `saveFailed` / `save` / `saving` / `Modified` / `Reset` /
-  `Invalid` / `Not a number`), and the effort picker captions.
+  the five section titles/descriptions, the four summary metrics, the jump row, the status
+  strip, the advanced disclosure, the embedding action bar, both confirmation dialogs, the
+  `Auto` route captions, the form frame (`unavailable` / `readOnly` / `saveFailed` / `save` /
+  `saving` / `Modified` / `Reset` / `Invalid` / `Not a number`), and the effort picker captions.
 - Host/provider data stays literal: provider ids, model ids, model names, effort ids,
   effort `name`/`description`, `TTL`, and `token` are not translated.
 - `FORM_LABELS` is built by `formLabels(t)` inside the card render. It is not translated
@@ -153,29 +149,31 @@ this fork added its concrete use case and evidence there on 2026-11-16.
 
 ## 6. Compatibility and fallback
 
-- Until T21, a host without the `settings.section` slot does not render the primary page;
-  the Plugins-page card remains available. T21 removes that fallback, so such a host will
-  have no configuration card.
-- Until T21, a shell without `@deepseek-ai/dsh-client-ui-primitives` uses the card's
-  plain-control fallback: the same staging, writes, picker states, and labels, with only
-  the chrome differing. T21 removes that path as well.
+- The redesigned card requires the `settings.section` slot. A host without it shows no
+  Magic Context configuration card; there is no legacy Plugins-page fallback anymore.
+- The card also requires `SettingsForm` and `SettingsValueField` from
+  `@deepseek-ai/dsh-client-ui-primitives`. Without those primitives it renders the
+  localized unavailable notice only: no fields, no second Save and no plain-control
+  fallback.
 - A shell without `remote.session.modelCatalog()` keeps the route and effort fields on
   plain text; no catalog data is invented.
-
-> Planned T21: the redesigned card requires `settings.section` and the DSH primitives.
-> T21 removes the two legacy Plugins seats and the plain-control fallback; a host
-> without those primitives will show no configuration card rather than a second Save.
+- The host `SettingsForm` has no footer slot, no `busy` prop, no global Reset and no
+  close interception. The card places a text-only status strip above the fixed host
+  footer and refuses writes through its own `onSave` guard while a probe or migration
+  is in flight; it does not pretend the host Save can be disabled through a busy prop.
 
 ## 7. Evidence baseline
 
 - Host: DSH 0.2.2-rc.1 with a real Web client.
 - The Web gate installs a local tarball into a **fresh isolated profile**, starts the
   real Web host with a token URL / `--no-open`, and drives Settings through Playwright.
-- The gate covers: the top-level nav item and its sibling relationship; the legacy
-  Plugins-page card; zh/en switching; a pinned `deepseek-official/deepseek-flash` route;
-  the advertised `off/low/high/max` list (no `medium`); save/reload of a listed id; the
-  always-available Custom path; unknown-value preservation; provider/model change;
-  Default/clear in the resolved config; screenshots and DOM/text snapshots.
+- The T13/T18 gate covered the top-level nav item and its sibling relationship, zh/en
+  switching, a pinned `deepseek-official/deepseek-flash` route, the advertised
+  `off/low/high/max` list (no `medium`), save/reload of a listed id, the always-available
+  Custom path, unknown-value preservation, provider/model change, and Default/clear in the
+  resolved config. T21 replaces the layout and adds one new browser gate for the summary,
+  five sections, advanced disclosure, dirty action labels, confirmations and rollback
+  ordering; its evidence is stored with the T21 acceptance directory.
 - Headless DSH has no Settings UI; pure tests and the headless runtime smoke are
   supplementary, not a substitute for the browser gate.
 
@@ -186,7 +184,7 @@ project-scoped: a project must not redirect the endpoint or the API-key
 environment name. The current host does not expose a project/tier source, so
 that rule is a design boundary rather than an enforced runtime check yet.
 
-![Vector search section in the Magic Context Settings card](img/settings-page-embedding.png)
+![Vector search section in the Magic Context Settings card](img/settings-page-v2-embedding.png)
 
 Fields: provider (`local`/`openai-compatible`/`off`), preset
 (`siliconflow`/`custom`), endpoint, auth header, model, API-key environment name,
@@ -204,11 +202,50 @@ query timeout and batch size.
 - POST routes require JSON content type and a matching Origin/Host when an
   Origin is present; they return JSON errors and never return a key or provider
   body.
-- The client disables remote actions while the form is dirty, shows only key
-  presence, warns about sending memory text to the endpoint, and labels plain
-  HTTP on non-local endpoints.
+- The client shows only key presence, warns about sending memory text to the
+  endpoint, and labels plain HTTP on non-local endpoints. Load models and Test
+  remain available while the form is dirty; they first run the ordinary
+  revision-fenced Save and only then call the route. Both are disabled while a
+  rebuild is running or paused. Start and Rollback require a clean form.
 
-## 9. Boundaries
+## 9. Settings layout and actions (T21)
+
+One `settings.section` card, rendered as a single page:
+
+- Summary strip: reclaim policy (`execute/force`), Historian (`on/off` + effort),
+  vector space (local/off/remote + model), rebuild (state + coverage). Values come
+  only from the config snapshot and `/mc-embedding/status`; unknown is `—`, never 0.
+- Jump row: scrolls to one of five sections without remounting or dropping drafts.
+- Sections: 常规, 历史摘要, 日志, 向量检索, 维护与诊断. Every one of the 34
+  `FIELDS` belongs to exactly one section and one placement (common/advanced);
+  `FIELDS` remains the only inventory.
+- Advanced disclosures: General budgets, Historian limits, Journal mirror,
+  Embedding auth/dimensions/query instruction/document prefix/timeouts/batch size.
+- Status strip: text only, last child above the fixed host footer: saved, unsaved
+  count, invalid count, saving, working (probe/load/test), or migrating-busy. It
+  is not a footer slot and it renders no Save/Reset.
+- No second Save, no global Reset, no `busy` prop and no close interception. The
+  card refuses writes through its `onSave` guard while a probe or migration is in
+  flight; closing Settings drops drafts.
+
+Embedding actions:
+
+- Load models requires a resolvable endpoint (saved or preset default); Test
+  requires a saved model and a resolvable endpoint.
+- Dirty Load/Test are labelled `保存并加载模型` / `保存并测试`, run one existing
+  revision-fenced Save, and perform the action only if that Save is accepted.
+- Start requires a clean form, a saved model, a probed dimension, at least one
+  searchable memory (`coverage.total > 0`), an available API key when one is
+  configured, enabled memory and no `dimensions-unsupported` failure. It
+  confirms the `coverage.missing` count and possible quota spend first.
+- Rollback confirms, stages `provider = local`, saves, and calls `disarm` only
+  after the Save is accepted. A failed Save leaves the remote target armed.
+- Pause/Resume are server actions and do not depend on draft state.
+- Status polls every 2s while migrating, otherwise every 15s; it stops while
+  paused/off/error or hidden, keeps the 15s refresh while remote-ready, and
+  deduplicates in-flight reads.
+
+## 10. Boundaries
 
 - No runtime effort mapping, clamping, validation, or fallback aliasing.
 - The only model-list/probe/rebuild RPCs are the plugin-owned `/mc-embedding`

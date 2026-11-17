@@ -10,6 +10,10 @@
 
 ## [Unreleased]
 
+- 设置界面（T21）：顶层「设置 → Magic Context」改为宿主原生分区卡片——四项摘要（回收策略、历史摘要、向量空间、重建）、五个分区（常规 / 历史摘要 / 日志 / 向量检索 / 维护与诊断）、分区跳转行、高级折叠，以及宿主底栏上方的纯文本状态条。不再注册旧的 `plugins.item` / `plugins.row.config`，也不再有纯控件回退与卡片内第二个 Save；缺少 `settings.section` 的宿主将没有配置入口。跳过该 seat 属于 breaking change。
+- 向量检索动作前置条件：加载模型要求 endpoint 可解析（已保存或 preset 默认），测试连接要求模型已保存且 endpoint 可解析；表单有未保存修改时按钮变为「保存并加载模型」/「保存并测试」，先走现有 revision-fenced Save，保存失败则不执行动作。开始重建与回滚要求表单干净；回滚严格按「确认 → 暂存 local → Save 成功 → disarm」执行。
+- 设置卡片状态轮询：迁移中每 2 秒，其余每 15 秒；暂停、关闭、错误或页面隐藏时停止，`remote-ready` 保留 15 秒刷新。中文文案继续作为发版阻断项。
+
 ### Added
 
 - 远程向量（T20）：可选的 OpenAI 兼容 embed endpoint，设置页支持 provider/preset/endpoint/auth header/model/维度探测/查询前缀/超时/批大小；模型列表动态加载，维度靠 `POST /embeddings` 探测并缓存。远程空间带 `embedding-remote:` 命名，保存配置不自动消耗额度，必须点「开始重建向量」；支持暂停/继续、完整后继续维护新记忆，以及通过普通 Save 回滚到本地。远程失败降级 FTS，不与本地向量混用。

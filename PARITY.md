@@ -249,12 +249,13 @@ earlier "add promote-primers next" reading).
   so it stays opt-in.
 - Emergency reclaim rides the `agent/request-error` waterfall rather than a
   pre-request decision (`src/dsh/emergency.ts:3`, `src/dsh/seams.ts:43`).
-- The settings surface is a DSH-specific pair: `settings.section` for the
-  top-level **Settings → Magic Context** page plus the legacy `plugins.item` /
-  `plugins.row.config` card on the Plugins page. Upstream has no DSH slot model;
-  the stored contract is still the optional `historian.reasoningEffort` string,
-  and an unadvertised id is passed through unchanged (the provider remains the
-  authority). See `docs/dsh-plugin-settings-ui-contract.md`.
+- The settings surface is a DSH-specific single seat: `settings.section` for the
+  top-level **Settings → Magic Context** page. The legacy `plugins.item` /
+  `plugins.row.config` card is removed; a host without `settings.section` has no
+  card. Upstream has no DSH slot model; the stored contract is still the optional
+  `historian.reasoningEffort` string, and an unadvertised id is passed through
+  unchanged (the provider remains the authority). See
+  `docs/dsh-plugin-settings-ui-contract.md`.
 
 ## E. Pending parity (observation, no verdict yet)
 

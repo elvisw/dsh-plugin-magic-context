@@ -55,9 +55,9 @@ window.__ModuleLoader__.load({
 
     /** Loader row id of the Host half; also the settings namespace. */
     const CFG_NS = 'magic-context-dsh'
-    /** Package name; the `plugins.row.config` key is `<package name>#<row id>`. */
+    /** Package name; the module id and the single `settings.section` entry. */
     const PKG_NAME = '@elvisw/dsh-magic-context'
-    const ROW_CONFIG_KEY = PKG_NAME + '#' + CFG_NS
+    const SETTINGS_SEAT = 'settings.section'
     /** Host telemetry routes (loopback only, no auth — telemetry only). */
     const SUMMARY_URL = '/mc-telemetry/summary'
     const EVENTS_URL = '/mc-telemetry/events'
@@ -319,110 +319,288 @@ window.__ModuleLoader__.load({
       return { labelKey: prefix + '.label', hintKey: prefix + '.hint' }
     }
 
+    /** Attach the one section/placement home to a field spec. */
+    const field = (section, placement, spec) => ({ ...spec, section, placement })
+
     const FIELDS = [
-      {
+      field('general', 'common', {
         path: ['policy', 'executeThreshold'], kind: 'number', ...fieldCopy(['policy', 'executeThreshold']),
-      },
-      {
+      }),
+      field('general', 'common', {
         path: ['policy', 'forceThreshold'], kind: 'number', ...fieldCopy(['policy', 'forceThreshold']),
-      },
-      {
+      }),
+      field('general', 'common', {
         path: ['policy', 'assumedContextWindow'], kind: 'number', ...fieldCopy(['policy', 'assumedContextWindow']),
-      },
-      {
+      }),
+      field('general', 'common', {
         path: ['policy', 'ttlMs'], kind: 'number', ...fieldCopy(['policy', 'ttlMs']),
-      },
-      {
+      }),
+      field('general', 'common', {
         path: ['policy', 'protectedToolResults'], kind: 'number', ...fieldCopy(['policy', 'protectedToolResults']),
-      },
-      {
-        path: ['policy', 'historianMinNodes'], kind: 'number', ...fieldCopy(['policy', 'historianMinNodes']),
-      },
-      {
-        path: ['policy', 'historianMaxTokens'], kind: 'number', ...fieldCopy(['policy', 'historianMaxTokens']),
-      },
-      {
-        path: ['policy', 'historianMaxTokensCeiling'], kind: 'number', ...fieldCopy(['policy', 'historianMaxTokensCeiling']),
-      },
-      {
-        path: ['policy', 'historianTimeoutMs'], kind: 'number', ...fieldCopy(['policy', 'historianTimeoutMs']),
-      },
-      {
+      }),
+      field('general', 'advanced', {
         path: ['policy', 'baselineTokens'], kind: 'number', ...fieldCopy(['policy', 'baselineTokens']),
-      },
-      {
+      }),
+      field('general', 'advanced', {
         path: ['policy', 'memoryBudgetTokens'], kind: 'number', ...fieldCopy(['policy', 'memoryBudgetTokens']),
-      },
-      {
+      }),
+      field('general', 'advanced', {
         path: ['policy', 'memoryLimit'], kind: 'number', ...fieldCopy(['policy', 'memoryLimit']),
-      },
-      {
-        path: ['journal', 'retentionDays'], kind: 'number', ...fieldCopy(['journal', 'retentionDays']),
-      },
-      {
+      }),
+
+      field('historian', 'common', {
         path: ['historianEnabled'], kind: 'boolean', ...fieldCopy(['historianEnabled']),
-      },
-      {
-        path: ['registerCompactionEngine'], kind: 'boolean', ...fieldCopy(['registerCompactionEngine']),
-      },
-      {
-        path: ROUTES[0].providerPath, kind: 'route-provider', routeId: 'maintenance',
-        ...fieldCopy(ROUTES[0].providerPath),
-      },
-      {
-        path: ROUTES[0].modelPath, kind: 'route-model', routeId: 'maintenance',
-        ...fieldCopy(ROUTES[0].modelPath),
-      },
-      {
+      }),
+      field('historian', 'common', {
         path: ROUTES[1].providerPath, kind: 'route-provider', routeId: 'historian',
         ...fieldCopy(ROUTES[1].providerPath),
-      },
-      {
+      }),
+      field('historian', 'common', {
         path: ROUTES[1].modelPath, kind: 'route-model', routeId: 'historian',
         ...fieldCopy(ROUTES[1].modelPath),
-      },
-      {
+      }),
+      field('historian', 'common', {
         path: ['historian', 'reasoningEffort'], kind: 'effort', routeId: 'historian',
         ...fieldCopy(['historian', 'reasoningEffort']),
-      },
-      {
+      }),
+      field('historian', 'advanced', {
+        path: ['policy', 'historianMinNodes'], kind: 'number', ...fieldCopy(['policy', 'historianMinNodes']),
+      }),
+      field('historian', 'advanced', {
+        path: ['policy', 'historianMaxTokens'], kind: 'number', ...fieldCopy(['policy', 'historianMaxTokens']),
+      }),
+      field('historian', 'advanced', {
+        path: ['policy', 'historianMaxTokensCeiling'], kind: 'number', ...fieldCopy(['policy', 'historianMaxTokensCeiling']),
+      }),
+      field('historian', 'advanced', {
+        path: ['policy', 'historianTimeoutMs'], kind: 'number', ...fieldCopy(['policy', 'historianTimeoutMs']),
+      }),
+
+      field('journal', 'common', {
         path: ['journal', 'enabled'], kind: 'boolean', ...fieldCopy(['journal', 'enabled']),
-      },
-      {
+      }),
+      field('journal', 'common', {
+        path: ['journal', 'retentionDays'], kind: 'number', ...fieldCopy(['journal', 'retentionDays']),
+      }),
+      field('journal', 'advanced', {
         path: ['journal', 'mirror'], kind: 'boolean', ...fieldCopy(['journal', 'mirror']),
-      },
-      {
+      }),
+
+      field('embedding', 'common', {
         path: ['embedding', 'provider'], kind: 'select', ...fieldCopy(['embedding', 'provider']),
         options: [
           { value: 'local', labelKey: 'settings.embedding.provider.local' },
           { value: 'openai-compatible', labelKey: 'settings.embedding.provider.remote' },
           { value: 'off', labelKey: 'settings.embedding.provider.off' },
         ],
-      },
-      {
+      }),
+      field('embedding', 'common', {
         path: ['embedding', 'preset'], kind: 'select', ...fieldCopy(['embedding', 'preset']),
         options: [
           { value: 'siliconflow', labelKey: 'settings.embedding.preset.siliconflow' },
           { value: 'custom', labelKey: 'settings.embedding.preset.custom' },
         ],
-      },
-      { path: ['embedding', 'endpoint'], kind: 'text', ...fieldCopy(['embedding', 'endpoint']) },
-      {
+      }),
+      field('embedding', 'common', {
+        path: ['embedding', 'endpoint'], kind: 'text', ...fieldCopy(['embedding', 'endpoint']),
+      }),
+      field('embedding', 'common', {
+        path: ['embedding', 'model'], kind: 'text', ...fieldCopy(['embedding', 'model']),
+      }),
+      field('embedding', 'common', {
+        path: ['embedding', 'apiKeyEnv'], kind: 'text', ...fieldCopy(['embedding', 'apiKeyEnv']),
+      }),
+      field('embedding', 'advanced', {
         path: ['embedding', 'authHeader'], kind: 'select', ...fieldCopy(['embedding', 'authHeader']),
         options: [
           { value: 'authorization', labelKey: 'settings.embedding.auth.authorization' },
           { value: 'api-key', labelKey: 'settings.embedding.auth.apiKey' },
         ],
-      },
-      { path: ['embedding', 'model'], kind: 'text', ...fieldCopy(['embedding', 'model']) },
-      { path: ['embedding', 'apiKeyEnv'], kind: 'text', ...fieldCopy(['embedding', 'apiKeyEnv']) },
-      { path: ['embedding', 'dimensions'], kind: 'number', ...fieldCopy(['embedding', 'dimensions']) },
-      { path: ['embedding', 'queryInstruction'], kind: 'text', ...fieldCopy(['embedding', 'queryInstruction']) },
-      { path: ['embedding', 'documentPrefix'], kind: 'text', ...fieldCopy(['embedding', 'documentPrefix']) },
-      { path: ['embedding', 'timeoutMs'], kind: 'number', ...fieldCopy(['embedding', 'timeoutMs']) },
-      { path: ['embedding', 'queryTimeoutMs'], kind: 'number', ...fieldCopy(['embedding', 'queryTimeoutMs']) },
-      { path: ['embedding', 'batchSize'], kind: 'number', ...fieldCopy(['embedding', 'batchSize']) },
+      }),
+      field('embedding', 'advanced', {
+        path: ['embedding', 'dimensions'], kind: 'number', ...fieldCopy(['embedding', 'dimensions']),
+      }),
+      field('embedding', 'advanced', {
+        path: ['embedding', 'queryInstruction'], kind: 'text', ...fieldCopy(['embedding', 'queryInstruction']),
+      }),
+      field('embedding', 'advanced', {
+        path: ['embedding', 'documentPrefix'], kind: 'text', ...fieldCopy(['embedding', 'documentPrefix']),
+      }),
+      field('embedding', 'advanced', {
+        path: ['embedding', 'timeoutMs'], kind: 'number', ...fieldCopy(['embedding', 'timeoutMs']),
+      }),
+      field('embedding', 'advanced', {
+        path: ['embedding', 'queryTimeoutMs'], kind: 'number', ...fieldCopy(['embedding', 'queryTimeoutMs']),
+      }),
+      field('embedding', 'advanced', {
+        path: ['embedding', 'batchSize'], kind: 'number', ...fieldCopy(['embedding', 'batchSize']),
+      }),
+
+      field('maintenance', 'common', {
+        path: ['registerCompactionEngine'], kind: 'boolean', ...fieldCopy(['registerCompactionEngine']),
+      }),
+      field('maintenance', 'common', {
+        path: ROUTES[0].providerPath, kind: 'route-provider', routeId: 'maintenance',
+        ...fieldCopy(ROUTES[0].providerPath),
+      }),
+      field('maintenance', 'common', {
+        path: ROUTES[0].modelPath, kind: 'route-model', routeId: 'maintenance',
+        ...fieldCopy(ROUTES[0].modelPath),
+      }),
     ]
+
+    /** The five section headers; the fields themselves live only in `FIELDS`. */
+    const SETTINGS_SECTIONS = [
+      { id: 'general', titleKey: 'settings.section.general.title', descKey: 'settings.section.general.desc' },
+      { id: 'historian', titleKey: 'settings.section.historian.title', descKey: 'settings.section.historian.desc' },
+      { id: 'journal', titleKey: 'settings.section.journal.title', descKey: 'settings.section.journal.desc' },
+      { id: 'embedding', titleKey: 'settings.section.embedding.title', descKey: 'settings.section.embedding.desc' },
+      { id: 'maintenance', titleKey: 'settings.section.maintenance.title', descKey: 'settings.section.maintenance.desc' },
+    ]
+
+    /** The home of one field; an unknown field falls back to 常规 so it still renders. */
+    function layoutOf(spec) {
+      const known = typeof spec?.section === 'string'
+        ? spec
+        : FIELDS.find((candidate) => Array.isArray(spec?.path)
+          && fieldKey(candidate.path) === fieldKey(spec.path))
+      return {
+        section: typeof known?.section === 'string' ? known.section : 'general',
+        placement: known?.placement === 'advanced' ? 'advanced' : 'common',
+      }
+    }
+
+    /**
+     * The five sections with their field specs. Grouping is derived from the
+     * `section`/`placement` properties on `FIELDS`; this function owns no
+     * second field-key list.
+     */
+    function fieldSections() {
+      return SETTINGS_SECTIONS.map((section) => ({
+        ...section,
+        common: FIELDS.filter((spec) => spec.section === section.id && spec.placement === 'common'),
+        advanced: FIELDS.filter((spec) => spec.section === section.id && spec.placement === 'advanced'),
+      }))
+    }
+
+    /**
+     * The four summary metrics. Pure data: the renderer owns localization.
+     * Unknown values stay empty and are rendered as `—`, never as 0.
+     */
+    function settingsSummary(snapshot, status) {
+      const value = snapshot !== null && typeof snapshot === 'object' ? snapshot.value : undefined
+      const ready = snapshot !== null && typeof snapshot === 'object' && snapshot.status === 'ready'
+      const execute = formatNumber(readPath(value, ['policy', 'executeThreshold']))
+      const force = formatNumber(readPath(value, ['policy', 'forceThreshold']))
+      const historian = asBool(readPath(value, ['historianEnabled']))
+      const effort = formatText(readPath(value, ['historian', 'reasoningEffort']))
+      const state = status !== null && typeof status === 'object' && typeof status.state === 'string'
+        ? status.state : ''
+      const provider = status !== null && typeof status === 'object' && typeof status.provider === 'string'
+        ? status.provider : ''
+      const vectorKind = state === 'remote-off' ? 'off'
+        : state === 'local' || state === 'rollback-local' ? 'local'
+          : state === '' ? 'unknown' : 'remote'
+      const coverage = status !== null && typeof status === 'object'
+        && status.coverage !== null && typeof status.coverage === 'object' ? status.coverage : null
+      const covered = coverage !== null && Number.isFinite(coverage.covered) ? coverage.covered : null
+      const total = coverage !== null && Number.isFinite(coverage.total) ? coverage.total : null
+      const missing = coverage !== null && Number.isFinite(coverage.missing)
+        ? coverage.missing
+        : covered !== null && total !== null ? Math.max(0, total - covered) : null
+      return {
+        ready,
+        policy: { execute, force },
+        historian: { enabled: historian, effort },
+        vector: {
+          kind: vectorKind,
+          model: vectorKind === 'remote' && typeof status?.model === 'string' ? status.model : '',
+        },
+        rebuild: {
+          state,
+          covered,
+          total,
+          missing,
+          local: vectorKind === 'local',
+        },
+        provider,
+      }
+    }
+
+    /**
+     * The remote action matrix (T21). Pure so the node-side spec can pin every
+     * precondition without a browser. `hidden` controls rendering; `disabled`
+     * controls interaction. A dirty Load/Test still shows, with a save-first
+     * label, because the action itself runs the existing revision-fenced Save.
+     */
+    function embeddingActionState(input) {
+      const source = input !== null && typeof input === 'object' ? input : {}
+      const state = typeof source.state === 'string' ? source.state : ''
+      const remote = state !== '' && state !== 'local' && state !== 'remote-off' && state !== 'rollback-local'
+      const dirty = source.dirty === true
+      const writable = source.writable === true
+      const busy = source.busy === true
+      const model = typeof source.model === 'string' && source.model !== ''
+      const endpoint = source.endpointResolvable === true
+      const total = Number.isFinite(source.total) ? source.total : null
+      const probeOk = source.probeOk === true
+      const refreshing = source.refreshing === true
+      const keyOk = source.keyPresent !== false
+      const memoryOk = source.memoryEnabled !== false
+      const progressing = state === 'remote-migrating'
+      const paused = state === 'remote-paused'
+      const ready = state === 'remote-ready'
+      const targetMissing = state === 'remote-target-missing'
+      const armed = remote && state !== 'remote-configured-not-started' && state !== 'remote-unprobed'
+      return {
+        remote,
+        refresh: { hidden: false, disabled: busy || refreshing },
+        load: { hidden: !remote, disabled: busy || progressing || paused || !writable || !endpoint || !keyOk || !memoryOk },
+        test: { hidden: !remote, disabled: busy || progressing || paused || !writable || !model || !endpoint || !keyOk || !memoryOk },
+        start: {
+          hidden: !remote || progressing || paused || ready || targetMissing,
+          disabled: busy || !writable || dirty || !model || !probeOk || total === null || total <= 0
+            || !keyOk || !memoryOk || source.dimensionsUnsupported === true,
+        },
+        pause: { hidden: !progressing, disabled: busy },
+        resume: { hidden: !paused, disabled: busy },
+        rollback: { hidden: !armed, disabled: busy || !writable || dirty || progressing },
+      }
+    }
+
+    /**
+     * Status-derived action gates. `apiKeyEnv === ''` means "no auth", not a
+     * missing key; a configured-but-absent env var and an unsupported-dimension
+     * probe failure must both block remote actions.
+     */
+    function embeddingStatusFlags(status) {
+      const source = status !== null && typeof status === 'object' ? status : {}
+      const keyEnv = typeof source.keyEnv === 'string' ? source.keyEnv : ''
+      return {
+        keyPresent: !(source.keyPresent === false && keyEnv !== ''),
+        memoryEnabled: source.memoryEnabled !== false,
+        dimensionsUnsupported: typeof source.lastError === 'string'
+          && source.lastError.includes('dimensions-unsupported'),
+      }
+    }
+
+    /** The ten server-side remote states, mapped to dictionary keys. */
+    const EMBEDDING_STATE_KEYS = {
+      local: 'settings.embedding.state.local',
+      'rollback-local': 'settings.embedding.state.rollbackLocal',
+      'remote-off': 'settings.embedding.state.off',
+      'remote-unprobed': 'settings.embedding.state.unprobed',
+      'remote-configured-not-started': 'settings.embedding.state.notStarted',
+      'remote-paused': 'settings.embedding.state.paused',
+      'remote-target-missing': 'settings.embedding.state.targetMissing',
+      'remote-migrating': 'settings.embedding.state.migrating',
+      'remote-ready': 'settings.embedding.state.ready',
+      'remote-error': 'settings.embedding.state.error',
+    }
+
+    function embeddingStateKey(value) {
+      return EMBEDDING_STATE_KEYS[value] ?? 'settings.embedding.state.unprobed'
+    }
 
     /** Copy owned by the form frame, summary line and effort picker. */
     const SETTINGS_EXTRA_COPY_KEYS = [
@@ -433,6 +611,45 @@ window.__ModuleLoader__.load({
       'settings.summary.off',
       'settings.summary.verify',
       'settings.summary.gen',
+      'settings.summary.policy',
+      'settings.summary.policyValue',
+      'settings.summary.historian',
+      'settings.summary.vector',
+      'settings.summary.rebuild',
+      'settings.summary.unknown',
+      'settings.summary.local',
+      'settings.summary.notAvailable',
+      'settings.summary.coverage',
+      'settings.section.general.title',
+      'settings.section.general.desc',
+      'settings.section.historian.title',
+      'settings.section.historian.desc',
+      'settings.section.journal.title',
+      'settings.section.journal.desc',
+      'settings.section.embedding.title',
+      'settings.section.embedding.desc',
+      'settings.section.maintenance.title',
+      'settings.section.maintenance.desc',
+      'settings.section.advanced',
+      'settings.section.advancedOpen',
+      'settings.section.advancedClose',
+      'settings.status.saved',
+      'settings.status.dirty',
+      'settings.status.invalid',
+      'settings.status.saving',
+      'settings.status.busy',
+      'settings.status.working',
+      'settings.status.failed',
+      'settings.action.saveAndLoad',
+      'settings.action.saveAndTest',
+      'settings.action.confirmStartTitle',
+      'settings.action.confirmStartBody',
+      'settings.action.confirmRollbackTitle',
+      'settings.action.confirmRollbackBody',
+      'settings.action.confirm',
+      'settings.action.cancel',
+      'settings.embedding.rollbackPending',
+      'settings.embedding.rollbackDone',
       'settings.form.unavailable',
       'settings.form.readOnly',
       'settings.form.saveFailed',
@@ -460,6 +677,7 @@ window.__ModuleLoader__.load({
       'settings.embedding.savedFirst',
       'settings.embedding.keyPresent',
       'settings.embedding.keyAbsent',
+      'settings.embedding.noAuth',
       'settings.embedding.loadModels',
       'settings.embedding.refresh',
       'settings.embedding.probe',
@@ -473,6 +691,7 @@ window.__ModuleLoader__.load({
       'settings.embedding.coverage',
       'settings.embedding.coverageUnknown',
       'settings.embedding.dimensionUnknown',
+      'settings.embedding.dimensions',
       'settings.embedding.memoryOff',
       'settings.embedding.plainHttp',
       'settings.embedding.state.local',
@@ -748,7 +967,7 @@ window.__ModuleLoader__.load({
      */
     function makeCard(scope, catalog) {
       return function MagicContextCard(props) {
-        const [, setRevision] = useState(0)
+        const [renderTick, setRevision] = useState(0)
         const drafts = useRef(new Map())
         const [saving, setSaving] = useState(false)
         const [failed, setFailed] = useState(false)
@@ -757,7 +976,12 @@ window.__ModuleLoader__.load({
         const [embeddingStatus, setEmbeddingStatus] = useState(null)
         const [embeddingModels, setEmbeddingModels] = useState([])
         const [embeddingBusy, setEmbeddingBusy] = useState(false)
+        const [statusRefreshing, setStatusRefreshing] = useState(false)
+        const statusInFlight = useRef(null)
         const [embeddingMessage, setEmbeddingMessage] = useState('')
+        const [advancedOpen, setAdvancedOpen] = useState({})
+        const [confirmAction, setConfirmAction] = useState(null)
+        const lastInvalidKey = useRef('')
 
         useEffect(() => scope.subscribe(() => setRevision((value) => value + 1)), [scope])
 
@@ -767,45 +991,68 @@ window.__ModuleLoader__.load({
         const labels = formLabels(t)
         const valueLabels = settingsValueLabels(t)
 
+        const refreshEmbeddingStatus = () => {
+          if (statusInFlight.current !== null) return statusInFlight.current
+          setStatusRefreshing(true)
+          const request = fetch('/mc-embedding/status', { headers: { accept: 'application/json' } })
+            .then((response) => response.json())
+            .then((body) => {
+              if (body !== null && typeof body === 'object' && body.ok === true) {
+                setEmbeddingStatus(body)
+                return body
+              }
+              return null
+            })
+            .catch(() => null)
+            .finally(() => {
+              statusInFlight.current = null
+              setStatusRefreshing(false)
+            })
+          statusInFlight.current = request
+          return request
+        }
+
+        // Status is the only live data on this card. Poll at the design cadence,
+        // stop for a paused/off/error target, and never run while the tab is
+        // hidden. `embeddingStatus.state` is a dependency so a state transition
+        // reschedules at the correct interval.
         useEffect(() => {
           if (snapshot.status !== 'ready') return undefined
           let alive = true
-          const read = () => {
-            fetch('/mc-embedding/status', { headers: { accept: 'application/json' } })
-              .then((response) => response.json())
-              .then((body) => {
-                if (alive && body !== null && typeof body === 'object' && body.ok === true) setEmbeddingStatus(body)
-              })
-              .catch(() => {})
+          let timer = null
+          const clear = () => {
+            if (timer !== null) {
+              clearTimeout(timer)
+              timer = null
+            }
           }
-          read()
-          return () => { alive = false }
-        }, [snapshot.status])
-
-        // The summary view is the one-liner the Plugins page shows in its list
-        // (and as a row's description fallback); it must render without the form.
-        if (props.view === 'summary') {
-          const execute = formatNumber(readPath(snapshot.value, ['policy', 'executeThreshold']))
-          const force = formatNumber(readPath(snapshot.value, ['policy', 'forceThreshold']))
-          const historian = asBool(readPath(snapshot.value, ['historianEnabled']))
-          if (snapshot.status !== 'ready') return t('settings.summary.notReady')
-          const pinnedRoutes = ROUTES.flatMap((route) => {
-            const provider = formatText(readPath(snapshot.value, route.providerPath))
-            const model = formatText(readPath(snapshot.value, route.modelPath))
-            if (provider === '' || model === '') return []
-            return [t('settings.summary.route', {
-              kind: t(route.id === 'maintenance' ? 'settings.summary.verify' : 'settings.summary.gen'),
-              provider,
-              model,
-            })]
-          })
-          return t('settings.summary.line', {
-            execute: execute || '—',
-            force: force || '—',
-            historian: t(historian ? 'settings.summary.on' : 'settings.summary.off'),
-            routes: pinnedRoutes.join(''),
-          })
-        }
+          const schedule = () => {
+            clear()
+            if (!alive || document.visibilityState !== 'visible') return
+            const state = embeddingStatus !== null && typeof embeddingStatus === 'object' ? embeddingStatus.state : ''
+            if (state === 'remote-paused' || state === 'remote-off' || state === 'remote-error') return
+            const delay = state === 'remote-migrating' ? 2000 : 15000
+            timer = setTimeout(() => {
+              timer = null
+              void refreshEmbeddingStatus().finally(schedule)
+            }, delay)
+          }
+          const readNow = () => {
+            if (!alive || document.visibilityState !== 'visible') return
+            void refreshEmbeddingStatus().finally(schedule)
+          }
+          const onVisibility = () => {
+            if (document.visibilityState === 'visible') readNow()
+            else clear()
+          }
+          readNow()
+          document.addEventListener('visibilitychange', onVisibility)
+          return () => {
+            alive = false
+            clear()
+            document.removeEventListener('visibilitychange', onVisibility)
+          }
+        }, [snapshot.status, embeddingStatus?.state])
 
         /** Stage one field's draft and re-render. */
         const stage = (key, draft) => {
@@ -1224,34 +1471,35 @@ window.__ModuleLoader__.load({
         }
 
         const save = () => {
-          if (saving || !snapshot.writable || staged.size === 0) return
-          const { ops, blocked } = plan()
-          if (blocked || ops.length === 0) return
-          const turnsLocal = ops.some((op) =>
-            op.op === 'set' && op.path.length === 2
-              && op.path[0] === 'embedding' && op.path[1] === 'provider' && op.value === 'local')
-          if (turnsLocal) {
-            // Disarm is a state-only route: it never writes profile config. The
-            // revision-fenced Save below remains the only config writer.
-            void fetch('/mc-embedding/rebuild?action=disarm', {
-              method: 'POST',
-              headers: { 'content-type': 'application/json' },
-            }).catch(() => {})
+          if (saving || !snapshot.writable) return Promise.resolve(false)
+          // The host footer cannot express a busy state. Refuse the write at
+          // the card boundary while a probe or migration owns the adapter.
+          if (embeddingBusy || (embeddingStatus !== null && typeof embeddingStatus === 'object'
+            && embeddingStatus.state === 'remote-migrating')) {
+            setEmbeddingMessage(t('settings.status.busy'))
+            return Promise.resolve(false)
           }
+          if (staged.size === 0) return Promise.resolve(true)
+          const { ops, blocked } = plan()
+          if (blocked || ops.length === 0) return Promise.resolve(false)
           setSaving(true)
           setFailed(false)
-          Promise.resolve(scope.mutate(ops, snapshot.revision)).then((accepted) => {
-            if (accepted) {
-              staged.clear()
-              setTimeout(() => { void refreshEmbeddingStatus() }, 600)
-            }
-            setSaving(false)
-            setFailed(!accepted)
-            setRevision((value) => value + 1)
-          }, () => {
-            setSaving(false)
-            setFailed(true)
-            setRevision((value) => value + 1)
+          return new Promise((resolve) => {
+            Promise.resolve(scope.mutate(ops, snapshot.revision)).then((accepted) => {
+              if (accepted) {
+                staged.clear()
+                setTimeout(() => { void refreshEmbeddingStatus() }, 600)
+              }
+              setSaving(false)
+              setFailed(!accepted)
+              setRevision((value) => value + 1)
+              resolve(accepted === true)
+            }, () => {
+              setSaving(false)
+              setFailed(true)
+              setRevision((value) => value + 1)
+              resolve(false)
+            })
           })
         }
 
@@ -1264,31 +1512,78 @@ window.__ModuleLoader__.load({
           failed,
         }
 
-        const embeddingStateKey = (value) => ({
-          local: 'settings.embedding.state.local',
-          'rollback-local': 'settings.embedding.state.rollbackLocal',
-          'remote-off': 'settings.embedding.state.off',
-          'remote-unprobed': 'settings.embedding.state.unprobed',
-          'remote-configured-not-started': 'settings.embedding.state.notStarted',
-          'remote-paused': 'settings.embedding.state.paused',
-          'remote-target-missing': 'settings.embedding.state.targetMissing',
-          'remote-migrating': 'settings.embedding.state.migrating',
-          'remote-ready': 'settings.embedding.state.ready',
-          'remote-error': 'settings.embedding.state.error',
-        }[value] ?? 'settings.embedding.state.unprobed')
+        const sections = fieldSections()
+        const summary = settingsSummary(snapshot, embeddingStatus)
+        const modelSpec = FIELDS.find((spec) => fieldKey(spec.path) === 'embedding.model')
+        const endpointSpec = FIELDS.find((spec) => fieldKey(spec.path) === 'embedding.endpoint')
+        const presetSpec = FIELDS.find((spec) => fieldKey(spec.path) === 'embedding.preset')
+        const currentModel = view(modelSpec).text
+        const currentEndpoint = view(endpointSpec).text
+        const currentPreset = view(presetSpec).text
+        const endpointResolvable = currentEndpoint !== '' || currentPreset === 'siliconflow'
+        const embeddingState = embeddingStatus !== null && typeof embeddingStatus === 'object'
+          ? formatText(embeddingStatus.state) : ''
+        const embeddingCoverage = embeddingStatus !== null && typeof embeddingStatus === 'object'
+          && embeddingStatus.coverage !== null && typeof embeddingStatus.coverage === 'object'
+          ? embeddingStatus.coverage : null
+        const embeddingTotal = embeddingCoverage !== null && Number.isFinite(embeddingCoverage.total)
+          ? embeddingCoverage.total : null
+        const embeddingMissing = embeddingCoverage !== null && Number.isFinite(embeddingCoverage.missing)
+          ? embeddingCoverage.missing
+          : embeddingCoverage !== null && Number.isFinite(embeddingCoverage.total) && Number.isFinite(embeddingCoverage.covered)
+            ? Math.max(0, embeddingCoverage.total - embeddingCoverage.covered) : null
+        const probeOk = embeddingStatus !== null && typeof embeddingStatus === 'object'
+          && embeddingStatus.dimensions !== null
+          && embeddingStatus.state !== 'remote-unprobed'
+          && embeddingStatus.state !== 'remote-target-missing'
+        const embeddingFlags = embeddingStatusFlags(embeddingStatus)
+        const actions = embeddingActionState({
+          state: embeddingState,
+          dirty: shell.dirty,
+          writable: shell.writable,
+          busy: embeddingBusy,
+          refreshing: statusRefreshing,
+          model: currentModel,
+          endpointResolvable,
+          total: embeddingTotal,
+          probeOk,
+          // An empty `apiKeyEnv` means "no authentication", not a missing key.
+          keyPresent: embeddingFlags.keyPresent,
+          memoryEnabled: embeddingFlags.memoryEnabled,
+          dimensionsUnsupported: embeddingFlags.dimensionsUnsupported,
+        })
 
-        const refreshEmbeddingStatus = () => fetch('/mc-embedding/status', { headers: { accept: 'application/json' } })
-          .then((response) => response.json())
-          .then((body) => {
-            if (body !== null && typeof body === 'object' && body.ok === true) setEmbeddingStatus(body)
-          })
-          .catch(() => {})
+        // The host Save is disabled while a value is invalid, so "try Save to
+        // reveal the bad field" can never run. Open the advanced disclosure and
+        // focus the first invalid field as soon as it becomes invalid.
+        useEffect(() => {
+          const invalid = FIELDS.find((spec) => view(spec).invalid)
+          const key = invalid === undefined ? '' : fieldKey(invalid.path)
+          if (key === lastInvalidKey.current) return
+          lastInvalidKey.current = key
+          if (key === '') return
+          const layout = layoutOf(invalid)
+          if (layout.placement === 'advanced') {
+            setAdvancedOpen((current) => current[layout.section] === true
+              ? current : { ...current, [layout.section]: true })
+          }
+          setTimeout(() => {
+            const node = document.getElementById('mc-field-' + key)
+            if (node !== null && typeof node.focus === 'function') node.focus()
+          }, 0)
+        }, [renderTick, snapshot.status])
 
-        const callEmbedding = (path, action) => {
-          if (embeddingBusy || !shell.writable || shell.dirty) return
+        useEffect(() => {
+          if (confirmAction === null) return
+          const node = document.querySelector('[data-mc-confirm-cancel]')
+          if (node !== null && typeof node.focus === 'function') node.focus()
+        }, [confirmAction])
+
+        const callEmbedding = (path, action, options = {}) => {
+          if (embeddingBusy || (!options.allowReadOnly && !shell.writable)) return Promise.resolve(false)
           setEmbeddingBusy(true)
           setEmbeddingMessage('')
-          fetch(path + (action === undefined ? '' : '?action=' + encodeURIComponent(action)), {
+          return fetch(path + (action === undefined ? '' : '?action=' + encodeURIComponent(action)), {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
           })
@@ -1297,69 +1592,161 @@ window.__ModuleLoader__.load({
               if (body === null || typeof body !== 'object') throw new Error('bad-response')
               if (body.ok !== true) {
                 setEmbeddingMessage(t('settings.embedding.state.error') + ': ' + String(body.error ?? 'error'))
-              } else {
-                setEmbeddingMessage('')
+                return false
               }
-              return refreshEmbeddingStatus()
+              setEmbeddingMessage('')
+              return true
             })
-            .then(() => {
+            .then((ok) => {
+              void refreshEmbeddingStatus()
               // A started/resumed bounded pass runs just after the route returns;
               // poll twice so the panel reflects the landed state without reload.
               setTimeout(() => { void refreshEmbeddingStatus() }, 1200)
               setTimeout(() => { void refreshEmbeddingStatus() }, 2600)
+              return ok
             })
-            .catch((error) => setEmbeddingMessage(String(error && error.message ? error.message : error)))
+            .catch((error) => {
+              setEmbeddingMessage(String(error && error.message ? error.message : error))
+              return false
+            })
             .finally(() => setEmbeddingBusy(false))
         }
 
         const loadEmbeddingModels = () => {
-          if (embeddingBusy || !shell.writable || shell.dirty) return
+          if (embeddingBusy || !shell.writable) return Promise.resolve(false)
           setEmbeddingBusy(true)
           setEmbeddingMessage('')
-          fetch('/mc-embedding/models', { headers: { accept: 'application/json' } })
+          return fetch('/mc-embedding/models', { headers: { accept: 'application/json' } })
             .then((response) => response.json())
             .then((body) => {
               if (body !== null && typeof body === 'object' && body.ok === true && Array.isArray(body.models)) {
                 setEmbeddingModels(body.models)
                 if (body.models.length === 0) setEmbeddingMessage(t('settings.embedding.noModels'))
-              } else {
-                setEmbeddingMessage(t('settings.embedding.state.error') + ': ' + String(body && body.error ? body.error : 'error'))
+                return true
               }
+              setEmbeddingMessage(t('settings.embedding.state.error') + ': ' + String(body && body.error ? body.error : 'error'))
+              return false
             })
-            .catch((error) => setEmbeddingMessage(String(error && error.message ? error.message : error)))
+            .catch((error) => {
+              setEmbeddingMessage(String(error && error.message ? error.message : error))
+              return false
+            })
             .finally(() => setEmbeddingBusy(false))
         }
 
+        /** Run one action through the existing revision-fenced Save first. */
+        const saveThen = (action) => {
+          if (!shell.dirty) {
+            void action()
+            return
+          }
+          void save().then((accepted) => {
+            if (accepted) void action()
+          })
+        }
+
+        const requestStart = () => {
+          setConfirmAction({
+            kind: 'start',
+            count: embeddingMissing === null ? 0 : embeddingMissing,
+          })
+        }
+
+        const requestRollback = () => setConfirmAction({ kind: 'rollback' })
+
+        const runConfirmed = () => {
+          const current = confirmAction
+          setConfirmAction(null)
+          if (current === null) return
+          if (current.kind === 'start') {
+            void callEmbedding('/mc-embedding/rebuild', 'start')
+            return
+          }
+          // Rollback is a config write followed by a state-only disarm. The
+          // disarm must never run before the accepted Save: a failed write keeps
+          // the remote target armed.
+          stage(fieldKey(['embedding', 'provider']), { clear: false, text: 'local' })
+          void save().then((accepted) => {
+            if (accepted) void callEmbedding('/mc-embedding/rebuild', 'disarm', { allowReadOnly: true })
+          })
+        }
+
         const renderEmbeddingTools = () => {
-          if (!shell.available || embeddingStatus === null) return null
+          if (!shell.available) return null
+          if (embeddingStatus === null) {
+            return el('div', { key: 'embedding-tools-loading', style: { fontSize: 11.5, opacity: 0.7 } },
+              t('settings.embedding.working'))
+          }
           const status = embeddingStatus
-          const remote = status.provider === 'openai-compatible'
           const coverage = status.coverage === null
             ? t('settings.embedding.coverageUnknown')
             : t('settings.embedding.coverage', {
               covered: String(status.coverage.covered),
               total: String(status.coverage.total),
             })
-          const dimensions = status.dimensions === null ? '—' : String(status.dimensions) + 'd'
+          const dimensions = status.provider === 'local' || status.dimensions === null
+            ? t('settings.embedding.dimensionUnknown')
+            : t('settings.embedding.dimensions', { value: String(status.dimensions) })
+          const modelLabel = status.provider === 'local'
+            ? t('settings.summary.local')
+            : (status.model || '—')
+          const keyLabel = status.keyEnv === ''
+            ? t('settings.embedding.noAuth')
+            : status.keyPresent ? t('settings.embedding.keyPresent') : t('settings.embedding.keyAbsent')
           const progressText = status.progress === null || status.progress === undefined
             || status.progress.processed === null || status.progress.total === null
             ? ''
             : String(status.progress.processed) + '/' + String(status.progress.total)
               + (status.progress.failures > 0 ? ' · ' + String(status.progress.failures) : '')
           const modelOptions = embeddingModels.map((id) => el('option', { key: id, value: id }, id))
-          return el('section', {
+          const button = (key, label, onClick, disabled, danger) => el('button', {
+            key,
+            type: 'button',
+            disabled,
+            onClick,
+            style: danger ? { borderColor: 'var(--dsw-alias-state-error-primary, #c33)', color: 'var(--dsw-alias-state-error-primary, #c33)' } : undefined,
+          }, label)
+          const actionRow = []
+          if (!actions.refresh.hidden) actionRow.push(button(
+            'refresh', t('settings.embedding.refresh'), () => { void refreshEmbeddingStatus() }, actions.refresh.disabled,
+          ))
+          if (!actions.load.hidden) actionRow.push(button(
+            'models',
+            t(shell.dirty ? 'settings.action.saveAndLoad' : 'settings.embedding.loadModels'),
+            () => saveThen(loadEmbeddingModels),
+            actions.load.disabled,
+          ))
+          if (!actions.test.hidden) actionRow.push(button(
+            'probe',
+            t(shell.dirty ? 'settings.action.saveAndTest' : 'settings.embedding.probe'),
+            () => saveThen(() => callEmbedding('/mc-embedding/probe')),
+            actions.test.disabled,
+          ))
+          if (!actions.start.hidden) actionRow.push(button(
+            'start', t('settings.embedding.start'), requestStart, actions.start.disabled,
+          ))
+          if (!actions.pause.hidden) actionRow.push(button(
+            'pause', t('settings.embedding.pause'),
+            () => { void callEmbedding('/mc-embedding/rebuild', 'pause', { allowReadOnly: true }) },
+            actions.pause.disabled,
+          ))
+          if (!actions.resume.hidden) actionRow.push(button(
+            'resume', t('settings.embedding.resume'),
+            () => { void callEmbedding('/mc-embedding/rebuild', 'resume', { allowReadOnly: true }) },
+            actions.resume.disabled,
+          ))
+          if (!actions.rollback.hidden) actionRow.push(button(
+            'rollback', t('settings.embedding.rollback'), requestRollback, actions.rollback.disabled, true,
+          ))
+          return el('div', {
             key: 'embedding-tools',
-            'aria-label': t('settings.embedding.title'),
-            style: { display: 'grid', gap: 6, margin: '12px 0 4px', paddingTop: 8,
-              borderTop: '1px solid var(--dsw-alias-border-secondary, rgba(127,127,127,.25))' },
+            style: { display: 'grid', gap: 6, margin: '8px 0 4px' },
           }, [
-            el('strong', { key: 'title', style: { fontSize: 12.5 } }, t('settings.embedding.title')),
             el('span', { key: 'status', style: { fontSize: 11.5, opacity: 0.8 } },
               t('settings.embedding.status') + ': ' + t(embeddingStateKey(status.state))
-                + ' · ' + (status.model || '—') + ' · ' + dimensions + ' · ' + coverage),
+                + ' · ' + modelLabel + ' · ' + dimensions + ' · ' + coverage),
             el('span', { key: 'key', style: { fontSize: 11.5, opacity: 0.7 } },
-              (status.keyPresent ? t('settings.embedding.keyPresent') : t('settings.embedding.keyAbsent'))
-                + (status.keyEnv ? ' (' + status.keyEnv + ')' : '')),
+              keyLabel + (status.keyEnv ? ' (' + status.keyEnv + ')' : '')),
             status.httpWarning === 'plain-http'
               ? el('span', { key: 'http', style: { fontSize: 11.5, color: 'var(--dsw-alias-label-warning, #b8860b)' } },
                 t('settings.embedding.plainHttp'))
@@ -1375,97 +1762,32 @@ window.__ModuleLoader__.load({
               ? el('span', { key: 'last-error', style: { fontSize: 11.5, color: 'var(--dsw-alias-label-warning, #b8860b)' } },
                 status.lastError)
               : null,
-            !snapshot.writable || shell.dirty
+            shell.dirty
               ? el('span', { key: 'saved', style: { fontSize: 11.5, opacity: 0.7 } }, t('settings.embedding.savedFirst'))
               : null,
-            remote ? el('div', { key: 'remote-actions', style: { display: 'flex', gap: 6, flexWrap: 'wrap' } }, [
-              el('button', { key: 'refresh', type: 'button', disabled: embeddingBusy || shell.dirty || !snapshot.writable, onClick: () => { void refreshEmbeddingStatus() } },
-                t('settings.embedding.refresh')),
-              el('button', { key: 'models', type: 'button', disabled: embeddingBusy || shell.dirty || !snapshot.writable, onClick: loadEmbeddingModels },
-                t('settings.embedding.loadModels')),
-              el('button', { key: 'probe', type: 'button', disabled: embeddingBusy || shell.dirty || !snapshot.writable, onClick: () => callEmbedding('/mc-embedding/probe') },
-                t('settings.embedding.probe')),
-              el('button', { key: 'start', type: 'button', disabled: embeddingBusy || shell.dirty || !snapshot.writable, onClick: () => callEmbedding('/mc-embedding/rebuild', 'start') },
-                t('settings.embedding.start')),
-              el('button', { key: 'pause', type: 'button', disabled: embeddingBusy || shell.dirty || !snapshot.writable, onClick: () => callEmbedding('/mc-embedding/rebuild', 'pause') },
-                t('settings.embedding.pause')),
-              el('button', { key: 'resume', type: 'button', disabled: embeddingBusy || shell.dirty || !snapshot.writable, onClick: () => callEmbedding('/mc-embedding/rebuild', 'resume') },
-                t('settings.embedding.resume')),
-              el('button', { key: 'rollback', type: 'button', disabled: embeddingBusy || shell.dirty || !snapshot.writable, onClick: () => {
-                callEmbedding('/mc-embedding/rebuild', 'disarm')
-                stage(fieldKey(['embedding', 'provider']), { clear: false, text: 'local' })
-                setEmbeddingMessage(t('settings.embedding.savedFirst'))
-              } }, t('settings.embedding.rollback')),
-            ]) : el('span', { key: 'off', style: { fontSize: 11.5, opacity: 0.7 } },
-              t(snapshot.value && snapshot.value.memory && snapshot.value.memory.enabled === false
-                ? 'settings.embedding.memoryOff'
-                : status.provider === 'off'
-                  ? 'settings.embedding.state.off'
-                  : 'settings.embedding.state.local')),
+            actionRow.length > 0
+              ? el('div', { key: 'remote-actions', style: { display: 'flex', gap: 6, flexWrap: 'wrap' } }, actionRow)
+              : null,
             embeddingModels.length > 0
               ? el('select', {
                 key: 'model-select',
                 'aria-label': t('settings.embedding.modelPlaceholder'),
+                value: currentModel,
                 onChange: (event) => {
                   if (event.target.value !== '') stage(fieldKey(['embedding', 'model']), { clear: false, text: event.target.value })
                 },
-              }, [el('option', { key: 'empty', value: '' }, t('settings.embedding.modelPlaceholder')), ...modelOptions])
+              }, [
+                el('option', { key: 'empty', value: '' }, t('settings.embedding.modelPlaceholder')),
+                ...(currentModel !== '' && !embeddingModels.includes(currentModel)
+                  ? [el('option', { key: 'current', value: currentModel }, currentModel)] : []),
+                ...modelOptions,
+              ])
               : null,
             embeddingMessage === '' ? null : el('span', { key: 'message', style: { fontSize: 11.5 } }, embeddingMessage),
           ])
         }
 
-        // Plain-control fallback for a module table without ui-primitives: the
-        // same staging and the same writes, only the chrome differs.
-        if (SettingsForm === undefined || SettingsValueField === undefined) {
-          const rows = FIELDS.map((spec) => {
-            const state = view(spec)
-            const id = 'mc-field-' + fieldKey(spec.path)
-            if (spec.kind === 'boolean') {
-              return el('div', { key: id, style: { margin: '6px 0' } }, [
-                el('input', {
-                  key: 'input',
-                  id,
-                  type: 'checkbox',
-                  checked: state.value,
-                  disabled: !shell.writable,
-                  onChange: (event) => stage(fieldKey(spec.path), { clear: false, bool: event.target.checked }),
-                }),
-                el('label', { key: 'label', htmlFor: id, style: { marginLeft: 6, fontSize: 12 } }, t(spec.labelKey)),
-              ])
-            }
-            if (spec.kind === 'route-provider' || spec.kind === 'route-model') {
-              return renderRouteField(spec, state, false)
-            }
-            if (spec.kind === 'effort') return renderEffortField(spec, state)
-            if (spec.kind === 'select') return renderSelectField(spec, state)
-            return el('div', { key: id, style: { margin: '6px 0' } }, [
-              el('label', { key: 'label', htmlFor: id, style: { display: 'block', fontSize: 12 } }, t(spec.labelKey)),
-              el('input', {
-                key: 'input',
-                id,
-                type: 'text',
-                value: state.text,
-                disabled: !shell.writable,
-                onChange: (event) => stage(fieldKey(spec.path), { clear: false, text: event.target.value }),
-              }),
-            ])
-          })
-          return el('div', { style: { display: 'grid', gap: 4, maxWidth: 520 } }, [
-            el('p', { key: 'unavailable', style: { margin: 0, fontSize: 12 } },
-              shell.available ? '' : labels.unavailable),
-            ...rows,
-            renderEmbeddingTools(),
-            el('button', {
-              key: 'save', type: 'button', disabled: !shell.dirty || shell.invalid || shell.saving || !shell.writable,
-              onClick: save,
-            }, shell.saving ? labels.saving : labels.save),
-            failed ? el('span', { key: 'failed', style: { color: 'var(--dsw-alias-label-error, #c33)', fontSize: 12 } },
-              labels.saveFailed) : null,
-          ])
-        }
-
-        const controls = FIELDS.map((spec) => {
+        const renderField = (spec) => {
           const state = view(spec)
           const id = 'mc-field-' + fieldKey(spec.path)
           if (spec.kind === 'boolean') {
@@ -1518,16 +1840,229 @@ window.__ModuleLoader__.load({
             onEdit: (text) => stage(fieldKey(spec.path), { clear: false, text }),
             onReset: () => stage(fieldKey(spec.path), { clear: true }),
           })
-        })
+        }
 
-        controls.push(renderEmbeddingTools())
+        const jumpTo = (id) => {
+          if (typeof document === 'undefined') return
+          const node = document.getElementById('mc-section-' + id)
+          if (node === null || typeof node.scrollIntoView !== 'function') return
+          const reduce = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+            && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          node.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' })
+        }
+
+        const summaryValue = (key, value, onClick) => el('div', {
+          key,
+          style: { display: 'grid', gap: 2, minWidth: 0 },
+        }, [
+          el('span', { key: 'label', style: { fontSize: 11, opacity: 0.7 } }, t(key)),
+          onClick === undefined
+            ? el('span', { key: 'value', style: { fontSize: 16, fontWeight: 600, fontVariantNumeric: 'tabular-nums' } }, value)
+            : el('button', {
+              key: 'value',
+              type: 'button',
+              onClick,
+              style: {
+                border: 0,
+                padding: 0,
+                background: 'transparent',
+                color: 'inherit',
+                textAlign: 'left',
+                font: 'inherit',
+                fontSize: 16,
+                fontWeight: 600,
+                fontVariantNumeric: 'tabular-nums',
+                cursor: 'pointer',
+              },
+            }, value),
+        ])
+
+        const renderSummary = () => {
+          const policyValue = summary.ready
+            ? t('settings.summary.policyValue', {
+              execute: summary.policy.execute || '—',
+              force: summary.policy.force || '—',
+            })
+            : '—'
+          const historianValue = summary.ready
+            ? t(summary.historian.enabled ? 'settings.summary.on' : 'settings.summary.off')
+              + (summary.historian.effort === '' ? '' : ' · ' + summary.historian.effort)
+            : '—'
+          const vectorValue = !summary.ready ? '—'
+            : summary.vector.kind === 'local' ? t('settings.summary.local')
+              : summary.vector.kind === 'off' ? t('settings.summary.off')
+                : summary.vector.kind === 'remote' ? (summary.vector.model || '—') : '—'
+          const coverageValue = summary.rebuild.covered !== null && summary.rebuild.total !== null
+            ? t('settings.summary.coverage', {
+              covered: String(summary.rebuild.covered),
+              total: String(summary.rebuild.total),
+            })
+            : ''
+          const rebuildValue = !summary.ready ? '—'
+            : summary.rebuild.local || summary.rebuild.state === 'remote-off'
+              ? t('settings.summary.notAvailable')
+              : summary.rebuild.state === '' ? '—'
+                : t(embeddingStateKey(summary.rebuild.state)) + (coverageValue === '' ? '' : ' · ' + coverageValue)
+          return el('div', {
+            key: 'mc-summary',
+            'data-mc-summary': 'true',
+            style: {
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+              gap: 10,
+              padding: '12px 16px',
+              border: '0.5px solid var(--dsw-alias-border-l2, rgba(127,127,127,.25))',
+              borderRadius: 'var(--dsw-radius-lg, 12px)',
+              background: 'var(--dsw-alias-bg-layer-3, transparent)',
+              margin: '4px 0 8px',
+            },
+          }, [
+            summaryValue('settings.summary.policy', policyValue),
+            summaryValue('settings.summary.historian', historianValue),
+            summaryValue('settings.summary.vector', vectorValue, () => jumpTo('embedding')),
+            summaryValue('settings.summary.rebuild', rebuildValue),
+          ])
+        }
+
+        const renderJumpRow = () => el('div', {
+          key: 'mc-jump-row',
+          'data-mc-jump-row': 'true',
+          style: { display: 'flex', gap: 10, overflowX: 'auto', padding: '4px 0 8px', borderBottom: '0.5px solid var(--dsw-alias-border-l2, rgba(127,127,127,.25))' },
+        }, sections.map((section) => el('button', {
+          key: section.id,
+          type: 'button',
+          onClick: () => jumpTo(section.id),
+          style: {
+            border: 0,
+            background: 'transparent',
+            color: 'inherit',
+            font: 'inherit',
+            fontSize: 12,
+            fontWeight: 600,
+            whiteSpace: 'nowrap',
+            cursor: 'pointer',
+            padding: '2px 0',
+          },
+        }, t(section.titleKey))))
+
+        const renderStatusStrip = () => {
+          const invalidCount = FIELDS.filter((spec) => view(spec).invalid).length
+          let text = t('settings.status.saved')
+          if (!shell.available) text = labels.unavailable
+          else if (failed) text = labels.saveFailed
+          else if (saving) text = t('settings.status.saving')
+          else if (embeddingState === 'remote-migrating') text = t('settings.status.busy')
+          else if (embeddingBusy) text = t('settings.status.working')
+          else if (invalidCount > 0) text = t('settings.status.invalid', { n: String(invalidCount) })
+          else if (shell.dirty) text = t('settings.status.dirty', { n: String(staged.size) })
+          return el('div', {
+            key: 'mc-status-strip',
+            'data-mc-status-strip': 'true',
+            role: 'status',
+            'aria-live': 'polite',
+            style: { padding: '8px 0', borderTop: '0.5px solid var(--dsw-alias-border-l2, rgba(127,127,127,.25))', fontSize: 11.5, opacity: 0.8 },
+          }, text)
+        }
+
+        const renderSection = (section) => {
+          const advanced = section.advanced.length > 0
+          const open = advanced && (advancedOpen[section.id] === true
+            || section.advanced.some((spec) => view(spec).invalid))
+          const fields = section.common.map(renderField)
+          const advancedFields = open ? section.advanced.map(renderField) : []
+          const chip = section.id === 'embedding' && embeddingStatus !== null
+            ? t(embeddingStateKey(embeddingStatus.state))
+            : null
+          return el('section', {
+            key: section.id,
+            id: 'mc-section-' + section.id,
+            'data-mc-section': section.id,
+            style: { padding: '16px 0', borderTop: '0.5px solid var(--dsw-alias-border-l2, rgba(127,127,127,.25))' },
+          }, [
+            el('div', { key: 'head', style: { display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8 } }, [
+              el('h3', { key: 'title', style: { margin: 0, fontSize: 14, fontWeight: 600 } }, t(section.titleKey)),
+              chip === null ? null : el('span', {
+                key: 'chip',
+                style: { fontSize: 11, border: '0.5px solid var(--dsw-alias-border-l2, rgba(127,127,127,.3))', borderRadius: 999, padding: '2px 8px', whiteSpace: 'nowrap' },
+              }, chip),
+            ]),
+            el('p', { key: 'desc', style: { margin: '4px 0 8px', fontSize: 11.5, opacity: 0.65 } }, t(section.descKey)),
+            el('fieldset', {
+              key: 'common',
+              disabled: !shell.writable,
+              style: { border: 0, padding: 0, margin: 0, minWidth: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))', columnGap: 12 },
+            }, fields),
+            section.id === 'embedding' ? renderEmbeddingTools() : null,
+            advanced ? el('button', {
+              key: 'advanced-toggle',
+              type: 'button',
+              'aria-expanded': open,
+              'aria-controls': 'mc-section-' + section.id + '-advanced',
+              'aria-label': t(open ? 'settings.section.advancedClose' : 'settings.section.advancedOpen'),
+              onClick: () => setAdvancedOpen((current) => ({ ...current, [section.id]: current[section.id] !== true })),
+              style: { border: 0, background: 'transparent', color: 'inherit', font: 'inherit', fontSize: 11.5, padding: '6px 0', cursor: 'pointer' },
+            }, t('settings.section.advanced')) : null,
+            advanced && open ? el('fieldset', {
+              key: 'advanced',
+              id: 'mc-section-' + section.id + '-advanced',
+              disabled: !shell.writable,
+              style: { border: '0.5px solid var(--dsw-alias-border-l2, rgba(127,127,127,.25))', borderRadius: 'var(--dsw-radius-md, 8px)', padding: '8px 10px', margin: '4px 0 0', minWidth: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))', columnGap: 12 },
+            }, advancedFields) : null,
+          ])
+        }
+
+        const renderConfirm = () => {
+          if (confirmAction === null) return null
+          const start = confirmAction.kind === 'start'
+          const titleKey = start ? 'settings.action.confirmStartTitle' : 'settings.action.confirmRollbackTitle'
+          const bodyKey = start ? 'settings.action.confirmStartBody' : 'settings.action.confirmRollbackBody'
+          return el('div', {
+            key: 'mc-confirm',
+            'data-mc-confirm-dialog': start ? 'start' : 'rollback',
+            style: { position: 'fixed', inset: 0, zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,.28)', padding: 16 },
+          }, el('div', {
+            role: 'dialog',
+            'aria-modal': 'true',
+            'aria-label': t(titleKey),
+            style: { width: 'min(420px, 100%)', display: 'grid', gap: 10, padding: 16, background: 'var(--dsw-alias-bg-layer-1, #fff)', border: '0.5px solid var(--dsw-alias-border-secondary, rgba(127,127,127,.35))', borderRadius: 'var(--dsw-radius-lg, 12px)' },
+          }, [
+            el('h4', { key: 'title', style: { margin: 0, fontSize: 14 } }, t(titleKey)),
+            el('p', { key: 'body', style: { margin: 0, fontSize: 12 } }, start
+              ? t(bodyKey, { count: String(confirmAction.count) })
+              : t(bodyKey)),
+            el('div', { key: 'actions', style: { display: 'flex', justifyContent: 'flex-end', gap: 8 } }, [
+              el('button', {
+                key: 'cancel',
+                type: 'button',
+                'data-mc-confirm-cancel': 'true',
+                onClick: () => setConfirmAction(null),
+              }, t('settings.action.cancel')),
+              el('button', {
+                key: 'ok',
+                type: 'button',
+                'data-mc-confirm-ok': 'true',
+                onClick: runConfirmed,
+              }, t('settings.action.confirm')),
+            ]),
+          ]))
+        }
+
+        if (SettingsForm === undefined || SettingsValueField === undefined) {
+          return el('div', { style: { fontSize: 12, padding: '8px 0' } }, t('settings.form.unavailable'))
+        }
 
         return el(SettingsForm, {
           labels,
           state: shell,
           onSave: save,
           onDiscard: discard,
-        }, controls)
+        }, [
+          renderSummary(),
+          renderJumpRow(),
+          ...sections.map(renderSection),
+          renderStatusStrip(),
+          renderConfirm(),
+        ])
       }
     }
 
@@ -2005,12 +2540,51 @@ window.__ModuleLoader__.load({
         // Slot labels (ledger rows the shell projects).
         // Settings card copy.
         'settings.summary.notReady': 'Magic Context 适配器设置',
-        'settings.summary.line': '执行 {execute}% · 强制 {force}% · Historian {historian}{routes}',
+        'settings.summary.line': '执行 {execute}% · 强制 {force}% · 历史摘要 {historian}{routes}',
         'settings.summary.route': ' · {kind} {provider}/{model}',
         'settings.summary.on': '开',
         'settings.summary.off': '关',
         'settings.summary.verify': '校验',
         'settings.summary.gen': '生成',
+        'settings.summary.policy': '回收策略',
+        'settings.summary.policyValue': '{execute}% / {force}%',
+        'settings.summary.historian': '历史摘要',
+        'settings.summary.vector': '向量空间',
+        'settings.summary.rebuild': '重建',
+        'settings.summary.unknown': '—',
+        'settings.summary.local': '本地',
+        'settings.summary.notAvailable': '未启用',
+        'settings.summary.coverage': '{covered}/{total}',
+        'settings.section.general.title': '常规',
+        'settings.section.general.desc': '决定什么时候开始回收、什么时候强制回收。',
+        'settings.section.historian.title': '历史摘要',
+        'settings.section.historian.desc': '用哪个模型写历史摘要、何时触发。',
+        'settings.section.journal.title': '日志',
+        'settings.section.journal.desc': '决定是否保留操作日志、保留多久。',
+        'settings.section.embedding.title': '向量检索',
+        'settings.section.embedding.desc': '本地优先；远程提供商需要显式开始重建。',
+        'settings.section.maintenance.title': '维护与诊断',
+        'settings.section.maintenance.desc': '维护校验路由、压缩引擎开关和完整诊断入口。',
+        'settings.section.advanced': '高级',
+        'settings.section.advancedOpen': '展开高级设置',
+        'settings.section.advancedClose': '收起高级设置',
+        'settings.status.saved': '已保存',
+        'settings.status.dirty': '{n} 项未保存',
+        'settings.status.invalid': '{n} 项无效',
+        'settings.status.saving': '保存中…',
+        'settings.status.busy': '迁移中，暂停后可保存',
+        'settings.status.working': '处理中…',
+        'settings.status.failed': '保存失败',
+        'settings.action.saveAndLoad': '保存并加载模型',
+        'settings.action.saveAndTest': '保存并测试',
+        'settings.action.confirmStartTitle': '开始重建向量？',
+        'settings.action.confirmStartBody': '这会重新计算 {count} 条记忆，可能产生 API 费用。',
+        'settings.action.confirmRollbackTitle': '回滚到本地？',
+        'settings.action.confirmRollbackBody': '远程向量会保留；在本地重建完成前，检索可能只覆盖部分记忆。',
+        'settings.action.confirm': '确认',
+        'settings.action.cancel': '取消',
+        'settings.embedding.rollbackPending': '待保存回滚',
+        'settings.embedding.rollbackDone': '已回滚到本地',
         'settings.form.unavailable': '此部署未提供 Magic Context 设置。',
         'settings.form.readOnly': '此部署以只读方式保存设置。',
         'settings.form.saveFailed': '宿主没有接受本次保存；下面的值仍未保存。',
@@ -2029,7 +2603,7 @@ window.__ModuleLoader__.load({
         'settings.effort.custom': '自定义…',
         'settings.effort.customCurrent': '自定义（{value}）',
         'settings.effort.customPlaceholder': '输入 effort id',
-        'settings.effort.autoHint': '固定 Historian provider 与 model 后，可从模型公布的 effort 列表中选择。',
+        'settings.effort.autoHint': '固定历史摘要提供商与模型后，可从模型公布的 effort 列表中选择。',
         'settings.effort.noneHint': '该模型未公布 reasoning effort；留空使用模型默认值。',
         'settings.effort.unknownHint': '该 id 不在当前模型目录中；在你修改前会保留。',
         'settings.field.embedding.provider.label': '向量提供方',
@@ -2069,6 +2643,7 @@ window.__ModuleLoader__.load({
         'settings.embedding.savedFirst': '先保存当前修改，再执行远程操作。',
         'settings.embedding.keyPresent': 'API Key：已配置',
         'settings.embedding.keyAbsent': 'API Key：未配置',
+        'settings.embedding.noAuth': 'API Key：无需认证',
         'settings.embedding.loadModels': '加载模型',
         'settings.embedding.refresh': '刷新',
         'settings.embedding.probe': '测试连接',
@@ -2082,6 +2657,7 @@ window.__ModuleLoader__.load({
         'settings.embedding.coverage': '{covered}/{total} 条可检索记忆',
         'settings.embedding.coverageUnknown': '覆盖未知',
         'settings.embedding.dimensionUnknown': '维度未知',
+        'settings.embedding.dimensions': '{value} 维',
         'settings.embedding.memoryOff': '记忆功能已关闭；向量检索不会运行。',
         'settings.embedding.plainHttp': '该端点使用明文 HTTP，且不是本机/私网；请谨慎使用。',
         'settings.embedding.state.local': '本地模型',
@@ -2118,25 +2694,25 @@ window.__ModuleLoader__.load({
         'settings.field.policy.memoryBudgetTokens.hint': '召回记忆块可使用的 token 预算。',
         'settings.field.policy.memoryLimit.label': '记忆行上限',
         'settings.field.policy.memoryLimit.hint': '每次 pass 最多召回的共享记忆行数。',
-        'settings.field.journal.retentionDays.label': 'Journal 保留天数',
-        'settings.field.journal.retentionDays.hint': 'Journal 行的保留时长。修改后会重新清理（最少 1 天）。',
-        'settings.field.historianEnabled.label': 'Historian 启用',
-        'settings.field.historianEnabled.hint': '运行带外 Historian。',
+        'settings.field.journal.retentionDays.label': '日志保留天数',
+        'settings.field.journal.retentionDays.hint': '日志行的保留时长。修改后会重新清理（最少 1 天）。',
+        'settings.field.historianEnabled.label': '历史摘要启用',
+        'settings.field.historianEnabled.hint': '运行带外历史摘要。',
         'settings.field.registerCompactionEngine.label': '注册压缩引擎',
         'settings.field.registerCompactionEngine.hint': '把适配器注册为压缩引擎 seam；在 DSH Web 和桌面端都无效。只对 flat/headless profile 生效，且必须先停用该组合的根 compaction-basic 行；Web 与桌面端的每个 agent preset 自带 compaction 引擎，本开关不会替换它。下一次 agent step 挂载或卸载。',
-        'settings.field.maintenance.verifyProvider.label': '校验 provider',
-        'settings.field.maintenance.verifyProvider.hint': '维护校验通道使用的 provider。“Auto” 表示不固定，跟随会话路由。',
+        'settings.field.maintenance.verifyProvider.label': '校验提供商',
+        'settings.field.maintenance.verifyProvider.hint': '维护校验通道使用的提供商。“Auto” 表示不固定，跟随会话路由。',
         'settings.field.maintenance.verifyModel.label': '校验模型',
-        'settings.field.maintenance.verifyModel.hint': '维护校验通道使用的模型。同时设置 provider 和 model 才会固定；“Auto” 跟随会话路由。',
-        'settings.field.historian.provider.label': 'Historian provider',
-        'settings.field.historian.provider.hint': 'Historian 与 /compact 摘要使用的 provider。“Auto” 跟随会话路由（推荐）。',
-        'settings.field.historian.model.label': 'Historian 模型',
-        'settings.field.historian.model.hint': 'Historian 与 /compact 摘要使用的模型。两半都设置才会固定；“Auto” 跟随会话路由。',
-        'settings.field.historian.reasoningEffort.label': 'Historian 推理强度',
+        'settings.field.maintenance.verifyModel.hint': '维护校验通道使用的模型。同时设置提供商和模型才会固定；“Auto” 跟随会话路由。',
+        'settings.field.historian.provider.label': '历史摘要提供商',
+        'settings.field.historian.provider.hint': '历史摘要与 /compact 摘要使用的提供商。“Auto” 跟随会话路由（推荐）。',
+        'settings.field.historian.model.label': '历史摘要模型',
+        'settings.field.historian.model.hint': '历史摘要与 /compact 摘要使用的模型。两半都设置才会固定；“Auto” 跟随会话路由。',
+        'settings.field.historian.reasoningEffort.label': '历史摘要推理强度',
         'settings.field.historian.reasoningEffort.hint': '路由模型公布的 effort id（例如 off/low/high/max）；留空使用模型默认值。',
-        'settings.field.journal.enabled.label': 'Journal 启用',
+        'settings.field.journal.enabled.label': '日志启用',
         'settings.field.journal.enabled.hint': '记录适配器活动。关闭立即生效；从关闭状态开启需要重启应用。',
-        'settings.field.journal.mirror.label': 'Journal 文本镜像',
+        'settings.field.journal.mirror.label': '日志文本镜像',
         'settings.field.journal.mirror.hint': '同时写单行活动镜像文件。仅对修改后写入的条目生效。',
         'title': 'Magic Context',
         'label.telemetry': 'Magic Context 遥测',
@@ -2270,6 +2846,45 @@ window.__ModuleLoader__.load({
         'settings.summary.off': 'off',
         'settings.summary.verify': 'verify',
         'settings.summary.gen': 'gen',
+        'settings.summary.policy': 'Reclaim policy',
+        'settings.summary.policyValue': '{execute}% / {force}%',
+        'settings.summary.historian': 'Historian',
+        'settings.summary.vector': 'Vector space',
+        'settings.summary.rebuild': 'Rebuild',
+        'settings.summary.unknown': '—',
+        'settings.summary.local': 'Local',
+        'settings.summary.notAvailable': 'Not enabled',
+        'settings.summary.coverage': '{covered}/{total}',
+        'settings.section.general.title': 'General',
+        'settings.section.general.desc': 'Decide when reclaim starts and when it becomes unconditional.',
+        'settings.section.historian.title': 'Historian',
+        'settings.section.historian.desc': 'Choose the summary route, effort and trigger limits.',
+        'settings.section.journal.title': 'Journal',
+        'settings.section.journal.desc': 'Keep the activity journal and its text mirror.',
+        'settings.section.embedding.title': 'Embedding search',
+        'settings.section.embedding.desc': 'Local first; a remote provider needs an explicit rebuild start.',
+        'settings.section.maintenance.title': 'Maintenance and diagnostics',
+        'settings.section.maintenance.desc': 'Verify route, compaction switch and the full diagnostic entry.',
+        'settings.section.advanced': 'Advanced',
+        'settings.section.advancedOpen': 'Expand advanced settings',
+        'settings.section.advancedClose': 'Collapse advanced settings',
+        'settings.status.saved': 'Saved',
+        'settings.status.dirty': '{n} unsaved',
+        'settings.status.invalid': '{n} invalid',
+        'settings.status.saving': 'Saving…',
+        'settings.status.busy': 'Migrating; pause before saving',
+        'settings.status.working': 'Working…',
+        'settings.status.failed': 'Save failed',
+        'settings.action.saveAndLoad': 'Save and load models',
+        'settings.action.saveAndTest': 'Save and test',
+        'settings.action.confirmStartTitle': 'Start embedding rebuild?',
+        'settings.action.confirmStartBody': 'This sends {count} memories to the endpoint and may cost quota.',
+        'settings.action.confirmRollbackTitle': 'Roll back to local?',
+        'settings.action.confirmRollbackBody': 'Remote vectors are kept; search may be partial until the local rebuild completes.',
+        'settings.action.confirm': 'Confirm',
+        'settings.action.cancel': 'Cancel',
+        'settings.embedding.rollbackPending': 'Rollback pending save',
+        'settings.embedding.rollbackDone': 'Rolled back to local',
         'settings.form.unavailable': 'Magic Context settings are not served by this deployment.',
         'settings.form.readOnly': 'This deployment stores settings read-only.',
         'settings.form.saveFailed': 'The Host did not accept the save; the values below are unsaved.',
@@ -2328,6 +2943,7 @@ window.__ModuleLoader__.load({
         'settings.embedding.savedFirst': 'Save the current edits before using remote actions.',
         'settings.embedding.keyPresent': 'API key: configured',
         'settings.embedding.keyAbsent': 'API key: not configured',
+        'settings.embedding.noAuth': 'API key: not required',
         'settings.embedding.loadModels': 'Load models',
         'settings.embedding.refresh': 'Refresh',
         'settings.embedding.probe': 'Test connection',
@@ -2341,6 +2957,7 @@ window.__ModuleLoader__.load({
         'settings.embedding.coverage': '{covered}/{total} searchable memories',
         'settings.embedding.coverageUnknown': 'coverage unknown',
         'settings.embedding.dimensionUnknown': 'dimensions unknown',
+        'settings.embedding.dimensions': '{value} dims',
         'settings.embedding.memoryOff': 'Memory is disabled; embedding search will not run.',
         'settings.embedding.plainHttp': 'This endpoint uses plain HTTP and is not local/private; use with care.',
         'settings.embedding.state.local': 'local model',
@@ -3511,31 +4128,14 @@ window.__ModuleLoader__.load({
         const scope = settingsCtx.configForms.get(CFG_NS)
         const Card = makeCard(scope, catalog)
         settingsCtx.effect(() => settingsCtx.configForms.whileServed([CFG_NS], () => {
-          const offSection = ctx.slots.inject('settings.section', () => ctx.slots.register({
-            name: 'settings.section',
+          const offSection = ctx.slots.inject(SETTINGS_SEAT, () => ctx.slots.register({
+            name: SETTINGS_SEAT,
             id: 'magic-context',
             order: 30,
             label: () => t('title'),
             locale: LOCALE_NS,
           }, Card))
-          const offItem = ctx.slots.inject('plugins.item', () => ctx.slots.register({
-            name: 'plugins.item',
-            id: CFG_NS,
-            order: 20,
-            label: () => t('title'),
-            locale: LOCALE_NS,
-          }, Card))
-          const offRow = ctx.slots.inject('plugins.row.config', () => ctx.slots.register({
-            name: 'plugins.row.config',
-            key: ROW_CONFIG_KEY,
-            order: 20,
-            locale: LOCALE_NS,
-          }, Card))
-          return () => {
-            offSection()
-            offItem()
-            offRow()
-          }
+          return offSection
         }), 'magic-context: settings card')
       })
     }
@@ -3553,7 +4153,7 @@ window.__ModuleLoader__.load({
       __diagnostics: {
         recordOf, recordsOf, recordCounts, noiseLine, dictionaryKeys, dictionaryTranslator, dictionaries: DICTIONARIES,
         // Package identity (the client module id and the row-config key).
-        PKG_NAME, ROW_CONFIG_KEY,
+        PKG_NAME, settingsSeats: [SETTINGS_SEAT],
         // The category table the panel renders from. Exposed so node-side checks
         // use THIS table instead of a hand-copied mirror — the mirror had
         // already drifted (`maintain` was missing) and the records-check script
@@ -3566,6 +4166,7 @@ window.__ModuleLoader__.load({
         /** Settings copy + catalog-backed effort picker helpers. */
         settingsCopyKeys, reasoningEffortsOf, effortSelectionOf, effortPlanOps, effortDraftOf,
         EFFORT_CUSTOM_SENTINEL, fieldSpecs: FIELDS,
+        fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingStateKeys: EMBEDDING_STATE_KEYS,
         // The number/text formatters are the panel's display contract; the
         // node-side spec pins them so a formatting regression (the scope bug
         // that briefly unmounted the pill) cannot come back silently.

@@ -1,0 +1,131 @@
+{
+  "algorithm": "sha256",
+  "root": "acceptance-windows-dsh-2026-11-17-settings-redesign",
+  "entries": [
+    {
+      "path": "acceptance-report.md",
+      "bytes": 4306,
+      "sha256": "4d8bf497365f925fc908affa698cd1a9db1cebe01fa3bddc955794337bdd4e8b"
+    },
+    {
+      "path": "evidence/embedding-requests.jsonl",
+      "bytes": 260,
+      "sha256": "c7c7a4eb4dbbbfc1800f3550e24bb3d88fbd5ca047e88ce896c4208cdc76b529"
+    },
+    {
+      "path": "evidence/fake-server-state.json",
+      "bytes": 124,
+      "sha256": "a8fbdf00ac31d8706a58c7c050a9e8c9e92649e862f7feb1cdbf3e73acd00bf8"
+    },
+    {
+      "path": "evidence/host-version.json",
+      "bytes": 625,
+      "sha256": "167761283c5a9ba5b98120e51f10306ad753e89ee9eafa6a14b27ffb715209bf"
+    },
+    {
+      "path": "evidence/host-version.txt",
+      "bytes": 187,
+      "sha256": "97b8f9fdd4ff65d5c1ee4a4dd7002c9509c98419b365da89857574a9b5635c7c"
+    },
+    {
+      "path": "evidence/prepare.json",
+      "bytes": 894,
+      "sha256": "150772a37b995bacc35c7443d1bc0c2e19ce747fac982a1a1e23668c80f763d8"
+    },
+    {
+      "path": "evidence/secret-scan.txt",
+      "bytes": 192,
+      "sha256": "059167c116a99d2bacb191af49725b8f80e0fb72a280ca9b674094cf0eec1ac7"
+    },
+    {
+      "path": "evidence/seed-corpus.json",
+      "bytes": 166,
+      "sha256": "2e02d24b4bdf3f492bfc50b4a573cb78cf3b7638d6a684e79a05ce511a4b6de5"
+    },
+    {
+      "path": "evidence/server-log.txt",
+      "bytes": 49,
+      "sha256": "1f0bba062161d79e7a9aa6dfc0d06f573b5ab5ea420f0e8e57d0489000628067"
+    },
+    {
+      "path": "evidence/server-redacted.json",
+      "bytes": 420,
+      "sha256": "c9c4acc9b3d574ea9226f986a19585a16ad630ea35a2857b0cd9aced65daea17"
+    },
+    {
+      "path": "evidence/ui-gate.json",
+      "bytes": 15499,
+      "sha256": "ceb2b935fafb730d7be7fa03c6f82f9f7d59daec0bee9585f4c16ba2ee3d599d"
+    },
+    {
+      "path": "fake_embedding_server.py",
+      "bytes": 3882,
+      "sha256": "d0992a72496732ddc2175944b7ff4351b3426ffae477acf04b338749f21a6680"
+    },
+    {
+      "path": "prepare_t21_host.py",
+      "bytes": 7798,
+      "sha256": "49cc9ba0b1541eefe2ef81f5b48d9d77253955aac9746ef52bc5e3842fab88ca"
+    },
+    {
+      "path": "REPRODUCE.md",
+      "bytes": 2872,
+      "sha256": "a7b298f1b4b583ed5401b90fa2a82b00778b6ed4e55642d46f1624126d5a5ee3"
+    },
+    {
+      "path": "run_t21_host.py",
+      "bytes": 5008,
+      "sha256": "31c18a84e25ecd2ae4907fb1ecbc0dc20766736e7dcf552c1ee9b435ae48f8bf"
+    },
+    {
+      "path": "scan_t21_secrets.py",
+      "bytes": 1822,
+      "sha256": "2630937828cee5b3e4670124fea6ab95f336bf02e6df862533a629c1667da1c1"
+    },
+    {
+      "path": "screenshots/01-summary-zh.png",
+      "bytes": 90646,
+      "sha256": "f3a1c8ee8a2f923a9d9379973e3f24f39013a39a510446e2b31750938a567b22"
+    },
+    {
+      "path": "screenshots/02-probed-zh.png",
+      "bytes": 91731,
+      "sha256": "eab67ae1955680c3110d40cca0d65606c0aa0a103c9ff2bdedbf7be2b7eb14d3"
+    },
+    {
+      "path": "screenshots/03-migrating-zh.png",
+      "bytes": 91838,
+      "sha256": "8b02ca8bd37f0eaf3d3b83bc71e47f59ee0ddf6b32b839d7067361a830f87a70"
+    },
+    {
+      "path": "screenshots/04-rollback-zh.png",
+      "bytes": 88859,
+      "sha256": "9df52b85bd5a53b161759c4d58e42a22803c69335fce25f4f52c1e6ed26945db"
+    },
+    {
+      "path": "screenshots/05-summary-en.png",
+      "bytes": 93420,
+      "sha256": "ca6bb3ed4b6332a9ad5f5b1a3b2dd4ed1d0185364a5e733e6be50f0077f02877"
+    },
+    {
+      "path": "screenshots/06-narrow-en.png",
+      "bytes": 63714,
+      "sha256": "2b806793e6fbca40810b83114cde1d8561e3069a8666178e759e3d045ff5243e"
+    },
+    {
+      "path": "seed_t21_corpus.py",
+      "bytes": 2256,
+      "sha256": "1eecd2530826ed8ab86a59be79f071220a6028c0b8addf6fc1b9e3d0d31b82eb"
+    },
+    {
+      "path": "t21_ui_gate.cjs",
+      "bytes": 13620,
+      "sha256": "6c597df065d5e5dd8d2d7f4969d92e56425d44c38e6106d6d330e80cc20658df"
+    },
+    {
+      "path": "write_manifest.py",
+      "bytes": 1067,
+      "sha256": "2f417da01effbb0614e0f767b3164d18134cc24ca70c865e1b8e2f39fe50a3e3"
+    }
+  ]
+}

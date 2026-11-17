@@ -74,8 +74,9 @@ version hot-loads. In your next session:
 - Tool results carry `§N§` tags; a **telemetry badge** appears in the overlay showing live
   context occupancy, with a panel of host token composition, estimated message breakdown,
   localized sections and an operation record behind it.
-- A **Settings → Magic Context** page edits the options the card exposes; the same card is still
-  available on the GUI Plugins page as the legacy location/fallback.
+- A **Settings → Magic Context** page edits the options the card exposes. The legacy
+  Plugins-page card is removed; a host without the `settings.section` slot has no
+  Magic Context configuration card.
 - The `ctx_reduce` / `ctx_expand` / `ctx_memory` tools are registered for the agent;
   project memory is **on by default** — facts distilled by the historian persist across
   sessions and surface where the model reads them.
@@ -113,7 +114,7 @@ last five manage the context window (full design in [Architecture](#architecture
 | **Pressure scheduling** | Persistent usage (incl. cache reads/writes) → pressure score → execute/defer decisions (65% threshold, 5 min cache TTL, 85% force band); `CONTEXT_WINDOW_EXCEEDED` triggers emergency reclaim + retry; tiered reduce-guidance nudges |
 | **Historian (out-of-band digest)** | One LLM call replays the real prefix (KV cache preserved) → four-tier p1–p4 summary + facts/events, **writes the store only, never touches the wire**; published in the execute band as a `[compacted §C<n>§]` range replacement; `/ctx-recomp` redoes compacted history in place |
 | **Compaction seam** | `registerCompactionEngine` can take over root `ctx.compaction` (real `compaction/start\|summary\|replace\|end` protocol); **off by default** — the host compaction-basic (root or preset) stays in place. **Flat/headless only**: in DSH 0.2.2-rc.1, Web and Desktop agent presets mount their own compaction engine, so this switch does not replace a preset engine |
-| **UI integration** | Top-level **Settings → Magic Context** page plus the legacy Plugins-page card (volatile fields, save = live); catalog-backed Historian reasoning-effort picker; `shell.overlay` telemetry badge + capsule panel (host token composition, estimated message breakdown, localized sections, operation record); `session-notice` rows in the session stream; Chinese/English instant switching for card labels and panel section/empty-state copy (operation detail values stay as recorded) |
+| **UI integration** | Top-level **Settings → Magic Context** page (the legacy Plugins-page card is removed; volatile fields, save = live); catalog-backed Historian reasoning-effort picker; `shell.overlay` telemetry badge + capsule panel (host token composition, estimated message breakdown, localized sections, operation record); `session-notice` rows in the session stream; Chinese/English instant switching for card labels and panel section/empty-state copy (operation detail values stay as recorded) |
 
 ## Installation
 
@@ -280,16 +281,16 @@ Slash commands (`registerStatusCommand: false` disables this command surface):
 Both UI capabilities ride the same browser half (`src/client/index.js`, copied verbatim to
 `lib/client.js` at build time):
 
-- **Settings → Magic Context** (top-level Settings page): visual editing of the volatile
-  config above; saving takes effect immediately (see "Configuration"). The same card stays
-  on the Plugins page as the legacy location and fallback for hosts without the
-  `settings.section` slot.
+- **Settings → Magic Context** (top-level Settings page): a five-section layout with a
+  four-metric summary, jump row, advanced disclosures and a text-only status strip above
+  the host footer. Volatile options are saved through the host footer. The legacy
+  Plugins-page card is removed; a host without the `settings.section` slot has no card.
 
-  ![Magic Context page in DSH Settings — execute/force thresholds, assumed window, reclaim TTL, protected results, historian nodes and token caps](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-top.png)
+  ![Magic Context page in DSH Settings — four-metric summary, five section jump row, and the two-column General section](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-top.png)
 
-  ![Lower part of the Magic Context Settings page — journal retention, verify/historian routes, catalog-backed reasoning effort picker, journal switches](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-bottom.png)
+  ![Lower part of the Magic Context Settings page — vector actions, migration status and Maintenance and diagnostics](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-bottom.png)
 
-  ![Vector search section — provider/preset, endpoint, auth header, model ID, API-key environment variable, probed dimensions, timeouts and batch size, with Load models / Probe / Start rebuild / Pause / Resume / Roll back](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-embedding.png)
+  ![Vector search section — provider/preset, endpoint, auth header, model ID, API-key environment variable, probed dimensions, timeouts and batch size, with Load models / Probe / Start rebuild / Pause / Resume / Roll back](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-embedding.png)
 
 - **`shell.overlay` telemetry badge + capsule panel**: the collapsed pill keeps the live
   pressure, token pair, Historian state and reclaim queue (`H` / `Q<n>`) visible, and
@@ -425,7 +426,7 @@ Chinese and a few are English.
 ### Current documentation maintained by this fork
 
 - [Magic Context Settings UI contract](docs/dsh-plugin-settings-ui-contract.md) (English) — the
-  current top-level Settings page, Plugins fallback, zh/en copy, and catalog-backed effort picker.
+  current top-level Settings page, zh/en copy, and catalog-backed effort picker.
 - [Operations runbook](docs/dsh-plugin-operations-runbook-2026-10-10.md) — daily/weekly checks,
   thresholds, recovery, and backup commands.
 - [Upgrade follow-up](docs/dsh-plugin-upgrade-followup.md) — the current re-alignment procedure.
@@ -527,9 +528,9 @@ Differences from upstream `0.11.2`, accumulated through `0.15.0`:
 - **Tag retention**: the mount-time 30-day tag prune, the `tags.retentionDays` config, and
   `AdapterStores.pruneTags` are removed. An old profile's key is kept but ignored, with at most one warning
   per process.
-- **Settings UI**: the plugin registers a top-level `settings.section` (Magic Context) with
-  zh/en copy and a catalog-backed Historian reasoning-effort picker; the card on the GUI Plugins
-  page remains as the legacy location/fallback.
+- **Settings UI**: the plugin registers only a top-level `settings.section` (Magic Context)
+  with zh/en copy and a catalog-backed Historian reasoning-effort picker. The legacy GUI
+  Plugins-page card is removed; a host without `settings.section` has no card.
 - **Telemetry v2**: the overlay pill keeps pressure, the token pair, Historian state and queue
   visible; the panel adds a 100% host token composition bar, an estimated message breakdown,
   Historian/Memory/Queue/Maintenance/Hygiene/Warnings sections, and localized chrome. Missing

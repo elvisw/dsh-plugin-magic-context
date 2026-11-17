@@ -44,7 +44,7 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 
 - 工具结果带上 `§N§` 标签；overlay 里出现**遥测徽标**，显示实时上下文占用，点开是
   宿主 token 构成、估算消息构成、中英分区与操作记录。
-- 「设置 → Magic Context」顶层设置页可编辑卡片列出的 volatile 选项；同一张卡片仍保留在 GUI「插件」页，作为旧位置与缺少 `settings.section` 槽位时的回退。
+- 「设置 → Magic Context」顶层设置页可编辑卡片列出的 volatile 选项。GUI「插件」页的旧卡片已移除；宿主若没有 `settings.section` 槽位，将不再有 Magic Context 配置入口。
 - `ctx_reduce` / `ctx_expand` / `ctx_memory` 三个工具已注册；项目记忆**默认开启**——
   historian 提炼的事实跨会话沉淀，注入模型读取的位置。
 
@@ -78,7 +78,7 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 | **压力调度** | 持久 usage（含 cache 读写）→ 压力分 → execute/defer 决策（65% 阈值、5 min cache TTL、85% 强制带）；`CONTEXT_WINDOW_EXCEEDED` 触发紧急回收 + retry；reduce-guidance 分级引导 |
 | **historian（带外摘要）** | 一次 LLM 调用重放真前缀（保 KV cache）→ 四层摘要 p1–p4 + facts/events，**只写 store 不动线缆**；execute 带内发布为 `[compacted §C<n>§]` 范围替换；`/ctx-recomp` 原地重做已压缩历史 |
 | **压缩接缝** | `registerCompactionEngine` 可接管 `ctx.compaction`（真实 `compaction/start\|summary\|replace\|end` 协议）；**默认关**，宿主 compaction-basic（根或 preset）保持原位。**仅 flat/headless**：在 DSH 0.2.2-rc.1 中，DSH Web 与桌面端的 agent preset 自己挂载压缩引擎，本开关不会替换 preset 引擎 |
-| **界面集成** | 顶层「设置 → Magic Context」页 + 旧「插件」页卡片（volatile 字段保存即生效）；catalog-backed Historian 推理强度选择器；`shell.overlay` 遥测徽标 + 胶囊面板（宿主 token 构成、估算消息构成、中英分区、操作记录）；`session-notice` 会话流提示；卡片文案与面板分区/空状态中英即时切换（操作明细保持记录原文） |
+| **界面集成** | 顶层「设置 → Magic Context」页（旧「插件」页卡片已移除；volatile 字段保存即生效）；catalog-backed Historian 推理强度选择器；`shell.overlay` 遥测徽标 + 胶囊面板（宿主 token 构成、估算消息构成、中英分区、操作记录）；`session-notice` 会话流提示；卡片文案与面板分区/空状态中英即时切换（操作明细保持记录原文） |
 
 ## 安装
 
@@ -217,13 +217,13 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
 
 两个界面能力都靠同一个浏览器半侧（`src/client/index.js`，构建时原样拷为 `lib/client.js`）：
 
-- **「设置 → Magic Context」顶层设置页**：上文 volatile 配置项的可视化编辑，保存即生效（见“配置”一节）。同一张卡片保留在「插件」页，作为旧位置与没有 `settings.section` 槽位时的回退。
+- **「设置 → Magic Context」顶层设置页**：五个分区、四项摘要、跳转行、高级折叠，以及宿主底栏上方的纯文本状态条；上文 volatile 配置项的可视化编辑，保存即生效（见“配置”一节）。旧「插件」页卡片已移除；宿主若没有 `settings.section` 槽位，将不再有配置入口。
 
-  ![DSH 设置页顶层的 Magic Context 页面——执行/强制阈值、假定窗口、回收 TTL、保护条数、historian 节点数与 token 上限](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-top.png)
+  ![DSH 设置页顶层的 Magic Context 页面——四项摘要、五分区跳转行与两列常规分区](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-top.png)
 
-  ![Magic Context 设置页下半部——journal 保留天数、verify/historian 路由、catalog-backed 推理强度选择器、journal 开关](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-bottom.png)
+  ![Magic Context 设置页下半部——向量检索动作、迁移状态与维护诊断](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-bottom.png)
 
-  ![向量检索分区——向量提供方/服务预设、接口地址、认证头、模型 ID、API Key 环境变量、探测维度、超时与批大小，以及加载模型/测试连接/开始重建/暂停/继续/回滚到本地](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-embedding.png)
+  ![向量检索分区——向量提供方/服务预设、接口地址、认证头、模型 ID、API Key 环境变量、探测维度、超时与批大小，以及加载模型/测试连接/开始重建/暂停/继续/回滚到本地](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-embedding.png)
 
 - **`shell.overlay` 遥测徽标 + 胶囊面板**：收起态保留实时压力、token 对、Historian 状态与回收队列
   （`H` / `Q<n>`）；composer 变窄时切换成图标宽度变体。面板里是：
@@ -331,7 +331,7 @@ src/
 ### 本 fork 维护的当前文档
 
 - [Magic Context 设置界面契约](docs/dsh-plugin-settings-ui-contract.md)（英文）——当前顶层设置页、
-  Plugins 回退入口、中英文案与 catalog-backed effort 选择器。
+  中英文案与 catalog-backed effort 选择器。
 - [运维手册](docs/dsh-plugin-operations-runbook-2026-10-10.md)——每日/每周检查、阈值、故障处置与备份命令。
 - [升级跟随](docs/dsh-plugin-upgrade-followup.md)——当前重新对齐流程；§1 是 v0.49.30 历史基线，
   **不**代表已经完成 v0.49.55 parity。
@@ -413,7 +413,7 @@ typecheck → test → build → check:i18n。
 - **手动 flush**：新增 `/ctx-flush`，只把当前会话已 pending 的 drop 标记为下一次 preStep 落地；不启动 Historian、recomp、摘要或模型调用。
 - **持久 drop 状态**：`ctx_reduce`/`ctx_expand` 以 `pending_drops` 的 `none`/`pending`/`landed` 状态判定，而不是依赖当前 surface 上是否还有占位符；旧 tag 在 restore 后不会再显示假的 “Queued”。
 - **tag 保留策略**：移除挂载时的 30 天 tag prune、`tags.retentionDays` 配置与 `AdapterStores.pruneTags`；旧 profile 里的该键保留但被忽略，且每进程最多告警一次。
-- **设置界面**：插件注册顶层 `settings.section`（Magic Context），字段文案与选择器支持中英文，Historian 推理强度从当前模型 catalog 读取；GUI「插件」页卡片保留为旧位置与回退。
+- **设置界面**：插件只注册顶层 `settings.section`（Magic Context），字段文案与选择器支持中英文，Historian 推理强度从当前模型 catalog 读取；GUI「插件」页卡片已移除，缺少 `settings.section` 的旧宿主不再有配置入口。
 - **遥测 v2**：胶囊保留压力、token 对、Historian 状态与回收队列；面板新增 100% 宿主 token 构成条、估算消息构成、Historian/记忆/队列/维护/可回收/警告分区，分区与空状态文案本地化。宿主没上报的值显示 `—` / `空` / `尚未运行`，不伪造 0。
 - **schema 与包名**：插件数据库升到 v11（`pending_drops.flush_requested`，v10 自动迁移）；npm 包名在 `0.12.x` 为
   `@elvisw/dsh-plugin-magic-context`，`0.13.0` 改为 `@elvisw/dsh-magic-context`，但 loader row id

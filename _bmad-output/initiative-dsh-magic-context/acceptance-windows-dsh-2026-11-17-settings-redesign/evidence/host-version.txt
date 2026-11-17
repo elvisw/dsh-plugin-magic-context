@@ -1,0 +1,6 @@
+dsh 0.2.2-rc.1
+node 24.21.0
+plugin @elvisw/dsh-magic-context@0.15.0
+tarball_sha256 5454554bf51e7d7c0b3a19e9e34fa2f95064c4ed97f4fe0d1b1a650080d950f0
+tarball_bytes 4054369
+tarball_files 68

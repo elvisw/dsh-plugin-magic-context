@@ -1,0 +1,389 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t21-20261117-101827",
+  "steps": [
+    {
+      "name": "chinese-locale",
+      "at": "2026-11-17T02:18:49.397Z",
+      "ok": true
+    },
+    {
+      "name": "visible-回收策略",
+      "at": "2026-11-17T02:18:49.397Z",
+      "ok": true
+    },
+    {
+      "name": "visible-历史摘要",
+      "at": "2026-11-17T02:18:49.397Z",
+      "ok": true
+    },
+    {
+      "name": "visible-向量空间",
+      "at": "2026-11-17T02:18:49.397Z",
+      "ok": true
+    },
+    {
+      "name": "visible-重建",
+      "at": "2026-11-17T02:18:49.397Z",
+      "ok": true
+    },
+    {
+      "name": "visible-常规",
+      "at": "2026-11-17T02:18:49.398Z",
+      "ok": true
+    },
+    {
+      "name": "visible-日志",
+      "at": "2026-11-17T02:18:49.398Z",
+      "ok": true
+    },
+    {
+      "name": "visible-向量检索",
+      "at": "2026-11-17T02:18:49.398Z",
+      "ok": true
+    },
+    {
+      "name": "visible-维护与诊断",
+      "at": "2026-11-17T02:18:49.398Z",
+      "ok": true
+    },
+    {
+      "name": "five-sections",
+      "at": "2026-11-17T02:18:49.404Z",
+      "ok": true,
+      "count": 5
+    },
+    {
+      "name": "summary-strip",
+      "at": "2026-11-17T02:18:49.407Z",
+      "ok": true
+    },
+    {
+      "name": "jump-row-click",
+      "at": "2026-11-17T02:18:50.076Z",
+      "ok": true,
+      "jumpCount": 5,
+      "beforeJump": 1678,
+      "afterJump": 554
+    },
+    {
+      "name": "advanced-disclosure",
+      "at": "2026-11-17T02:18:50.438Z",
+      "ok": true,
+      "advancedClosed": 0,
+      "advancedOpen": 1
+    },
+    {
+      "name": "zh-aria-label-all-chinese",
+      "at": "2026-11-17T02:18:50.446Z",
+      "ok": true,
+      "ariaLabels": [
+        "展开高级设置",
+        "历史摘要启用",
+        "历史摘要提供商",
+        "历史摘要模型",
+        "历史摘要推理强度",
+        "展开高级设置",
+        "日志启用",
+        "展开高级设置",
+        "向量提供方",
+        "服务预设",
+        "收起高级设置",
+        "认证头",
+        "注册压缩引擎",
+        "校验提供商",
+        "校验模型"
+      ]
+    },
+    {
+      "name": "single-visible-save",
+      "at": "2026-11-17T02:18:50.454Z",
+      "ok": true,
+      "count": 1
+    },
+    {
+      "name": "start-disabled-at-zero",
+      "at": "2026-11-17T02:18:50.463Z",
+      "ok": true
+    },
+    {
+      "name": "seed-corpus",
+      "at": "2026-11-17T02:18:51.232Z",
+      "ok": true,
+      "error": ""
+    },
+    {
+      "name": "dirty-load-label",
+      "at": "2026-11-17T02:18:54.224Z",
+      "ok": true
+    },
+    {
+      "name": "dirty-test-label",
+      "at": "2026-11-17T02:18:54.229Z",
+      "ok": true
+    },
+    {
+      "name": "save-before-action-label",
+      "at": "2026-11-17T02:18:54.234Z",
+      "ok": true
+    },
+    {
+      "name": "models-loaded",
+      "at": "2026-11-17T02:18:56.790Z",
+      "ok": true,
+      "options": [
+        "",
+        "fixture-embed-a",
+        "fixture-embed-b"
+      ]
+    },
+    {
+      "name": "probe-dimensions",
+      "at": "2026-11-17T02:18:58.841Z",
+      "ok": true
+    },
+    {
+      "name": "probe-not-started",
+      "at": "2026-11-17T02:18:58.841Z",
+      "ok": true
+    },
+    {
+      "name": "start-enabled-after-probe",
+      "at": "2026-11-17T02:18:58.850Z",
+      "ok": true
+    },
+    {
+      "name": "start-confirm-visible",
+      "at": "2026-11-17T02:18:59.401Z",
+      "ok": true
+    },
+    {
+      "name": "start-confirm-count",
+      "at": "2026-11-17T02:18:59.404Z",
+      "ok": true,
+      "text": "开始重建向量？\n\n这会重新计算 3 条记忆，可能产生 API 费用。\n\n取消\n确认"
+    },
+    {
+      "name": "started-or-ready",
+      "at": "2026-11-17T02:19:02.444Z",
+      "ok": true,
+      "text": "口地址\n已修改\n重置\n\n例如 https://api.siliconflow.cn/v1；不要填写密钥。\n\n模型 ID\n已修改\n重置\n\n从模型列表选择，或手动填写服务商公布的模型 ID。\n\nAPI Key 环境变量\n已修改\n重置\n\n只写变量名，不写密钥值；填写空值表示端点不需要认证。\n\n状态: 迁移中 · fixture-embed-a · 16 维 · 2/3 条可检索记忆\nAPI Key：无需认证\n启用远程向量会把你检索的记忆文本发送到该端点；请使用可信端点。\n2/3\n刷新\n加载模型\n测试连接\n暂停\n回滚到本地\n选择或填写模型\nfixture-embed-a\nfixture-embed-b\n高级\n认证头\nAuthorization: Bearer\napi-key 头\n多数服务使用 Authorization；Azure 可用 api-key。\n向量维度\n已修改\n重置\n\n0 表示自动探测；只有服务支持 dimensions 参数时才填写覆盖值。\n\n查询指令前缀\n\n可选；只影响查询向量，不写入存储。\n\n文档前缀\n\n可选；会改变写入的文档向量，切换后需要重建。\n\n后台超时（毫秒）\n已修改\n重置\n\n后台探测/重建请求的超时；默认 8000。\n\n查询超时（毫秒）\n已修改\n重置\n\n交互式检索的最长等待；默认 2500，超时降级为全文检索。\n\n批大小\n已修改\n重置\n\n每次远程请求的文本条数；默认 16。\n\n维护与诊断\n\n维护校验路由、压缩引擎开关和完整诊断入口。\n\n注册压缩引擎\n重置\n校验提供商\nAuto — 跟随会话路由\ndeepseek-official\n维护校验通道使用的提供商。“Auto” 表示不固定，跟随会话路由。\n校验模型\nAuto — 先选择 provider\n维护校验通道使用的模型。同时设置提供商和模型才会固定；“Auto” 跟随会话路由。\n迁移中，暂停后可保存\n保存"
+    },
+    {
+      "name": "paused-status",
+      "at": "2026-11-17T02:19:03.279Z",
+      "ok": true,
+      "text": "embed-b\n高级\n认证头\nAuthorization: Bearer\napi-key 头\n多数服务使用 Authorization；Azure 可用 api-key。\n向量维度\n已修改\n重置\n\n0 表示自动探测；只有服务支持 dimensions 参数时才填写覆盖值。\n\n查询指令前缀\n\n可选；只影响查询向量，不写入存储。\n\n文档前缀\n\n可选；会改变写入的文档向量，切换后需要重建。\n\n后台超时（毫秒）\n已修改\n重置\n\n后台探测/重建请求的超时；默认 8000。\n\n查询超时（毫秒）\n已修改\n重置\n\n交互式检索的最长等待；默认 2500，超时降级为全文检索。\n\n批大小\n已修改\n重置\n\n每次远程请求的文本条数；默认 16。\n\n维护与诊断\n\n维护校验路由、压缩引擎开关和完整诊断入口。\n\n注册压缩引擎\n重置\n校验提供商\nAuto — 跟随会话路由\ndeepseek-official\n维护校验通道使用的提供商。“Auto” 表示不固定，跟随会话路由。\n校验模型\nAuto — 先选择 provider\n维护校验通道使用的模型。同时设置提供商和模型才会固定；“Auto” 跟随会话路由。\n已保存\n保存"
+    },
+    {
+      "name": "paused-load-disabled",
+      "at": "2026-11-17T02:19:03.286Z",
+      "ok": true
+    },
+    {
+      "name": "paused-test-disabled",
+      "at": "2026-11-17T02:19:03.292Z",
+      "ok": true
+    },
+    {
+      "name": "resume-active",
+      "at": "2026-11-17T02:19:05.821Z",
+      "ok": true,
+      "text": "API Key：无需认证\n启用远程向量会把你检索的记忆文本发送到该端点；请使用可信端点。\n3/3\n刷新\n加载模型\n测试连接\n回滚到本地\n选择或填写模型\nfixture-embed-a\nfixture-embed-b\n高级\n认证头\nAuthorization: Bearer\napi-key 头\n多数服务使用 Authorization；Azure 可用 api-key。\n向量维度\n已修改\n重置\n\n0 表示自动探测；只有服务支持 dimensions 参数时才填写覆盖值。\n\n查询指令前缀\n\n可选；只影响查询向量，不写入存储。\n\n文档前缀\n\n可选；会改变写入的文档向量，切换后需要重建。\n\n后台超时（毫秒）\n已修改\n重置\n\n后台探测/重建请求的超时；默认 8000。\n\n查询超时（毫秒）\n已修改\n重置\n\n交互式检索的最长等待；默认 2500，超时降级为全文检索。\n\n批大小\n已修改\n重置\n\n每次远程请求的文本条数；默认 16。\n\n维护与诊断\n\n维护校验路由、压缩引擎开关和完整诊断入口。\n\n注册压缩引擎\n重置\n校验提供商\nAuto — 跟随会话路由\ndeepseek-official\n维护校验通道使用的提供商。“Auto” 表示不固定，跟随会话路由。\n校验模型\nAuto — 先选择 provider\n维护校验通道使用的模型。同时设置提供商和模型才会固定；“Auto” 跟随会话路由。\n已保存\n保存"
+    },
+    {
+      "name": "rollback-confirm-visible",
+      "at": "2026-11-17T02:19:07.670Z",
+      "ok": true
+    },
+    {
+      "name": "no-disarm-before-save",
+      "at": "2026-11-17T02:19:07.670Z",
+      "ok": true,
+      "rollbackStart": 5
+    },
+    {
+      "name": "rollback-status",
+      "at": "2026-11-17T02:19:10.720Z",
+      "ok": true,
+      "text": "\n硅基流动\n自定义\n预设只提供端点和模型列表方式，不包含模型 ID 或维度。\n接口地址\n已修改\n重置\n\n例如 https://api.siliconflow.cn/v1；不要填写密钥。\n\n模型 ID\n已修改\n重置\n\n从模型列表选择，或手动填写服务商公布的模型 ID。\n\nAPI Key 环境变量\n已修改\n重置\n\n只写变量名，不写密钥值；填写空值表示端点不需要认证。\n\n状态: 已回滚到本地 · 本地 · 维度未知 · 0/2 条可检索记忆\nAPI Key：无需认证\n启用远程向量会把你检索的记忆文本发送到该端点；请使用可信端点。\n刷新\n选择或填写模型\nfixture-embed-a\nfixture-embed-b\n高级\n认证头\nAuthorization: Bearer\napi-key 头\n多数服务使用 Authorization；Azure 可用 api-key。\n向量维度\n已修改\n重置\n\n0 表示自动探测；只有服务支持 dimensions 参数时才填写覆盖值。\n\n查询指令前缀\n\n可选；只影响查询向量，不写入存储。\n\n文档前缀\n\n可选；会改变写入的文档向量，切换后需要重建。\n\n后台超时（毫秒）\n已修改\n重置\n\n后台探测/重建请求的超时；默认 8000。\n\n查询超时（毫秒）\n已修改\n重置\n\n交互式检索的最长等待；默认 2500，超时降级为全文检索。\n\n批大小\n已修改\n重置\n\n每次远程请求的文本条数；默认 16。\n\n维护与诊断\n\n维护校验路由、压缩引擎开关和完整诊断入口。\n\n注册压缩引擎\n重置\n校验提供商\nAuto — 跟随会话路由\ndeepseek-official\n维护校验通道使用的提供商。“Auto” 表示不固定，跟随会话路由。\n校验模型\nAuto — 先选择 provider\n维护校验通道使用的模型。同时设置提供商和模型才会固定；“Auto” 跟随会话路由。\n已保存\n保存"
+    },
+    {
+      "name": "disarm-after-save",
+      "at": "2026-11-17T02:19:10.720Z",
+      "ok": true,
+      "rollbackStart": 5,
+      "mutateOffset": 0,
+      "disarmOffset": 1,
+      "requests": [
+        {
+          "at": "2026-11-17T02:19:07.697Z",
+          "method": "POST",
+          "url": "http://127.0.0.1:8503/api/settings/mutate"
+        },
+        {
+          "at": "2026-11-17T02:19:08.041Z",
+          "method": "POST",
+          "url": "http://127.0.0.1:8503/mc-embedding/rebuild?action=disarm"
+        }
+      ]
+    },
+    {
+      "name": "english-switched",
+      "at": "2026-11-17T02:19:17.246Z",
+      "ok": true
+    },
+    {
+      "name": "english-General",
+      "at": "2026-11-17T02:19:17.247Z",
+      "ok": true
+    },
+    {
+      "name": "english-Historian",
+      "at": "2026-11-17T02:19:17.247Z",
+      "ok": true
+    },
+    {
+      "name": "english-Journal",
+      "at": "2026-11-17T02:19:17.247Z",
+      "ok": true
+    },
+    {
+      "name": "english-Embedding search",
+      "at": "2026-11-17T02:19:17.247Z",
+      "ok": true
+    },
+    {
+      "name": "english-Maintenance and diagnostics",
+      "at": "2026-11-17T02:19:17.247Z",
+      "ok": true
+    },
+    {
+      "name": "english-aria-no-chinese",
+      "at": "2026-11-17T02:19:17.252Z",
+      "ok": true,
+      "ariaLabels": [
+        "Expand advanced settings",
+        "Historian enabled",
+        "Historian provider",
+        "Historian model",
+        "Historian reasoning effort",
+        "Expand advanced settings",
+        "Journal enabled",
+        "Expand advanced settings",
+        "Embedding provider",
+        "Provider preset",
+        "Expand advanced settings",
+        "Register compaction engine",
+        "Verify provider",
+        "Verify model"
+      ]
+    },
+    {
+      "name": "narrow-sections",
+      "at": "2026-11-17T02:19:18.072Z",
+      "ok": true
+    },
+    {
+      "name": "narrow-no-horizontal-scroll",
+      "at": "2026-11-17T02:19:18.072Z",
+      "ok": true,
+      "overflow": false
+    },
+    {
+      "name": "console-errors-zero",
+      "at": "2026-11-17T02:19:18.115Z",
+      "ok": true,
+      "errors": []
+    }
+  ],
+  "failures": [],
+  "requests": [
+    {
+      "at": "2026-11-17T02:18:46.349Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:8503/api/settings/mutate"
+    },
+    {
+      "at": "2026-11-17T02:18:54.268Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:8503/api/settings/mutate"
+    },
+    {
+      "at": "2026-11-17T02:18:59.433Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:8503/mc-embedding/rebuild?action=start"
+    },
+    {
+      "at": "2026-11-17T02:19:02.562Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:8503/mc-embedding/rebuild?action=pause"
+    },
+    {
+      "at": "2026-11-17T02:19:03.313Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:8503/mc-embedding/rebuild?action=resume"
+    },
+    {
+      "at": "2026-11-17T02:19:07.697Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:8503/api/settings/mutate"
+    },
+    {
+      "at": "2026-11-17T02:19:08.041Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:8503/mc-embedding/rebuild?action=disarm"
+    },
+    {
+      "at": "2026-11-17T02:19:13.352Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:8503/api/settings/mutate"
+    }
+  ],
+  "errors": [],
+  "final": {
+    "requests": [
+      {
+        "at": "2026-11-17T02:18:46.349Z",
+        "method": "POST",
+        "url": "http://127.0.0.1:8503/api/settings/mutate"
+      },
+      {
+        "at": "2026-11-17T02:18:54.268Z",
+        "method": "POST",
+        "url": "http://127.0.0.1:8503/api/settings/mutate"
+      },
+      {
+        "at": "2026-11-17T02:18:59.433Z",
+        "method": "POST",
+        "url": "http://127.0.0.1:8503/mc-embedding/rebuild?action=start"
+      },
+      {
+        "at": "2026-11-17T02:19:02.562Z",
+        "method": "POST",
+        "url": "http://127.0.0.1:8503/mc-embedding/rebuild?action=pause"
+      },
+      {
+        "at": "2026-11-17T02:19:03.313Z",
+        "method": "POST",
+        "url": "http://127.0.0.1:8503/mc-embedding/rebuild?action=resume"
+      },
+      {
+        "at": "2026-11-17T02:19:07.697Z",
+        "method": "POST",
+        "url": "http://127.0.0.1:8503/api/settings/mutate"
+      },
+      {
+        "at": "2026-11-17T02:19:08.041Z",
+        "method": "POST",
+        "url": "http://127.0.0.1:8503/mc-embedding/rebuild?action=disarm"
+      },
+      {
+        "at": "2026-11-17T02:19:13.352Z",
+        "method": "POST",
+        "url": "http://127.0.0.1:8503/api/settings/mutate"
+      }
+    ],
+    "failures": [],
+    "errors": []
+  }
+}

@@ -189,12 +189,12 @@ api.apply(fakeCtx)
 check('注入 locale 服务', api.inject.includes('locale') && api.inject.includes('slots'), api.inject.join(','))
 check('注册 magic-context 命名空间（zh+en）', registered.length === 1 && registered[0].ns === 'magic-context'
   && registered[0].dicts.zh !== undefined && registered[0].dicts.en !== undefined)
-check('每个槽位注册项都声明 locale', registrations.length >= 3 && registrations.every((entry) => entry.options.locale === 'magic-context'),
+check('每个槽位注册项都声明 locale', registrations.length >= 2 && registrations.every((entry) => entry.options.locale === 'magic-context'),
   registrations.map((entry) => entry.options.name).join(', '))
-check('顶层 Settings 页与旧插件页入口并存', registrations.some((entry) => entry.options.name === 'settings.section'
+check('只注册顶层 Settings 页，旧插件页入口已移除', registrations.some((entry) => entry.options.name === 'settings.section'
   && entry.options.id === 'magic-context' && entry.options.order === 30)
-  && registrations.some((entry) => entry.options.name === 'plugins.item' && entry.options.id === 'magic-context-dsh')
-  && registrations.some((entry) => entry.options.name === 'plugins.row.config'))
+  && !registrations.some((entry) => entry.options.name === 'plugins.item')
+  && !registrations.some((entry) => entry.options.name === 'plugins.row.config'))
 const labelled = registrations.filter((entry) => typeof entry.options.label === 'function')
 check('槽位 label 为跟随语言的 thunk', labelled.length >= 1 && labelled.every((entry) => !CJK.test(entry.options.label())),
   labelled.map((entry) => entry.options.label()).join(' | '))

@@ -240,3 +240,15 @@ after = [19]
 hitl = false
 risk = "high"
 refine = true
+
+[[entry]]
+id = 21
+type = "story"
+title = "Settings UI redesign: sections, summary and host-native actions"
+description = "Implement the frozen T21 UX design for the Magic Context settings surface. Register only settings.section and remove the legacy plugins.item / plugins.row.config seats and the plain-control fallback. Group the existing 34 FIELDS into 常规 / 历史摘要 / 日志 / 向量检索 / 维护与诊断, split each into common and advanced fields, and add a four-metric summary strip, jump row, advanced disclosures and a text-only status strip above the host footer. Preserve the config schema, defaults, validation, revision-fenced Save and one visible host Save; no new RPC. Add action preconditions: Load models requires an endpoint resolvable after the pending Save or a preset default, Test requires a model plus resolvable endpoint, dirty Load/Test become 保存并加载模型 / 保存并测试 and run one Save first; both are disabled while migrating or paused; Start/Rollback require a clean form and confirmations; rollback stages local, saves, then disarms. Keep the ten remote states, polling cadence, Chinese-complete dictionaries and responsive breakpoints. Update README, settings contract and CHANGELOG for the breaking removal of legacy seats. One real isolated DSH Web gate with a fake OpenAI-compatible endpoint plus unit tests; no package/release/profile change."
+verify = "Independent ticket validation passes. Diff is limited to the T21 covers; the settings registration contains only settings.section (the telemetry badge seats remain), and the client no longer exports ROW_CONFIG_KEY or registers plugins.item/plugins.row.config. All 34 FIELDS have exactly one section and one placement; source inspection shows five sections, summary strip, jump row, advanced disclosures, status strip and no second Save/global Reset/fallback Save. The ten real remote states and polling cadence are unchanged; dirty Load/Test evaluate the draft that Save will write, run one revision-fenced Save before their route, and a failed Save prevents the action; Start requires a non-empty searchable set and confirms the missing count; Start/Rollback require a clean form and rollback calls disarm only after accepted Save. Chinese and English copy keys are dictionary-backed and check:i18n passes. A fresh isolated DSH 0.2.2-rc.1 Web gate with a fake OpenAI-compatible endpoint verifies the summary strip labels and count, five section headings, a jump-row click that scrolls to the embedding section, advanced disclosure, Chinese and English rendering, dirty action labels, paused Load/Test disabled, start/pause/resume/rollback, no second Save, narrow layout and zero console errors. npm test, typecheck, check:i18n and build pass. No new config field, route, schema, dsh-go, real vendor call, package/release or daily-profile change."
+covers = ["src/client/index.js", "tests/client-pure.spec.ts", "docs/dsh-plugin-settings-ui-contract.md", "README.md", "README.zh-CN.md", "CHANGELOG.md", "PARITY.md", "scripts/mc-i18n-check.mjs"]
+after = [20]
+hitl = false
+risk = "medium"
+refine = true
