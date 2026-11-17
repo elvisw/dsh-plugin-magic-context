@@ -153,13 +153,18 @@ this fork added its concrete use case and evidence there on 2026-11-16.
 
 ## 6. Compatibility and fallback
 
-- A host without the `settings.section` slot simply does not render the primary page; the
-  Plugins-page card remains available.
-- A shell without `@deepseek-ai/dsh-client-ui-primitives` uses the card's plain-control
-  fallback: the same staging, writes, picker states, and labels, with only the chrome
-  differing.
+- Until T21, a host without the `settings.section` slot does not render the primary page;
+  the Plugins-page card remains available. T21 removes that fallback, so such a host will
+  have no configuration card.
+- Until T21, a shell without `@deepseek-ai/dsh-client-ui-primitives` uses the card's
+  plain-control fallback: the same staging, writes, picker states, and labels, with only
+  the chrome differing. T21 removes that path as well.
 - A shell without `remote.session.modelCatalog()` keeps the route and effort fields on
   plain text; no catalog data is invented.
+
+> Planned T21: the redesigned card requires `settings.section` and the DSH primitives.
+> T21 removes the two legacy Plugins seats and the plain-control fallback; a host
+> without those primitives will show no configuration card rather than a second Save.
 
 ## 7. Evidence baseline
 

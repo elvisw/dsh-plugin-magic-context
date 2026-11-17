@@ -139,7 +139,7 @@ Chinese is required for every surface in this design and is **release-blocking**
 | Local | Summary + section | Local vector space; no remote actions; advanced vector fields hidden. |
 | Off / `remote-off` | Summary + section | `语义检索已关闭`; remote fields hidden; no probe/start. |
 | Missing key | Section alert | `未找到环境变量 SILICONFLOW_API_KEY`; Load models/Test/Start disabled; editing the env name is allowed. |
-| Not probed | Status chip | `未探测`; dimensions `—`; Start disabled; Load models enabled when the endpoint is saved or the preset default applies; Test enabled only when endpoint and model are saved. |
+| Not probed | Status chip | `未探测`; dimensions `—`; Start disabled; Load models enabled when the endpoint is saved or the preset default applies; Test enabled only when the model is saved and the endpoint resolves (saved or preset default). |
 | Probe running | Status + button | `测试中…`; Test/Load disabled; timeout and cancel are visible; duplicate click is ignored. |
 | Model list loading | Model field | Spinner/`加载中…`; Test disabled until a model exists; previous list stays selectable. |
 | Model list empty | Model field | `没有返回可用模型` + manual entry remains available; retry action. |
@@ -185,8 +185,8 @@ Only one alert is expanded at a time. Order: blocking failure (auth, unsupported
 | State | 刷新 | 加载模型 | 测试连接 | 开始重建 | 暂停 | 继续 | 回滚到本地 |
 |---|---|---|---|---|---|---|---|
 | Local / off | enabled | hidden | hidden | hidden | hidden | hidden | hidden |
-| Remote, dirty | enabled | `保存并加载模型` | `保存并测试` | disabled, reason | contextual | contextual | disabled, reason |
-| Not probed | enabled | enabled if endpoint/default | enabled if model | disabled | hidden | hidden | enabled if armed |
+| Remote, dirty | enabled | `保存并加载模型` if endpoint/default | `保存并测试` if model & endpoint resolves | disabled, reason | contextual | contextual | disabled, reason |
+| Not probed | enabled | enabled if endpoint/default | enabled if model & endpoint resolves | disabled | hidden | hidden | enabled if armed |
 | Configured, not started | enabled | enabled | enabled | enabled (0 memories: disabled) | hidden | hidden | enabled if armed |
 | Target missing | enabled | enabled | enabled | hidden | hidden | hidden | enabled if armed |
 | Migrating | enabled | disabled | disabled | hidden | enabled | hidden | disabled, `先暂停` |

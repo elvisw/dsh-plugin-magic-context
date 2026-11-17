@@ -25,7 +25,7 @@ The first three ran against the draft snapshot; Prose ran against the snapshot w
 - Unified breakpoints to **760 / 560** and removed the 900/720 conflict.
 - Added the missing Journal wireframe section and preserved rebuild coverage in the narrow summary.
 - Split card states from remote states; added status enum, alert priority and a state × button matrix.
-- Added polling, snapshot-error/retry, invalid-field focus, probe in-flight/cancel, model-list empty/error, unsupported-dimensions and coverage-incomplete states.
+- Added polling, snapshot-error handling without a fake reload API, invalid-field focus, probe in-flight/cancel, model-list empty/error, unsupported-dimensions and coverage-incomplete states.
 - Added rollback pending-save, rollback-complete and remote-inactive behavior.
 - Clarified read-only values (`readOnly` + `aria-disabled`) and made Pause available in read-only mode where transport permits.
 - Made security/limitation hints non-truncating.
@@ -54,7 +54,8 @@ A fifth focused review checked the revised files against the host contract and t
 - **Status enumeration** now uses the real 10 server states, including `remote-off` and `remote-target-missing`.
 - **Migrating** no longer claims the host Save can be disabled through a missing `busy` prop; the card guards `onSave` and says so.
 - **Chinese wireframes** no longer show `Historian`, `Journal`, `Auto`, `Default`, `baseline`, `timeout` or `API Key` as UI labels; the exception list is explicit.
-- Invalid-field focus, snapshot-error retry, Pause outside the disabled fieldset, local vector-space source, preset endpoint behavior, advanced query instruction, fallback Save removal and pre-Save disarm are all documented as T21 requirements.
+- Invalid-field focus, snapshot-error handling without a retry API, Pause outside the disabled fieldset, local vector-space source, preset endpoint behavior, advanced query instruction, fallback Save removal and pre-Save disarm are all documented as T21 requirements.
+- A follow-up found three residual mismatches; they are now corrected: Test requires a model plus a resolvable endpoint, review notes no longer request a snapshot retry, and the contract's §6 fallback section carries the same T21 removal note as §1.
 - T21 must update `docs/dsh-plugin-settings-ui-contract.md` when the legacy seats are actually removed.
 
 ## Verdict
