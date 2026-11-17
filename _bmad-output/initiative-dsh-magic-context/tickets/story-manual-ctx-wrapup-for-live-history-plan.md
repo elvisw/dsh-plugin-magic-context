@@ -1,7 +1,7 @@
 ---
 ticket: 22
 title: "/ctx-wrapup manual live-history compaction — plan"
-status: built
+status: done
 ---
 
 # Implementation plan: `/ctx-wrapup`
