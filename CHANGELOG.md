@@ -8,6 +8,12 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
+## [Unreleased]
+
+### Added
+
+- `/ctx-wrapup [messages_to_keep]`（T22）：为下一次 pre-step 排队一次手动 live-history 压缩，默认保留最新 20 条 eligible surface 条目。命令只写 `wrapup_request:<sessionId>` 标记，不调用模型、不改 surface；下一次 pre-step 走正常 execute lane，先落地 pending drop、修复 stranded wire，再跑一次 manual Historian，发布全部 unlanded compartment 并刷新基线。该趟跳过 force band；`attempts` 最多 3 次，deferred/baseline 失败会保留标记重试，terminal rejection 不重试。`refreshBaseline` 只渲染 landed compartment，避免 deferred/rejected digest 泄漏进基线。
+
 ## [0.16.0] - 2026-11-17
 
 ### Added

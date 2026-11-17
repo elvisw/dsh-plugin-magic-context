@@ -73,6 +73,8 @@ export interface ManagementPassInput {
    * not apply, because the adapter never refuses to send.
    */
   readonly pressureStale?: boolean
+  /** Manual wrapup: skip the force band so it cannot replace a computed span. */
+  readonly skipForce?: boolean
   /** Route + window facts for the historian's auxiliary call. */
   readonly route?: HistorianRoute
   readonly contextWindow?: number
@@ -163,6 +165,8 @@ export interface ManagementPassResult {
   /** Stranded tool/results swept off the wire this pass (the iron-rule repair). */
   readonly wireRepaired: number
   readonly baselineUpdated: boolean
+  /** False when no baseline target existed or the refresh threw. */
+  readonly baselineOk: boolean
   readonly historianStarted: boolean
   /**
    * Net reclaim proof: the estimate of the whole current surface before and
@@ -405,9 +409,14 @@ export function publishReadyCompartments(
 function refreshBaseline(
   input: ManagementPassInput,
   nodes: readonly SurfaceNode[],
-): boolean {
+): { readonly updated: boolean; readonly ok: boolean } {
   const now = input.now?.() ?? Date.now()
-  const compartments = input.stores.listCompartments(input.sessionId)
+  // Only a landed digest is on the wire. Publishing a compartment can be
+  // deferred or terminally rejected; rendering its digest into the baseline
+  // while the original span is still live would duplicate the context.
+  const compartments = input.stores
+    .listCompartments(input.sessionId)
+    .filter(compartment => compartment.landedEventSeq !== undefined)
   const memories = input.memories
   const profile = input.profile
   const updates = input.memoryUpdates
@@ -518,7 +527,7 @@ function refreshBaseline(
     ...hard || updates === undefined ? {} : { memoryUpdates: updates.updates },
     budgetTokens: input.policy.baselineTokens,
   })
-  if (block.length === 0) return false
+  if (block.length === 0) return { updated: false, ok: false }
 
   // The baseline rides the first ordinary user node — never a compaction
   // checkpoint (host or engine). Attaching it to a checkpoint let that
@@ -526,7 +535,7 @@ function refreshBaseline(
   // re-emitted the foreign summary and rewrote the node, and the GUI lost the
   // card it correlates by `source.kind === 'compact-checkpoint'` + compactionId.
   const target = nodes.find(node => node.role === 'user' && node.sourceKind !== 'compact-checkpoint')
-  if (target === undefined) return false
+  if (target === undefined) return { updated: false, ok: false }
   if (baselineBlockOf(target.text) === block) {
     // Byte-identical: no durable mutation, no priced bust (MC's defer pass).
     if (state.nodeSeq !== target.seq || state.updatedAt !== previous?.updatedAt) {
@@ -537,7 +546,7 @@ function refreshBaseline(
         ...memories === undefined ? {} : { memoriesDigest: memories.digest },
       })
     }
-    return false
+    return { updated: false, ok: true }
   }
   const landedSeq = replaceSurfaceRange(
     input.session,
@@ -589,7 +598,7 @@ function refreshBaseline(
     },
     input.sessionId,
   )
-  return true
+  return { updated: true, ok: true }
 }
 
 /** Upper bound of wire repairs per pass, so a pathological surface cannot monopolize the bust. */
@@ -604,7 +613,9 @@ const WIRE_REPAIR_CAP = 16
  * it); only the wire copy goes.
  * @returns the number of results swept this pass.
  */
-function repairWirePairing(input: ManagementPassInput): number {
+export function repairWirePairing(
+  input: Pick<ManagementPassInput, 'session' | 'sessionId' | 'journal'>,
+): number {
   const stranded = wireStrandedResults(input.session)
   if (stranded.length === 0) return 0
   const sweep = stranded.slice(0, WIRE_REPAIR_CAP)
@@ -642,12 +653,13 @@ export function runManagementPass(input: ManagementPassInput): ManagementPassRes
   const landedDrops: number[] = []
   let wireRepaired = 0
   const tokensBefore = surfaceTokens(input.session)
-  const result: ManagementPassResult = {
+  let result: ManagementPassResult = {
     landedDrops,
     published: [],
     forceDropped: 0,
     wireRepaired: 0,
     baselineUpdated: false,
+    baselineOk: false,
     historianStarted: false,
     tokensBefore,
     tokensAfter: tokensBefore,
@@ -690,7 +702,10 @@ export function runManagementPass(input: ManagementPassInput): ManagementPassRes
     // 3. Force-band reclaim (before publishing, so a compartment range that
     //    lost its content to a drop still replaces the same nodes).
     let forceDropped = 0
-    if (input.pressureStale === true && input.pressure !== undefined && input.pressure >= input.policy.forceThreshold) {
+    if (input.skipForce !== true
+      && input.pressureStale === true
+      && input.pressure !== undefined
+      && input.pressure >= input.policy.forceThreshold) {
       // The reading says "over the force band" but it was recorded before the
       // surface changed: reclaiming again would drop against a prompt that no
       // longer exists (upstream MC v0.49.49's half of issue 828). Reclaim is
@@ -706,7 +721,9 @@ export function runManagementPass(input: ManagementPassInput): ManagementPassRes
         },
         input.sessionId,
       )
-    } else if (input.pressure !== undefined && input.pressure >= input.policy.forceThreshold) {
+    } else if (input.skipForce !== true
+      && input.pressure !== undefined
+      && input.pressure >= input.policy.forceThreshold) {
       const generationBefore = input.session.surface.replaceGeneration
       // #731: pass the whole-surface estimate so the drop lane can refuse a
       // reclaim that cannot fit the request even at zero tool results. The
@@ -752,8 +769,12 @@ export function runManagementPass(input: ManagementPassInput): ManagementPassRes
     // 2 + 4: publish compartments, then refresh the baseline over the result.
     const nodes = enumerateSurfaceNodes(input.session)
     const { ids: published, factsPromoted, factsSeenAgain } = publishCompartments(input)
+    // Keep the IDs in the result before the baseline step: if the refresh throws,
+    // the caller must still know which compartments already landed.
+    result = { ...result, published }
     const afterPublish = published.length === 0 ? nodes : enumerateSurfaceNodes(input.session)
-    const baselineUpdated = refreshBaseline(input, afterPublish)
+    const baseline = refreshBaseline(input, afterPublish)
+    const baselineUpdated = baseline.updated
 
     // 5. Fire the historian out of band; it only writes a store row.
     let historianStarted = false
@@ -807,6 +828,7 @@ export function runManagementPass(input: ManagementPassInput): ManagementPassRes
       forceDropped,
       wireRepaired,
       baselineUpdated,
+      baselineOk: baseline.ok,
       historianStarted,
       tokensAfter: surfaceTokens(input.session),
       factsPromoted,

@@ -129,7 +129,7 @@ export function pressureWindowTokens(
 }
 
 export type PassDecision =
-  | { readonly kind: 'execute'; readonly reason: 'execute-threshold' | 'cache-ttl-expired' | 'wire-repair' }
+  | { readonly kind: 'execute'; readonly reason: 'execute-threshold' | 'cache-ttl-expired' | 'wire-repair' | 'wrapup-pending' }
   | { readonly kind: 'defer'; readonly reason: 'no-usage' | 'no-window' | 'below-threshold' }
 
 /**

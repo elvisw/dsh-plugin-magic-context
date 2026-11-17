@@ -185,38 +185,44 @@ const SKIPPABLE_PLACEHOLDER = /^\[(?:dropped|compacted|checkpoint) §/
  * auxiliary request structurally invalid for tool-using providers, which
  * reject it before the historian can produce anything.
  */
-export function selectHistorianRange(input: {
-  readonly nodes: readonly SurfaceNode[]
-  readonly covered: ReadonlySet<number>
-  readonly baselineNodeSeq?: number
-  readonly protectedNodes: number
-  readonly minNodes: number
-}): HistorianRange | undefined {
-  const { nodes, covered } = input
-  let start = 0
-  const skippable = (node: SurfaceNode): boolean =>
-    node.role === 'system'
-    || node.seq === input.baselineNodeSeq
+/** True when a node cannot carry content into a historian replay. */
+export function isHistorianSkippableNode(
+  node: SurfaceNode,
+  covered: ReadonlySet<number>,
+  baselineNodeSeq?: number,
+): boolean {
+  return node.role === 'system'
+    || node.seq === baselineNodeSeq
     || covered.has(node.seq)
     || node.isPlaceholder
     || SKIPPABLE_PLACEHOLDER.test(node.text.trim())
     || !node.hasText
-  while (start < nodes.length && skippable(nodes[start] as SurfaceNode)) start += 1
-  // TOOL-PAIRING, head: a `tool` node can never OPEN the replay, because its
-  // assistant tool-call always precedes it in the surface — opening on one
-  // sends an orphan `tool_result`, which tool-using providers reject outright
-  // (HTTP 400) before the historian ever sees a token. The skipped node that
-  // exposed it (a tool-call-only assistant, an already-digested or placeholder
-  // producer) is not eligible either, so skip the whole unpaired run.
-  while (start < nodes.length && (nodes[start] as SurfaceNode).role === 'tool') start += 1
-  if (start >= nodes.length) return undefined
+}
 
-  let cut = Math.max(start, nodes.length - Math.max(0, input.protectedNodes))
-  // TOOL-PAIRING, both edges: never end the span on a `tool` result (its
-  // producer would be inside while the result is out) and never end it on an
-  // assistant that REQUESTED tools (the request would carry a dangling
-  // `tool_use`). Dropping the call — and the results it would have dragged
-  // along — costs a little digest scope and keeps the auxiliary request valid.
+/**
+ * Apply the historian's head/tail tool-pairing rules to a candidate span.
+ *
+ * A `tool` node can never OPEN the replay: its assistant tool-call precedes it
+ * in the surface, so opening on one sends an orphan `tool_result` and strict
+ * providers reject the request before the historian sees a token. The span
+ * also never ends on a `tool` result or on an assistant that requested tools.
+ * Shared by the automatic range scan and `/ctx-wrapup`.
+ */
+export function historianSpanBounds(input: {
+  readonly nodes: readonly SurfaceNode[]
+  readonly start: number
+  readonly cut: number
+  readonly covered: ReadonlySet<number>
+  readonly baselineNodeSeq?: number
+}): { readonly start: number; readonly cut: number } | undefined {
+  const { nodes } = input
+  let start = Math.max(0, Math.min(input.start, nodes.length))
+  let cut = Math.max(start, Math.min(input.cut, nodes.length))
+  while (start < cut && isHistorianSkippableNode(
+    nodes[start] as SurfaceNode, input.covered, input.baselineNodeSeq,
+  )) start += 1
+  while (start < cut && (nodes[start] as SurfaceNode).role === 'tool') start += 1
+  if (start >= cut) return undefined
   for (;;) {
     while (cut > start && (nodes[cut] as SurfaceNode | undefined)?.role === 'tool') cut -= 1
     if (cut > start && (nodes[cut - 1] as SurfaceNode | undefined)?.hasToolCalls === true) {
@@ -225,7 +231,28 @@ export function selectHistorianRange(input: {
     }
     break
   }
-  const slice = nodes.slice(start, cut)
+  if (cut <= start) return undefined
+  return { start, cut }
+}
+
+export function selectHistorianRange(input: {
+  readonly nodes: readonly SurfaceNode[]
+  readonly covered: ReadonlySet<number>
+  readonly baselineNodeSeq?: number
+  readonly protectedNodes: number
+  readonly minNodes: number
+}): HistorianRange | undefined {
+  const { nodes } = input
+  const candidateCut = Math.max(0, nodes.length - Math.max(0, input.protectedNodes))
+  const bounds = historianSpanBounds({
+    nodes,
+    start: 0,
+    cut: candidateCut,
+    covered: input.covered,
+    ...input.baselineNodeSeq === undefined ? {} : { baselineNodeSeq: input.baselineNodeSeq },
+  })
+  if (bounds === undefined) return undefined
+  const slice = nodes.slice(bounds.start, bounds.cut)
   if (slice.length < Math.max(1, input.minNodes)) return undefined
   const tokens = slice.reduce((total, node) => total + estimateTokens(node.text), 0)
   if (tokens <= 0) return undefined
@@ -943,6 +970,8 @@ export function runHistorian(
     readonly session: Parameters<typeof spanRequestMessages>[0]
     /** Explicit span (the manual/region path); default is the eligibility scan. */
     readonly forcedRange?: readonly SurfaceNode[]
+    /** Journal attribution; manual paths must not masquerade as automatic. */
+    readonly trigger?: 'automatic' | 'manual'
   },
 ): Promise<Compartment | undefined> {
   const existing = inFlight.get(input.sessionId)
@@ -965,6 +994,7 @@ async function runHistorianExclusive(
     readonly signal?: AbortSignal
     readonly session: Parameters<typeof spanRequestMessages>[0]
     readonly forcedRange?: readonly SurfaceNode[]
+    readonly trigger?: 'automatic' | 'manual'
   },
 ): Promise<Compartment | undefined> {
   // #802: after a run that published nothing, automatic runs wait for a node
@@ -1019,7 +1049,7 @@ async function runHistorianExclusive(
       sessionId: input.sessionId,
       session: input.session,
       nodes: range.nodes,
-      trigger: 'automatic',
+      trigger: input.trigger ?? 'automatic',
       // D1/D3: an oversized span digests in ~budget-token chunks with a merge
       // call; the run budget scales with the chunk count (capped 600s).
       chunkTokens: budget,

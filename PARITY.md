@@ -222,15 +222,16 @@ earlier "add promote-primers next" reading).
 
 Upstream's six host commands are documented in
 `packages/docs/src/content/docs/reference/commands.md` at v0.49.59. This adapter
-registers five (`src/dsh/status-command.ts:52`, `src/dsh/flush-command.ts:173`,
-`src/dsh/recomp.ts:270`, `src/dsh/command-surface.ts:455,469`):
+registers six (`src/dsh/status-command.ts:52`, `src/dsh/flush-command.ts:173`,
+`src/dsh/wrapup-command.ts`, `src/dsh/recomp.ts:270`,
+`src/dsh/command-surface.ts:455,469`):
 
 | Upstream command | Here | Notes |
 |---|---|---|
 | `/ctx-status` | supported | DSH text command; no OpenCode/Pi native dialog or overlay. |
 | `/ctx-flush` | supported | Marks pending drops only; no injection-cache refresh, no Historian/recomp/model call. |
 | `/ctx-recomp` | supported | Rebuilds already compacted spans; args are `all` \| `last:<n>` \| `<startSeq>-<endSeq>` over **DSH log event seq**, not upstream message ordinals; no `--upgrade` flag. |
-| `/ctx-wrapup` | absent | Would require a manual historian pass over the live tail; this adapter has only the automatic historian and `/ctx-recomp` for already compacted spans. |
+| `/ctx-wrapup` | supported | Queues a manual historian pass over the live tail for the next pre-step; keeps the newest N eligible surface entries, lands pending drops first, skips the force band for that pass, and publishes through the normal execute lane. DSH counts surface entries, not upstream message ordinals. |
 | `/ctx-dream` | absent | Requires the full dreamer task set; this adapter has only the TTL + verify tick slice (§C). |
 | `/ctx-embed` | absent | Upstream embeds session-history compartments, project memories and git commits; this adapter's embedding controls cover the memory vector lane only. |
 | — | `/ctx-profile` | DSH-specific extra: user-profile candidate confirm / reject / retire. |

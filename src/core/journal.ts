@@ -52,6 +52,7 @@ export type JournalKind =
   | 'memory-sample'
   | 'session-notice'
   | 'project-drift'
+  | 'wrapup'
   | 'context-pressure'
   | 'tool-call'
   | 'engine'

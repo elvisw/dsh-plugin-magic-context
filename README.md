@@ -274,14 +274,15 @@ Slash commands (`registerStatusCommand: false` disables this command surface):
 | `/ctx-status` | pressure / decisions / reclaim ledger / compartments / baseline / policy |
 | `/ctx-flush` | mark this session's pending `ctx_reduce` drops for landing on the next message; reports requested/already/pending counts; when the queue is empty, reports the last landed drop count/time for this session; starts no historian, recomp, summary, or model call |
 | `/ctx-recomp` `all` \| `last:<n>` \| `<startSeq>-<endSeq>` | re-runs the historian and **replaces the stored digest in place** (ranges snap to compartments, never split; identity and landed placeholders unchanged, the next pre-step rebuilds the baseline) |
+| `/ctx-wrapup` `[messages_to_keep]` | queues a manual historian pass for the next pre-step; keeps the newest N eligible surface entries (default 20), lands pending drops first, and publishes through the normal execute lane with the force band skipped for that pass |
 | `/ctx-profile` `confirm` \| `reject` \| `retire` | confirm / reject / retire user-profile candidates; promotion into the shared profile happens at the next maintenance tick |
 | `/ctx-global` `add` \| `remove` \| `status` \| `promote` \| `approve` \| `reject` | the manual lane for global-domain membership and candidate approval (same gate→publish path as the approval cards, `source_type=user`) |
 
-Compared with cortexkit `v0.49.59`, `/ctx-wrapup`, `/ctx-dream` and `/ctx-embed`
-are not registered. `/ctx-wrapup` would need a manual historian pass over the
-live tail; `/ctx-dream` needs the full dreamer task set; `/ctx-embed` targets
+Compared with cortexkit `v0.49.59`, `/ctx-dream` and `/ctx-embed` are not
+registered. `/ctx-dream` needs the full dreamer task set; `/ctx-embed` targets
 session-history compartments, memories and git commits, while this adapter's
-embedding controls cover the memory vector lane. The exact command-by-command
+embedding controls cover the memory vector lane. `/ctx-wrapup` is supported as
+a queued manual pass over the live tail. The exact command-by-command
 matrix is in [PARITY.md](PARITY.md#command-surface-upstream-commands-checked-at-v04959).
 
 ## UI & telemetry

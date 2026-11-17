@@ -64,6 +64,7 @@ import { ReduceNudgeTracker } from './dsh/reduce-guidance.ts'
 import { registerCtxStatusCommand } from './dsh/status-command.ts'
 import { registerCtxFlushCommand } from './dsh/flush-command.ts'
 import { registerCtxRecompCommand } from './dsh/recomp.ts'
+import { registerCtxWrapupCommand } from './dsh/wrapup-command.ts'
 import { registerCtxGlobalCommand, registerCtxProfileCommand } from './dsh/command-surface.ts'
 import { reviewGlobalCandidates, type GlobalReviewAsker } from './dsh/global-review.ts'
 import { promoteMemoryToCandidate } from './core/global-domains.ts'
@@ -750,6 +751,9 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
     // second recovery mode. The command only writes the durable marker; the
     // next preStep lands it through the same helper as the automatic pass.
     registerCtxFlushCommand(ctx, { stores })
+    // Wrapup queues a request; the next preStep runs the manual historian and
+    // the normal execute lane. It never calls the model from the handler.
+    registerCtxWrapupCommand(ctx, { stores })
     // Recomp rides the same gate: it needs the same seams as the historian, and
     // its handler refuses with a readable message when the LLM is absent or the
     // historian is switched off.
@@ -766,7 +770,7 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
       activeRoute: historianRouteOf,
       activeEffort: historianEffortOf,
     })
-    ctx.logger.info('magic-context dsh adapter: /ctx-status, /ctx-flush and /ctx-recomp registered')
+    ctx.logger.info('magic-context dsh adapter: /ctx-status, /ctx-flush, /ctx-wrapup and /ctx-recomp registered')
     // The global-domain surface rides the same gate: with Magic Context's
     // dashboard gone these commands ARE the operating surface for the profile
     // queue and the domains.

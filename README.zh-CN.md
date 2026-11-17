@@ -210,13 +210,14 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
 | `/ctx-status` | 压力 / 决策 / 回收台账 / compartments / 基线 / 策略 |
 | `/ctx-flush` | 把当前会话已排队的 `ctx_reduce` 标记为下一次消息强制落地；回执 requested / already marked / pendingNext；队列为空时显示本会话最近一次落地的数量与时间；不启动 historian、recomp、摘要或模型调用 |
 | `/ctx-recomp` `all` \| `last:<n>` \| `<startSeq>-<endSeq>` | 重跑 historian 并**原地替换** store 里的摘要（区间按 compartment 吸附、绝不切分；身份与已落地占位符不变，下一趟 pre-step 重建基线） |
+| `/ctx-wrapup` `[messages_to_keep]` | 为下一次 pre-step 排队一次手动 historian；保留最新 N 条 eligible surface 条目（默认 20），先落地 pending drop，再走正常 execute lane 发布，该趟跳过 force band |
 | `/ctx-profile` `confirm` \| `reject` \| `retire` | 用户画像候选的确认 / 拒绝 / 退休；晋升进共享 profile 在下一维护 tick 发生 |
 | `/ctx-global` `add` \| `remove` \| `status` \| `promote` \| `approve` \| `reject` | 全域成员管理与候选审批的人工通道（与审批卡走同一 gate→publish 路径，`source_type=user`） |
 
-对照 cortexkit `v0.49.59`，`/ctx-wrapup`、`/ctx-dream`、`/ctx-embed` 没有注册：
-`/ctx-wrapup` 需要对仍在线上的历史做一次手动 historian；`/ctx-dream` 需要完整的
-dreamer 任务集；`/ctx-embed` 面向会话历史 compartments、记忆和 git commits，而本适配器的
-嵌入控制只覆盖记忆向量通道。逐条矩阵见
+对照 cortexkit `v0.49.59`，`/ctx-dream`、`/ctx-embed` 没有注册：
+`/ctx-dream` 需要完整的 dreamer 任务集；`/ctx-embed` 面向会话历史 compartments、
+记忆和 git commits，而本适配器的嵌入控制只覆盖记忆向量通道。`/ctx-wrapup` 已支持，
+作为对仍在线上的历史排队一次手动压缩。逐条矩阵见
 [PARITY.md](PARITY.md#command-surface-upstream-commands-checked-at-v04959)。
 
 ## 界面与遥测

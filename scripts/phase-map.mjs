@@ -71,6 +71,9 @@ const PHASE_BASE = [
   'tests/telemetry.spec.ts',
   'tests/telemetry-view.spec.ts',
   'tests/wire-repair.spec.ts',
+  'tests/wrapup-command.spec.ts',
+  'tests/pre-step-wrapup.spec.ts',
+  'tests/wrapup-baseline.spec.ts',
 ]
 
 /** Phase A: the substrate. Own corpus (v95 lineage), adapter schema v9, domains activate. */

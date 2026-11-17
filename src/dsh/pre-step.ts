@@ -27,14 +27,28 @@ import {
   type PreStepPayload,
   type Session,
   type UserMessage,
+  enumerateSurfaceNodes,
   enumerateSurfaceToolResults,
   requestContextOf,
   wireStrandedResults,
 } from './seams.ts'
-import { runManagementPass } from './management-pass.ts'
+import { repairWirePairing, runManagementPass } from './management-pass.ts'
 import { landPendingDrops } from './drop-landing.ts'
 import { syncMachineDomain } from '../core/machine-domain.ts'
-import type { HistorianLlm } from './historian.ts'
+import {
+  historianInFlight,
+  runHistorian,
+  type HistorianDeps,
+  type HistorianLlm,
+} from './historian.ts'
+import {
+  clearWrapupMarker,
+  planWrapupRange,
+  readWrapupMarker,
+  writeWrapupMarker,
+  WRAPUP_MAX_ATTEMPTS,
+  type WrapupMarker,
+} from './wrapup-command.ts'
 import {
   buildChannel1Reminder,
   buildChannel2Reminder,
@@ -48,6 +62,10 @@ import type { MagicContextDshConfig } from './config.ts'
 import type { MemoryLane } from './memory-lane.ts'
 import { liveBoolean, liveRoute, liveString } from './volatile.ts'
 import { planSearchHint, type SearchHintTracker } from './search-hint.ts'
+
+function sameSeqList(left: readonly number[], right: readonly number[]): boolean {
+  return left.length === right.length && left.every((seq, index) => seq === right[index])
+}
 
 /** Identities shared by the preStep, the maintenance sweep and the panel. */
 export interface PreStepProjects {
@@ -331,15 +349,26 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
       const historyChangedAt = stores.latestHistoryChangeAt(sessionId)
       const pressureStale = flushLanded || (latest !== undefined && historyChangedAt !== undefined
         && historyChangedAt > latest.recordedAt)
-      const pass = decidePass({
-        latest,
-        pressure,
-        now: Date.now(),
-        policy,
-        // Iron rule: a stranded tool_result 400s every strict-provider request,
-        // so it forces the execute band regardless of pressure.
-        wireDefects: wireStrandedResults(payload.agent.session).length,
-      })
+      // A queued /ctx-wrapup request forces one execute pass even below the
+      // pressure bands. The marker itself is the queue; the command never calls
+      // the model. Read it live so a malformed row cannot wedge the turn.
+      let wrapup: WrapupMarker | undefined
+      try {
+        wrapup = readWrapupMarker(stores, sessionId)
+      } catch (error) {
+        journal?.warn('wrapup', `wrapup marker read failed: ${errText(error)}`, {}, sessionId)
+      }
+      const pass = wrapup === undefined
+        ? decidePass({
+          latest,
+          pressure,
+          now: Date.now(),
+          policy,
+          // Iron rule: a stranded tool_result 400s every strict-provider request,
+          // so it forces the execute band regardless of pressure.
+          wireDefects: wireStrandedResults(payload.agent.session).length,
+        })
+        : { kind: 'execute' as const, reason: 'wrapup-pending' as const }
       const usage = latest === undefined ? undefined : {
         input: latest.inputTokens ?? 0,
         cacheRead: latest.cacheReadTokens ?? 0,
@@ -539,6 +568,182 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
           : generationEffort === ''
             ? historianBaseRoute
             : { ...historianBaseRoute, reasoningEffort: generationEffort }
+        const profileCollectSink = profileWriter === undefined || profileWriter.status.ok !== true
+          || !liveBoolean(config.memory?.global?.user?.collect, true)
+          ? undefined
+          : (collect: {
+            sessionId: string
+            observations: readonly string[]
+            compartmentStart: number | null
+            compartmentEnd: number | null
+          }) => profileWriter.recordCandidates(collect)
+
+        // ── /ctx-wrapup: one manual historian, then the normal execute lane ──
+        // The marker is the queue. The command never calls the model; this pass
+        // owns the route/recall/profile inputs and therefore the only correct
+        // place to run the historian and publish its compartment.
+        let wrapupActive: WrapupMarker | undefined = wrapup
+        let wrapupCompartmentId: number | undefined
+        let wrapupRange: ReturnType<typeof planWrapupRange>
+        if (wrapupActive !== undefined) {
+          const attempted: WrapupMarker = { ...wrapupActive, attempts: wrapupActive.attempts + 1 }
+          try {
+            writeWrapupMarker(stores, sessionId, attempted)
+            wrapupActive = attempted
+          } catch (error) {
+            try { clearWrapupMarker(stores, sessionId) } catch { /* best effort */ }
+            journal?.warn('wrapup', `wrapup marker could not persist attempts: ${errText(error)}`, {}, sessionId)
+            wrapupActive = undefined
+          }
+          if (wrapupActive !== undefined && wrapupActive.attempts > WRAPUP_MAX_ATTEMPTS) {
+            try { clearWrapupMarker(stores, sessionId) } catch { /* best effort */ }
+            journal?.warn('wrapup', `wrapup stopped after ${String(WRAPUP_MAX_ATTEMPTS)} attempts`, {
+              attempts: wrapupActive.attempts,
+            }, sessionId)
+            wrapupActive = undefined
+          }
+        }
+        if (wrapupActive !== undefined) {
+          if (wrapupActive.compartmentIds.length > 0) {
+            wrapupCompartmentId = wrapupActive.compartmentIds[wrapupActive.compartmentIds.length - 1]
+          } else if (llm === undefined || liveBoolean(config.historianEnabled, true) === false) {
+            try { clearWrapupMarker(stores, sessionId) } catch { /* best effort */ }
+            journal?.warn('wrapup', 'wrapup dropped: the historian is unavailable or disabled', {}, sessionId)
+            wrapupActive = undefined
+          } else if (historianInFlight(sessionId) !== undefined) {
+            journal?.info('wrapup', 'wrapup waiting: a historian run is already in flight', {}, sessionId)
+          } else {
+            try {
+              const landing = landPendingDrops({
+                session: payload.agent.session,
+                sessionId,
+                stores,
+                tags: stores.listPendingDrops(sessionId),
+                ...journal === undefined ? {} : { journal },
+              })
+              const repaired = repairWirePairing({
+                session: payload.agent.session,
+                sessionId,
+                ...journal === undefined ? {} : { journal },
+              })
+              const baselineNodeSeq = stores.baselineState(sessionId)?.nodeSeq
+              const nodesNow = enumerateSurfaceNodes(payload.agent.session)
+              const coveredNow = stores.coveredSeqs(sessionId)
+              // A previous attempt may have stored a compartment but failed to
+              // persist its ID. Its own covered seqs make the normal planner
+              // no-op, so try each recent compartment with its own claims
+              // removed. Adopt only an exact span match; an unrelated automatic
+              // run must never satisfy a manual wrapup silently.
+              const recent = stores.listCompartments(sessionId)
+                .filter(compartment => compartment.createdAt >= wrapupActive!.requestedAt)
+                .filter(compartment => compartment.landedReason === undefined)
+                .sort((left, right) => right.createdAt - left.createdAt)
+              let adopted: (typeof recent)[number] | undefined
+              for (const candidate of recent) {
+                const withoutCandidate = new Set(coveredNow)
+                for (const seq of candidate.coveredSeqs) withoutCandidate.delete(seq)
+                const candidateRange = planWrapupRange({
+                  nodes: nodesNow,
+                  keep: wrapupActive.keep,
+                  covered: withoutCandidate,
+                  ...baselineNodeSeq === undefined ? {} : { baselineNodeSeq },
+                })
+                if (candidateRange !== undefined
+                  && sameSeqList(candidate.coveredSeqs, candidateRange.prefix.map(node => node.seq))) {
+                  adopted = candidate
+                  wrapupRange = candidateRange
+                  break
+                }
+              }
+              if (adopted === undefined) {
+                wrapupRange = planWrapupRange({
+                  nodes: nodesNow,
+                  keep: wrapupActive.keep,
+                  covered: coveredNow,
+                  ...baselineNodeSeq === undefined ? {} : { baselineNodeSeq },
+                })
+              }
+              if (wrapupRange === undefined) {
+                try { clearWrapupMarker(stores, sessionId) } catch { /* best effort */ }
+                journal?.info('wrapup', 'wrapup no-op: the live surface no longer has an eligible span', {
+                  landed: landing.landed.length,
+                  wireRepaired: repaired,
+                }, sessionId)
+                wrapupActive = undefined
+              } else {
+                if (adopted !== undefined) {
+                  wrapupCompartmentId = adopted.compartmentId
+                  const withId: WrapupMarker = {
+                    ...wrapupActive,
+                    compartmentIds: [adopted.compartmentId],
+                    retainedEligible: wrapupRange.retainedEligible,
+                    compactedEntries: wrapupRange.compactedEntries,
+                  }
+                  try { writeWrapupMarker(stores, sessionId, withId) } catch { /* adoption still works this pass */ }
+                  wrapupActive = withId
+                  journal?.info('wrapup', `adopted compartment §C${String(adopted.compartmentId)}§ for the pending wrapup`, {
+                    compartmentId: adopted.compartmentId,
+                    retainedEligible: wrapupRange.retainedEligible,
+                    compactedEntries: wrapupRange.compactedEntries,
+                  }, sessionId)
+                } else {
+                  const deps: HistorianDeps = {
+                    stores,
+                    policy,
+                    llm,
+                    logger: ctx.logger,
+                    ...journal === undefined ? {} : { journal },
+                    ...historianRoute === undefined ? {} : { route: historianRoute },
+                    ...profileCollectSink === undefined ? {} : { profileCollect: profileCollectSink },
+                  }
+                  const compartment = await runHistorian(deps, {
+                    sessionId,
+                    session: payload.agent.session,
+                    nodes: enumerateSurfaceNodes(payload.agent.session),
+                    forcedRange: wrapupRange.prefix,
+                    ...context.contextWindow === undefined ? {} : { contextWindow: context.contextWindow },
+                    ...historianRoute === undefined ? {} : { route: historianRoute },
+                    ...payload.signal === undefined ? {} : { signal: payload.signal },
+                    trigger: 'manual',
+                  })
+                  if (compartment === undefined) {
+                    try { clearWrapupMarker(stores, sessionId) } catch { /* best effort */ }
+                    journal?.info('wrapup', 'wrapup no-op: the historian returned no compartment', {
+                      landed: landing.landed.length,
+                      wireRepaired: repaired,
+                    }, sessionId)
+                    wrapupActive = undefined
+                  } else {
+                    wrapupCompartmentId = compartment.compartmentId
+                    const withId: WrapupMarker = {
+                      ...wrapupActive,
+                      compartmentIds: [compartment.compartmentId],
+                      retainedEligible: wrapupRange.retainedEligible,
+                      compactedEntries: wrapupRange.compactedEntries,
+                    }
+                    try { writeWrapupMarker(stores, sessionId, withId) } catch (error) {
+                      journal?.warn('wrapup', `wrapup ID could not persist; exact-span adoption will recover: ${errText(error)}`, {
+                        compartmentId: compartment.compartmentId,
+                      }, sessionId)
+                    }
+                    wrapupActive = withId
+                    journal?.info('wrapup', `manual historian stored §C${String(compartment.compartmentId)}§`, {
+                      compartmentId: compartment.compartmentId,
+                      landed: landing.landed.length,
+                      wireRepaired: repaired,
+                      retainedEligible: wrapupRange.retainedEligible,
+                      compactedEntries: wrapupRange.compactedEntries,
+                    }, sessionId)
+                  }
+                }
+              }
+            } catch (error) {
+              try { clearWrapupMarker(stores, sessionId) } catch { /* best effort */ }
+              journal?.warn('wrapup', `wrapup failed before publish: ${errText(error)}`, {}, sessionId)
+              wrapupActive = undefined
+            }
+          }
+        }
         const outcome = runManagementPass({
           session: payload.agent.session,
           sessionId,
@@ -548,12 +753,13 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
           pass,
           pressure,
           ...pressureStale ? { pressureStale: true } : {},
+          ...pass.reason === 'wrapup-pending' ? { skipForce: true } : {},
           ...journal === undefined ? {} : { journal },
           ...context.provider === undefined || context.model === undefined
             ? {}
             : { route: { provider: context.provider, model: context.model } },
           ...context.contextWindow === undefined ? {} : { contextWindow: context.contextWindow },
-          ...liveBoolean(config.historianEnabled, true) === false || llm === undefined
+          ...liveBoolean(config.historianEnabled, true) === false || llm === undefined || pass.reason === 'wrapup-pending'
             ? {}
             : {
               historian: {
@@ -607,18 +813,38 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
           // rows in the shared contract. The historian journals what it staged
           // (including what normalization dropped), so the switch's effect is
           // visible from the journal rather than inferred from the pool size.
-          ...profileWriter === undefined || profileWriter.status.ok !== true
-            || !liveBoolean(config.memory?.global?.user?.collect, true)
-            ? {}
-            : {
-              profileCollect: (collect: {
-                sessionId: string
-                observations: readonly string[]
-                compartmentStart: number | null
-                compartmentEnd: number | null
-              }) => profileWriter.recordCandidates(collect),
-            },
+          ...profileCollectSink === undefined ? {} : { profileCollect: profileCollectSink },
         })
+        if (wrapupActive !== undefined && wrapupCompartmentId !== undefined) {
+          const target = stores.listCompartments(sessionId)
+            .find(compartment => compartment.compartmentId === wrapupCompartmentId)
+          if (target === undefined) {
+            try { clearWrapupMarker(stores, sessionId) } catch { /* best effort */ }
+            journal?.warn('wrapup', `wrapup target §C${String(wrapupCompartmentId)}§ disappeared; marker cleared`, {
+              compartmentId: wrapupCompartmentId,
+            }, sessionId)
+          } else if (target.landedReason !== undefined) {
+            try { clearWrapupMarker(stores, sessionId) } catch { /* best effort */ }
+            journal?.warn('wrapup', `wrapup target §C${String(wrapupCompartmentId)}§ was rejected; marker cleared`, {
+              compartmentId: wrapupCompartmentId,
+              reason: target.landedReason,
+            }, sessionId)
+          } else if (target.landedEventSeq === undefined) {
+            journal?.info('wrapup', `wrapup target §C${String(wrapupCompartmentId)}§ deferred; retrying next pre-step`, {
+              compartmentId: wrapupCompartmentId,
+              attempts: wrapupActive.attempts,
+            }, sessionId)
+          } else if (outcome.baselineOk) {
+            try { clearWrapupMarker(stores, sessionId) } catch { /* best effort */ }
+            journal?.info('wrapup', `wrapup complete: §C${String(wrapupCompartmentId)}§ published and baseline refreshed`, {
+              compartmentId: wrapupCompartmentId,
+            }, sessionId)
+          } else {
+            journal?.warn('wrapup', `wrapup published §C${String(wrapupCompartmentId)}§ but baseline refresh failed; retrying`, {
+              compartmentId: wrapupCompartmentId,
+            }, sessionId)
+          }
+        }
         journal?.info('pass', `execute (${pass.reason}) at ${pressure?.toFixed(1) ?? '?'}%`, {
           decision: 'execute',
           ...basePassData,
@@ -626,6 +852,20 @@ export function preStepListener(deps: PreStepDeps): PreStepListener {
           published: outcome.published,
           forceDropped: outcome.forceDropped,
           baseline: outcome.baselineUpdated ? 'refreshed' : 'unchanged',
+          ...pass.reason === 'wrapup-pending'
+            ? {
+              wrapup: {
+                compartmentId: wrapupCompartmentId ?? null,
+                trigger: 'manual',
+                retainedEligible: wrapupActive?.retainedEligible
+                  ?? wrapupRange?.retainedEligible
+                  ?? 0,
+                compactedEntries: wrapupActive?.compactedEntries
+                  ?? wrapupRange?.compactedEntries
+                  ?? 0,
+              },
+            }
+            : {},
           historianStarted: outcome.historianStarted,
           // Net reclaim proof: surface estimate before/after this pass.
           tokensBefore: outcome.tokensBefore,
