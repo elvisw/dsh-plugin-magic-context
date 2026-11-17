@@ -1,7 +1,7 @@
 ---
 ticket: 21
 title: "Settings UI redesign — plan"
-status: in-progress
+status: built
 ---
 
 # Plan — Settings UI redesign
