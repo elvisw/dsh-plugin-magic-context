@@ -264,3 +264,15 @@ after = [21]
 hitl = false
 risk = "high"
 refine = true
+
+[[entry]]
+id = 23
+type = "story"
+title = "Android dsh-go native telemetry and embedding controls"
+description = "Draft Android LOCAL port in the same package: optional native context strip/details, native embedding controls over existing services, and host-generated configuration with complete Chinese/English copy. Keep desktop behavior, env-only keys, explicit activation and scoped data. No host patch, iOS, new provider client, route, command, schema or release. Code follows ticket/design approval; phone gate runs only on the final candidate."
+verify = "Independent ticket check before implementation; local native payload, scope, cancellation, activation and lifecycle tests plus existing regression checks; one final-candidate Android path for memory write/recall, native strip/details/settings and explicit fixture embedding actions, followed by one engine restart and memory recall. Record actual versions and artifact identity; distinguish simulated embedding from real model traffic. No claim of Android E2E from source or preliminary ADB checks, and no repeated Web matrix."
+covers = []
+after = [22]
+hitl = true
+risk = "high"
+refine = true
