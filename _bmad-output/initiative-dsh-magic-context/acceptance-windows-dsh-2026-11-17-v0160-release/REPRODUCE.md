@@ -35,20 +35,8 @@ Expected SHA-256:
 `ac058376c5d25f01f4d3c72bbd0d6dfc66f5e04e80884c5d1fee34e1ac33032a`;
 4,054,414 bytes; 68 files.
 
-If the T21 candidate is still present at
-`$env:TEMP\opencode\t21-pack\elvisw-dsh-magic-context-0.15.0.tgz`, compare the
-release to it:
-
-```powershell
-python _bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-17-v0160-release/compare_tarballs.py `
-  --local "$pack\elvisw-dsh-magic-context-0.16.0.tgz" `
-  --registry "$pack\elvisw-dsh-magic-context-0.16.0.tgz" `
-  --previous "$env:TEMP\opencode\t21-pack\elvisw-dsh-magic-context-0.15.0.tgz" `
-  --out "$dir\pack-compare-previous.json"
-```
-
-Expected changed members: `package/README.md`, `package/README.zh-CN.md`,
-`package/package.json`; no `package/lib/` changes.
+The comparison against the T21 candidate is performed in step 4, together with
+the registry artifact. It is not a local-vs-local comparison.
 
 ## 4. Compare the registry artifact
 
@@ -63,9 +51,16 @@ python _bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-
   --local "$pack\elvisw-dsh-magic-context-0.16.0.tgz" `
   --registry "$reg\elvisw-dsh-magic-context-0.16.0.tgz" `
   --out "$dir\tarball-compare.json"
+python _bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-17-v0160-release/compare_tarballs.py `
+  --local "$pack\elvisw-dsh-magic-context-0.16.0.tgz" `
+  --registry "$reg\elvisw-dsh-magic-context-0.16.0.tgz" `
+  --previous "$env:TEMP\opencode\t21-pack\elvisw-dsh-magic-context-0.15.0.tgz" `
+  --out "$dir\pack-compare-previous.json"
 ```
 
-Expected: `byteIdentical: true`, `memberContentDiff: []`.
+Expected: `byteIdentical: true`, `memberContentDiff: []`; the previous-candidate
+comparison differs only in `package/README.md`, `package/README.zh-CN.md`,
+`package/package.json`, with no `package/lib/` changes.
 
 ## 5. Registry install smoke
 

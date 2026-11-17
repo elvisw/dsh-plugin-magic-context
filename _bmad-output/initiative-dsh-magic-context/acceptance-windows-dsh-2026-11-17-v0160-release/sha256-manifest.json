@@ -23,8 +23,8 @@
     },
     {
       "path": "evidence/dist-tags.json",
-      "bytes": 65,
-      "sha256": "b08850d124604be225b7f35706f55a5f6f1bec2e3d16ebe8e26d9b22175603e5"
+      "bytes": 61,
+      "sha256": "0ef9fe0b9977fc124adc2415cf5612beeb55fd729eba2266e32af3be07e0e0b3"
     },
     {
       "path": "evidence/host-state.json",
@@ -48,8 +48,8 @@
     },
     {
       "path": "evidence/pack-compare-previous.json",
-      "bytes": 1306,
-      "sha256": "da324f8836ac3e162ab086315505ad81fc7debed4d936b069feb4d3c4030b2f8"
+      "bytes": 1310,
+      "sha256": "5b32e2a0f33087786e6ecd0177b91a41f91bcd46d120033a22e2a6414c8822cd"
     },
     {
       "path": "evidence/registry-host/add-registry.txt",
@@ -118,8 +118,8 @@
     },
     {
       "path": "REPRODUCE.md",
-      "bytes": 3609,
-      "sha256": "68ed10dc2e6ca30da4a86d898f666f619ff37e835e1bd33ce1f3fb7964ec9df1"
+      "bytes": 3623,
+      "sha256": "92ff4a6fb478b65af006a6eaf6ac29743dee54dc344e574911a996dfdab5d03f"
     },
     {
       "path": "run_registry_e2e.py",
