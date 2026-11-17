@@ -219,11 +219,11 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
 
 - **「设置 → Magic Context」顶层设置页**：五个分区、四项摘要、跳转行、高级折叠，以及宿主底栏上方的纯文本状态条；上文 volatile 配置项的可视化编辑，保存即生效（见“配置”一节）。旧「插件」页卡片已移除；宿主若没有 `settings.section` 槽位，将不再有配置入口。
 
-  ![DSH 设置页顶层的 Magic Context 页面——四项摘要、五分区跳转行与两列常规分区](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-top.png)
+  ![DSH 设置页顶层的 Magic Context 页面——四项摘要、五分区跳转行与两列常规分区](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-top.zh.png)
 
-  ![Magic Context 设置页下半部——向量检索动作、迁移状态与维护诊断](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-bottom.png)
+  ![Magic Context 设置页下半部——维护与诊断、宿主底栏状态与保存按钮](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-bottom.zh.png)
 
-  ![向量检索分区——向量提供方/服务预设、接口地址、认证头、模型 ID、API Key 环境变量、探测维度、超时与批大小，以及加载模型/测试连接/开始重建/暂停/继续/回滚到本地](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-embedding.png)
+  ![向量检索分区——向量提供方、服务预设、接口地址、模型 ID、API Key 环境变量与当前本地/远程状态](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-embedding.zh.png)
 
 - **`shell.overlay` 遥测徽标 + 胶囊面板**：收起态保留实时压力、token 对、Historian 状态与回收队列
   （`H` / `Q<n>`）；composer 变窄时切换成图标宽度变体。面板里是：

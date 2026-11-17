@@ -289,9 +289,9 @@ Both UI capabilities ride the same browser half (`src/client/index.js`, copied v
 
   ![Magic Context page in DSH Settings — four-metric summary, five section jump row, and the two-column General section](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-top.png)
 
-  ![Lower part of the Magic Context Settings page — vector actions, migration status and Maintenance and diagnostics](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-bottom.png)
+  ![Lower part of the Magic Context Settings page — Maintenance and diagnostics, the host footer status, and the Save button](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-bottom.png)
 
-  ![Vector search section — provider/preset, endpoint, auth header, model ID, API-key environment variable, probed dimensions, timeouts and batch size, with Load models / Probe / Start rebuild / Pause / Resume / Roll back](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-embedding.png)
+  ![Vector search section — provider, provider preset, endpoint, model ID, API-key environment variable, and the current local/remote status](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-embedding.png)
 
 - **`shell.overlay` telemetry badge + capsule panel**: the collapsed pill keeps the live
   pressure, token pair, Historian state and reclaim queue (`H` / `Q<n>`) visible, and
