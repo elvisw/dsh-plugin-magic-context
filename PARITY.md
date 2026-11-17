@@ -29,7 +29,7 @@ This document records the **effective-behavior contract** between the DSH adapte
 | Decision baseline | **v0.49.55** — `v0.49.50 → v0.49.55` still not swept; `v0.49.55 → v0.49.56` reviewed with no port |
 | MC store contract | shape inherited at the v95 cutover, **own lineage since 2026-10-13** (`src/core/memory-bridge.ts:45`; `MEMORY_SCHEMA_MAX_VERSION = 95`) |
 | DeepSeek Harness | **Desktop 0.2.1-rc.1** (host paths below are relative to the DSH checkout) |
-| Adapter | `@elvisw/dsh-magic-context` 0.16.0, own store **schema v11** (`src/core/stores.ts`) |
+| Adapter | `@elvisw/dsh-magic-context` 0.17.0, own store **schema v11** (`src/core/stores.ts`) |
 
 Scope split: `docs/dsh-plugin-upgrade-followup.md` says **how** to follow an
 upgrade; this file says **where we differ**. Three verdicts are used below:

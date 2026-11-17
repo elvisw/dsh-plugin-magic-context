@@ -8,7 +8,7 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
-## [Unreleased]
+## [0.17.0] - 2026-11-17
 
 ### Added
 
@@ -280,6 +280,7 @@ npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布�
 
 0.12.0 之前的 tag 位于上游仓库 `wk544863858/dsh-plugin-magic-context`；从 0.12.0 起，版本与 tag 属于本 fork。
 
+[0.17.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.13.0...v0.14.0

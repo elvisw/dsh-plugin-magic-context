@@ -31,7 +31,7 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 
 > 包名说明：npm 上无 scope 的 `dsh-magic-context` 是另一位维护者的独立实现，不是本 fork，也不是它的上游；本 fork 只以 `@elvisw/dsh-magic-context` 发布。所有安装命令都必须保留 `@elvisw/` scope。
 
-`0.13.0` 引入本包名；当前发布是 `0.16.0`，新增远程向量检索与宿主原生设置页重做（`0.15.0` 新增遥测 v2 面板，`0.14.0` 新增顶层设置页）。如果之前装过 `@elvisw/dsh-plugin-magic-context`（0.12.x）或上游
+`0.13.0` 引入本包名；当前发布是 `0.17.0`，新增手动 `/ctx-wrapup` live-history 压缩（`0.16.0` 新增远程向量检索与宿主原生设置页重做，`0.15.0` 新增遥测 v2 面板，`0.14.0` 新增顶层设置页）。如果之前装过 `@elvisw/dsh-plugin-magic-context`（0.12.x）或上游
 `dsh-plugin-magic-context`，请先移除旧包：三者使用同一个 loader row id（`magic-context-dsh`），不支持共装；共装时只会加载一行，设置页可能消失。
 从 0.12.x 升级还需要一次性迁移 profile patch 的包名，见
 [docs/independent-package-release.md](docs/independent-package-release.md)；迁移脚本随 npm tarball 与 hand-out 一起发布。
@@ -413,7 +413,7 @@ typecheck → test → build → check:i18n。
 `0.13.0` 起以 **`@elvisw/dsh-magic-context`** 发布；版本与 tag 归本 fork。
 上游仓库和上游 npm 包仍由原维护者维护，本 fork 不修改它们。
 
-相对上游 `0.11.2`，累计到 `0.16.0` 的主要差异：
+相对上游 `0.11.2`，累计到 `0.17.0` 的主要差异：
 
 - **恢复语义**：`ctx_expand` 不再原地改写占位符，而是读取持久化的原始 `tool/result`，作为新的工具结果返回并分配新 tag；旧占位符保持不变，旧 tag 仍是 dropped，再次 `ctx_reduce` 是 no-op（`already dropped`）。这是 breaking change。
 - **Historian 之后仍可读原文**：`ctx_expand` 新增 `message` 定位，接受当前会话的 DSH log event seq（包括被 Historian shadow 的原始 `tool/result`）；不重跑原工具、不改写摘要或 compartment。
