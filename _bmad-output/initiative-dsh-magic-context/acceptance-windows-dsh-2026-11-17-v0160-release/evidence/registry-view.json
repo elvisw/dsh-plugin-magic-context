@@ -1,0 +1,163 @@
+{
+  "_id": "@elvisw/dsh-magic-context@0.16.0",
+  "_rev": "6-898a7b4719fc8fb46aa8c17e66c7845f",
+  "name": "@elvisw/dsh-magic-context",
+  "dist-tags": {
+    "bootstrap": "0.0.0-bootstrap.0",
+    "latest": "0.16.0"
+  },
+  "versions": [
+    "0.0.0-bootstrap.0",
+    "0.0.0-stage",
+    "0.13.0",
+    "0.14.0",
+    "0.15.0",
+    "0.16.0"
+  ],
+  "time": {
+    "created": "2026-11-15T13:29:42.302Z",
+    "modified": "2026-11-17T02:42:45.851Z",
+    "0.0.0-stage": "2026-11-15T13:29:42.302Z",
+    "0.0.0-bootstrap.0": "2026-11-15T13:31:19.609Z",
+    "0.13.0": "2026-11-15T13:36:06.132Z",
+    "0.14.0": "2026-11-15T16:42:25.504Z",
+    "0.15.0": "2026-11-16T09:12:29.230Z",
+    "0.16.0": "2026-11-17T02:42:45.511Z"
+  },
+  "bugs": {
+    "url": "https://github.com/elvisw/dsh-plugin-magic-context/issues"
+  },
+  "author": "elvisw",
+  "license": "MIT",
+  "homepage": "https://github.com/elvisw/dsh-plugin-magic-context#readme",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "magic-context",
+    "context-management",
+    "context-compaction",
+    "memory",
+    "llm",
+    "ai-agent",
+    "typescript"
+  ],
+  "repository": {
+    "url": "git+https://github.com/elvisw/dsh-plugin-magic-context.git",
+    "type": "git"
+  },
+  "description": "Magic Context for DeepSeek Harness — elvisw fork: reversible context reclaim, an out-of-band historian, an m[0]/m[1] baseline, project memories in the plugin's own corpus, and the compaction seam.",
+  "contributors": [
+    "wukai"
+  ],
+  "maintainers": [
+    "elvisw <me@elvisw.com>"
+  ],
+  "readmeFilename": "README.zh-CN.md",
+  "_contentLength": 61255,
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "dist": {
+    "shasum": "e3c687bb1e263cb97bfedd850dd783b00e52f5ca",
+    "tarball": "https://registry.npmjs.org/@elvisw/dsh-magic-context/-/dsh-magic-context-0.16.0.tgz",
+    "fileCount": 68,
+    "integrity": "sha512-gvRd8pnhVXKsiyhgEizADhl8KK4Y+yZbTKuEtKHE2tDfLvr8hjOrKwNgOOKH4PygA8u2vikkbB7CZ3iKFlGTWw==",
+    "signatures": [
+      {
+        "sig": "MEUCIF2qd5obzp3v/55xWvPXI0fJfwAUFajX1xFnneYG5IPJAiEAucPhzg+K0BW5mH0nfYQ7XDhJbfURwZ0gwQ+1M34x3Pg=",
+        "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+      },
+      {
+        "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+        "sig": "MEQCIDQ2pvdiRAhtkdhstuHtqlBK/c206DwBcwwVxDfDlspzAiBQ1k+yLQxHVeWxTwErOarm0fWmSxv0NRKKJu0dGFbg8Q=="
+      }
+    ],
+    "attestations": {
+      "url": "https://registry.npmjs.org/-/npm/v1/attestations/@elvisw%2fdsh-magic-context@0.16.0",
+      "provenance": {
+        "predicateType": "https://slsa.dev/provenance/v1"
+      }
+    },
+    "unpackedSize": 15540181
+  },
+  "main": "lib/index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=22.19"
+  },
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml"
+  },
+  "gitHead": "3ea88bff16ee6f4583782091c45274d98bad53c6",
+  "scripts": {
+    "gate": "node scripts/mc-test.mjs --full",
+    "test": "vitest run",
+    "build": "tsc -p tsconfig.build.json && node scripts/copy-client.mjs",
+    "phase": "node scripts/mc-phase.mjs",
+    "doctor": "node scripts/dsh-doctor.mjs",
+    "pack:dist": "node scripts/mc-pack-dist.mjs",
+    "typecheck": "tsc --noEmit",
+    "check:i18n": "node scripts/mc-i18n-check.mjs",
+    "test:watch": "vitest",
+    "build:seeds": "node scripts/build-reference-seeds.mjs",
+    "prepublishOnly": "npm run build"
+  },
+  "version": "0.16.0",
+  "_npmUser": "GitHub Actions <npm-oidc-no-reply@github.com>",
+  "_npmVersion": "12.2.2",
+  "directories": {},
+  "_nodeVersion": "24.22.2",
+  "dependencies": {
+    "onnxruntime-common": "1.31.0-dev.20260911-2a43ec07e",
+    "@huggingface/tokenizers": "0.2.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "_hasShrinkwrap": false,
+  "devDependencies": {
+    "vitest": "^4.1.8",
+    "typescript": "^5.9.3",
+    "@types/node": "^24.19.1",
+    "onnxruntime-common": "1.31.0-dev.20260911-2a43ec07e",
+    "@deepseek-ai/cordis": "4.0.5",
+    "@deepseek-ai/dsh-llm": "0.2.1-rc.1",
+    "@deepseek-ai/dsh-agent": "0.2.1-rc.1",
+    "@deepseek-ai/dsh-tools": "0.2.1-rc.1",
+    "@huggingface/tokenizers": "0.2.0",
+    "@deepseek-ai/dsh-session": "0.2.1-rc.1",
+    "@deepseek-ai/schemastery": "3.18.5",
+    "@deepseek-ai/dsh-agent-loop": "0.2.1-rc.1",
+    "@deepseek-ai/dsh-compaction": "0.2.1-rc.1",
+    "@deepseek-ai/dsh-token-meter": "0.2.1-rc.1",
+    "@deepseek-ai/dsh-session-title": "0.2.1-rc.1",
+    "@deepseek-ai/dsh-system-prompt": "0.2.1-rc.1",
+    "@deepseek-ai/dsh-compaction-basic": "0.2.1-rc.1",
+    "@deepseek-ai/dsh-session-projection": "0.2.1-rc.1"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "*",
+    "@deepseek-ai/dsh-llm": "*",
+    "@deepseek-ai/dsh-agent": "*",
+    "@deepseek-ai/dsh-tools": "*",
+    "@deepseek-ai/dsh-session": "*",
+    "@deepseek-ai/schemastery": "*",
+    "@deepseek-ai/dsh-compaction": "*"
+  },
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages-npm-production",
+    "tmp": "tmp/dsh-magic-context_0.16.0_1794883365322_0.4435980795255021"
+  }
+}

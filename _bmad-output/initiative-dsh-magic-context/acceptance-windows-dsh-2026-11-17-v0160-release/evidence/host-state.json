@@ -1,0 +1,19 @@
+{
+  "node": "24.21.0",
+  "dsh": "0.2.2-rc.1",
+  "profile": "headless",
+  "isolationRoot": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-v0160-release-20261117-104458",
+  "dailyProfile": "C:/Users/elvis/.dsh/profiles/web",
+  "registry": {
+    "name": "@elvisw/dsh-magic-context",
+    "version": "0.16.0",
+    "specifier": "@elvisw/dsh-magic-context@0.16.0"
+  },
+  "installedIndexSha256": "67082f285267f03149ac47c77aa4cf6d2e9dad4dc1d7492c86f17137e5b9e7e4",
+  "installedHelperSha256": "ffd1a2b42351f2cce16a07300c6c729d002e2db3bdbaaeff48f67f8ad7a19716",
+  "dumpConfigMentionsPackage": true,
+  "dumpConfigMentionsRowId": true,
+  "modelSmoke": "V0160_REGISTRY_OK",
+  "note": "The smoke ran in an isolated DSH_HOME/HOME/USERPROFILE/XDG/APPDATA/LOCALAPPDATA root and did not modify the daily web profile. pnpm may reuse the user-level content-addressable store.",
+  "derivedFrom": "evidence/registry-host/registry-e2e.json and evidence/registry-host/smoke.txt"
+}

@@ -1,0 +1,140 @@
+{
+  "fileCount": 27,
+  "files": [
+    {
+      "path": "acceptance-report.md",
+      "bytes": 4286,
+      "sha256": "91f8bebca626bca2ff7a098218543276c3b2c89a1e8797f95c8fed82e9537ea6"
+    },
+    {
+      "path": "compare_tarballs.py",
+      "bytes": 3451,
+      "sha256": "97508d0555b3eaae5c00e0c8843084ba49deb42179d5729995e2e36bde2b2c58"
+    },
+    {
+      "path": "evidence/attestation.json",
+      "bytes": 15312,
+      "sha256": "2c7439b22ac14708a450bfd41e17d8d66180270c7b96f6e761d56d96a2d3ec24"
+    },
+    {
+      "path": "evidence/build.txt",
+      "bytes": 288,
+      "sha256": "23f27386ba0da745e1cc809ca976c7cdb3d5ebf1b912418e10ecb196542009f7"
+    },
+    {
+      "path": "evidence/dist-tags.json",
+      "bytes": 65,
+      "sha256": "b08850d124604be225b7f35706f55a5f6f1bec2e3d16ebe8e26d9b22175603e5"
+    },
+    {
+      "path": "evidence/host-state.json",
+      "bytes": 992,
+      "sha256": "96bde4f92044777269c92adfb98d0ea69f79a9c18d0ff6a1f8c84e63b6c96acf"
+    },
+    {
+      "path": "evidence/i18n.txt",
+      "bytes": 2155,
+      "sha256": "503c54f5c0a3560341f84345e149588fbc57b6f8b6c42459da5dc3079cb4e932"
+    },
+    {
+      "path": "evidence/npm-pack-dry-run.txt",
+      "bytes": 3334,
+      "sha256": "7291c7d4ed1f218cdb9ea53f6698c5172852f8407adb94183e7828abcaf5fd92"
+    },
+    {
+      "path": "evidence/npm-pack.txt",
+      "bytes": 3334,
+      "sha256": "7291c7d4ed1f218cdb9ea53f6698c5172852f8407adb94183e7828abcaf5fd92"
+    },
+    {
+      "path": "evidence/pack-compare-previous.json",
+      "bytes": 1306,
+      "sha256": "da324f8836ac3e162ab086315505ad81fc7debed4d936b069feb4d3c4030b2f8"
+    },
+    {
+      "path": "evidence/registry-host/add-registry.txt",
+      "bytes": 756,
+      "sha256": "498fef6944a4b71ffdfcd1e94f06d3f7246afb53d401b27b999746f7f7ebcce6"
+    },
+    {
+      "path": "evidence/registry-host/bootstrap.txt",
+      "bytes": 12597,
+      "sha256": "e2a13420918e366827e045126d8842ffb94c2e736c2f28a16b243dd285681d9b"
+    },
+    {
+      "path": "evidence/registry-host/dump-config.txt",
+      "bytes": 13563,
+      "sha256": "7071f883239b2596402ae0832b53d5d06dc55b0b84b7e50c90bb71ae25e172ee"
+    },
+    {
+      "path": "evidence/registry-host/registry-e2e.json",
+      "bytes": 936,
+      "sha256": "c302d6f0d99e9034fde28a3c846741e753730e6973565dd109d4c1da0f1faec3"
+    },
+    {
+      "path": "evidence/registry-host/smoke.txt",
+      "bytes": 885,
+      "sha256": "24b47ec026cd6efceaba1e75b7a47d442cec0c0128911d1d5ed32c33898f4a38"
+    },
+    {
+      "path": "evidence/registry-view.json",
+      "bytes": 5233,
+      "sha256": "4fc43e7afa4f2a7fd73d8ca2a26f580275fadc26218bb4a691f0a479058f5b4f"
+    },
+    {
+      "path": "evidence/release-run.json",
+      "bytes": 366,
+      "sha256": "00e2438bbd638ae830aae0b69f9a1c65e9bfa0c02bf06388b85d78d38f9e921c"
+    },
+    {
+      "path": "evidence/secret-scan.txt",
+      "bytes": 146,
+      "sha256": "a261aca4faa48960bba8127d83f1f4af6eb58176c49d5d3593c23aa26fc9eb93"
+    },
+    {
+      "path": "evidence/tag-commit.txt",
+      "bytes": 41,
+      "sha256": "648792a36a9225678327c39cef1e5519ca23d3122faa574920d3e99af8864d1c"
+    },
+    {
+      "path": "evidence/tag.txt",
+      "bytes": 8,
+      "sha256": "635d5dd5a4ace7759d038fa90fa3a831eedc8ca045806ac12d1043225f5ad7f2"
+    },
+    {
+      "path": "evidence/tarball-compare.json",
+      "bytes": 811,
+      "sha256": "458a664b5462631ebee2e06625b73fabceb676ddbae55ded862414b818fdcaff"
+    },
+    {
+      "path": "evidence/typecheck.txt",
+      "bytes": 74,
+      "sha256": "8101066150a89ec4fae09ced770f3c62eb42a2fc389330b1a693493b78801c07"
+    },
+    {
+      "path": "evidence/unit-test.txt",
+      "bytes": 930,
+      "sha256": "d31163b5f2c1194ff98f4ce0c1b6f5ace6ebc92f447150ecc3dfbab1e2491ba5"
+    },
+    {
+      "path": "REPRODUCE.md",
+      "bytes": 3609,
+      "sha256": "68ed10dc2e6ca30da4a86d898f666f619ff37e835e1bd33ce1f3fb7964ec9df1"
+    },
+    {
+      "path": "run_registry_e2e.py",
+      "bytes": 6795,
+      "sha256": "b98a309bb4473ce2928a8926c8a648d9e6265994a178dbfc2084fd1343e9c528"
+    },
+    {
+      "path": "scan_release_secrets.py",
+      "bytes": 1349,
+      "sha256": "4312dfbb4097d10640e9c70916adb777457ccd44dd5f3515fd07b365848fd5fb"
+    },
+    {
+      "path": "write_manifest.py",
+      "bytes": 1136,
+      "sha256": "3d5e32d9fc386bca39ece4d7e88a777b19e47cc3a049981c48beb6f43c75dda8"
+    }
+  ]
+}
