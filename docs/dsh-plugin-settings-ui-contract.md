@@ -25,6 +25,10 @@ entries are kept as the legacy location and as the fallback for a host that does
 declare `settings.section`; they are **not** inside the Settings → Built-in plugins
 section (that is a separate `settings.plugins.tab` surface).
 
+> Planned T21: the settings redesign removes the two legacy Plugins seats and keeps
+> only `settings.section`; that release also drops the plain-control fallback. Until
+> T21 ships, 0.15.x still registers all three seats as described above.
+
 Each registration declares `locale: 'magic-context'` and the section uses
 `label: () => t('title')`, so the navigation label follows the active DSH language.
 Every registration is disposed with the `whileServed` effect.

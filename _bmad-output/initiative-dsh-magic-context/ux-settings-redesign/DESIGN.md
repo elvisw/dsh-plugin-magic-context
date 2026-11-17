@@ -147,7 +147,7 @@ Do not use all-caps labels, letter-spaced eyebrows, or serif display type. The h
 
 Chinese is a first-class, release-blocking locale, not a translation afterthought. Every visible string in the card — section titles, field labels, hints, buttons, status chips, empty states, alerts, confirmations and `aria-label`/tooltip text — must exist in both `zh` and `en`. Switching the host locale must update the card immediately without a reload.
 
-Shared exception list: model IDs, endpoint URLs, header names, environment-variable names and protocol terms such as `OpenAI-compatible`. Everything else must be Chinese in the Chinese locale. Outside those exceptions, no English fallback may appear in a Chinese panel.
+Shared exception list: provider/model/effort IDs and values, endpoint URLs, header names, environment-variable names, the product name `Magic Context`, technical labels such as `Token`, `ID`, `API`, `URL`, `/ctx-status`, and protocol terms such as `OpenAI-compatible`. Everything else must be Chinese in the Chinese locale. Outside those exceptions, no English fallback may appear in a Chinese panel.
 
 ## Layout & Spacing
 
@@ -179,11 +179,11 @@ Use host radii: `sm` for inputs and buttons, `md` for small wells, `lg` for the 
 
 ## Components
 
-- **Summary strip** — four compact metrics: reclaim policy (`execute / force`), Historian state, vector space, rebuild coverage. Each metric has a label, a value and an optional one-word state. These values come from the config snapshot and the embedding status route; the card does not invent a live pressure metric. Degraded states use warning/danger text, not a colored background.
-- **Jump row** — text buttons for `常规`, `Historian`, `Journal`, `向量检索`, `维护与诊断`. They scroll to a section; they do not change draft state. The current target may show a 2px accent underline.
+- **Summary strip** — four compact metrics: `回收策略` (`execute / force`), `历史摘要`, `向量空间`, `重建`. Each metric has a label, a value and an optional one-word state. These values come from the config snapshot and the embedding status route; the card does not invent a live pressure metric. Degraded states use warning/danger text, not a colored background.
+- **Jump row** — text buttons for `常规`, `历史摘要`, `日志`, `向量检索`, `维护与诊断`. They scroll to a section; they do not change draft state. The current target may show a 2px accent underline.
 - **Section card** — title, one-line description, optional inline badge, fields, optional advanced disclosure.
 - **Field row** — label, control, hint. Override/reset affordances sit on the label line, right-aligned, and appear only when the value is overridden.
-- **Advanced disclosure** — a full-width text button with a chevron; expanded area uses a subtle surface well. It appears in 常规 (baseline/memory budgets), Historian (node/token/timeout limits), Journal (mirror) and 向量检索 (auth header, dimensions override, prefixes, timeouts, batch size).
+- **Advanced disclosure** — a full-width text button with a chevron; expanded area uses a subtle surface well. It appears in 常规 (baseline/memory budgets), 历史摘要 (node/token/timeout limits), 日志 (mirror) and 向量检索 (auth header, dimensions override, query instruction, document prefix, timeouts, batch size).
 - **Remote action bar** — `刷新` (status only), `加载模型` / `测试连接` as secondary, `开始重建向量` as primary, `暂停`/`继续` contextual, `回滚到本地` as danger outline. One primary action at a time; visibility and disabled reasons follow the state matrix in `EXPERIENCE.md`.
 - **Inline alert** — icon plus text, one line of detail and an optional action. Used for missing key, probe failure, unsupported dimensions and incomplete coverage.
 - **Confirmation dialog** — only for rollback and for starting a rebuild that will spend remote quota.

@@ -14,7 +14,7 @@ The first three ran against the draft snapshot; Prose ran against the snapshot w
 | Issue | Fix |
 |---|---|
 | Summary claimed a live “context pressure” metric that the Settings snapshot does not provide. | Summary now shows reclaim policy (`execute / force`), Historian, vector space and rebuild coverage; a source table defines every value and its `—` fallback. |
-| The draft added a second sticky Save while the host `SettingsForm` footer already owns Save/Reset. | The host footer remains the only Save/Reset surface. The card adds a non-button status strip above it and never renders a duplicate Save. |
+| The draft added a second sticky Save while the host `SettingsForm` footer already owns the only Save. | The host footer remains the only Save surface; there is no global Reset. The card adds a non-button status strip above it and never renders a duplicate Save. |
 | Flow 2 clicked `加载模型` / `测试连接` while the form was dirty, contradicting the “save first” rule. | Load/Test now use saved config; when dirty, their labels become `保存并加载模型` / `保存并测试`, and one revision-fenced Save runs first. |
 | The field inventory did not enumerate all fields, and the count was wrong (34, not 35). | Added the full 34-field inventory grouped by section and common/advanced placement. |
 | Rollback could claim success before the config was saved. | Rollback order is now confirm → stage local → Save → `disarm` → show `已回滚到本地`; if Save fails, remote stays armed. |
@@ -29,7 +29,7 @@ The first three ran against the draft snapshot; Prose ran against the snapshot w
 - Added rollback pending-save, rollback-complete and remote-inactive behavior.
 - Clarified read-only values (`readOnly` + `aria-disabled`) and made Pause available in read-only mode where transport permits.
 - Made security/limitation hints non-truncating.
-- Added explicit seat variants: Settings gets the full redesign; legacy Plugins cards stay unchanged.
+- Added explicit seat variants: Settings gets the full redesign; legacy `plugins.item` / `plugins.row.config` seats are removed, not restyled.
 - Added a release-blocking Chinese localization contract with a shared exception list.
 - Moved Decision Gates before the field appendix and made the main file request the decision before implementation.
 
@@ -45,6 +45,17 @@ The first three ran against the draft snapshot; Prose ran against the snapshot w
 - A full per-key zh/en copy table belongs in the T21 implementation ticket; this design defines the contract, not the final string catalog.
 - No HTML mock or browser screenshot gate was produced for the redesign yet; those belong to T21.
 - Final host version support policy for removing the legacy seats belongs in the T21 ticket; the design assumes 0.2.2-rc.1+.
+
+## Final focused confirmation
+
+A fifth focused review checked the revised files against the host contract and the T20 server/client code. It found four Criticals and nine Fixes; all are now reflected in the spines:
+
+- **Load models** requires only a saved endpoint or a preset default; **Test** requires a model. Flow 2 and the button matrix agree.
+- **Status enumeration** now uses the real 10 server states, including `remote-off` and `remote-target-missing`.
+- **Migrating** no longer claims the host Save can be disabled through a missing `busy` prop; the card guards `onSave` and says so.
+- **Chinese wireframes** no longer show `Historian`, `Journal`, `Auto`, `Default`, `baseline`, `timeout` or `API Key` as UI labels; the exception list is explicit.
+- Invalid-field focus, snapshot-error retry, Pause outside the disabled fieldset, local vector-space source, preset endpoint behavior, advanced query instruction, fallback Save removal and pre-Save disarm are all documented as T21 requirements.
+- T21 must update `docs/dsh-plugin-settings-ui-contract.md` when the legacy seats are actually removed.
 
 ## Verdict
 
