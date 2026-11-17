@@ -1,0 +1,261 @@
+{
+  "sessionId": "session-3db800a2-ea06-4c05-a0aa-18080790b223",
+  "marker": {
+    "key": "wrapup_request:session-3db800a2-ea06-4c05-a0aa-18080790b223",
+    "value": ""
+  },
+  "compartment": {
+    "session_id": "session-3db800a2-ea06-4c05-a0aa-18080790b223",
+    "compartment_id": 1,
+    "covered_start_seq": 8,
+    "covered_end_seq": 18,
+    "covered_seqs": "[8,9,10,11,18]",
+    "covered_tokens": 569,
+    "importance": 3,
+    "landed_event_seq": 46,
+    "landed_reason": null,
+    "superseded": 0
+  },
+  "journal": [
+    {
+      "id": 21,
+      "at": 1794906569672,
+      "kind": "historian",
+      "session_id": "session-3db800a2-ea06-4c05-a0aa-18080790b223",
+      "summary": "historian manual run started over 5 nodes",
+      "data": {
+        "phase": "start",
+        "trigger": "manual",
+        "nodes": 5,
+        "tokens": 569,
+        "route": "deepseek-official/deepseek-flash",
+        "reasoningEffort": "low",
+        "maxTokens": 8192,
+        "timeoutMs": 120000
+      }
+    },
+    {
+      "id": 22,
+      "at": 1794906573590,
+      "kind": "historian",
+      "session_id": "session-3db800a2-ea06-4c05-a0aa-18080790b223",
+      "summary": "historian digest ready (importance 3, 5 nodes)",
+      "data": {
+        "phase": "done",
+        "trigger": "manual",
+        "nodes": 5,
+        "tokens": 569,
+        "route": "deepseek-official/deepseek-flash",
+        "reasoningEffort": "low",
+        "maxTokens": 8192,
+        "timeoutMs": 120000,
+        "importance": 3,
+        "facts": 4,
+        "events": 1,
+        "attempts": 1,
+        "durationMs": 3919,
+        "usage": {
+          "inputTokens": 2639,
+          "outputTokens": 729,
+          "cacheReadTokens": 2176,
+          "cacheWriteTokens": 0,
+          "totalTokens": 5544
+        },
+        "finishReason": "stop"
+      }
+    },
+    {
+      "id": 23,
+      "at": 1794906573602,
+      "kind": "historian",
+      "session_id": "session-3db800a2-ea06-4c05-a0aa-18080790b223",
+      "summary": "staged 1 user observation(s) for review",
+      "data": {
+        "phase": "profile-collect",
+        "compartmentId": 1,
+        "observations": 1,
+        "inserted": 1,
+        "skipped": 0
+      }
+    },
+    {
+      "id": 24,
+      "at": 1794906573605,
+      "kind": "historian",
+      "session_id": "session-3db800a2-ea06-4c05-a0aa-18080790b223",
+      "summary": "compartment §C1§ stored (~569 tokens, importance 3)",
+      "data": {
+        "phase": "stored",
+        "compartmentId": 1,
+        "nodes": 5,
+        "tokens": 569,
+        "importance": 3,
+        "userObservations": 1,
+        "profileCollect": "armed",
+        "coveredStartSeq": 8,
+        "coveredEndSeq": 18
+      }
+    },
+    {
+      "id": 25,
+      "at": 1794906573610,
+      "kind": "wrapup",
+      "session_id": "session-3db800a2-ea06-4c05-a0aa-18080790b223",
+      "summary": "manual historian stored §C1§",
+      "data": {
+        "compartmentId": 1,
+        "landed": 0,
+        "wireRepaired": 0,
+        "retainedEligible": 4,
+        "compactedEntries": 5
+      }
+    },
+    {
+      "id": 26,
+      "at": 1794906573618,
+      "kind": "compartment-published",
+      "session_id": "session-3db800a2-ea06-4c05-a0aa-18080790b223",
+      "summary": "compartment §C1§ replaced 5 nodes on the wire",
+      "data": {
+        "compartmentId": 1,
+        "nodes": 5,
+        "coveredTokens": 569,
+        "estTokensReclaimed": 569,
+        "nodeSeq": 46,
+        "importance": 3
+      }
+    },
+    {
+      "id": 27,
+      "at": 1794906573626,
+      "kind": "memory-promote",
+      "session_id": "session-3db800a2-ea06-4c05-a0aa-18080790b223",
+      "summary": "promoted 4 fact(s) into project memory",
+      "data": {
+        "compartmentId": 1,
+        "identity": "dir:cbd2ed93e505",
+        "inserted": [
+          {
+            "id": 1,
+            "category": "CONSTRAINTS"
+          },
+          {
+            "id": 2,
+            "category": "CONFIG_VALUES"
+          },
+          {
+            "id": 3,
+            "category": "CONFIG_VALUES"
+          },
+          {
+            "id": 4,
+            "category": "CONFIG_VALUES"
+          }
+        ],
+        "seenAgain": [],
+        "skipped": []
+      }
+    },
+    {
+      "id": 28,
+      "at": 1794906573633,
+      "kind": "baseline",
+      "session_id": "session-3db800a2-ea06-4c05-a0aa-18080790b223",
+      "summary": "baseline HARD rebuild (epoch 1)",
+      "data": {
+        "mode": "hard",
+        "epoch": 1,
+        "nodeSeq": 47,
+        "compartments": {
+          "baseline": 1,
+          "delta": 0
+        },
+        "memories": {
+          "rows": 0,
+          "digest": ""
+        },
+        "profile": {
+          "rows": 0,
+          "newRows": 0
+        },
+        "memoryUpdates": {
+          "pending": 0,
+          "rendered": 0,
+          "cursor": 0,
+          "epochFingerprint": "d782668ec486515b"
+        },
+        "bytes": 1177,
+        "estTokens": 295,
+        "reason": "first-baseline"
+      }
+    },
+    {
+      "id": 29,
+      "at": 1794906573639,
+      "kind": "wrapup",
+      "session_id": "session-3db800a2-ea06-4c05-a0aa-18080790b223",
+      "summary": "wrapup complete: §C1§ published and baseline refreshed",
+      "data": {
+        "compartmentId": 1
+      }
+    },
+    {
+      "id": 30,
+      "at": 1794906573642,
+      "kind": "pass",
+      "session_id": "session-3db800a2-ea06-4c05-a0aa-18080790b223",
+      "summary": "execute (wrapup-pending) at 1.1%",
+      "data": {
+        "decision": "execute",
+        "reason": "wrapup-pending",
+        "pressure": 1.1,
+        "contextWindow": 1048576,
+        "route": "deepseek-official/deepseek-flash",
+        "usage": {
+          "input": 166,
+          "cacheRead": 11648,
+          "cacheWrite": 0
+        },
+        "landed": [],
+        "published": [
+          1
+        ],
+        "forceDropped": 0,
+        "baseline": "refreshed",
+        "wrapup": {
+          "compartmentId": 1,
+          "trigger": "manual",
+          "retainedEligible": 4,
+          "compactedEntries": 5
+        },
+        "historianStarted": false,
+        "tokensBefore": 3363,
+        "tokensAfter": 3093,
+        "tokensDelta": -270,
+        "factsPromoted": 4,
+        "factsSeenAgain": 0
+      }
+    },
+    {
+      "id": 31,
+      "at": 1794906573666,
+      "kind": "session-notice",
+      "session_id": "session-3db800a2-ea06-4c05-a0aa-18080790b223",
+      "summary": "Magic Context · compacted 1 compartment §C1§ · reclaimed 270 tok · promoted 4 memories",
+      "data": {
+        "seq": {
+          "type": "user/message",
+          "seq": 48,
+          "time": 1794906573665,
+          "data": {
+            "id": "a5d4f5d6-6990-45d9-841d-5fa0b6cdbcc8",
+            "role": "user",
+            "content": "[depth]",
+            "source": "[depth]"
+          },
+          "surfaceOp": "append"
+        }
+      }
+    }
+  ]
+}

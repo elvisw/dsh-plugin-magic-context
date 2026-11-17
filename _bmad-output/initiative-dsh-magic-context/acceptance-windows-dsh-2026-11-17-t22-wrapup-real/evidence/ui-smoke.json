@@ -1,0 +1,33 @@
+{
+  "steps": [
+    {
+      "text": "只回复 OK-2，不要使用任何工具。",
+      "at": "2026-11-17T09:09:15.463Z",
+      "url": "http://127.0.0.1:5883/"
+    },
+    {
+      "text": "只回复 OK-3，不要使用任何工具。",
+      "at": "2026-11-17T09:09:20.637Z",
+      "url": "http://127.0.0.1:5883/"
+    },
+    {
+      "text": "只回复 OK-4，不要使用任何工具。",
+      "at": "2026-11-17T09:09:25.803Z",
+      "url": "http://127.0.0.1:5883/"
+    },
+    {
+      "text": "/ctx-wrapup 2",
+      "at": "2026-11-17T09:09:29.349Z",
+      "url": "http://127.0.0.1:5883/"
+    },
+    {
+      "text": "只回复 WRAPUP-TRIGGER，不要使用任何工具。",
+      "at": "2026-11-17T09:09:54.637Z",
+      "url": "http://127.0.0.1:5883/"
+    }
+  ],
+  "errors": [],
+  "afterCommand": "新会话\nCtrl\n+\nAlt\n+\nN\n插件\n自动化任务\n更多\n工作区\n默认工作区\n仅回复 OK-2 测试\n刚刚\n仅回复 OK-1 测试\n刚刚\n更多\n仅回复 OK-2 测试\n标准模式\n对话\n轨迹\n只回复 OK-2，不要使用任何工具。\n17:09\n已完成\n已完成，用时 1秒\n\n好的\n\n用量 11.8K tok\n17:09\n只回复 OK-3，不要使用任何工具。\n17:09\n已完成\n已完成，用时 1秒\n\nOK-3\n\n用量 11.8K tok\n17:09\n只回复 OK-4，不要使用任何工具。\n17:09\n已完成\n已完成，用时 1秒\n\nOK-4\n\n用量 11.8K tok\n17:09\nctx-wrapup\nMagic Context: wrapup queued (keep 2, retain ~4 eligible entries, compact 5 entries). It runs on the next pre-step; the current request is unchanged. The historian spends tokens then.\n发消息或创建任务, / 调用指令, @ 文件或对话\n工作区内修改\nDeepSeek-V4.1-Flash\nLow\n3 轮 3 步·256 tok/s\n35.4K tok·缓存命中 97%\nMC · — · H 空闲\n1%",
+  "afterTrigger": "新会话\nCtrl\n+\nAlt\n+\nN\n插件\n自动化任务\n更多\n工作区\n默认工作区\n仅回复 OK-2 测试\n刚刚\n仅回复 OK-1 测试\n1分钟\n更多\n仅回复 OK-2 测试\n标准模式\n对话\n轨迹\n只回复 OK-2，不要使用任何工具。\n17:09\n已完成\n已完成，用时 1秒\n\n好的\n\n用量 11.8K tok\n17:09\n只回复 OK-3，不要使用任何工具。\n17:09\n已完成\n已完成，用时 1秒\n\nOK-3\n\n用量 11.8K tok\n17:09\n只回复 OK-4，不要使用任何工具。\n17:09\n已完成\n已完成，用时 1秒\n\nOK-4\n\n用量 11.8K tok\n17:09\nctx-wrapup\nMagic Context: wrapup queued (keep 2, retain ~4 eligible entries, compact 5 entries). It runs on the next pre-step; the current request is unchanged. The historian spends tokens then.\n只回复 WRAPUP-TRIGGER，不要使用任何工具。\n17:09\n已完成\n已完成，用时 4秒\n\nWRAPUP-TRIGGER\n\n用量 11.9K tok\n17:09\n发消息或创建任务, / 调用指令, @ 文件或对话\n工作区内修改\nDeepSeek-V4.1-Flash\nLow\n4 轮 4 步·212 tok/s\n47.3K tok·缓存命中 96%\nMC · — · H 空闲\n1%",
+  "url": "http://127.0.0.1:5883/"
+}
