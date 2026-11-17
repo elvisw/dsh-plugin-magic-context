@@ -1,0 +1,45 @@
+{
+  "localTarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\v0170-pack\\elvisw-dsh-magic-context-0.17.0.tgz",
+  "localSha256": "2264998cc95349d5e204da68bf8c279b6d063fc5e46c9032c72253826525642e",
+  "localSha1": "7c0918938ed6643245294631bc4411e9dca1fb9f",
+  "localBytes": 4059906,
+  "localFiles": 69,
+  "registryTarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\v0170-pack\\elvisw-dsh-magic-context-0.17.0.tgz",
+  "registrySha256": "2264998cc95349d5e204da68bf8c279b6d063fc5e46c9032c72253826525642e",
+  "registrySha1": "7c0918938ed6643245294631bc4411e9dca1fb9f",
+  "registryBytes": 4059906,
+  "registryFiles": 69,
+  "registryIntegritySha512": "RR/Odl2OCpwCOLqOUgDTkSANkfpgh717bvfq4oNkmAWkij2XII8d9yaoZGF47gg1DX/u5Md82ciZe+08zmizQA==",
+  "byteIdentical": true,
+  "memberContentDiff": [],
+  "previousTarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\v0160-pack\\elvisw-dsh-magic-context-0.16.0.tgz",
+  "previousSha256": "ac058376c5d25f01f4d3c72bbd0d6dfc66f5e04e80884c5d1fee34e1ac33032a",
+  "previousBytes": 4054414,
+  "rawChangedMembers": [
+    "package/README.md",
+    "package/README.zh-CN.md",
+    "package/lib/dsh/historian.js",
+    "package/lib/dsh/management-pass.js",
+    "package/lib/dsh/pre-step.js",
+    "package/lib/dsh/wrapup-command.js",
+    "package/lib/index.js",
+    "package/package.json"
+  ],
+  "normalizedChangedMembers": [
+    "package/README.md",
+    "package/README.zh-CN.md",
+    "package/lib/dsh/historian.js",
+    "package/lib/dsh/management-pass.js",
+    "package/lib/dsh/pre-step.js",
+    "package/lib/dsh/wrapup-command.js",
+    "package/lib/index.js",
+    "package/package.json"
+  ],
+  "libNormalizedChanged": [
+    "package/lib/dsh/historian.js",
+    "package/lib/dsh/management-pass.js",
+    "package/lib/dsh/pre-step.js",
+    "package/lib/dsh/wrapup-command.js",
+    "package/lib/index.js"
+  ]
+}

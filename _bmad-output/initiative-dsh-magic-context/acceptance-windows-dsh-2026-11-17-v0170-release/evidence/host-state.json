@@ -1,0 +1,24 @@
+{
+  "release": {
+    "package": "@elvisw/dsh-magic-context",
+    "version": "0.17.0",
+    "commit": "2cf1c72cf10ad9b605887f9239d2f621f74a4c2e",
+    "tag": "v0.17.0",
+    "workflowRun": 44048210846
+  },
+  "isolatedHost": {
+    "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\mc-t0-2026-11-13\\tools\\dsh-mc-v0170-release-20261117-164314",
+    "profile": "headless",
+    "specifier": "@elvisw/dsh-magic-context@0.17.0",
+    "installedName": "@elvisw/dsh-magic-context",
+    "installedVersion": "0.17.0",
+    "rowId": "magic-context-dsh",
+    "installedIndexSha256": "e9b9a8df9a4aa9895c3f90494729cad37df74bce73e2899035f2811ac5e14e0c",
+    "modelSmoke": "V0170_REGISTRY_OK"
+  },
+  "derivedFrom": [
+    "evidence/registry-host/registry-e2e.json",
+    "evidence/registry.json",
+    "evidence/tarball-compare.json"
+  ]
+}
