@@ -277,6 +277,13 @@ Slash commands (`registerStatusCommand: false` disables this command surface):
 | `/ctx-profile` `confirm` \| `reject` \| `retire` | confirm / reject / retire user-profile candidates; promotion into the shared profile happens at the next maintenance tick |
 | `/ctx-global` `add` \| `remove` \| `status` \| `promote` \| `approve` \| `reject` | the manual lane for global-domain membership and candidate approval (same gate→publish path as the approval cards, `source_type=user`) |
 
+Compared with cortexkit `v0.49.59`, `/ctx-wrapup`, `/ctx-dream` and `/ctx-embed`
+are not registered. `/ctx-wrapup` would need a manual historian pass over the
+live tail; `/ctx-dream` needs the full dreamer task set; `/ctx-embed` targets
+session-history compartments, memories and git commits, while this adapter's
+embedding controls cover the memory vector lane. The exact command-by-command
+matrix is in [PARITY.md](PARITY.md#command-surface-upstream-commands-checked-at-v04959).
+
 ## UI & telemetry
 
 Both UI capabilities ride the same browser half (`src/client/index.js`, copied verbatim to

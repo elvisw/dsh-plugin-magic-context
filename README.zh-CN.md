@@ -213,6 +213,12 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
 | `/ctx-profile` `confirm` \| `reject` \| `retire` | 用户画像候选的确认 / 拒绝 / 退休；晋升进共享 profile 在下一维护 tick 发生 |
 | `/ctx-global` `add` \| `remove` \| `status` \| `promote` \| `approve` \| `reject` | 全域成员管理与候选审批的人工通道（与审批卡走同一 gate→publish 路径，`source_type=user`） |
 
+对照 cortexkit `v0.49.59`，`/ctx-wrapup`、`/ctx-dream`、`/ctx-embed` 没有注册：
+`/ctx-wrapup` 需要对仍在线上的历史做一次手动 historian；`/ctx-dream` 需要完整的
+dreamer 任务集；`/ctx-embed` 面向会话历史 compartments、记忆和 git commits，而本适配器的
+嵌入控制只覆盖记忆向量通道。逐条矩阵见
+[PARITY.md](PARITY.md#command-surface-upstream-commands-checked-at-v04959)。
+
 ## 界面与遥测
 
 两个界面能力都靠同一个浏览器半侧（`src/client/index.js`，构建时原样拷为 `lib/client.js`）：
