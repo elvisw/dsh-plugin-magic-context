@@ -225,7 +225,7 @@ The [T23 device report](_bmad-output/initiative-dsh-magic-context/acceptance-and
 records Android LOCAL memory write/recall, session-scoped context, native config,
 explicit simulated embedding probe/rebuild/pause/resume, and persistence across
 an engine restart. The final observed rebuild was partial (2/3), not complete.
-Real embedding vendors, the full Android local retrieval/backfill lane, English
+Real embedding vendors, English
 phone rendering, and mobile failure/lifecycle matrices were not tested. The
 shipped local MiniLM WASM primitive itself was verified on the Android device
 (384 dimensions, 891 ms for two texts; T24 probe). The T23 evidence was taken on
@@ -233,6 +233,17 @@ the pre-release T23 candidate. 0.18.0 packages the T24 candidate runtime, which
 also refreshed native credential state and error copy in `go-native`/`go-view`;
 that device gate predates those edits. The final tarball differs from the tested
 candidate only in version and docs.
+
+The Android local vector lane was then verified end to end on the same device with
+the published 0.18.0 artifact (T25): three memories backfilled to 384-dimension
+vectors under `embedding-provider:<md5>`, `ctx_memory action=search` returned
+`match=hybrid` for rows matched by both lanes and `match=semantic` for the row only
+the vector lane could reach (`memory.embedBackfill` was off, so the vector had to be
+a stored row), and after an engine restart the shared-space gate reported
+`parity: 1` with no duplicate embedding rows. See the
+[T25 report](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-18-t25-local-vector/acceptance-report.md).
+Chinese keyword retrieval remains weak on both hosts because `porter unicode61`
+does not segment CJK; that is recorded as a separate decision item, not covered here.
 
 ## C. Not ported
 

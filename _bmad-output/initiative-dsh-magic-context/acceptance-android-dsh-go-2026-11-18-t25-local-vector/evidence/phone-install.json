@@ -1,0 +1,34 @@
+{
+  "status": "installed",
+  "candidateSha256": "0ab7f5168bda13cf38db83c9af68067a14f5f78c764757ad80d73d0ce852aa30",
+  "candidateSha512Base64": "AHUrlgbHdj1Bqf8xxaO/9W5cEaoOopiHy7hBmQfVFQ8hx0Qf46E3HD5SIH55Co4qsEOZgTX9/4gEOCv4JhayTw==",
+  "candidateBytes": 4087402,
+  "profilePatchSha256": "5d3f5acd7d8490b5a1349eafc908086a1aaa4d815a0b15c4882101d975b2d0bb",
+  "dataDir": "/root/.dsh/dsh-go/mc-t25-local-vector/data",
+  "corpusDb": "/root/.dsh/dsh-go/mc-t25-local-vector/data/memories.db",
+  "modelsDir": "/root/.dsh/dsh-go/mc-t25-local-vector/data/models",
+  "assets": [
+    {
+      "name": "model.onnx",
+      "bytes": 90387606,
+      "sha256Match": true
+    },
+    {
+      "name": "tokenizer.json",
+      "bytes": 711661,
+      "sha256Match": true
+    },
+    {
+      "name": "tokenizer_config.json",
+      "bytes": 366,
+      "sha256Match": true
+    }
+  ],
+  "embeddingProvider": "local",
+  "embedBackfill": false,
+  "vectorBackfill": true,
+  "vectorBackfillLimit": 8,
+  "maintenanceIntervalMs": 60000,
+  "runtimeVerified": false,
+  "needsEngineRestart": true
+}

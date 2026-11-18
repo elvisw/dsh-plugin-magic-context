@@ -244,8 +244,12 @@ Web 矩阵与浏览器浮层不变。
 显式操作模拟嵌入服务，以及引擎重启后的检索。嵌入使用 16 维测试服务，**不是 SiliconFlow
 验收**。0.18.0 在这些原生视图上新增了 T24 凭据处理，真机 gate 早于这批改动，因此不等于已对
 发布的 Android 字节做过完整端到端验证。随包的本地 MiniLM WASM 原语已在同一台手机上单独验证（384 维，两条中英文文本 891 ms，
-见 [T24 真机探针](_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-18-t24-credential-key/android/phone-local-embed.json)），
-但完整的本地检索/回填链路和手机英文界面尚未实测。详见[证据与覆盖边界](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-17-t23/acceptance-report.md)。
+见 [T24 真机探针](_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-18-t24-credential-key/android/phone-local-embed.json)）。
+T25 随后在同一台设备上用**已发布的 0.18.0 包**把这条链路打通：三条记忆由维护 tick 回填成 384
+维向量，`ctx_memory action=search` 对同时命中关键词与向量的行返回 `match=hybrid`、对只有向量能
+找回的行返回 `match=semantic`，引擎重启后共享空间门禁报告 `parity: 1`。详见
+[T25 报告](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-18-t25-local-vector/acceptance-report.md)。
+手机英文界面、iOS、长历史吞吐与中文关键词检索仍未实测。
 
 <details>
 <summary>真机截图（中文界面，模拟嵌入服务）</summary>

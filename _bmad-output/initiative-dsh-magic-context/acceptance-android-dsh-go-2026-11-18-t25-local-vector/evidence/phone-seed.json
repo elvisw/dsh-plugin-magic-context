@@ -1,0 +1,32 @@
+{
+  "phase": "seed",
+  "at": "2026-11-18T13:42:44.139Z",
+  "project": "git:t25-fixture",
+  "pluginRoot": "/root/.dsh/profiles/web/node_modules/@elvisw/dsh-magic-context",
+  "pluginVersion": "0.18.0",
+  "dbPath": "/root/.dsh/dsh-go/mc-t25-local-vector/data/memories.db",
+  "writerStatus": {
+    "ok": true,
+    "corpusVersion": 95
+  },
+  "writes": [
+    {
+      "ok": true,
+      "id": 1
+    },
+    {
+      "ok": true,
+      "id": 2
+    },
+    {
+      "ok": true,
+      "id": 3
+    }
+  ],
+  "ids": [
+    1,
+    2,
+    3
+  ],
+  "status": "ok"
+}

@@ -1,0 +1,61 @@
+{
+  "at": "2026-11-18T14:27:19.791Z",
+  "query": "upload retry pipeline",
+  "tokenizer": "porter unicode61",
+  "rows": [
+    {
+      "id": 1,
+      "category": "ARCHITECTURE",
+      "content": "t25 fixture alpha: the deploy pipeline retries a failed upload three times before giving up",
+      "ftsHit": true,
+      "vectorPresent": true,
+      "vectorPresentSource": "evidence/phone-after-backfill.json",
+      "derivedLabel": "hybrid"
+    },
+    {
+      "id": 2,
+      "category": "CONSTRAINTS",
+      "content": "t25 fixture beta: the upload retry budget must never exceed three attempts in the pipeline",
+      "ftsHit": true,
+      "vectorPresent": true,
+      "vectorPresentSource": "evidence/phone-after-backfill.json",
+      "derivedLabel": "hybrid"
+    },
+    {
+      "id": 3,
+      "category": "CONFIG_VALUES",
+      "content": "t25 fixture gamma: the deploy pipeline timeout is set to thirty seconds",
+      "ftsHit": false,
+      "vectorPresent": true,
+      "vectorPresentSource": "evidence/phone-after-backfill.json",
+      "derivedLabel": "semantic"
+    }
+  ],
+  "fts": {
+    "attempts": [
+      {
+        "label": "sanitize",
+        "match": "\"upload\" \"retry\" \"pipeline\"",
+        "ids": [
+          1,
+          2
+        ]
+      }
+    ],
+    "usedIds": [
+      1,
+      2
+    ]
+  },
+  "summary": {
+    "hybrid": [
+      1,
+      2
+    ],
+    "semantic": [
+      3
+    ],
+    "fts": []
+  },
+  "status": "derived"
+}

@@ -1,0 +1,146 @@
+{
+  "phase": "after-search",
+  "at": "2026-11-18T13:50:00.438Z",
+  "dataDir": "/root/.dsh/dsh-go/mc-t25-local-vector/data",
+  "installedEntry": "/root/.dsh/profiles/web/node_modules/@elvisw/dsh-magic-context/lib/index.js",
+  "pluginVersion": "0.18.0",
+  "pluginDependency": "file:/sdcard/Download/dsh-mc-t25/elvisw-dsh-magic-context-0.18.0.tgz",
+  "patchSha256": "5d3f5acd7d8490b5a1349eafc908086a1aaa4d815a0b15c4882101d975b2d0bb",
+  "models": [
+    {
+      "name": "model.onnx",
+      "bytes": 90387606
+    },
+    {
+      "name": "tokenizer.json",
+      "bytes": 711661
+    },
+    {
+      "name": "tokenizer_config.json",
+      "bytes": 366
+    }
+  ],
+  "memories": [
+    {
+      "id": 1,
+      "project": "git:t25-fixture",
+      "category": "ARCHITECTURE",
+      "status": "active",
+      "preview": "t25 fixture alpha: the deploy pipeline retries a failed uplo"
+    },
+    {
+      "id": 2,
+      "project": "git:t25-fixture",
+      "category": "CONSTRAINTS",
+      "status": "active",
+      "preview": "t25 fixture beta: the upload retry budget must never exceed "
+    },
+    {
+      "id": 3,
+      "project": "git:t25-fixture",
+      "category": "CONFIG_VALUES",
+      "status": "active",
+      "preview": "t25 fixture gamma: the deploy pipeline timeout is set to thi"
+    }
+  ],
+  "embeddings": [
+    {
+      "memory_id": 1,
+      "model_id": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+      "bytes": 1536
+    },
+    {
+      "memory_id": 2,
+      "model_id": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+      "bytes": 1536
+    },
+    {
+      "memory_id": 3,
+      "model_id": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+      "bytes": 1536
+    }
+  ],
+  "embeddingSpaces": [
+    {
+      "model_id": "embedding-provider:adc36d64c8cb774f10f8348390e75fea",
+      "rows": 3,
+      "bytes": 1536
+    }
+  ],
+  "ftsRows": 3,
+  "vectorLane": [
+    {
+      "id": 2,
+      "at": 1795008372284,
+      "level": "info",
+      "kind": "boot",
+      "summary": "adapter booted (tools: dynamic-import, historian: off)",
+      "data": "{\"version\":\"phase2\",\"dbPath\":\"/root/.dsh/dsh-go/mc-t25-local-vector/data/dsh-magic-context.db\",\"schemaVersion\":11,\"recoveredHistorianRuns\":0,\"switches\":{\"write\":true,\"autoPromote\":true,\"embedBackfill\":false,\"vectorBackfill\":true,\"scoring\":true,\"userRender\":false,\"userCollect\":false,\"userReview\":false,\"machine\":false,\"machineAutoStage\":false,\"forceWaitMs\":0},\"corpusBootstrap\":\"created (v95)\",\"tools"
+    },
+    {
+      "id": 3,
+      "at": 1795008372286,
+      "level": "info",
+      "kind": "boot",
+      "summary": "telemetry route attached for the browser half",
+      "data": "{\"telemetry\":\"/mc-telemetry\",\"routes\":[\"/mc-telemetry/summary\",\"/mc-telemetry/events\"]}"
+    },
+    {
+      "id": 4,
+      "at": 1795008372287,
+      "level": "info",
+      "kind": "boot",
+      "summary": "embedding route attached for the browser half",
+      "data": "{\"embedding\":\"/mc-embedding\",\"routes\":[\"/mc-embedding/status\",\"/mc-embedding/models\",\"/mc-embedding/probe\",\"/mc-embedding/rebuild\"]}"
+    },
+    {
+      "id": 6,
+      "at": 1795008404934,
+      "level": "info",
+      "kind": "boot",
+      "summary": "adapter booted (tools: dynamic-import, historian: off)",
+      "data": "{\"version\":\"phase2\",\"dbPath\":\"/root/.dsh/dsh-go/mc-t25-local-vector/data/dsh-magic-context.db\",\"schemaVersion\":11,\"recoveredHistorianRuns\":0,\"switches\":{\"write\":true,\"autoPromote\":true,\"embedBackfill\":false,\"vectorBackfill\":true,\"scoring\":true,\"userRender\":false,\"userCollect\":false,\"userReview\":false,\"machine\":false,\"machineAutoStage\":false,\"forceWaitMs\":0},\"tools\":{\"mode\":\"dynamic-import\",\"regist"
+    },
+    {
+      "id": 7,
+      "at": 1795008405899,
+      "level": "info",
+      "kind": "boot",
+      "summary": "telemetry route attached for the browser half",
+      "data": "{\"telemetry\":\"/mc-telemetry\",\"routes\":[\"/mc-telemetry/summary\",\"/mc-telemetry/events\"]}"
+    },
+    {
+      "id": 8,
+      "at": 1795008405900,
+      "level": "info",
+      "kind": "boot",
+      "summary": "embedding route attached for the browser half",
+      "data": "{\"embedding\":\"/mc-embedding\",\"routes\":[\"/mc-embedding/status\",\"/mc-embedding/models\",\"/mc-embedding/probe\",\"/mc-embedding/rebuild\"]}"
+    },
+    {
+      "id": 10,
+      "at": 1795008464985,
+      "level": "info",
+      "kind": "vector-lane",
+      "summary": "shared-space gate: no-sample",
+      "data": "{\"outcome\":\"no-sample\",\"modelId\":\"embedding-provider:adc36d64c8cb774f10f8348390e75fea\"}"
+    },
+    {
+      "id": 26,
+      "at": 1795009366265,
+      "level": "info",
+      "kind": "vector-lane",
+      "summary": "backfill: +3 vector(s) in the dominant space",
+      "data": "{\"outcome\":\"backfill\",\"created\":3,\"present\":0,\"skipped\":0,\"failed\":0,\"total\":3,\"modelId\":\"embedding-provider:adc36d64c8cb774f10f8348390e75fea\",\"batch\":3}"
+    },
+    {
+      "id": 40,
+      "at": 1795009784976,
+      "level": "info",
+      "kind": "maintenance",
+      "summary": "maintenance: expired 0 (nothing to verify)",
+      "data": "{\"expired\":0,\"poolUnverified\":0,\"verify\":\"idle\"}"
+    }
+  ],
+  "status": "observed"
+}

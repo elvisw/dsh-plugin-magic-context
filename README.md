@@ -332,9 +332,15 @@ provider, not SiliconFlow. 0.18.0 adds T24 credential handling to the native
 views; that phone gate predates those edits, so it is not a fresh end-to-end run
 of the shipped Android bytes. The shipped local MiniLM WASM primitive was verified
 separately on the same phone (384 dimensions, 891 ms for two texts; see
-[the T24 probe](_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-18-t24-credential-key/android/phone-local-embed.json)),
-but the full local retrieval/backfill lane and an English phone UI were not
-tested. See the [evidence and limits](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-17-t23/acceptance-report.md).
+[the T24 probe](_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-18-t24-credential-key/android/phone-local-embed.json)).
+T25 then closed the lane end to end on the same device with the published
+0.18.0 tarball: three memories were backfilled to 384-dimensional vectors by the
+maintenance tick, `ctx_memory action=search` returned `match=hybrid` for both
+keyword-and-vector rows and `match=semantic` for the row that only the vector lane
+could reach, and after an engine restart the shared-space gate reported
+`parity: 1`. See the [T25 report](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-18-t25-local-vector/acceptance-report.md).
+An English phone UI, iOS, long-history throughput and Chinese keyword retrieval
+were still not tested.
 
 <details>
 <summary>On-device screenshots (Chinese UI; simulated embeddings)</summary>

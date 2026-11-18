@@ -1,0 +1,126 @@
+{
+  "root": "acceptance-android-dsh-go-2026-11-18-t25-local-vector",
+  "count": 24,
+  "files": [
+    {
+      "path": "acceptance-report.md",
+      "bytes": 13243,
+      "sha256": "9c9f647b97ed8701dd4d26ebe7b84d2d734840df54ea09d104fc3538eaeedc2c"
+    },
+    {
+      "path": "evidence/out-fts-rows.txt",
+      "bytes": 1439,
+      "sha256": "102fcd3dd868ea7cef1c3df51ae6c47326ae7172daa07cb74e180b3190bad020"
+    },
+    {
+      "path": "evidence/out-fts-sanitize.txt",
+      "bytes": 462,
+      "sha256": "6ac2cdf24af37b263b9b2ef542dcd7bfeeefeef921c41b205e7075493ebf8c8b"
+    },
+    {
+      "path": "evidence/out-fts-vocab.txt",
+      "bytes": 210,
+      "sha256": "ae20f409e3dbe6389c3b8e73a7ff0ffc463c041b8412ee807354b7392bc9cfbe"
+    },
+    {
+      "path": "evidence/out-zh-embeddings.txt",
+      "bytes": 201,
+      "sha256": "fef9d624162a5c034adc3692aa3796e12819edf13dd8c2a233181d34484d8209"
+    },
+    {
+      "path": "evidence/phone-after-backfill.json",
+      "bytes": 5023,
+      "sha256": "c32e49157bfe0c9d5ebca272baab9cc9947802fed66885ab4c768edaaefd4313"
+    },
+    {
+      "path": "evidence/phone-after-search.json",
+      "bytes": 5265,
+      "sha256": "bafdb0cae58033660faf15a29c1cb8ac2eedc3a39ee0f269eb58c9957a568e84"
+    },
+    {
+      "path": "evidence/phone-artifacts.json",
+      "bytes": 1303,
+      "sha256": "40ce598aa41997ac8f8f46dde15bc40016f2556f88003a7a4dc491efd3362818"
+    },
+    {
+      "path": "evidence/phone-install.json",
+      "bytes": 1062,
+      "sha256": "589bb199cef266b12200035fa7640ed2a7a842c4a81a3d53987fbe9ec31dd1d7"
+    },
+    {
+      "path": "evidence/phone-journal.json",
+      "bytes": 2766,
+      "sha256": "19f8cc8d801623972aca14e1d1f9e0a437ec4c3f499aee33d45e8f48986291f6"
+    },
+    {
+      "path": "evidence/phone-restore.json",
+      "bytes": 379,
+      "sha256": "34aee11f5c44dd120e33ca267be835a0023e3f8916aea3214bcc33ce35dc247f"
+    },
+    {
+      "path": "evidence/phone-seed.json",
+      "bytes": 543,
+      "sha256": "8293886ad31c7c16523bdb73c5d14ceebc2ff55234b725ecb77a70b7aadd14d5"
+    },
+    {
+      "path": "evidence/probe-fts-rows.cjs",
+      "bytes": 4326,
+      "sha256": "aa2e420108d7e61e3fd31dd40c2bef39287b566626e6ff9dca5e6a4caa028ff3"
+    },
+    {
+      "path": "evidence/probe-fts-sanitize.cjs",
+      "bytes": 1529,
+      "sha256": "97db2173890451234b76a90bfd4cd7cd64bdebb8e9f8e1536a0eb95acd664d77"
+    },
+    {
+      "path": "evidence/probe-fts-tokenizer.cjs",
+      "bytes": 859,
+      "sha256": "89d16341a2456ab50ebbc256a5dc1e35e090891062d472c905b86cdcd8acbcd9"
+    },
+    {
+      "path": "evidence/probe-fts-vocab.cjs",
+      "bytes": 859,
+      "sha256": "60d250813749d812481de79c2a146d0bb08106dd0023d23f3dc3e81debca1d3f"
+    },
+    {
+      "path": "evidence/probe-zh-embeddings.cjs",
+      "bytes": 1665,
+      "sha256": "3f009fd6acd860209ca6e614fd2628f804e38318e98d53547822b966f68de4eb"
+    },
+    {
+      "path": "evidence/retrieval-notes.md",
+      "bytes": 5119,
+      "sha256": "205848e4eb0ab74df9d3cd5b6d8a92fc5a2e826febf4b276cd7f80cda1e8d59f"
+    },
+    {
+      "path": "phone-t25-artifacts.cjs",
+      "bytes": 2810,
+      "sha256": "e54e8c8bafb0c7fb5241ddb62a23bd9f51d853b6255c7f31842b38f896b70146"
+    },
+    {
+      "path": "phone-t25-install.cjs",
+      "bytes": 10514,
+      "sha256": "e43f1dee4d8718bff39da9a4c8c0e27b33b59d0cb3aafbb207275365c792b979"
+    },
+    {
+      "path": "phone-t25-journal.cjs",
+      "bytes": 2021,
+      "sha256": "2eec9e50e3057ccd72836533deef46d955af2e9c2e43a7a13f636d704b5bbe3a"
+    },
+    {
+      "path": "phone-t25-observe.cjs",
+      "bytes": 4619,
+      "sha256": "730671bb09d3811ebbc1b2bdd6f4c271f07bab62842f28eb7a068915a8ba4026"
+    },
+    {
+      "path": "phone-t25-seed.cjs",
+      "bytes": 3348,
+      "sha256": "39fcff9e49a929fbbd3165ca4c18a8aa44981023eb97ad8a4a514288d0c7c51a"
+    },
+    {
+      "path": "REPRODUCE.md",
+      "bytes": 7033,
+      "sha256": "d19c5f1cc7fda2e3d6acb91dfe83773d32383a21cdcac9b6a263b94b9582b9cf"
+    }
+  ]
+}

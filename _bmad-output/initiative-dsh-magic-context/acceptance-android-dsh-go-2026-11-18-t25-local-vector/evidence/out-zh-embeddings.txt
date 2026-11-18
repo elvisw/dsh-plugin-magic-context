@@ -1,0 +1,7 @@
+dims 384
+zh paraphrase            0.7330
+zh paraphrase            0.7275
+zh paraphrase            0.8586
+zh unrelated             0.5388
+zh unrelated             0.6171
+zh vs en same meaning    0.0219

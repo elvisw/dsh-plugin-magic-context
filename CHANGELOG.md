@@ -10,6 +10,14 @@
 
 ## [Unreleased]
 
+### Verified
+
+- Android 本地向量链路端到端验收通过（T25，已发布的 0.18.0 包）：维护 tick 回填 3 条记忆为
+  384 维向量，`ctx_memory action=search` 对同时命中关键词与向量的行返回 `match=hybrid`、对只有
+  向量能找回的行返回 `match=semantic`，重启后共享空间门禁 `parity: 1`。`memory.embedBackfill`
+  在本次 gate 中关闭，因此 `hybrid` 只能来自存储行。产品缺陷为零，修复的是验收脚本自身的两处
+  缺陷。证据见 `_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-18-t25-local-vector/`。
+
 ### Added
 
 - 项目图标 `docs/img/plugin-icon.png`（512×512，另有 256 版）：括号收纳三枚方块，用于市场条目与 README。图标为本仓库原创，不沿用上游 `cortexkit/magic-context` 的徽标。

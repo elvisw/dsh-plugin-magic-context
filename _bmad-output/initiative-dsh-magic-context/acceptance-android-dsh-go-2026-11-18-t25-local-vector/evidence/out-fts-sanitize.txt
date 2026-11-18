@@ -1,0 +1,15 @@
+"上传失败"
+  sanitize: "\"上传失败\"" -> 0
+  relaxed: "\"上传失败\"" -> 0
+"重试次数上限是多少"
+  sanitize: "\"重试次数上限是多少\"" -> 0
+  relaxed: "\"重试次数上限是多少\"" -> 0
+"放弃"
+  sanitize: "\"放弃\"" -> 0
+  relaxed: empty query
+"最多重试"
+  sanitize: "\"最多重试\"" -> 0
+  relaxed: "\"最多重试\"" -> 0
+"upload retry"
+  sanitize: "\"upload\" \"retry\"" -> 0
+  relaxed: "\"upload\" OR \"retry\"" -> 0

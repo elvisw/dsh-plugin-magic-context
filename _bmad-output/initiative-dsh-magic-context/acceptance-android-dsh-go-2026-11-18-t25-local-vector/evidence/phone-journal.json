@@ -1,0 +1,73 @@
+{
+  "at": "2026-11-18T13:58:35.162Z",
+  "adapterDb": "/root/.dsh/dsh-go/mc-t25-local-vector/data/dsh-magic-context.db",
+  "toolCalls": [
+    {
+      "id": 36,
+      "at": 1795009737519,
+      "level": "info",
+      "summary": "ctx_memory search: search: 3 result(s)",
+      "data": "{\"tool\":\"ctx_memory\",\"action\":\"search\",\"identity\":\"git:t25-fixture\",\"explicitProject\":\"git:t25-fixture\",\"query\":\"upload retry pipeline\",\"hits\":3,\"ms\":42,\"ok\":true}"
+    },
+    {
+      "id": 38,
+      "at": 1795009739561,
+      "level": "info",
+      "summary": "ctx_reduce: queued 1, refused 0",
+      "data": "{\"tool\":\"ctx_reduce\",\"requested\":[1],\"queued\":[1],\"refused\":[],\"ms\":2}"
+    },
+    {
+      "id": 47,
+      "at": 1795009997585,
+      "level": "info",
+      "summary": "ctx_memory search: search: 3 result(s)",
+      "data": "{\"tool\":\"ctx_memory\",\"action\":\"search\",\"identity\":\"git:t25-fixture\",\"explicitProject\":\"git:t25-fixture\",\"query\":\"upload retry pipeline\",\"hits\":3,\"ms\":51,\"ok\":true}"
+    },
+    {
+      "id": 49,
+      "at": 1795010002438,
+      "level": "info",
+      "summary": "ctx_reduce: queued 1, refused 0",
+      "data": "{\"tool\":\"ctx_reduce\",\"requested\":[3],\"queued\":[3],\"refused\":[],\"ms\":1}"
+    },
+    {
+      "id": 68,
+      "at": 1795010270940,
+      "level": "info",
+      "summary": "ctx_memory search: search: 3 result(s)",
+      "data": "{\"tool\":\"ctx_memory\",\"action\":\"search\",\"identity\":\"git:t25-fixture\",\"explicitProject\":\"git:t25-fixture\",\"query\":\"upload retry pipeline\",\"hits\":3,\"ms\":780,\"ok\":true}"
+    },
+    {
+      "id": 69,
+      "at": 1795010271771,
+      "level": "info",
+      "summary": "ctx_reduce: queued 1, refused 0",
+      "data": "{\"tool\":\"ctx_reduce\",\"requested\":[5],\"queued\":[5],\"refused\":[],\"ms\":1}"
+    }
+  ],
+  "vectorLane": [
+    {
+      "id": 10,
+      "at": 1795008464985,
+      "level": "info",
+      "summary": "shared-space gate: no-sample",
+      "data": "{\"outcome\":\"no-sample\",\"modelId\":\"embedding-provider:adc36d64c8cb774f10f8348390e75fea\"}"
+    },
+    {
+      "id": 26,
+      "at": 1795009366265,
+      "level": "info",
+      "summary": "backfill: +3 vector(s) in the dominant space",
+      "data": "{\"outcome\":\"backfill\",\"created\":3,\"present\":0,\"skipped\":0,\"failed\":0,\"total\":3,\"modelId\":\"embedding-provider:adc36d64c8cb774f10f8348390e75fea\",\"batch\":3}"
+    },
+    {
+      "id": 67,
+      "at": 1795010270923,
+      "level": "info",
+      "summary": "shared-space gate: parity-pass",
+      "data": "{\"outcome\":\"parity-pass\",\"modelId\":\"embedding-provider:adc36d64c8cb774f10f8348390e75fea\",\"parity\":1}"
+    }
+  ],
+  "retrievalCounts": 0,
+  "status": "observed"
+}
