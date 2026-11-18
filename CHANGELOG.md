@@ -10,6 +10,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- 项目图标 `docs/img/plugin-icon.png`（512×512，另有 256 版）：括号收纳三枚方块，用于市场条目与 README。图标为本仓库原创，不沿用上游 `cortexkit/magic-context` 的徽标。
+
 ## [0.18.0] - 2026-11-18
 
 ### Added
