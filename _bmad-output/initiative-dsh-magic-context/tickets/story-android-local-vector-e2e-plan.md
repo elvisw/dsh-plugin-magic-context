@@ -3,7 +3,7 @@ title: Android local-vector end-to-end acceptance
 type: acceptance
 ticket: "25"
 created: 2026-11-18
-status: built
+status: done
 baseline_revision: c5a1e618342fe2bd55268ebddc6095385ed0d18c
 route: acceptance
 route_source: auto
