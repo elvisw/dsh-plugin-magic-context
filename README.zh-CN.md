@@ -17,7 +17,7 @@
 本插件把这套能力接到 **DeepSeek Harness（DSH）** 上。以 bundle 形式装进 profile，在运行中的应用里直接开始工作。
 
 上游跟进已核到 v0.49.30。宿主 0.2.2-rc.1 上实测运行正常，日常在 Web profile 里用着。仓库历史和出处见 [NOTICE](NOTICE)。
-## 装
+## 安装
 
 需要 Node ≥ 22.19，以及带 Web 客户端的 DSH 0.2.x 宿主（桌面应用或 `web` profile）。
 
