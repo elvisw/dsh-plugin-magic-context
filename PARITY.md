@@ -207,11 +207,13 @@ lane:
 - a committed `local` / `off` provider disarms through the parent-owned
   `loader/volatile-update` listener, even with no panel open.
 
-Host-imposed consequences: keys remain environment-variable names; the host
-loads `$DSH_HOME/.env` (a plaintext local file) into `process.env`, and the
-plugin reads the named variable only to send the auth header to the configured
-provider. The agent, panels, config values, logs and evidence never receive the
-raw key. Remote probes use the host's deferred-action protocol, the schema
+Host-imposed consequences: T24 exposes the key as a `role('secret')` config
+field with a sibling `role('credential-ref')` reference, so the native settings
+form writes the host credential store instead of requiring a `.env` file. The
+runtime still falls back to the referenced environment variable (including
+`$DSH_HOME/.env`) for headless or older hosts; the plugin reads the value only
+to send the auth header. The agent, panels, config values, logs and evidence
+never receive the raw key. Remote probes use the host's deferred-action protocol, the schema
 form's labels come from short localized descriptions (its `labelFor` treats a
 description as a title only at ≤18 runes), and the Android device gate is
 separate from the desktop Web matrix. iOS is not claimed.

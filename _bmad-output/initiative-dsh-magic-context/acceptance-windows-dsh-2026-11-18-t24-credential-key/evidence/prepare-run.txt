@@ -1,0 +1,21 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t24-20261118-143932",
+  "profile": "t24",
+  "overlay": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t24-20261118-143932\\overlays\\t24.yml",
+  "profile_patch": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t24-20261118-143932\\dsh-home\\profiles\\t24\\cordis.patch.yml",
+  "profile_patch_sha256": "69b8dff992e2177a0a512faa120e197623b9b1719f9d733f59fb33e54fa2abe3",
+  "tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t24-pack\\elvisw-dsh-magic-context-0.17.0.tgz",
+  "tarball_sha256": "e3c7b7b4dced12feb41f2d99620154e38f166e4198a7ca2727f37a1f1790b2c3",
+  "tarball_bytes": 4086969,
+  "tarball_files": 71,
+  "profile_dependency": "file:C:/Users/elvis/AppData/Local/Temp/opencode/t24-pack/elvisw-dsh-magic-context-0.17.0.tgz",
+  "fake_port": 12923,
+  "bootstrap_exit_code": 0,
+  "add_exit_code": 0,
+  "dump_exit_code": 0,
+  "dump_has_embedding": true,
+  "deepseek_key_present": true,
+  "siliconflow_key_present": false
+}
+
+--- stderr ---

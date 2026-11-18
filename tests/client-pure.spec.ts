@@ -91,6 +91,22 @@ const api = factory((name) => {
       memoryEnabled: boolean
       dimensionsUnsupported: boolean
     }
+    embeddingKeyRowState: (input: {
+      savedRef?: string
+      refDirty?: boolean
+      writable?: boolean
+      credentialsAvailable?: boolean
+      status?: unknown
+      busy?: boolean
+    }) => {
+      savedRef: string
+      source: string
+      labelKey: string
+      blockedKey: string
+      canWrite: boolean
+      clearVisible: boolean
+      keyPresent: boolean
+    }
     embeddingStateKeys: Record<string, string>
     reasoningEffortsOf: (
       groups: Array<{ id: string; models: Array<{ id: string; name?: string; reasoning?: unknown }> }>,
@@ -569,7 +585,7 @@ describe('routePairOps — the pin-pair write semantics', () => {
 })
 
 describe('settings information architecture (T21)', () => {
-  const { fieldSpecs, fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingStateKeys } = api.__diagnostics
+  const { fieldSpecs, fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingKeyRowState, embeddingStateKeys } = api.__diagnostics
 
   it('gives every field exactly one section and one placement', () => {
     const sections = fieldSections()
@@ -580,14 +596,23 @@ describe('settings information architecture (T21)', () => {
       ...section.common.map((spec) => ({ key: spec.path.join('.'), section: section.id, placement: 'common' })),
       ...section.advanced.map((spec) => ({ key: spec.path.join('.'), section: section.id, placement: 'advanced' })),
     ])
-    expect(placed).toHaveLength(34)
-    expect(new Set(placed.map((entry) => entry.key)).size).toBe(34)
+    expect(placed).toHaveLength(35)
+    expect(new Set(placed.map((entry) => entry.key)).size).toBe(35)
     expect(new Set(fieldSpecs.map((spec) => spec.path.join('.')))).toEqual(new Set(placed.map((entry) => entry.key)))
     for (const spec of fieldSpecs) {
       const layout = layoutOf(spec)
       expect(layout.section).toBe(placed.find((entry) => entry.key === spec.path.join('.'))?.section)
       expect(layout.placement).toBe(placed.find((entry) => entry.key === spec.path.join('.'))?.placement)
     }
+  })
+
+  it('keeps the embedding API key as a write-only field beside its reference', () => {
+    const embedding = fieldSections().find((section) => section.id === 'embedding')
+    expect(embedding).toBeDefined()
+    expect(embedding.common.map((spec) => spec.path.join('.'))).toContain('embedding.apiKeyEnv')
+    expect(embedding.common.map((spec) => spec.path.join('.'))).toContain('embedding.apiKey')
+    expect(embedding.advanced.map((spec) => spec.path.join('.'))).not.toContain('embedding.apiKey')
+    expect(fieldSpecs.find((spec) => spec.path.join('.') === 'embedding.apiKey')?.kind).toBe('secret')
   })
 
   it('keeps the advanced groups on the sections the design names', () => {
@@ -701,6 +726,34 @@ describe('settings information architecture (T21)', () => {
     expect(embeddingStatusFlags({ lastError: 'dimensions-unsupported', memoryEnabled: false })).toEqual({
       keyPresent: true, memoryEnabled: false, dimensionsUnsupported: true,
     })
+    expect(embeddingStatusFlags({ keyPresent: false, keyEnv: '', keyEnvInvalid: true })).toEqual({
+      keyPresent: false, memoryEnabled: true, dimensionsUnsupported: false,
+    })
+
+    const keyBase = {
+      savedRef: 'SILICONFLOW_API_KEY', refDirty: false, writable: true,
+      credentialsAvailable: true, status: { keyPresent: false, keySource: 'none' }, busy: false,
+    }
+    expect(embeddingKeyRowState(keyBase).canWrite).toBe(true)
+    expect(embeddingKeyRowState({ ...keyBase, writable: false }).blockedKey).toBe('settings.embedding.readOnly')
+    expect(embeddingKeyRowState({ ...keyBase, refDirty: true }).blockedKey).toBe('settings.embedding.keySaveFirst')
+    expect(embeddingKeyRowState({ ...keyBase, savedRef: '' }).blockedKey).toBe('settings.embedding.keyRefRequired')
+    expect(embeddingKeyRowState({ ...keyBase, savedRef: 'bad-name' }).blockedKey).toBe('settings.embedding.keyInvalidRef')
+    expect(embeddingKeyRowState({ ...keyBase, credentialsAvailable: false }).blockedKey).toBe('settings.embedding.keyUnavailable')
+    expect(embeddingKeyRowState({ ...keyBase, status: null }).blockedKey).toBe('settings.embedding.working')
+    expect(embeddingKeyRowState({ ...keyBase, busy: true }).blockedKey).toBe('settings.embedding.keyBusy')
+    expect(embeddingKeyRowState({
+      ...keyBase, status: { keyPresent: true, keySource: 'credential' },
+    })).toMatchObject({ labelKey: 'settings.embedding.keyCredential', clearVisible: true, canWrite: true })
+    expect(embeddingKeyRowState({
+      ...keyBase, status: { keyPresent: true, keySource: 'environment' },
+    })).toMatchObject({ labelKey: 'settings.embedding.keyEnvironment', clearVisible: false })
+    expect(embeddingKeyRowState({
+      ...keyBase, status: { keyPresent: false, keySource: 'none', keyEnv: '' },
+    })).toMatchObject({ labelKey: 'settings.embedding.noAuth', clearVisible: false })
+    expect(embeddingKeyRowState({
+      ...keyBase, status: { keyPresent: false, keySource: 'none', keyEnv: '', keyEnvInvalid: true },
+    })).toMatchObject({ labelKey: 'settings.embedding.keyInvalidRef', canWrite: true })
 
     const migrating = embeddingActionState({ ...base, state: 'remote-migrating' })
     expect(migrating.start.hidden).toBe(true)
@@ -736,7 +789,7 @@ describe('settings copy — every field key is dictionary-backed', () => {
   const { settingsCopyKeys, fieldSpecs } = api.__diagnostics
 
   it('derives a label and hint key for every field spec', () => {
-    expect(fieldSpecs).toHaveLength(34)
+    expect(fieldSpecs).toHaveLength(35)
     for (const spec of fieldSpecs) {
       expect(settingsCopyKeys()).toContain(spec.labelKey)
       expect(settingsCopyKeys()).toContain(spec.hintKey)

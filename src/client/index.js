@@ -410,6 +410,9 @@ window.__ModuleLoader__.load({
       field('embedding', 'common', {
         path: ['embedding', 'apiKeyEnv'], kind: 'text', ...fieldCopy(['embedding', 'apiKeyEnv']),
       }),
+      field('embedding', 'common', {
+        path: ['embedding', 'apiKey'], kind: 'secret', ...fieldCopy(['embedding', 'apiKey']),
+      }),
       field('embedding', 'advanced', {
         path: ['embedding', 'authHeader'], kind: 'select', ...fieldCopy(['embedding', 'authHeader']),
         options: [
@@ -577,10 +580,51 @@ window.__ModuleLoader__.load({
       const source = status !== null && typeof status === 'object' ? status : {}
       const keyEnv = typeof source.keyEnv === 'string' ? source.keyEnv : ''
       return {
-        keyPresent: !(source.keyPresent === false && keyEnv !== ''),
+        keyPresent: source.keyPresent === true
+          ? true
+          : source.keyEnvInvalid === true ? false : !(source.keyPresent === false && keyEnv !== ''),
         memoryEnabled: source.memoryEnabled !== false,
         dimensionsUnsupported: typeof source.lastError === 'string'
           && source.lastError.includes('dimensions-unsupported'),
+      }
+    }
+
+    /**
+     * Pure state for the write-only API key row. Kept outside the React
+     * component so the disabled/first-ref/credential-source branches can be
+     * asserted without a DOM.
+     */
+    function embeddingKeyRowState(input) {
+      const savedRef = typeof input.savedRef === 'string' ? input.savedRef.trim() : ''
+      const status = input.status !== null && typeof input.status === 'object' ? input.status : null
+      const source = status !== null && typeof status.keySource === 'string' ? status.keySource : ''
+      const keyEnv = status !== null && typeof status.keyEnv === 'string' ? status.keyEnv : ''
+      const keyEnvInvalid = status !== null && status.keyEnvInvalid === true
+      const labelKey = status === null
+        ? 'settings.embedding.working'
+        : source === 'literal' ? 'settings.embedding.keyLiteral'
+          : keyEnvInvalid ? 'settings.embedding.keyInvalidRef'
+            : source === 'credential' ? 'settings.embedding.keyCredential'
+              : source === 'environment' ? 'settings.embedding.keyEnvironment'
+                : keyEnv === '' ? 'settings.embedding.noAuth'
+                  : status.keyPresent === true ? 'settings.embedding.keyPresent' : 'settings.embedding.keyAbsent'
+      const blockedKey = input.writable !== true
+        ? 'settings.embedding.readOnly'
+        : input.refDirty === true ? 'settings.embedding.keySaveFirst'
+          : savedRef === '' ? 'settings.embedding.keyRefRequired'
+            : !/^[A-Za-z_][A-Za-z0-9_]*$/.test(savedRef) ? 'settings.embedding.keyInvalidRef'
+              : input.credentialsAvailable !== true ? 'settings.embedding.keyUnavailable'
+                : status === null ? 'settings.embedding.working'
+                  : input.busy === true ? 'settings.embedding.keyBusy'
+                    : ''
+      return {
+        savedRef,
+        source,
+        labelKey,
+        blockedKey,
+        canWrite: blockedKey === '',
+        clearVisible: source === 'credential',
+        keyPresent: status !== null && status.keyPresent === true,
       }
     }
 
@@ -677,6 +721,22 @@ window.__ModuleLoader__.load({
       'settings.embedding.savedFirst',
       'settings.embedding.keyPresent',
       'settings.embedding.keyAbsent',
+      'settings.embedding.keyCredential',
+      'settings.embedding.keyEnvironment',
+      'settings.embedding.keyLiteral',
+      'settings.embedding.keySave',
+      'settings.embedding.keyClear',
+      'settings.embedding.keySaved',
+      'settings.embedding.keyCleared',
+      'settings.embedding.keyError',
+      'settings.embedding.keySaveFirst',
+      'settings.embedding.keyRefRequired',
+      'settings.embedding.keyUnavailable',
+      'settings.embedding.keyInvalidRef',
+      'settings.embedding.keyBusy',
+      'settings.embedding.keyPlaceholder',
+      'settings.embedding.keyEnvOnly',
+      'settings.embedding.readOnly',
       'settings.embedding.noAuth',
       'settings.embedding.loadModels',
       'settings.embedding.refresh',
@@ -965,7 +1025,7 @@ window.__ModuleLoader__.load({
      *   absent data falls back to plain text for the verify pin.
      * @returns the React component the two configuration seats register.
      */
-    function makeCard(scope, catalog) {
+    function makeCard(scope, catalog, credentialsOf) {
       return function MagicContextCard(props) {
         const [renderTick, setRevision] = useState(0)
         const drafts = useRef(new Map())
@@ -979,6 +1039,10 @@ window.__ModuleLoader__.load({
         const [statusRefreshing, setStatusRefreshing] = useState(false)
         const statusInFlight = useRef(null)
         const [embeddingMessage, setEmbeddingMessage] = useState('')
+        // T24: the secret is write-only and never enters `drafts`/`scope.mutate`.
+        const [embeddingKeyDraft, setEmbeddingKeyDraft] = useState('')
+        const [embeddingKeyBusy, setEmbeddingKeyBusy] = useState(false)
+        const [embeddingKeyMessage, setEmbeddingKeyMessage] = useState('')
         const [advancedOpen, setAdvancedOpen] = useState({})
         const [confirmAction, setConfirmAction] = useState(null)
         const lastInvalidKey = useRef('')
@@ -987,9 +1051,19 @@ window.__ModuleLoader__.load({
 
         const snapshot = scope.getSnapshot()
         const staged = drafts.current
+        const savedApiKeyRef = formatText(readPath(snapshot.value, ['embedding', 'apiKeyEnv'])).trim()
+        // A typed secret belongs to the reference it was entered under: never
+        // carry it across a saved reference change.
+        useEffect(() => {
+          setEmbeddingKeyDraft('')
+          setEmbeddingKeyMessage('')
+        }, [savedApiKeyRef])
         const t = typeof props.t === 'function' ? props.t : REFERENCE_T
         const labels = formLabels(t)
         const valueLabels = settingsValueLabels(t)
+        // Capture the credential namespace itself inside the inject scope; the
+        // `remote` service proxy may only be read while that scope is active.
+        const credentialsApi = typeof credentialsOf === 'function' ? credentialsOf() : undefined
 
         const refreshEmbeddingStatus = () => {
           if (statusInFlight.current !== null) return statusInFlight.current
@@ -1425,8 +1499,15 @@ window.__ModuleLoader__.load({
               ops.push(...planned.ops)
               continue
             }
+            const isApiKeyEnv = spec.path.length === 2
+              && spec.path[0] === 'embedding' && spec.path[1] === 'apiKeyEnv'
             if (draft.clear) {
-              ops.push({ op: 'unset', path: spec.path.slice() })
+              // An explicit empty reference is the only way a custom endpoint
+              // can opt out of the schema's SiliconFlow default and run without
+              // auth. `unset` would fall back to that default, so write ''.
+              ops.push(isApiKeyEnv
+                ? { op: 'set', path: spec.path.slice(), value: '' }
+                : { op: 'unset', path: spec.path.slice() })
               continue
             }
             if (spec.kind === 'boolean') {
@@ -1435,8 +1516,13 @@ window.__ModuleLoader__.load({
             }
             if (spec.kind === 'text' || spec.kind === 'select') {
               const text = String(draft.text ?? '').trim()
-              if (text === '') ops.push({ op: 'unset', path: spec.path.slice() })
-              else ops.push({ op: 'set', path: spec.path.slice(), value: text })
+              if (text === '') {
+                ops.push(isApiKeyEnv
+                  ? { op: 'set', path: spec.path.slice(), value: '' }
+                  : { op: 'unset', path: spec.path.slice() })
+              } else {
+                ops.push({ op: 'set', path: spec.path.slice(), value: text })
+              }
               continue
             }
             const write = parseNumberText(draft.text)
@@ -1787,9 +1873,114 @@ window.__ModuleLoader__.load({
           ])
         }
 
+        /**
+         * T24: a write-only secret bound to the SAVED `embedding.apiKeyEnv`
+         * reference. The input never enters `drafts`, so the host Save cannot
+         * write it into the profile patch; set/unset go to the credential store.
+         */
+        const renderSecretField = (spec) => {
+          const id = 'mc-field-' + fieldKey(spec.path)
+          const refSpec = FIELDS.find((candidate) => fieldKey(candidate.path) === 'embedding.apiKeyEnv')
+          const refValue = refSpec === undefined ? '' : view(refSpec).text.trim()
+          const row = embeddingKeyRowState({
+            savedRef: savedApiKeyRef,
+            refDirty: staged.has(fieldKey(['embedding', 'apiKeyEnv'])) && refValue !== savedApiKeyRef,
+            writable: shell.writable,
+            credentialsAvailable: credentialsApi !== undefined && credentialsApi !== null
+              && typeof credentialsApi.set === 'function' && typeof credentialsApi.unset === 'function',
+            status: embeddingStatus,
+            busy: embeddingKeyBusy,
+          })
+          const keyLabel = t(row.labelKey)
+          const blocked = row.blockedKey === '' ? '' : t(row.blockedKey)
+          const canWrite = row.canWrite
+          const source = row.source
+          const refInvalid = row.savedRef !== '' && !/^[A-Za-z_][A-Za-z0-9_]*$/.test(row.savedRef)
+          const api = credentialsApi
+          const saveSecret = () => {
+            if (!canWrite || embeddingKeyDraft.trim() === '' || api === undefined || api === null) return
+            setEmbeddingKeyBusy(true)
+            setEmbeddingKeyMessage('')
+            // Start in a microtask: a synchronous adapter throw must still land
+            // in the catch/finally path instead of leaving the buttons busy.
+            Promise.resolve().then(() => api.set(row.savedRef, embeddingKeyDraft.trim())).then((response) => {
+              if (response === null || typeof response !== 'object' || response.ok !== true) throw new Error('credential-rejected')
+              setEmbeddingKeyDraft('')
+              setEmbeddingKeyMessage(t('settings.embedding.keySaved'))
+              void refreshEmbeddingStatus()
+            }).catch(() => {
+              // Never echo the provider/credential error body: it may contain a
+              // reference, and the one thing this card must not leak is the value.
+              setEmbeddingKeyMessage(t('settings.embedding.keyError'))
+            }).finally(() => setEmbeddingKeyBusy(false))
+          }
+          const clearSecret = () => {
+            if (!canWrite || source !== 'credential' || api === undefined || api === null) return
+            setEmbeddingKeyBusy(true)
+            setEmbeddingKeyMessage('')
+            Promise.resolve().then(() => api.unset(row.savedRef)).then((response) => {
+              if (response === null || typeof response !== 'object' || response.ok !== true) throw new Error('credential-rejected')
+              setEmbeddingKeyDraft('')
+              setEmbeddingKeyMessage(t('settings.embedding.keyCleared'))
+              void refreshEmbeddingStatus()
+            }).catch(() => {
+              setEmbeddingKeyMessage(t('settings.embedding.keyError'))
+            }).finally(() => setEmbeddingKeyBusy(false))
+          }
+          return el('div', {
+            key: id,
+            style: { display: 'grid', gap: 6, margin: '8px 0' },
+          }, [
+            el('label', { key: 'label', htmlFor: id, style: { fontSize: 12 } }, t(spec.labelKey)),
+            el('span', { key: 'state', style: { fontSize: 11.5, opacity: 0.75 } }, keyLabel),
+            el('div', { key: 'row', style: { display: 'flex', gap: 6, flexWrap: 'wrap' } }, [
+              el('input', {
+                key: 'input',
+                id,
+                type: 'password',
+                value: embeddingKeyDraft,
+                disabled: !canWrite,
+                autoComplete: 'new-password',
+                spellCheck: false,
+                'aria-label': t(spec.labelKey),
+                'aria-invalid': refInvalid ? 'true' : 'false',
+                placeholder: t('settings.embedding.keyPlaceholder'),
+                onChange: (event) => {
+                  setEmbeddingKeyDraft(event.target.value)
+                  setEmbeddingKeyMessage('')
+                },
+                style: { flex: '1 1 220px', minWidth: 0 },
+              }),
+              el('button', {
+                key: 'save',
+                type: 'button',
+                disabled: !canWrite || embeddingKeyDraft.trim() === '',
+                onClick: saveSecret,
+              }, t('settings.embedding.keySave')),
+              source === 'credential'
+                ? el('button', {
+                  key: 'clear',
+                  type: 'button',
+                  disabled: !canWrite,
+                  onClick: clearSecret,
+                }, t('settings.embedding.keyClear'))
+                : null,
+            ]),
+            el('span', { key: 'hint', style: { fontSize: 11.5, opacity: 0.7 } }, t(spec.hintKey)),
+            blocked === '' ? null : el('span', { key: 'blocked', style: { fontSize: 11.5, opacity: 0.7 } }, blocked),
+            source === 'environment'
+              ? el('span', { key: 'env-only', style: { fontSize: 11.5, opacity: 0.7 } }, t('settings.embedding.keyEnvOnly'))
+              : null,
+            embeddingKeyMessage === ''
+              ? null
+              : el('span', { key: 'message', style: { fontSize: 11.5 } }, embeddingKeyMessage),
+          ])
+        }
+
         const renderField = (spec) => {
           const state = view(spec)
           const id = 'mc-field-' + fieldKey(spec.path)
+          if (spec.kind === 'secret') return renderSecretField(spec)
           if (spec.kind === 'boolean') {
             return el('div', { key: id, style: { display: 'flex', alignItems: 'center', gap: 8, margin: '8px 0' } }, [
               el('span', { key: 'label', style: { fontSize: 12 } }, t(spec.labelKey)),
@@ -2617,7 +2808,9 @@ window.__ModuleLoader__.load({
         'settings.field.embedding.model.label': '模型 ID',
         'settings.field.embedding.model.hint': '从模型列表选择，或手动填写服务商公布的模型 ID。',
         'settings.field.embedding.apiKeyEnv.label': 'API Key 环境变量',
-        'settings.field.embedding.apiKeyEnv.hint': '只写变量名，不写密钥值；填写空值表示端点不需要认证。',
+        'settings.field.embedding.apiKeyEnv.hint': '只写变量名，不写密钥值；留空表示未绑定凭据，SiliconFlow 预设仍会沿用 SILICONFLOW_API_KEY 环境变量。',
+        'settings.field.embedding.apiKey.label': 'API Key',
+        'settings.field.embedding.apiKey.hint': '只写不读，保存到宿主凭据库；不会写入配置文件。',
         'settings.field.embedding.dimensions.label': '向量维度',
         'settings.field.embedding.dimensions.hint': '0 表示自动探测；只有服务支持 dimensions 参数时才填写覆盖值。',
         'settings.field.embedding.queryInstruction.label': '查询指令前缀',
@@ -2643,6 +2836,22 @@ window.__ModuleLoader__.load({
         'settings.embedding.savedFirst': '先保存当前修改，再执行远程操作。',
         'settings.embedding.keyPresent': 'API Key：已配置',
         'settings.embedding.keyAbsent': 'API Key：未配置',
+        'settings.embedding.keyCredential': 'API Key：已配置（凭据库）',
+        'settings.embedding.keyEnvironment': 'API Key：已配置（环境变量）',
+        'settings.embedding.keyLiteral': 'API Key：已配置（配置项）',
+        'settings.embedding.keySave': '保存密钥',
+        'settings.embedding.keyClear': '清除凭据',
+        'settings.embedding.keySaved': '密钥已保存到宿主凭据库。',
+        'settings.embedding.keyCleared': '凭据已清除；环境变量回退仍可能生效。',
+        'settings.embedding.keyError': '凭据保存失败，请重试。',
+        'settings.embedding.keySaveFirst': '先保存变量名，再录入密钥。',
+        'settings.embedding.keyRefRequired': '先填写并保存密钥变量名；端点不需要认证时可留空。',
+        'settings.embedding.keyUnavailable': '宿主未提供凭据库，仍可使用环境变量。',
+        'settings.embedding.keyInvalidRef': '密钥变量名格式不正确。',
+        'settings.embedding.keyBusy': '正在保存…',
+        'settings.embedding.keyPlaceholder': '输入 API Key',
+        'settings.embedding.keyEnvOnly': '当前来源是环境变量；保存凭据后会优先使用凭据库。',
+        'settings.embedding.readOnly': '设置页只读。',
         'settings.embedding.noAuth': 'API Key：无需认证',
         'settings.embedding.loadModels': '加载模型',
         'settings.embedding.refresh': '刷新',
@@ -2917,7 +3126,9 @@ window.__ModuleLoader__.load({
         'settings.field.embedding.model.label': 'Model ID',
         'settings.field.embedding.model.hint': 'Pick from the model list or type a vendor-published model ID.',
         'settings.field.embedding.apiKeyEnv.label': 'API key environment variable',
-        'settings.field.embedding.apiKeyEnv.hint': 'Name only, never the value; leave empty when the endpoint needs no auth.',
+        'settings.field.embedding.apiKeyEnv.hint': 'Name only, never the value; leave empty to leave it unbound (the SiliconFlow preset still uses SILICONFLOW_API_KEY).',
+        'settings.field.embedding.apiKey.label': 'API key',
+        'settings.field.embedding.apiKey.hint': 'Write-only; stored in the host credential store, never in the profile file.',
         'settings.field.embedding.dimensions.label': 'Vector dimensions',
         'settings.field.embedding.dimensions.hint': '0 probes automatically; override only when the service supports the dimensions parameter.',
         'settings.field.embedding.queryInstruction.label': 'Query instruction',
@@ -2943,6 +3154,22 @@ window.__ModuleLoader__.load({
         'settings.embedding.savedFirst': 'Save the current edits before using remote actions.',
         'settings.embedding.keyPresent': 'API key: configured',
         'settings.embedding.keyAbsent': 'API key: not configured',
+        'settings.embedding.keyCredential': 'API key: configured (credential store)',
+        'settings.embedding.keyEnvironment': 'API key: configured (environment)',
+        'settings.embedding.keyLiteral': 'API key: configured (config)',
+        'settings.embedding.keySave': 'Save key',
+        'settings.embedding.keyClear': 'Clear credential',
+        'settings.embedding.keySaved': 'Key saved to the host credential store.',
+        'settings.embedding.keyCleared': 'Credential cleared; the environment fallback may still apply.',
+        'settings.embedding.keyError': 'Could not save the credential. Try again.',
+        'settings.embedding.keySaveFirst': 'Save the variable name before entering a key.',
+        'settings.embedding.keyRefRequired': 'Enter and save a key variable first; leave it empty for a no-auth endpoint.',
+        'settings.embedding.keyUnavailable': 'This host exposes no credential store; the environment variable still works.',
+        'settings.embedding.keyInvalidRef': 'The key variable name is invalid.',
+        'settings.embedding.keyBusy': 'Saving…',
+        'settings.embedding.keyPlaceholder': 'Enter API key',
+        'settings.embedding.keyEnvOnly': 'Currently from the environment; a stored credential takes precedence.',
+        'settings.embedding.readOnly': 'Settings are read-only.',
         'settings.embedding.noAuth': 'API key: not required',
         'settings.embedding.loadModels': 'Load models',
         'settings.embedding.refresh': 'Refresh',
@@ -4120,13 +4347,24 @@ window.__ModuleLoader__.load({
       // The model catalog is optional: without `remote.session` (or its
       // `modelCatalog` RPC) the card stays on plain text for the verify pin.
       const catalog = createModelCatalog()
+      // `remote.credentials` is optional; keep the card mounted when it is
+      // absent and let the secret row explain the environment fallback.
+      let credentialsApi
+      ctx.inject(['remote', 'remote.credentials'], (remoteCtx) => {
+        try {
+          credentialsApi = remoteCtx.remote.credentials
+        } catch {
+          credentialsApi = undefined
+        }
+        return () => { credentialsApi = undefined }
+      })
       ctx.inject(['remote', 'remote.session'], (remoteCtx) => {
         catalog.attach(remoteCtx)
       })
 
       ctx.inject(['configForms'], (settingsCtx) => {
         const scope = settingsCtx.configForms.get(CFG_NS)
-        const Card = makeCard(scope, catalog)
+        const Card = makeCard(scope, catalog, () => credentialsApi)
         settingsCtx.effect(() => settingsCtx.configForms.whileServed([CFG_NS], () => {
           const offSection = ctx.slots.inject(SETTINGS_SEAT, () => ctx.slots.register({
             name: SETTINGS_SEAT,
@@ -4166,7 +4404,7 @@ window.__ModuleLoader__.load({
         /** Settings copy + catalog-backed effort picker helpers. */
         settingsCopyKeys, reasoningEffortsOf, effortSelectionOf, effortPlanOps, effortDraftOf,
         EFFORT_CUSTOM_SENTINEL, fieldSpecs: FIELDS,
-        fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingStateKeys: EMBEDDING_STATE_KEYS,
+        fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingKeyRowState, embeddingStateKeys: EMBEDDING_STATE_KEYS,
         // The number/text formatters are the panel's display contract; the
         // node-side spec pins them so a formatting regression (the scope bug
         // that briefly unmounted the pill) cannot come back silently.

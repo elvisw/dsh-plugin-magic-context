@@ -107,6 +107,18 @@ describe('embedding identity and config', () => {
     expect(siliconflow.remote.apiKeyEnv).toBe('SILICONFLOW_API_KEY')
   })
 
+  it('resolves literal, then credential store, then environment', () => {
+    const literal = remote({ apiKey: 'literal-key' })
+    expect(apiKeyOf(literal, { [ENV_NAME]: 'env-key' }, 'cred-key')).toBe('literal-key')
+    const credential = remote({ apiKey: '' })
+    expect(apiKeyOf(credential, { [ENV_NAME]: 'env-key' }, 'cred-key')).toBe('cred-key')
+    expect(apiKeyOf(credential, { [ENV_NAME]: 'env-key' })).toBe('env-key')
+    expect(apiKeyOf(credential, { [ENV_NAME]: 'env-key' }, '')).toBe('env-key')
+    // A cleared reference must not borrow a credential from a previous ref.
+    expect(apiKeyOf(remote({ apiKeyEnv: '' }), { [ENV_NAME]: 'env-key' }, 'cred-key')).toBeUndefined()
+    expect(keyFingerprint(credential, {}, 'cred-key')).not.toContain('cred-key')
+  })
+
   it('never returns a key value in identity or fingerprint', () => {
     const rem = remote()
     const key = apiKeyOf(rem, { [ENV_NAME]: 'super-secret' })

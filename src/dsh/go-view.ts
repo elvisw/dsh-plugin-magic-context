@@ -896,12 +896,12 @@ export function goEmbeddingErrorDetail(error: string | undefined, locale: unknow
   switch (error) {
     case 'missing-key':
       return zh
-        ? '密钥变量未设置；请在宿主的 .env 中配置并重启引擎。'
-        : 'The key variable is absent. Set it in the host .env and restart the engine.'
+        ? '密钥未配置；请在配置页「API Key」录入，或设置引用的环境变量后重试。'
+        : 'No key configured; enter it in the settings API Key field, or set the referenced environment variable and retry.'
     case 'invalid-key-env':
       return zh
-        ? 'apiKeyEnv 必须是合法的环境变量名，不是密钥值；请修正变量名。'
-        : 'apiKeyEnv must be a valid environment-variable NAME, not a key value; fix the name.'
+        ? 'apiKeyEnv 必须是合法的引用名（字母、数字、下划线，且以字母或下划线开头），不是密钥值；请修正。'
+        : 'apiKeyEnv must be a valid reference name (letters, digits, underscore; start with a letter or underscore), not a key value.'
     case 'auth-failed':
       return zh ? '认证失败：检查密钥是否有效。' : 'Authentication failed; check that the configured key is valid.'
     case 'rate-limited':

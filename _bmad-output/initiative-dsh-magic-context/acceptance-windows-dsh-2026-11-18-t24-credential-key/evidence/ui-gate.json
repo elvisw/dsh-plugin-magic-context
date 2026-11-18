@@ -1,0 +1,306 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t24-20261118-143932",
+  "tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t24-pack\\elvisw-dsh-magic-context-0.17.0.tgz",
+  "steps": [
+    {
+      "name": "chinese-locale",
+      "at": "2026-11-18T06:40:13.661Z",
+      "ok": true
+    },
+    {
+      "name": "key-row-visible",
+      "at": "2026-11-18T06:40:13.667Z",
+      "ok": true
+    },
+    {
+      "name": "key-absent",
+      "at": "2026-11-18T06:40:13.667Z",
+      "ok": true
+    },
+    {
+      "name": "save-key-visible",
+      "at": "2026-11-18T06:40:13.673Z",
+      "ok": true
+    },
+    {
+      "name": "clear-hidden",
+      "at": "2026-11-18T06:40:13.678Z",
+      "ok": true
+    },
+    {
+      "name": "no-automatic-requests",
+      "at": "2026-11-18T06:40:13.678Z",
+      "ok": true,
+      "requests": []
+    },
+    {
+      "name": "key-saved-source",
+      "at": "2026-11-18T06:40:16.518Z",
+      "ok": true
+    },
+    {
+      "name": "key-input-cleared",
+      "at": "2026-11-18T06:40:16.523Z",
+      "ok": true
+    },
+    {
+      "name": "clear-visible",
+      "at": "2026-11-18T06:40:16.528Z",
+      "ok": true
+    },
+    {
+      "name": "save-did-not-mutate-config",
+      "at": "2026-11-18T06:40:16.529Z",
+      "ok": true,
+      "mutateBefore": 1
+    },
+    {
+      "name": "save-did-not-call-provider",
+      "at": "2026-11-18T06:40:16.529Z",
+      "ok": true,
+      "requests": []
+    },
+    {
+      "name": "profile-patch-unchanged",
+      "at": "2026-11-18T06:40:16.529Z",
+      "ok": true
+    },
+    {
+      "name": "secret-not-in-card",
+      "at": "2026-11-18T06:40:16.532Z",
+      "ok": true
+    },
+    {
+      "name": "secret-not-in-profile-or-db",
+      "at": "2026-11-18T06:40:16.540Z",
+      "ok": true,
+      "cordis.patch.yml": false,
+      "memories.db": false,
+      "server-log.txt": false
+    },
+    {
+      "name": "test-enabled",
+      "at": "2026-11-18T06:40:16.637Z",
+      "ok": true
+    },
+    {
+      "name": "probe-dimensions",
+      "at": "2026-11-18T06:40:19.199Z",
+      "ok": true,
+      "text": "“Auto” 跟随会话路由。\n历史摘要推理强度\n路由模型公布的 effort id（例如 off/low/high/max）；留空使用模型默认值。\n固定历史摘要提供商与模型后，可从模型公布的 effort 列表中选择。\n高级\n日志\n\n决定是否保留操作日志、保留多久。\n\n日志启用\n日志保留天数\n\n日志行的保留时长。修改后会重新清理（最少 1 天）。\n\n高级\n向量检索\n未开始重建\n\n本地优先；远程提供商需要显式开始重建。\n\n向量提供方\n本地 MiniLM\nOpenAI 兼容 API\n关闭语义检索\n本地模型是默认选项；远程只支持 OpenAI 兼容接口。\n服务预设\n硅基流动\n自定义\n预设只提供端点和模型列表方式，不包含模型 ID 或维度。\n接口地址\n已修改\n重置\n\n例如 https://api.siliconflow.cn/v1；不要填写密钥。\n\n模型 ID\n已修改\n重置\n\n从模型列表选择，或手动填写服务商公布的模型 ID。\n\nAPI Key 环境变量\n已修改\n重置\n\n只写变量名，不写密钥值；留空表示未绑定凭据，SiliconFlow 预设仍会沿用 SILICONFLOW_API_KEY 环境变量。\n\nAPI Key\nAPI Key：已配置（凭据库）\n保存密钥\n清除凭据\n只写不读，保存到宿主凭据库；不会写入配置文件。\n密钥已保存到宿主凭据库。\n状态: 未开始重建 · fixture-embed-a · 16 维 · 0/0 条可检索记忆\nAPI Key：已配置 (SILICONFLOW_API_KEY)\n启用远程向量会把你检索的记忆文本发送到该端点；请使用可信端点。\n刷新\n加载模型\n测试连接\n开始重建向量\n高级\n维护与诊断\n\n维护校验路由、压缩引擎开关和完整诊断入口。\n\n注册压缩引擎\n重置\n校验提供商\nAuto — 跟随会话路由\ndeepseek-official\n维护校验通道使用的提供商。“Auto” 表示不固定，跟随会话路由。\n校验模型\nAuto — 先选择 provider\n维护校验通道使用的模型。同时设置提供商和模型才会固定；“Auto” 跟随会话路由。\n已保存\n保存"
+    },
+    {
+      "name": "probe-used-credential",
+      "at": "2026-11-18T06:40:19.199Z",
+      "ok": true,
+      "requests": [
+        {
+          "at": 1794984016.6738448,
+          "path": "embeddings",
+          "inputCount": 1,
+          "auth": true,
+          "authHash": "500c42558747"
+        }
+      ]
+    },
+    {
+      "name": "key-cleared",
+      "at": "2026-11-18T06:40:21.850Z",
+      "ok": true
+    },
+    {
+      "name": "clear-hidden-after-clear",
+      "at": "2026-11-18T06:40:21.855Z",
+      "ok": true
+    },
+    {
+      "name": "test-disabled-after-clear",
+      "at": "2026-11-18T06:40:21.858Z",
+      "ok": true
+    },
+    {
+      "name": "clear-did-not-call-provider",
+      "at": "2026-11-18T06:40:21.859Z",
+      "ok": true,
+      "before": 1,
+      "after": 1
+    },
+    {
+      "name": "dirty-ref-disables-secret",
+      "at": "2026-11-18T06:40:22.473Z",
+      "ok": true
+    },
+    {
+      "name": "dirty-ref-copy",
+      "at": "2026-11-18T06:40:22.477Z",
+      "ok": true
+    },
+    {
+      "name": "restored-ref-enables-secret",
+      "at": "2026-11-18T06:40:23.006Z",
+      "ok": true
+    },
+    {
+      "name": "english-switched",
+      "at": "2026-11-18T06:40:29.412Z",
+      "ok": true
+    },
+    {
+      "name": "english-key-label",
+      "at": "2026-11-18T06:40:29.412Z",
+      "ok": true
+    },
+    {
+      "name": "english-save-key",
+      "at": "2026-11-18T06:40:29.416Z",
+      "ok": true
+    },
+    {
+      "name": "empty-ref-saved",
+      "at": "2026-11-18T06:40:32.476Z",
+      "ok": true
+    },
+    {
+      "name": "empty-ref-no-auth",
+      "at": "2026-11-18T06:40:32.478Z",
+      "ok": true
+    },
+    {
+      "name": "empty-ref-secret-disabled",
+      "at": "2026-11-18T06:40:32.482Z",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "requests": [
+    {
+      "at": "2026-11-18T06:40:10.585Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:12933/api/settings/mutate"
+    },
+    {
+      "at": "2026-11-18T06:40:12.698Z",
+      "method": "GET",
+      "url": "http://127.0.0.1:12933/mc-embedding/status"
+    },
+    {
+      "at": "2026-11-18T06:40:12.709Z",
+      "method": "GET",
+      "url": "http://127.0.0.1:12933/mc-embedding/status"
+    },
+    {
+      "at": "2026-11-18T06:40:14.007Z",
+      "method": "GET",
+      "url": "http://127.0.0.1:12933/mc-embedding/status"
+    },
+    {
+      "at": "2026-11-18T06:40:16.668Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:12933/mc-embedding/probe"
+    },
+    {
+      "at": "2026-11-18T06:40:16.680Z",
+      "method": "GET",
+      "url": "http://127.0.0.1:12933/mc-embedding/status"
+    },
+    {
+      "at": "2026-11-18T06:40:16.691Z",
+      "method": "GET",
+      "url": "http://127.0.0.1:12933/mc-embedding/status"
+    },
+    {
+      "at": "2026-11-18T06:40:17.881Z",
+      "method": "GET",
+      "url": "http://127.0.0.1:12933/mc-embedding/status"
+    },
+    {
+      "at": "2026-11-18T06:40:19.285Z",
+      "method": "GET",
+      "url": "http://127.0.0.1:12933/mc-embedding/status"
+    },
+    {
+      "at": "2026-11-18T06:40:19.358Z",
+      "method": "GET",
+      "url": "http://127.0.0.1:12933/mc-embedding/status"
+    },
+    {
+      "at": "2026-11-18T06:40:19.380Z",
+      "method": "GET",
+      "url": "http://127.0.0.1:12933/mc-embedding/status"
+    },
+    {
+      "at": "2026-11-18T06:40:25.538Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:12933/api/settings/mutate"
+    },
+    {
+      "at": "2026-11-18T06:40:28.496Z",
+      "method": "GET",
+      "url": "http://127.0.0.1:12933/mc-embedding/status"
+    },
+    {
+      "at": "2026-11-18T06:40:28.503Z",
+      "method": "GET",
+      "url": "http://127.0.0.1:12933/mc-embedding/status"
+    },
+    {
+      "at": "2026-11-18T06:40:29.956Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:12933/api/settings/mutate"
+    },
+    {
+      "at": "2026-11-18T06:40:30.901Z",
+      "method": "GET",
+      "url": "http://127.0.0.1:12933/mc-embedding/status"
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "initial": {
+      "width": 16,
+      "model": "fixture-embed-a",
+      "requests": []
+    },
+    "afterSave": {
+      "width": 16,
+      "model": "fixture-embed-a",
+      "requests": []
+    },
+    "afterProbe": {
+      "width": 16,
+      "model": "fixture-embed-a",
+      "requests": [
+        {
+          "at": 1794984016.6738448,
+          "path": "embeddings",
+          "inputCount": 1,
+          "auth": true,
+          "authHash": "500c42558747"
+        }
+      ]
+    },
+    "afterClear": {
+      "width": 16,
+      "model": "fixture-embed-a",
+      "requests": [
+        {
+          "at": 1794984016.6738448,
+          "path": "embeddings",
+          "inputCount": 1,
+          "auth": true,
+          "authHash": "500c42558747"
+        }
+      ]
+    }
+  },
+  "secretPresentIn": {
+    "cordis.patch.yml": false,
+    "memories.db": false,
+    "server-log.txt": false,
+    "serverLog": false
+  },
+  "profilePatchSha256": {
+    "before": "0aebb4afa6e7e7bd58161f42b7149f0836d0023d2a8cf81d65bc2d3586a38882",
+    "after": "0aebb4afa6e7e7bd58161f42b7149f0836d0023d2a8cf81d65bc2d3586a38882"
+  }
+}

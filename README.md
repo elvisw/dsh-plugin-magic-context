@@ -229,7 +229,7 @@ writable as profile override rows unless noted):
 | historian | `historianEnabled` (true) · `historian.{provider, model}` (**pinned as a pair**; empty = follow the session's last route) · `historian.reasoningEffort` (optional, blank = model default) | Generation route for out-of-band digests and `/compact` summaries; the GUI Settings page has "Historian provider/model" dropdowns (Auto = follow session, recommended) and a catalog-backed reasoning-effort picker: `Default`, the routed model's advertised ids, and `Custom` for legacy/unknown values. The Auto route keeps a text input because the session model is unknown there; an unadvertised id is never silently remapped or clamped. A provider-level `OUTPUT_TOKEN_LIMIT` empty completion is retried with the normal cap escalation. The only LLM spend besides verify |
 | Project memory | `memory.{}`: `enabled` (true, on by default since 0.9.0 — opt out with `enabled: false`) · `dbPath` · `project` (omitted = session cwd) · `domainProjects` · `shareCategories` · `autoPromote` (true) · `write` (true) | `write: false` makes `ctx_memory` read-only |
 | Retrieval / vectors | `memory.embedBackfill` (true, query-side inline backfill) · `memory.vectorBackfill` (true, maintenance-tick backfill) · `memory.vectorBackfillLimit` (24 rows/tick) | Any vector-lane failure fails open to FTS |
-| Remote embeddings (T20) | `embedding.provider` (local) · `embedding.preset` (siliconflow) · `embedding.endpoint` · `embedding.authHeader` (authorization) · `embedding.model` · `embedding.apiKeyEnv` (empty = no auth for custom; SiliconFlow falls back to `SILICONFLOW_API_KEY`) · `embedding.dimensions` (0 = probe) · `embedding.queryInstruction` · `embedding.documentPrefix` · `embedding.timeoutMs` (8000) · `embedding.queryTimeoutMs` (2500) · `embedding.batchSize` (16) | Optional OpenAI-compatible remote space. Model IDs are discovered through `/models` or typed manually; dimensions are probed, never compiled in. The block is declared user-level; the current host does not expose a project/tier source, so project-level rejection is not enforced at runtime. The key is read from the named environment variable, and remote space is namespaced `embedding-remote:…`. Saving remote config does not spend quota; `Start rebuild` arms the target, `Pause/Resume` and rollback (via the normal Save) manage it. Remote search never mixes local vectors and fails open to FTS |
+| Remote embeddings (T20/T24) | `embedding.provider` (local) · `embedding.preset` (siliconflow) · `embedding.endpoint` · `embedding.authHeader` (authorization) · `embedding.model` · `embedding.apiKeyEnv` (credential reference; default `SILICONFLOW_API_KEY`; empty = unbound — the SiliconFlow preset still consults the default environment variable, a custom preset means no auth) · `embedding.apiKey` (empty; role secret, host bridge only) · `embedding.dimensions` (0 = probe) · `embedding.queryInstruction` · `embedding.documentPrefix` · `embedding.timeoutMs` (8000) · `embedding.queryTimeoutMs` (2500) · `embedding.batchSize` (16) | Optional OpenAI-compatible remote space. Model IDs are discovered through `/models` or typed manually; dimensions are probed, never compiled in. The block is declared user-level; the current host does not expose a project/tier source, so project-level rejection is not enforced at runtime. The key resolves literal `apiKey` → host credential store under `apiKeyEnv` → environment; the settings UI writes only the credential store and shows presence/source, never the value. Remote space is namespaced `embedding-remote:…`. Saving remote config does not spend quota; `Start rebuild` arms the target, `Pause/Resume` and rollback (via the normal Save) manage it. Remote search never mixes local vectors and fails open to FTS |
 | S(t) decay | `memory.scoring.{enabled (true), alpha (0.4), beta (0.2), archiveThreshold (2), halfLives}` | Stats are always collected; the distribution default enabled=true takes over ranking; profile-JSON only, not on the settings card |
 | Global domains | `memory.global.machine.{enabled (true), excludeProjects, autoStage (true)}` · `memory.global.user.{render (true), collect (true), review (true)}` · `memory.global.review.batchLimit` (50) | Defaults all on: staging can be automated (≤3/pass, paused at ≥10 pending candidates), **publishing is always human**; LLM classification failure is fail-closed |
 | User profile | `memory.global.user.{render (true), collect (false), review (false)}` | Read / collect / review are independent halves; the two halves that write to the shared store are off by default |
@@ -243,9 +243,17 @@ The default vector lane stays local MiniLM. To use an OpenAI-compatible embeddin
 API (for example SiliconFlow), open **Settings → Magic Context → Embedding
 search**, choose `OpenAI-compatible API`, load the model list, select a model and
 press **Test connection**. The server probes one short input to learn the
-dimension; model IDs and dimensions are not compiled into the plugin. The API
-key is read from the environment variable you name — the value is never written
-to config, logs, the database or the browser.
+dimension; model IDs and dimensions are not compiled into the plugin. Enter the
+API key in the same section: the field is write-only, the plugin stores the value
+in the host credential store under the saved variable name (`apiKeyEnv`), and the
+card shows only **Configured / Not configured** plus its source. The value never
+enters the profile patch, logs, the database or the browser status. Existing
+`$DSH_HOME/.env` or process environment variables still work as a fallback; a
+saved credential takes precedence. The default reference is
+`SILICONFLOW_API_KEY`; on a custom preset, saving an empty reference means no
+auth; on the SiliconFlow preset an empty reference still falls back to the
+default environment variable. If the host exposes no credential store, the field is disabled and
+the environment fallback is unchanged.
 
 Press **Start rebuild** to arm the target space and begin a bounded backfill.
 Until then, remote search is full-text only and saving the config sends no
@@ -301,15 +309,17 @@ in this README. `memory` stays intentionally undeclared in that schema (native
 config does not offer a memory switch). Memory is on by default, exactly as on
 desktop; set `memory.enabled: false` in the profile patch only to opt out.
 
-Remote embedding keys remain **environment-variable names only**. On Android the
-user must add the real key to `$DSH_HOME/.env` — a plaintext local file — and
-restart the engine. The host itself loads that file into `process.env`; the
-plugin reads only the named variable, and only to send the auth header to the
-configured provider. The **agent, native panels, config values, logs and
-evidence never receive the raw key**, and the key is not sent to the App's
-credential vault either (App credentials are not injected into the plugin's
-`process.env`). Do not paste keys into a shell command: terminal history is a
-separate plaintext copy.
+Remote embedding keys can be entered on the phone. The native settings form
+renders `embedding.apiKey` as a write-only secret field; its sibling
+`role('credential-ref')` field `apiKeyEnv` names the credential. Saving calls the
+host credential store, so no `.env`, terminal or engine restart is required. The
+stored value is never displayed or written to the profile. The native form hides
+the `role('credential-ref')` field; it uses the saved reference, or the schema
+default `SILICONFLOW_API_KEY`. Set a different reference on desktop first if you
+need one. Existing `.env` / process environment variables remain a fallback for
+headless or older hosts; a saved credential takes precedence. If the host mounts
+no credential store, the field is disabled and the environment fallback is unchanged. The **agent, native
+panels, config values, logs and evidence never receive the raw key**.
 
 Switching the provider back to `local` (or `off`) disarms an armed remote rebuild
 immediately, even with no panel open. Switching back to the same remote config
@@ -374,7 +384,7 @@ Both UI capabilities ride the same browser half (`src/client/index.js`, copied v
 
   ![Lower part of the Magic Context Settings page — Maintenance and diagnostics, the host footer status, and the Save button](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-bottom.png)
 
-  ![Vector search section — provider, provider preset, endpoint, model ID, API-key environment variable, and the current local/remote status](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-embedding.png)
+  ![Vector search section — provider, provider preset, endpoint, model ID, API-key environment reference, write-only API key field, and the current local/remote status](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-embedding.png)
 
 - **`shell.overlay` telemetry badge + capsule panel**: the collapsed pill keeps the live
   pressure, token pair, Historian state and reclaim queue (`H` / `Q<n>`) visible, and

@@ -106,7 +106,8 @@ describe('runtime Config schema', () => {
   it('declares the embedding block as volatile and local by default', () => {
     const value = Config({}) as unknown as Record<string, any>
     expect((value.embedding.provider as Volatile).get()).toBe('local')
-    expect((value.embedding.apiKeyEnv as Volatile).get()).toBe('')
+    expect((value.embedding.apiKeyEnv as Volatile).get()).toBe('SILICONFLOW_API_KEY')
+    expect((value.embedding.apiKey as Volatile).get()).toBe('')
     expect((value.embedding.dimensions as Volatile).get()).toBe(0)
     expect((value.embedding.timeoutMs as Volatile).get()).toBe(8_000)
     const remote = Config({
@@ -189,6 +190,9 @@ describe('runtime Config schema', () => {
     expect(node(['embedding']).meta?.collapse).toBe(true)
     expect(node(['embedding']).meta?.description).toEqual({ zh: '向量检索', en: 'Embedding' })
     expect(node(['embedding', 'apiKeyEnv']).meta?.description).toEqual({ zh: '密钥变量', en: 'Key variable' })
+    expect(node(['embedding', 'apiKeyEnv']).meta?.role).toBe('credential-ref')
+    expect(node(['embedding', 'apiKey']).meta?.description).toEqual({ zh: '密钥', en: 'API key' })
+    expect(node(['embedding', 'apiKey']).meta?.role).toBe('secret')
     expect(node(['embedding', 'model']).meta?.description).toEqual({ zh: '模型 ID', en: 'Model ID' })
     expect(node(['policy']).meta?.collapse).toBe(true)
 

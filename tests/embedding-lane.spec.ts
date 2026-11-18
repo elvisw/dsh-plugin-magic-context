@@ -94,6 +94,35 @@ function addVector(path: string, memoryId: number, modelId: string): void {
 }
 
 describe('embedding lane state machine', () => {
+  it('resolves the key from the host credential store when the environment is empty', async () => {
+    const root = tempDir()
+    const corpus = join(root, 'memories.db')
+    mkdirSync(root, { recursive: true })
+    makeCorpus(corpus)
+    const headers: string[] = []
+    const lane = openEmbeddingLane({
+      config: config(),
+      corpusDbPath: corpus,
+      dataDir: root,
+      env: {},
+      logger: { info: () => {}, warn: () => {} },
+      credentials: () => ({
+        describe: async () => ({ configured: true, source: 'file', writable: true }),
+        resolve: async () => ({ value: 'cred-secret', source: 'file' }),
+      }),
+      fetchImpl: async (_url, init) => {
+        headers.push(new Headers(init?.headers).get('authorization') ?? '')
+        return response({ model: 'fixture-embed-a', data: [{ embedding: vector(16), index: 0 }] })
+      },
+    })
+    expect(lane.status().keyPresent).toBe(false)
+    await lane.refreshCredentials()
+    expect(lane.status().keySource).toBe('credential')
+    expect(lane.status().keyPresent).toBe(true)
+    await lane.probe()
+    expect(headers[0]).toBe('Bearer cred-secret')
+  })
+
   it('is not queryable or writable before an armed start', async () => {
     const root = tempDir()
     const corpus = join(root, 'memories.db')
@@ -211,6 +240,82 @@ describe('embedding lane state machine', () => {
     expect(result).toEqual({ ok: false, error: 'missing-key' })
     expect(requested).toBe(false)
     expect(lane.status().keyPresent).toBe(false)
+  })
+
+  it('reads the key from the host credential store and reports only its source', async () => {
+    const root = tempDir()
+    let auth = ''
+    let configured = true
+    const credentials = {
+      describe: async () => ({ configured, source: 'store', writable: true }),
+      resolve: async () => (configured ? { value: 'stored-key', source: 'store' } : undefined),
+    }
+    const lane = openEmbeddingLane({
+      config: config(),
+      corpusDbPath: join(root, 'memories.db'),
+      dataDir: root,
+      env: {},
+      credentials: () => credentials,
+      logger: { info: () => {}, warn: () => {} },
+      fetchImpl: async (_url, init) => {
+        auth = new Headers(init?.headers as HeadersInit).get('authorization') ?? ''
+        return response({ model: 'fixture-embed-a', data: [{ embedding: vector(8), index: 0 }] })
+      },
+    })
+    await lane.refreshCredentials()
+    expect(lane.status().keySource).toBe('credential')
+    expect(lane.status().keyPresent).toBe(true)
+    expect(JSON.stringify(lane.status())).not.toContain('stored-key')
+    expect(await lane.probe()).toMatchObject({ ok: true, dimensions: 8 })
+    expect(auth).toBe('Bearer stored-key')
+
+    configured = false
+    await lane.refreshCredentials()
+    expect(lane.status().keyPresent).toBe(false)
+    expect(lane.status().keySource).toBe('none')
+    expect(await lane.probe()).toEqual({ ok: false, error: 'missing-key' })
+    expect(auth).toBe('Bearer stored-key')
+  })
+
+  it('treats an empty reference as no-auth, not as a missing key', async () => {
+    const root = tempDir()
+    let auth: string | null = 'unset'
+    let requests = 0
+    const lane = openEmbeddingLane({
+      config: config({ apiKeyEnv: '' }),
+      corpusDbPath: join(root, 'memories.db'),
+      dataDir: root,
+      env: { SILICONFLOW_API_KEY: 'env-secret' },
+      logger: { info: () => {}, warn: () => {} },
+      fetchImpl: async (_url, init) => {
+        requests += 1
+        auth = new Headers(init?.headers as HeadersInit).get('authorization')
+        return response({ model: 'fixture-embed-a', data: [{ embedding: vector(8), index: 0 }] })
+      },
+    })
+    expect(lane.status()).toMatchObject({ keyPresent: false, keySource: 'none', keyEnv: '', keyEnvInvalid: false })
+    expect(await lane.probe()).toMatchObject({ ok: true, dimensions: 8 })
+    expect(auth).toBeNull()
+    expect(requests).toBe(1)
+  })
+
+  it('rejects a malformed reference without borrowing the environment or a cached key', async () => {
+    const root = tempDir()
+    let requests = 0
+    const lane = openEmbeddingLane({
+      config: config({ apiKeyEnv: 'bad-name' }),
+      corpusDbPath: join(root, 'memories.db'),
+      dataDir: root,
+      env: { SILICONFLOW_API_KEY: 'env-secret' },
+      logger: { info: () => {}, warn: () => {} },
+      fetchImpl: async () => {
+        requests += 1
+        return response({ model: 'fixture-embed-a', data: [{ embedding: vector(8), index: 0 }] })
+      },
+    })
+    expect(lane.status()).toMatchObject({ keyPresent: false, keySource: 'none', keyEnv: '', keyEnvInvalid: true })
+    expect(await lane.probe()).toEqual({ ok: false, error: 'invalid-key-env' })
+    expect(requests).toBe(0)
   })
 
   it('guards action routes against cross-origin and non-JSON posts', async () => {
@@ -420,6 +525,34 @@ describe('embedding lane state machine', () => {
     expect(await lane.models()).toEqual({ ok: false, error: 'server-error' })
     expect(lane.status().state).toBe('remote-error')
     expect(await lane.start()).toEqual({ ok: false, error: 'not-ready' })
+  })
+
+  it('clears a stale auth error before deriving state when a key is available', async () => {
+    const root = tempDir()
+    const corpus = join(root, 'memories.db')
+    makeCorpus(corpus)
+    const env: Record<string, string> = { [ENV_NAME]: 'bad-key' }
+    const lane = openEmbeddingLane({
+      config: config(),
+      corpusDbPath: corpus,
+      dataDir: root,
+      env,
+      logger: { info: () => {}, warn: () => {} },
+      fetchImpl: async () => new Response('unauthorized', { status: 401 }),
+    })
+    expect(await lane.probe()).toMatchObject({ ok: false, error: 'auth-failed' })
+    // The stale auth error must be cleared before `deriveState`, so the first
+    // status read does not return remote-error and stop client polling.
+    const first = lane.status()
+    expect(first.keyPresent).toBe(true)
+    expect(first.state).not.toBe('remote-error')
+    expect(first.lastError).toBeUndefined()
+
+    env[ENV_NAME] = 'now-present'
+    const after = lane.status()
+    expect(after.keyPresent).toBe(true)
+    expect(after.state).not.toBe('remote-error')
+    expect(after.lastError).toBeUndefined()
   })
 
   it('schedules the rebuild runner without waiting for the background pass', async () => {

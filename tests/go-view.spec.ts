@@ -356,7 +356,7 @@ describe('embedding panel', () => {
 
   it('shows the specific failure reason instead of a generic error state', () => {
     const data = goEmbeddingData(embeddingStatus({ state: 'remote-error', lastError: 'missing-key' }), [], 'zh-CN')
-    expect(data.stateText).toContain('密钥变量未设置')
+    expect(data.stateText).toContain('密钥未配置')
     expect(data.stateTone).toBe('bad')
   })
 
@@ -465,7 +465,8 @@ describe('embedding panel', () => {
     }
     expect(goEmbeddingErrorText('invalid-key-env', 'en')).toContain('NAME')
     expect(goEmbeddingErrorText('invalid-key-env', 'zh')).toContain('变量名')
-    expect(goEmbeddingErrorDetail('invalid-key-env', 'en')).toContain('NAME')
+    expect(goEmbeddingErrorDetail('invalid-key-env', 'en')).toContain('reference')
+    expect(goEmbeddingErrorDetail('invalid-key-env', 'zh')).toContain('引用')
     expect(goEmbeddingErrorDetail('invalid-key-env', 'en')).not.toContain('absent')
     expect(goEmbeddingErrorDetail('auth-failed', 'zh')).toContain('认证失败')
   })

@@ -60,7 +60,11 @@ export interface EmbeddingStatus {
   readonly model: string
   readonly dimensions: number | null
   readonly keyEnv: string
+  /** True when the configured reference is not a valid environment name. */
+  readonly keyEnvInvalid?: boolean
   readonly keyPresent: boolean
+  /** Where the current key came from; never the value itself. */
+  readonly keySource: 'literal' | 'credential' | 'environment' | 'none'
   readonly target: string | null
   readonly coverage: VectorCoverage | null
   readonly progress: { readonly processed: number | null; readonly total: number | null; readonly failures: number | null }
@@ -155,8 +159,16 @@ export function embeddingActionRefusal(
   return undefined
 }
 
+/** The small credential-store surface the lane needs; the host supplies it. */
+export interface EmbeddingCredentialProvider {
+  resolve(ref: string): Promise<{ readonly value: string; readonly source?: string } | undefined>
+  describe(ref: string): Promise<{ readonly configured: boolean; readonly source?: string; readonly writable?: boolean }>
+}
+
 export interface EmbeddingLane {
   readonly status: () => EmbeddingStatus
+  /** Refresh the cached credential presence/value for the current target. */
+  readonly refreshCredentials: () => Promise<void>
   readonly localEmbedder: () => LocalEmbedder | undefined
   readonly providerKind: () => 'local' | 'openai-compatible' | 'off'
   readonly isRemote: () => boolean
@@ -191,6 +203,8 @@ export interface EmbeddingLaneDeps {
   readonly lookupImpl?: EmbeddingLookup
   readonly env?: NodeJS.ProcessEnv
   readonly now?: () => number
+  /** The host credential store, read lazily; absent when not mounted. */
+  readonly credentials?: () => EmbeddingCredentialProvider | undefined
 }
 
 interface ProbeCacheEntry {
@@ -216,6 +230,8 @@ interface RebuildState {
   readonly failures: number
 }
 
+const isAborted = (signal?: AbortSignal): boolean => signal?.aborted === true
+
 const CACHE_FILE = 'embedding-cache.json'
 const REBUILD_FILE = 'embedding-rebuild.json'
 const MODEL_CACHE_MS = 15 * 60_000
@@ -230,9 +246,81 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
   let rollbackLocal = false
   let modelCache: { key: string; at: number; models: readonly string[] } | undefined
   let runner: (() => Promise<VectorBackfillOutcome | undefined>) | undefined
+  /**
+   * The last credential-store read for the current reference. Status and
+   * synchronous identity checks use this cache; every async action refreshes it
+   * first, so a rotated key applies to the next request without a restart.
+   */
+  let credentialValue: string | undefined
+  let credentialConfigured = false
+  let credentialSource: string | undefined
 
   const resolved = (): ResolvedEmbeddingConfig => resolveEmbeddingConfig(deps.config, env)
   const remote = (): ResolvedRemoteEmbedding => resolved().remote
+
+  const refreshCredentials = async (): Promise<void> => {
+    const rem = remote()
+    const ref = rem.apiKeyEnv
+    if (ref === '' || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(ref)) {
+      credentialValue = undefined
+      credentialConfigured = false
+      credentialSource = undefined
+      return
+    }
+    let provider: EmbeddingCredentialProvider | undefined
+    try {
+      provider = deps.credentials?.()
+    } catch {
+      provider = undefined
+    }
+    if (provider === undefined) {
+      credentialValue = undefined
+      credentialConfigured = false
+      credentialSource = undefined
+      return
+    }
+    try {
+      const described = await provider.describe(ref)
+      credentialConfigured = described.configured === true
+      credentialSource = described.source
+      if (!credentialConfigured) {
+        credentialValue = undefined
+        return
+      }
+      const hit = await provider.resolve(ref)
+      credentialValue = hit !== undefined && hit.value !== '' ? hit.value : undefined
+    } catch {
+      credentialValue = undefined
+      credentialConfigured = false
+      credentialSource = undefined
+    }
+  }
+
+  const validKeyEnv = (value: string): boolean => value === '' || /^[A-Za-z_][A-Za-z0-9_]*$/.test(value)
+  const keyState = (rem: ResolvedRemoteEmbedding): {
+    present: boolean
+    source: 'literal' | 'credential' | 'environment' | 'none'
+  } => {
+    if (rem.apiKey.trim() !== '') return { present: true, source: 'literal' }
+    // An empty reference is no-auth mode for a custom endpoint. It must not
+    // borrow a cached credential from a previous reference, and it must agree
+    // with `apiKeyOf`/`keyPresent` (which report absent) so cache keys and
+    // identities do not flip when the field is cleared.
+    if (rem.apiKeyEnv === '') return { present: false, source: 'none' }
+    if (!validKeyEnv(rem.apiKeyEnv)) return { present: false, source: 'none' }
+    if (credentialValue !== undefined) return { present: true, source: 'credential' }
+    try {
+      const value = env[rem.apiKeyEnv]
+      return value === undefined || value === ''
+        ? { present: false, source: 'none' }
+        : { present: true, source: 'environment' }
+    } catch {
+      return { present: false, source: 'none' }
+    }
+  }
+
+  const safeKeyEnv = (rem: ResolvedRemoteEmbedding): string =>
+    validKeyEnv(rem.apiKeyEnv) ? rem.apiKeyEnv : ''
 
   const readJsonFile = <T>(path: string): T | undefined => {
     try {
@@ -262,7 +350,7 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
     rem.authHeader,
     rem.model,
     String(rem.dimensions),
-    keyPresent(rem, env) ? 'key' : 'nokey',
+    keyState(rem).present ? 'key' : 'nokey',
   ].join('|')
 
   /** The cache key of an ENTRY (not of the current config). */
@@ -282,7 +370,7 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
     if (cfg.provider !== 'openai-compatible') return cfg.provider
     let fingerprint = 'invalid-key-env'
     try {
-      fingerprint = keyFingerprint(cfg.remote, env)
+      fingerprint = keyFingerprint(cfg.remote, env, credentialValue)
     } catch {
       // An invalid env-var name is its own target: never let the comparison
       // itself throw inside a catch path.
@@ -394,7 +482,7 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
     if (resolved().provider !== 'openai-compatible') return null
     const entry = readCache()
     if (entry === undefined) return null
-    return remoteIdentityHash(remote(), entry.dims, env)
+    return remoteIdentityHash(remote(), entry.dims, env, credentialValue)
   }
 
   const coverage = (target: string | null): VectorCoverage | null => {
@@ -508,6 +596,13 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
             }
           })()
         : null
+    const keys = keyState(rem)
+    // Clear stale key errors before deriving state: a key saved through the
+    // credential store is a positive state, and the first status read after
+    // saving must not still report `remote-error` (which stops client polling).
+    if (keys.present && (lastError === 'missing-key' || lastError === 'auth-failed')) lastError = undefined
+    if (rem.apiKeyEnv === '' && lastError === 'missing-key') lastError = undefined
+    if (lastError === 'invalid-key-env' && validKeyEnv(rem.apiKeyEnv)) lastError = undefined
     const state = deriveState()
     const current = readState()
     const rebuild = current !== undefined && current.targetIdentity === target ? current : undefined
@@ -535,8 +630,10 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
       authHeader: rem.authHeader,
       model: cfg.provider === 'local' ? 'local' : rem.model,
       dimensions: cfg.provider === 'local' ? null : entry?.dims ?? null,
-      keyEnv: rem.apiKeyEnv,
-      keyPresent: keyPresent(rem, env),
+      keyEnv: safeKeyEnv(rem),
+      keyEnvInvalid: rem.apiKeyEnv !== '' && !validKeyEnv(rem.apiKeyEnv),
+      keyPresent: keys.present,
+      keySource: keys.source,
       target,
       coverage: report,
       progress: rebuild === undefined
@@ -552,19 +649,21 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
   }
 
   const models = async (options: EmbeddingCancellableOptions = {}): Promise<EmbeddingModelsResult> => {
+    await refreshCredentials()
+    if (isAborted(options.signal)) return { ok: false, error: 'cancelled' }
     const refusal = embeddingActionRefusal('models', status(), armedState() ?? null)
     if (refusal !== undefined) return { ok: false, error: refusal }
     const captured = targetFingerprint()
     const rem = remote()
     try {
-      if (rem.apiKeyEnv !== '' && apiKeyOf(rem, env) === undefined) {
+      if (rem.apiKeyEnv !== '' && apiKeyOf(rem, env, credentialValue) === undefined) {
         lastError = 'missing-key'
         return { ok: false, error: 'missing-key' }
       }
     } catch (error) {
       return { ok: false, error: error instanceof Error ? error.message : 'missing-key' }
     }
-    const key = `${rem.endpoint}|${rem.preset}|${rem.authHeader}|${keyFingerprint(rem, env)}`
+    const key = `${rem.endpoint}|${rem.preset}|${rem.authHeader}|${keyFingerprint(rem, env, credentialValue)}`
     if (modelCache !== undefined && modelCache.key === key && now() - modelCache.at < MODEL_CACHE_MS) {
       lastError = undefined
       return { ok: true, models: modelCache.models }
@@ -572,6 +671,7 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
     try {
       const list = await listRemoteModels(rem, {
         env,
+        credential: credentialValue,
         ...deps.fetchImpl === undefined ? {} : { fetchImpl: deps.fetchImpl },
         ...deps.lookupImpl === undefined ? {} : { lookupImpl: deps.lookupImpl },
         ...options.signal === undefined ? {} : { signal: options.signal },
@@ -579,13 +679,13 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
       // A probe/list that outlived its target must not cache or report its
       // models as the current provider's. The captured fingerprint is the
       // boundary; compare after every await.
-      if (options.signal?.aborted === true) return { ok: false, error: 'cancelled' }
+      if (isAborted(options.signal)) return { ok: false, error: 'cancelled' }
       if (targetFingerprint() !== captured) return { ok: false, error: 'target-changed' }
       modelCache = { key, at: now(), models: list.models }
       lastError = undefined
       return { ok: true, models: list.models }
     } catch (error) {
-      if (options.signal?.aborted === true) return { ok: false, error: 'cancelled' }
+      if (isAborted(options.signal)) return { ok: false, error: 'cancelled' }
       if (targetFingerprint() !== captured) return { ok: false, error: 'target-changed' }
       lastError = error instanceof Error ? error.message : 'models-failed'
       deps.logger.warn(`embedding models failed: ${lastError}`)
@@ -594,6 +694,8 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
   }
 
   const probe = async (options: EmbeddingProbeOptions = {}): Promise<EmbeddingProbeResult> => {
+    await refreshCredentials()
+    if (isAborted(options.signal)) return { ok: false, error: 'cancelled' }
     // Internal dimension repair must remain allowed while a rebuild is armed;
     // a user probe is refused as busy by the same gate.
     const refusal = embeddingActionRefusal('probe', status(), options.internal === true ? null : armedState() ?? null)
@@ -603,12 +705,13 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
     try {
       const result = await probeRemoteEmbedding(rem, {
         env,
+        credential: credentialValue,
         ...deps.fetchImpl === undefined ? {} : { fetchImpl: deps.fetchImpl },
         ...deps.lookupImpl === undefined ? {} : { lookupImpl: deps.lookupImpl },
         ...deps.now === undefined ? {} : { now: deps.now },
         ...options.signal === undefined ? {} : { signal: options.signal },
       })
-      if (options.signal?.aborted === true) return { ok: false, error: 'cancelled' }
+      if (isAborted(options.signal)) return { ok: false, error: 'cancelled' }
       // Full target/key comparison after the await: a changed model, endpoint,
       // preset, dimension override or key must not be written under the old
       // result, and must not report success for the new target.
@@ -619,7 +722,7 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
         authHeader: rem.authHeader,
         model: rem.model,
         dimensionsOverride: rem.dimensions,
-        keyPresent: keyPresent(rem, env),
+        keyPresent: keyState(rem).present,
         dims: result.dimensions,
         probedAt: now(),
       })) {
@@ -629,7 +732,7 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
       lastError = undefined
       return { ok: true, model: result.model, dimensions: result.dimensions, latencyMs: result.latencyMs }
     } catch (error) {
-      if (options.signal?.aborted === true) return { ok: false, error: 'cancelled' }
+      if (isAborted(options.signal)) return { ok: false, error: 'cancelled' }
       if (targetFingerprint() !== captured) return { ok: false, error: 'target-changed' }
       lastError = error instanceof Error ? error.message : 'probe-failed'
       // `clearCache` is target-sensitive too: an old failure must not delete
@@ -641,6 +744,7 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
   }
 
   const start = async (): Promise<{ ok: boolean; error?: string }> => {
+    await refreshCredentials()
     const refusal = embeddingActionRefusal('start', status(), armedState() ?? null)
     if (refusal !== undefined) return { ok: false, error: refusal }
     const rem = remote()
@@ -729,10 +833,12 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
 
   const embedPassages = async (texts: readonly string[]): Promise<readonly Float32Array[]> => {
     if (texts.length === 0) return []
+    await refreshCredentials()
     const { rem, entry } = providerForEmbed()
     try {
       const batch = await embedRemoteBatch(rem, {
         env,
+        credential: credentialValue,
         ...deps.fetchImpl === undefined ? {} : { fetchImpl: deps.fetchImpl },
         ...deps.lookupImpl === undefined ? {} : { lookupImpl: deps.lookupImpl },
       }, texts, 'passage', { allowRowFailure: true, expectedDimensions: entry.dims })
@@ -745,6 +851,7 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
         const { rem: fresh, entry: freshEntry } = providerForEmbed()
         const batch = await embedRemoteBatch(fresh, {
           env,
+          credential: credentialValue,
           ...deps.fetchImpl === undefined ? {} : { fetchImpl: deps.fetchImpl },
           ...deps.lookupImpl === undefined ? {} : { lookupImpl: deps.lookupImpl },
         }, texts, 'passage', { allowRowFailure: true, expectedDimensions: freshEntry.dims })
@@ -756,11 +863,13 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
   }
 
   const embedQuery = async (text: string, signal?: AbortSignal): Promise<Float32Array | null> => {
+    await refreshCredentials()
     const cached = remoteCached()
     if (cached === undefined) return null
     try {
       const batch = await embedRemoteBatch(cached.rem, {
         env,
+        credential: credentialValue,
         ...deps.fetchImpl === undefined ? {} : { fetchImpl: deps.fetchImpl },
         ...deps.lookupImpl === undefined ? {} : { lookupImpl: deps.lookupImpl },
       }, [text], 'query', {
@@ -885,6 +994,7 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
 
   return {
     status,
+    refreshCredentials,
     localEmbedder,
     providerKind: () => resolved().provider,
     isRemote: () => resolved().provider === 'openai-compatible',

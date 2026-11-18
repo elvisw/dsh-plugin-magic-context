@@ -1,0 +1,141 @@
+{
+  "algorithm": "sha256",
+  "root": "acceptance-windows-dsh-2026-11-18-t24-credential-key",
+  "entries": [
+    {
+      "path": "acceptance-report.md",
+      "bytes": 4073,
+      "sha256": "2c8e4bd5dd4ae0ba3cf9b70701ee40bddaa86c3b638b5ea5780ae62bb799b09a"
+    },
+    {
+      "path": "collect_t24.py",
+      "bytes": 1184,
+      "sha256": "5689e907f7dbb9aba837dc8a23bc0407c56f9d043f2fac6deac6394f70ebede9"
+    },
+    {
+      "path": "evidence/01-key-absent-zh.png",
+      "bytes": 89982,
+      "sha256": "f785e005694d0a34502b1927a35e321a5d4c3d1d24810e744af6c6d8078b4a82"
+    },
+    {
+      "path": "evidence/02-key-saved-zh.png",
+      "bytes": 111818,
+      "sha256": "6549a5c791e4b08a107dd0fdef7d9b496f382df09714901cfb98fdc835b5d824"
+    },
+    {
+      "path": "evidence/03-probe-zh.png",
+      "bytes": 112632,
+      "sha256": "fed83ae07455b56e9bbf0dd2873d0c3889f38fe0b0d5556f99084a5c59077273"
+    },
+    {
+      "path": "evidence/04-cleared-zh.png",
+      "bytes": 110962,
+      "sha256": "cb64f293acf1e86fe340446bb402b1a8b8623e1045ea58c6b69066b8cf4b438f"
+    },
+    {
+      "path": "evidence/05-key-en.png",
+      "bytes": 94048,
+      "sha256": "394eaa06650ed850f5a430545b512051291925e8e4b8c7253678d97b65524820"
+    },
+    {
+      "path": "evidence/build.txt",
+      "bytes": 276,
+      "sha256": "a88fdbee06533beb2a3be0c950dd87dc09be5d236656f172f1f6cb9e86f70505"
+    },
+    {
+      "path": "evidence/embedding-requests.jsonl",
+      "bytes": 108,
+      "sha256": "6b334b4632dd66ea363122551ad187bc9af53f3b0c875b6f003b4addce04b9e8"
+    },
+    {
+      "path": "evidence/fake-server-state.json",
+      "bytes": 232,
+      "sha256": "13212510e720883337228079fe1fa79ed5563fa4151f5ea82cb5a889d8f705fe"
+    },
+    {
+      "path": "evidence/i18n.txt",
+      "bytes": 2143,
+      "sha256": "daadb91282d14af3a9a016c4e0cefb5a294911adfa8c01875588090e87ff654d"
+    },
+    {
+      "path": "evidence/prepare-run.txt",
+      "bytes": 1041,
+      "sha256": "b906b8986c458884b5a304f3975ad82312087fbb52f452d655af68b6383668f3"
+    },
+    {
+      "path": "evidence/prepare.json",
+      "bytes": 1025,
+      "sha256": "078ac3094bb58fb86e0887f78b6399791e039cf41c6184daf40baaac2897732b"
+    },
+    {
+      "path": "evidence/secret-scan.txt",
+      "bytes": 182,
+      "sha256": "d6352c7ac30d1d3a3667286cb898708ec4075f0b501043a5ad9adb40e1065e15"
+    },
+    {
+      "path": "evidence/server-log.txt",
+      "bytes": 50,
+      "sha256": "a3e333b01045b8568d83fff807f79136c78008fa968d0a77232d6b0ef68f1c90"
+    },
+    {
+      "path": "evidence/server-redacted.json",
+      "bytes": 424,
+      "sha256": "0437f5b867e7ec446d1206ef03c24ce5b9b84d64deeb28b6b54ddeed4caa4e59"
+    },
+    {
+      "path": "evidence/typecheck.txt",
+      "bytes": 61,
+      "sha256": "0de2eb78935fd30a0d030016ee461e4af326cec49661bfda73cdce3d50651fe1"
+    },
+    {
+      "path": "evidence/ui-gate.json",
+      "bytes": 9239,
+      "sha256": "85a8963bc593beac9e15c33f4df0ec92e5acd5c6184644684c56d845e39778ef"
+    },
+    {
+      "path": "evidence/unit-test.txt",
+      "bytes": 932,
+      "sha256": "38c0835ca39195b198ffedb8c3c9f48908df183af84b0554c531c1064134b40e"
+    },
+    {
+      "path": "fake_embedding_server_auth.py",
+      "bytes": 4965,
+      "sha256": "d77d1c067109529deff4423ef3a04939a88ee94f60910a17d44914d46c51d47e"
+    },
+    {
+      "path": "normalize_t24_evidence.py",
+      "bytes": 834,
+      "sha256": "866080a69b3826daa498136cb0674d4b59451c43d9b12bb4c04339efc6915a5d"
+    },
+    {
+      "path": "prepare_t24_host.py",
+      "bytes": 8445,
+      "sha256": "c5f749bd924f3a61a7a5f159e6201f4659afcc5820fad67549ed49f1906769a2"
+    },
+    {
+      "path": "REPRODUCE.md",
+      "bytes": 2815,
+      "sha256": "67c173f3d96dc88713edbf0ecc0dae886c12b6c4004f09e71990fad719fd07d8"
+    },
+    {
+      "path": "run_t24_host.py",
+      "bytes": 5402,
+      "sha256": "9d3d362c279369f0de936654de223c49fa7cd8ee40de9fe303c8816dc6586f85"
+    },
+    {
+      "path": "scan_t24_secrets.py",
+      "bytes": 1483,
+      "sha256": "ccc90ee8be58563aa6262a64c94fef4aa02d9073e11892f7e6e89addb439d173"
+    },
+    {
+      "path": "t24_ui_gate.cjs",
+      "bytes": 10363,
+      "sha256": "cbb73883ee055cc37c2232c7b4e3bf64ed34c792099b107b0e43da665e97eee9"
+    },
+    {
+      "path": "write_manifest.py",
+      "bytes": 1067,
+      "sha256": "a46c228dc7c2da6b48ba8a79353a5dfd997c0b578069883af98716ad8bc77e33"
+    }
+  ]
+}

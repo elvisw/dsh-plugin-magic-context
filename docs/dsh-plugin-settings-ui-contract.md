@@ -37,7 +37,7 @@ The browser half registers one locale namespace (`magic-context`) with `zh` and 
 dictionaries. The slot renderer passes the namespace-bound `t` to the card as
 `props.t`; the card falls back to the shipped translator only outside a slot.
 
-- Every **card-owned** string resolves through `t(...)`: all 34 field labels and hints,
+- Every **card-owned** string resolves through `t(...)`: all 35 field labels and hints,
   the five section titles/descriptions, the four summary metrics, the jump row, the status
   strip, the advanced disclosure, the embedding action bar, both confirmation dialogs, the
   `Auto` route captions, the form frame (`unavailable` / `readOnly` / `saveFailed` / `save` /
@@ -177,7 +177,7 @@ this fork added its concrete use case and evidence there on 2026-11-16.
 - Headless DSH has no Settings UI; pure tests and the headless runtime smoke are
   supplementary, not a substitute for the browser gate.
 
-## 8. Remote embedding fields and routes (T20)
+## 8. Remote embedding fields, credentials and routes (T20/T24)
 
 The `embedding` block is a top-level, **user-level** Settings block. It is not
 project-scoped: a project must not redirect the endpoint or the API-key
@@ -187,9 +187,9 @@ that rule is a design boundary rather than an enforced runtime check yet.
 ![Vector search section in the Magic Context Settings card](img/settings-page-v2-embedding.png)
 
 Fields: provider (`local`/`openai-compatible`/`off`), preset
-(`siliconflow`/`custom`), endpoint, auth header, model, API-key environment name,
-dimensions override, query instruction, document prefix, background timeout,
-query timeout and batch size.
+(`siliconflow`/`custom`), endpoint, auth header, model, API-key credential
+reference name, API key (write-only), dimensions override, query instruction, document prefix,
+background timeout, query timeout and batch size.
 
 - Model IDs come from `GET /mc-embedding/models` (or manual entry), never from a
   compiled model table. Dimensions come from `POST /mc-embedding/probe` and are
@@ -202,9 +202,28 @@ query timeout and batch size.
 - POST routes require JSON content type and a matching Origin/Host when an
   Origin is present; they return JSON errors and never return a key or provider
   body.
-- The client shows only key presence, warns about sending memory text to the
-  endpoint, and labels plain HTTP on non-local endpoints. Load models and Test
-  remain available while the form is dirty; they first run the ordinary
+- `embedding.apiKeyEnv` is the credential reference (`role('credential-ref')`);
+  `embedding.apiKey` is a write-only secret (`role('secret')`). The runtime
+  resolves literal `apiKey` → host credential store under `apiKeyEnv` →
+  environment. The schema default reference is `SILICONFLOW_API_KEY`. An empty
+  reference is **unset**: on the SiliconFlow preset it still falls back to the
+  default environment variable, while on a custom preset it means no auth
+  (the desktop card saves an explicit empty string rather than unsetting it).
+  dsh-go hides `role('credential-ref')` fields, so the native form binds the
+  secret to the saved reference or that default; a different reference must be
+  saved on desktop first.
+- The desktop card's secret row is bound to the **saved** reference. It calls
+  `remote.credentials.set(ref, value)` / `unset(ref)`, never
+  `configForms.mutate`; it clears the input after save, shows only
+  configured/unconfigured and the source, and is disabled while the reference is
+  dirty, empty, malformed, the form is read-only, or the host exposes no
+  credential store. The environment fallback remains available in those cases.
+  Android's native form uses the same schema: the sibling
+  `role('credential-ref')` field names the credential, and the host's
+  `SecretFieldTile` calls its credential store. No Flutter change is required.
+- The client shows only key presence and source, warns about sending memory text
+  to the endpoint, and labels plain HTTP on non-local endpoints. Load models and
+  Test remain available while the form is dirty; they first run the ordinary
   revision-fenced Save and only then call the route. Both are disabled while a
   rebuild is running or paused. Start and Rollback require a clean form.
 
@@ -216,7 +235,7 @@ One `settings.section` card, rendered as a single page:
   vector space (local/off/remote + model), rebuild (state + coverage). Values come
   only from the config snapshot and `/mc-embedding/status`; unknown is `—`, never 0.
 - Jump row: scrolls to one of five sections without remounting or dropping drafts.
-- Sections: 常规, 历史摘要, 日志, 向量检索, 维护与诊断. Every one of the 34
+- Sections: 常规, 历史摘要, 日志, 向量检索, 维护与诊断. Every one of the 35
   `FIELDS` belongs to exactly one section and one placement (common/advanced);
   `FIELDS` remains the only inventory.
 - Advanced disclosures: General budgets, Historian limits, Journal mirror,
@@ -249,7 +268,9 @@ Embedding actions:
 
 - No runtime effort mapping, clamping, validation, or fallback aliasing.
 - The only model-list/probe/rebuild RPCs are the plugin-owned `/mc-embedding`
-  routes above; there is no host catalog write.
+  routes above; there is no host catalog write. The only host remote namespace
+  used for key storage is `remote.credentials`; secret values never cross the
+  settings config editor or the `/mc-embedding` status payload.
 - No vendor-specific embedding adapter or SDK. Remote support is the standard
   OpenAI embeddings shape only.
 - No host schema, database, tool, command, or release change in this contract;

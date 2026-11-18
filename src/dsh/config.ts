@@ -46,6 +46,12 @@ export interface MagicContextDshConfig {
     authHeader?: 'authorization' | 'api-key'
     model?: string
     apiKeyEnv?: string
+    /**
+     * Optional literal secret for headless/host bridges. The settings UI never
+     * writes it; UI-entered keys live in the host credential store under
+     * `apiKeyEnv` and resolve below it.
+     */
+    apiKey?: string
     /** 0/null = probe the width; a positive value is an explicit override. */
     dimensions?: number | null
     queryInstruction?: string

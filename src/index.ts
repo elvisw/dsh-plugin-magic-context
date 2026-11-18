@@ -74,6 +74,7 @@ import { liveJournal } from './dsh/live-journal.ts'
 import { createTelemetryService, type MessageCompositionSnapshot } from './dsh/telemetry.ts'
 import { attachOptionalGoNative, installVolatileDisarm, type GoNativeEventHost } from './dsh/go-native.ts'
 import { openMemoryLane } from './dsh/memory-lane.ts'
+import type { EmbeddingCredentialProvider } from './dsh/embedding-lane.ts'
 import { injectReduceGuidance, preStepListener, type PreStepProjects } from './dsh/pre-step.ts'
 import { wireMaintenance } from './dsh/maintenance-wiring.ts'
 import { SWITCH_SNAPSHOT_META_KEY, buildSwitchSnapshot, diffSwitches } from './dsh/config-switches.ts'
@@ -297,7 +298,16 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
   // The bundle's presence in `dsh.profile.bundles` IS the consent: after
   // `dsh plugin add` the features must work with no profile hand-editing.
   // Read once, inside the lane, so a disabled adapter can never half-open.
-  const lane = openMemoryLane(ctx, config, stores)
+  // The credential store is optional: a flat/headless composition may omit it.
+  // `ctx.inject` waits for it without making it a required plugin service, and
+  // the lane reads the ref lazily so a service mounted later is still seen.
+  let credentialsRef: EmbeddingCredentialProvider | undefined
+  ctx.inject(['credentials'], (scope) => {
+    credentialsRef = (scope as unknown as { credentials?: EmbeddingCredentialProvider }).credentials
+    return () => { credentialsRef = undefined }
+  })
+  const credentials = (): EmbeddingCredentialProvider | undefined => credentialsRef
+  const lane = openMemoryLane(ctx, config, stores, credentials)
   const { memoryRecall, memoryWriter, profileWriter, memorySearch, describeMemoryWrite } = lane
   const { memorySettings } = lane
   if (journal !== undefined) {
@@ -1013,10 +1023,15 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
     scope.effect(() => webServer.register({
       kind: 'prefix',
       path: '/mc-embedding',
-      handler: (req, res) => lane.embedding.handle(
-        req as unknown as Parameters<typeof lane.embedding.handle>[0],
-        res as unknown as Parameters<typeof lane.embedding.handle>[1],
-      ),
+      handler: async (req, res) => {
+        // Refresh before every read/action: a key saved or cleared through the
+        // host credential store must apply to the next request without a restart.
+        await lane.embedding.refreshCredentials()
+        return lane.embedding.handle(
+          req as unknown as Parameters<typeof lane.embedding.handle>[0],
+          res as unknown as Parameters<typeof lane.embedding.handle>[1],
+        )
+      },
     }))
     journal?.info('boot', 'embedding route attached for the browser half', {
       embedding: '/mc-embedding',
@@ -1317,8 +1332,17 @@ export const Config = z.object({
     model: z.string().default('')
       .extra('description', { zh: '模型 ID', en: 'Model ID' })
       .volatile(),
-    apiKeyEnv: z.string().default('')
+    // The default must be non-empty: dsh-go's native form hides
+    // `role('credential-ref')` fields and binds a secret through its sibling's
+    // value OR schema default. Desktop users can clear it for a no-auth custom
+    // endpoint; the runtime still treats an empty reference as unbound.
+    apiKeyEnv: z.string().default('SILICONFLOW_API_KEY')
+      .role('credential-ref')
       .extra('description', { zh: '密钥变量', en: 'Key variable' })
+      .volatile(),
+    apiKey: z.string().default('')
+      .role('secret')
+      .extra('description', { zh: '密钥', en: 'API key' })
       .volatile(),
     dimensions: z.union([z.number(), z.const(null)]).default(0)
       .extra('description', { zh: '向量维度', en: 'Dimensions' })

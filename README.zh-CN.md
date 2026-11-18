@@ -170,7 +170,7 @@ bundle 自带配置只有一行：`registerCompactionEngine: false`——保守�
 | historian | `historianEnabled` (true) · `historian.{provider, model}`（**成对钉住**；空 = 跟随会话最后路由）· `historian.reasoningEffort`（可选，留空 = 模型默认） | 带外摘要与 `/compact` 摘要的生成路由；GUI 设置页有「Historian provider/model」下拉（Auto = 跟随会话，推荐）和 catalog-backed 推理强度选择器：`默认`、路由模型实际公布的 id，以及用于旧值/未知值的 `自定义`。Auto 路由下仍保留文本输入（此时不知道会话模型）；未公布的 id 不会被静默改写或夹取。provider 级 `OUTPUT_TOKEN_LIMIT` 空补全会走正常的预算翻倍重试。verify 之外的唯一 LLM 消耗点 |
 | 项目记忆 | `memory.{}`：`enabled`（true，0.9.0 起默认开启——`enabled: false` 退出）· `dbPath` · `project`（省略用会话 cwd）· `domainProjects` · `shareCategories` · `autoPromote` (true) · `write` (true) | `write: false` 让 `ctx_memory` 退回只读 |
 | 检索 / 向量 | `memory.embedBackfill` (true，查询侧内嵌补分) · `memory.vectorBackfill` (true，维护 tick 回填) · `memory.vectorBackfillLimit` (24 行/tick) | 向量车道任何失败 fail-open 降级 FTS |
-| 远程向量（T20） | `embedding.provider` (local) · `embedding.preset` (siliconflow) · `embedding.endpoint` · `embedding.authHeader` (authorization) · `embedding.model` · `embedding.apiKeyEnv` (空 = 自定义预设无认证；SiliconFlow 回退到 `SILICONFLOW_API_KEY`) · `embedding.dimensions` (0 = 探测) · `embedding.queryInstruction` · `embedding.documentPrefix` · `embedding.timeoutMs` (8000) · `embedding.queryTimeoutMs` (2500) · `embedding.batchSize` (16) | 可选的 OpenAI 兼容远程向量空间。模型 ID 从 `/models` 获取或手动填写，维度靠探测、不写死。整个 block 按设计只作为用户级配置；当前宿主未暴露 project/tier 来源，因此运行时尚未强制拒绝项目级覆盖。密钥只从指定环境变量读取；远程空间带 `embedding-remote:` 命名。保存远程配置不消耗额度；`开始重建` 才启用目标空间，支持暂停/继续，回滚走普通 Save。远程检索不与本地向量混用，失败降级 FTS |
+| 远程向量（T20/T24） | `embedding.provider` (local) · `embedding.preset` (siliconflow) · `embedding.endpoint` · `embedding.authHeader` (authorization) · `embedding.model` · `embedding.apiKeyEnv` (凭据引用；默认 `SILICONFLOW_API_KEY`；空 = 未绑定，SiliconFlow 预设仍使用默认环境变量，自定义预设即无认证) · `embedding.apiKey` (空；role secret，仅宿主桥接) · `embedding.dimensions` (0 = 探测) · `embedding.queryInstruction` · `embedding.documentPrefix` · `embedding.timeoutMs` (8000) · `embedding.queryTimeoutMs` (2500) · `embedding.batchSize` (16) | 可选的 OpenAI 兼容远程向量空间。模型 ID 从 `/models` 获取或手动填写，维度靠探测、不写死。整个 block 按设计只作为用户级配置；当前宿主未暴露 project/tier 来源，因此运行时尚未强制拒绝项目级覆盖。密钥按字面 `apiKey` → `apiKeyEnv` 下的宿主凭据库 → 环境变量解析；设置页只写凭据库，只显示已配置/未配置与来源，不回显值。远程空间带 `embedding-remote:` 命名。保存远程配置不消耗额度；`开始重建` 才启用目标空间，支持暂停/继续，回滚走普通 Save。远程检索不与本地向量混用，失败降级 FTS |
 | S(t) 衰减 | `memory.scoring.{enabled (true)，alpha (0.4)，beta (0.2)，archiveThreshold (2)，halfLives}` | 统计恒收集；分发缺省 enabled=true 接管排序；profile-JSON only，不进设置卡片 |
 | 全局域 | `memory.global.machine.{enabled (true)，excludeProjects，autoStage (true)}` · `memory.global.user.{render (true)，collect (true)，review (true)}` · `memory.global.review.batchLimit` (50) | 分发缺省全开：入队可自动化（≤3 条/pass、≥10 候选待审时暂停），**发布永远是人**；LLM 分类失败 fail-closed |
 | 用户画像 | `memory.global.user.{render (true)，collect (false)，review (false)}` | 读 / 收集 / 评审三半独立；写共享库的两个半边默认关 |
@@ -183,7 +183,12 @@ bundle 自带配置只有一行：`registerCompactionEngine: false`——保守�
 默认仍然使用本地 MiniLM 向量。若要使用 OpenAI 兼容的嵌入 API（例如硅基流动），打开
 **设置 → Magic Context → 向量检索**，选择 `OpenAI 兼容 API`，加载模型列表、选择模型，
 然后点 **测试连接**。插件会用一条短文本探测维度；模型 ID 和维度都不会写死在代码里。
-API Key 只从你填写的环境变量读取，密钥值不会进入配置、日志、数据库或浏览器。
+API Key 直接在同一个分区录入：字段只写不读，插件把值保存到 `apiKeyEnv` 指向的宿主凭据库，
+卡片只显示**已配置 / 未配置**与来源。密钥值不会进入 profile patch、日志、数据库或浏览器状态。
+已有的 `$DSH_HOME/.env` 或进程环境变量仍作为回退；保存的凭据优先于环境变量。
+默认引用名是 `SILICONFLOW_API_KEY`；在自定义预设下清空引用名就是无认证（保存空值），
+SiliconFlow 预设下清空仍会回退到默认环境变量。宿主没有提供凭据库时，
+字段禁用，环境变量回退保持不变。
 
 点 **开始重建向量** 才会启用目标空间并开始有界回填。在此之前，远程检索只走全文检索，
 保存配置也不会发送 embedding 请求。旧本地向量会保留；**回滚到本地** 通过普通的
@@ -225,11 +230,13 @@ dsh plugin --profile web add /绝对路径/elvisw-dsh-magic-context-0.17.0.tgz
 README。`memory` 仍刻意不写进该 schema（原生配置不提供记忆开关）；记忆与桌面端一致
 **默认开启**，只有需要退出时才在 profile 补丁里写 `memory.enabled: false`。
 
-远程向量的密钥仍然**只保存环境变量名**。Android 用户需把真实密钥写进 `$DSH_HOME/.env`
-（本机明文文件）并重启引擎。宿主会自行把该文件载入 `process.env`；插件只读取指定的变量，
-且只用于向已配置的 provider 发送认证头。**代理、原生面板、配置值、日志与证据都不会收到
-原始密钥**；密钥也不会进入 App 的凭据库（App 凭据不会自动变成插件的 `process.env`）。
-不要把密钥粘进终端命令：命令历史是另一份明文。
+远程向量的密钥可以直接在手机上录入。原生设置页把 `embedding.apiKey` 渲染为只写密钥字段，
+由同级 `role('credential-ref')` 字段 `apiKeyEnv` 指定引用名；保存时写入宿主凭据库，
+不需要 `.env`、终端或重启引擎。保存的值不会回显，也不会写进 profile。原生表单隐藏
+`role('credential-ref')` 字段，使用已保存的引用名或 schema 默认值
+`SILICONFLOW_API_KEY`；需要别的引用名时，先在桌面端保存。已有的 `.env` /
+进程环境变量仍作为 headless 或旧宿主的回退；保存的凭据优先。宿主没有挂载凭据库时，
+字段禁用，环境变量回退保持不变。**代理、原生面板、配置值、日志与证据都不会收到原始密钥**。
 
 把 provider 切回 `local`（或 `off`）会立即解除已武装的远程重建，即使没有打开面板；再切回
 相同远程配置仍须显式点一次 **开始重建**。本轮只以 Android 为交付验收面，不声称 iOS；桌面
@@ -285,7 +292,7 @@ Agent 工具（挂载时注册；`registerTools: false` 可关）：
 
   ![Magic Context 设置页下半部——维护与诊断、宿主底栏状态与保存按钮](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-bottom.zh.png)
 
-  ![向量检索分区——向量提供方、服务预设、接口地址、模型 ID、API Key 环境变量与当前本地/远程状态](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-embedding.zh.png)
+  ![向量检索分区——向量提供方、服务预设、接口地址、模型 ID、API Key 引用名、只写密钥输入框与当前本地/远程状态](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-embedding.zh.png)
 
 - **`shell.overlay` 遥测徽标 + 胶囊面板**：收起态保留实时压力、token 对、Historian 状态与回收队列
   （`H` / `Q<n>`）；composer 变窄时切换成图标宽度变体。面板里是：

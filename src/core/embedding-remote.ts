@@ -17,6 +17,9 @@ import type { MagicContextDshConfig } from '../dsh/config.ts'
 
 export type EmbeddingPurpose = 'query' | 'passage'
 
+/** Read the abort bit through a call so TS keeps the property observable. */
+const isAborted = (signal?: AbortSignal): boolean => signal?.aborted === true
+
 export interface ResolvedRemoteEmbedding {
   readonly provider: 'openai-compatible'
   readonly preset: string
@@ -24,6 +27,8 @@ export interface ResolvedRemoteEmbedding {
   readonly authHeader: 'authorization' | 'api-key'
   readonly model: string
   readonly apiKeyEnv: string
+  /** Literal secret from config; the UI never writes this field. */
+  readonly apiKey: string
   readonly dimensions: number
   readonly queryInstruction: string
   readonly documentPrefix: string
@@ -49,6 +54,8 @@ export interface RemoteCallDeps {
   readonly fetchImpl?: EmbeddingFetch
   readonly lookupImpl?: EmbeddingLookup
   readonly env?: NodeJS.ProcessEnv
+  /** Resolved credential-store value for the current target, if any. */
+  readonly credential?: string
   readonly now?: () => number
   /** Caller cancellation (native deferred actions, query teardown). */
   readonly signal?: AbortSignal
@@ -103,6 +110,7 @@ export function resolveEmbeddingConfig(
   const authRaw = liveString(raw.authHeader, 'authorization').trim().toLowerCase()
   const authHeader = authRaw === 'api-key' ? 'api-key' : 'authorization'
   const model = liveString(raw.model, '').trim()
+  const apiKey = liveString(raw.apiKey, '')
   const keyEnvRaw = liveValue(raw.apiKeyEnv)
   const keyEnvValue = typeof keyEnvRaw === 'string' ? keyEnvRaw.trim() : undefined
   // A custom preset may deliberately use an empty value for a no-auth local
@@ -126,6 +134,7 @@ export function resolveEmbeddingConfig(
       authHeader,
       model,
       apiKeyEnv,
+      apiKey,
       dimensions,
       queryInstruction,
       documentPrefix,
@@ -150,26 +159,52 @@ export function normalizeEndpoint(value: string, preset = 'custom'): string {
   return trimmed.replace(/\/+$/, '').replace(/\/embeddings$/i, '')
 }
 
-export function apiKeyOf(remote: ResolvedRemoteEmbedding, env: NodeJS.ProcessEnv = process.env): string | undefined {
+export function apiKeyOf(
+  remote: ResolvedRemoteEmbedding,
+  env: NodeJS.ProcessEnv = process.env,
+  credential?: string,
+): string | undefined {
+  // Precedence: literal config > host credential store > environment. The
+  // literal field exists for headless/host bridges; the settings UI never writes
+  // it, so a UI-entered key is resolved from `credential` here.
+  if (remote.apiKey.trim() !== '') return remote.apiKey.trim()
+  // An empty/malformed reference is not a key slot: ignore any stale
+  // credential value from a previous reference instead of sending it.
   if (remote.apiKeyEnv === '') return undefined
   if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(remote.apiKeyEnv)) {
     throw new EmbeddingRemoteError('invalid-key-env')
   }
+  if (credential !== undefined && credential !== '') return credential
   const value = env[remote.apiKeyEnv]
   return value === undefined || value === '' ? undefined : value
 }
 
-export function keyPresent(remote: ResolvedRemoteEmbedding, env: NodeJS.ProcessEnv = process.env): boolean {
+export function keyPresent(
+  remote: ResolvedRemoteEmbedding,
+  env: NodeJS.ProcessEnv = process.env,
+  credential?: string,
+): boolean {
   try {
-    return apiKeyOf(remote, env) !== undefined
+    return apiKeyOf(remote, env, credential) !== undefined
   } catch {
     return false
   }
 }
 
 /** In-memory only; never persisted, logged or returned. */
-export function keyFingerprint(remote: ResolvedRemoteEmbedding, env: NodeJS.ProcessEnv = process.env): string {
-  const key = apiKeyOf(remote, env)
+export function keyFingerprint(
+  remote: ResolvedRemoteEmbedding,
+  env: NodeJS.ProcessEnv = process.env,
+  credential?: string,
+): string {
+  let key: string | undefined
+  try {
+    key = apiKeyOf(remote, env, credential)
+  } catch {
+    // An invalid reference is not a value; never let status/target derivation
+    // throw because the user typed a key-looking string into the name field.
+    return 'invalid'
+  }
   return key === undefined ? 'absent' : createHash('sha256').update(key).digest('hex').slice(0, 16)
 }
 
@@ -178,12 +213,13 @@ export function remoteIdentityHash(
   remote: ResolvedRemoteEmbedding,
   dimensions: number,
   env: NodeJS.ProcessEnv = process.env,
+  credential?: string,
 ): string {
   const digest = createHash('md5').update(JSON.stringify({
     provider: 'openai-compatible',
     model: remote.model,
     endpoint: remote.endpoint,
-    apiKeyPresent: keyPresent(remote, env),
+    apiKeyPresent: keyPresent(remote, env, credential),
     dimensions,
     documentPrefix: remote.documentPrefix,
   })).digest('hex')
@@ -300,8 +336,12 @@ function parseIpv4(host: string): number[] | undefined {
  * HTTP
  * ------------------------------------------------------------------ */
 
-function authHeaders(remote: ResolvedRemoteEmbedding, env: NodeJS.ProcessEnv): Record<string, string> {
-  const key = apiKeyOf(remote, env)
+function authHeaders(
+  remote: ResolvedRemoteEmbedding,
+  env: NodeJS.ProcessEnv,
+  credential?: string,
+): Record<string, string> {
+  const key = apiKeyOf(remote, env, credential)
   if (key === undefined) {
     if (remote.apiKeyEnv !== '') throw new EmbeddingRemoteError('missing-key')
     return {}
@@ -345,6 +385,7 @@ async function postWithDeadline(
   const url = assertEndpoint(remote)
   const lookupImpl = deps.lookupImpl ?? (async hostname => dnsLookup(hostname, { all: true }))
   await guardHost(url.hostname, lookupImpl)
+  if (isAborted(signal)) throw new EmbeddingRemoteError('cancelled')
   const fetchImpl = deps.fetchImpl ?? fetch
   const controller = new AbortController()
   let timedOut = false
@@ -370,7 +411,7 @@ async function postWithDeadline(
       method: 'POST',
       headers: {
         'content-type': 'application/json',
-        ...authHeaders(remote, deps.env ?? process.env),
+        ...authHeaders(remote, deps.env ?? process.env, deps.credential),
       },
       body: JSON.stringify(body),
       redirect: 'error',
@@ -380,7 +421,7 @@ async function postWithDeadline(
   } catch (error) {
     done()
     if (error instanceof EmbeddingRemoteError) throw error
-    if (signal?.aborted === true) throw new EmbeddingRemoteError('cancelled')
+    if (isAborted(signal)) throw new EmbeddingRemoteError('cancelled')
     throw new EmbeddingRemoteError(timedOut ? 'timeout' : 'network')
   }
 }
@@ -407,6 +448,7 @@ export async function listRemoteModels(
   const url = assertEndpoint(remote)
   const lookupImpl = deps.lookupImpl ?? (async hostname => dnsLookup(hostname, { all: true }))
   await guardHost(url.hostname, lookupImpl)
+  if (isAborted(deps.signal)) throw new EmbeddingRemoteError('cancelled')
   const path = remote.preset === 'siliconflow' ? '/models?sub_type=embedding' : '/models'
   const fetchImpl = deps.fetchImpl ?? fetch
   const controller = new AbortController()
@@ -426,7 +468,7 @@ export async function listRemoteModels(
   try {
     const response = await fetchImpl(`${remote.endpoint.replace(/\/+$/, '')}${path}`, {
       method: 'GET',
-      headers: authHeaders(remote, deps.env ?? process.env),
+      headers: authHeaders(remote, deps.env ?? process.env, deps.credential),
       redirect: 'error',
       signal: controller.signal,
     })
@@ -445,7 +487,7 @@ export async function listRemoteModels(
     return { models, endpoint: remote.endpoint }
   } catch (error) {
     if (error instanceof EmbeddingRemoteError) throw error
-    if (deps.signal?.aborted === true) throw new EmbeddingRemoteError('cancelled')
+    if (isAborted(deps.signal)) throw new EmbeddingRemoteError('cancelled')
     throw new EmbeddingRemoteError(timedOut ? 'timeout' : 'network')
   } finally {
     clearTimeout(timer)

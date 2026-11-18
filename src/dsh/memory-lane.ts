@@ -27,6 +27,7 @@ import { runVectorBackfill, type VectorBackfillOutcome } from '../core/vector-ba
 import { openMemorySearch, type MemorySearch, type MemorySearchHit } from '../core/memory-search.ts'
 import { cosineSimilarity } from '../core/embedding-local.ts'
 import { openEmbeddingLane } from './embedding-lane.ts'
+import type { EmbeddingCredentialProvider } from './embedding-lane.ts'
 import { defineCtxMemoryTool, type LocalDefineTool } from './tool-bridge.ts'
 import type { MagicContextDshConfig, MagicContextDshConfigDefineTool } from './config.ts'
 import { liveBoolean, liveNumber, liveValue } from './volatile.ts'
@@ -122,6 +123,7 @@ export function openMemoryLane(
   ctx: Context,
   config: MagicContextDshConfig,
   stores: AdapterStores,
+  credentials?: () => EmbeddingCredentialProvider | undefined,
 ): MemoryLane {
   const memorySettings = config.memory
   // 0.9.0: the gate defaults ON — the old `memorySettings !== undefined &&`
@@ -259,6 +261,7 @@ export function openMemoryLane(
     corpusDbPath: memorySettings?.dbPath ?? fallbackCorpusPath(),
     dataDir: dirname(stores.dbPath),
     logger: { info: (message) => ctx.logger.info(message), warn: (message) => ctx.logger.warn(message) },
+    ...credentials === undefined ? {} : { credentials },
   })
   const localEmbedder = () => (memorySearch === undefined ? undefined : embedding.localEmbedder())
 

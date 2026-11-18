@@ -143,6 +143,17 @@ export function registerGoNative(service: GoNativeService, deps: GoNativeDeps): 
   let retainedModels: { key: string; rows: string[] } | null = null
   let controls: GoEmbeddingControls = { remote: false, startAction: null, rebuild: false, hint: false }
   let controlsKey = ''
+  let credentialsRefreshing = false
+  /** Refresh the cache off the feed path; the next frame reads the new value. */
+  const refreshCredentials = (): void => {
+    if (credentialsRefreshing) return
+    const refresh = deps.embedding.refreshCredentials
+    // Older/fake lanes in tests may not expose the T24 method; a missing
+    // credential cache is the same as an unavailable credential store.
+    if (typeof refresh !== 'function') return
+    credentialsRefreshing = true
+    void refresh.call(deps.embedding).finally(() => { credentialsRefreshing = false })
+  }
 
   const feed = (
     produce: () => Record<string, unknown>,
@@ -315,11 +326,13 @@ export function registerGoNative(service: GoNativeService, deps: GoNativeDeps): 
     view: (_scope, caps) => {
       // A view can precede its first feed/subscriber. Read the current state
       // here rather than depending on a refresh that nobody could receive.
+      refreshCredentials()
       controls = controlsOf(goEmbeddingData(deps.embedding.status(), [], caps?.locale))
       return goEmbeddingView(caps?.locale, controls)
     },
     data: (scope, emit, caps) => trackedFeed(
       () => {
+        refreshCredentials()
         const status = deps.embedding.status()
         const key = modelConfigKey(status)
         if (retainedModels !== null && retainedModels.key !== key) retainedModels = null
