@@ -2,11 +2,11 @@
 
 [![CI](https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml/badge.svg)](https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/@elvisw/dsh-magic-context)](https://www.npmjs.com/package/@elvisw/dsh-magic-context)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D22.19-brightgreen.svg)](package.json)
-[![DeepSeek Harness](https://img.shields.io/badge/DSH-0.2.x-blue.svg)](package.json)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D22.19-brightgreen.svg)](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/package.json)
+[![DeepSeek Harness](https://img.shields.io/badge/DSH-0.2.x-blue.svg)](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/package.json)
 
-> **English** | [简体中文](README.zh-CN.md)
+> **English** | [简体中文](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/README.zh-CN.md)
 
 If you have run long sessions, you probably know these: details you worked out last session are gone this session, so you hit the same wall twice; the context window fills up with dozens of tool outputs; compaction invalidates the cache prefix and you pay for the expensive part all over again.
 
@@ -16,7 +16,7 @@ Facts distilled during a session become project memories that survive across ses
 
 This plugin brings that to **DeepSeek Harness (DSH)**. It installs into a profile as a bundle and starts working inside the running app.
 
-Upstream has been checked through v0.49.30. Verified on host 0.2.2-rc.1 and used daily in a Web profile. Repository history and provenance are in [NOTICE](NOTICE).
+Upstream has been checked through v0.49.30. Verified on host 0.2.2-rc.1 and used daily in a Web profile. Repository history and provenance are in [NOTICE](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/NOTICE).
 
 ## Install
 
@@ -32,9 +32,9 @@ From 0.18.0 the same package also serves Android dsh-go 1.1.0 — see [Android](
 
 > **Package name.** The unscoped `dsh-magic-context` on npm is a different implementation by another maintainer. It is neither this fork nor its upstream. This fork publishes only as `@elvisw/dsh-magic-context`, so the `@elvisw/` scope is required in every install command.
 
-If you previously installed `@elvisw/dsh-plugin-magic-context` (0.12.x) or the upstream `dsh-plugin-magic-context`, remove the old package first. All three use the loader row id `magic-context-dsh`; installing more than one loads a single row and the settings page can disappear. Upgrading from 0.12.x also needs a one-time package-name migration in the profile patch — the script and steps are in [package identity and release](docs/independent-package-release.md).
+If you previously installed `@elvisw/dsh-plugin-magic-context` (0.12.x) or the upstream `dsh-plugin-magic-context`, remove the old package first. All three use the loader row id `magic-context-dsh`; installing more than one loads a single row and the settings page can disappear. Upgrading from 0.12.x also needs a one-time package-name migration in the profile patch — the script and steps are in [package identity and release](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/independent-package-release.md).
 
-The optional compaction takeover only applies to flat/headless setups and **does nothing in Web or desktop**, explained in the [configuration reference](docs/configuration.md).
+The optional compaction takeover only applies to flat/headless setups and **does nothing in Web or desktop**, explained in the [configuration reference](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/configuration.md).
 
 ## What you will see
 
@@ -94,7 +94,7 @@ Registered at mount time. `registerTools: false` turns them off.
 | `/ctx-profile` | Confirm, reject or retire user-profile candidates |
 | `/ctx-global` | Domain membership and candidate approval |
 
-Against cortexkit v0.49.59, `/ctx-dream` and `/ctx-embed` are not registered. The first needs the full dreamer task set; the second targets session history, memories and git commits while this adapter's vectors cover memories only. The per-command matrix is in [PARITY.md](PARITY.md#command-surface-upstream-commands-checked-at-v04959).
+Against cortexkit v0.49.59, `/ctx-dream` and `/ctx-embed` are not registered. The first needs the full dreamer task set; the second targets session history, memories and git commits while this adapter's vectors cover memories only. The per-command matrix is in [PARITY.md](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/PARITY.md#command-surface-upstream-commands-checked-at-v04959).
 
 ## Settings
 
@@ -112,7 +112,7 @@ The ones you are most likely to touch:
 - **Historian routing.** Pin provider and model, or leave both empty to follow the session. Reasoning effort comes from the host's model list.
 - **Vector search.** Local MiniLM by default. To use an OpenAI-compatible embedding API (SiliconFlow, for example), pick the preset in this section, load the models and test the connection. The key is write-only, goes into the host credential store, and the card only reports configured or not.
 
-The full key table with defaults is in the [configuration reference](docs/configuration.md). When writing profile overrides by hand, note that `config` **replaces** the bundled config rather than merging into it.
+The full key table with defaults is in the [configuration reference](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/configuration.md). When writing profile overrides by hand, note that `config` **replaces** the bundled config rather than merging into it.
 
 ### Telemetry badge
 
@@ -143,15 +143,15 @@ No Flutter changes, no second package. The host half registers the status strip 
 - **Context panel.** Opened from a conversation it strictly uses that `sessionId`; opened from All features it is labelled as a global view. Missing values show `—`, never 0. The phone does not recompute tokens.
 - **Vector panel.** Shows provider, model, probed dimensions, coverage and rebuild progress. It can load model IDs, test the connection, start a rebuild after confirmation, and pause or resume. Opening the panel or saving config never probes or rebuilds on its own.
 
-![Session context](docs/img/dsh-go-context.zh.png)
-![Vector rebuild progress](docs/img/dsh-go-embedding.zh.png)
-![Native configuration](docs/img/dsh-go-config.zh.png)
+![Session context](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/dsh-go-context.zh.png)
+![Vector rebuild progress](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/dsh-go-embedding.zh.png)
+![Native configuration](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/dsh-go-config.zh.png)
 
 Remote embedding keys are entered in the desktop or Web settings page. The native settings page declares the same roles, but dsh-go 1.1.0's bridge does not yet pass the credential reference to the app, so the native key field is disabled — see [dsh-go issue #1493](https://github.com/ccch1mneyyy/dsh-Go/issues/1493). Until then, the phone works with local MiniLM and needs no key.
 
 ### How far the phone has been verified
 
-On 2026-11-18 the full local-vector path was verified on the same phone with the **published 0.18.0 package**: three memories were backfilled by the maintenance tick into 384-dimension vectors, `ctx_memory action=search` returned `match=hybrid` for rows matched by both lanes and `match=semantic` for the row only the vector lane could reach, and after an engine restart the shared-space gate reported `parity: 1`. Details in the [T25 report](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-18-t25-local-vector/acceptance-report.md).
+On 2026-11-18 the full local-vector path was verified on the same phone with the **published 0.18.0 package**: three memories were backfilled by the maintenance tick into 384-dimension vectors, `ctx_memory action=search` returned `match=hybrid` for rows matched by both lanes and `match=semantic` for the row only the vector lane could reach, and after an engine restart the shared-space gate reported `parity: 1`. Details in the [T25 report](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-18-t25-local-vector/acceptance-report.md).
 
 The earlier T23 acceptance ran on a pre-release candidate and covered real memory writes and recall, native panels, configuration and recall after restart, using a 16-dimension simulated embedding service rather than SiliconFlow.
 
@@ -184,31 +184,31 @@ node scripts/mc-acceptance.mjs [--hours 72]    # corpus acceptance, exits 1 on f
 
 The report covers execute/defer ratios, net reclaim, historian failure rate and duration, emergency reclaims, tool-call counts, plus health notes such as "no execute pass in the window".
 
-The full journal taxonomy is in the [architecture document](docs/architecture.md).
+The full journal taxonomy is in the [architecture document](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/architecture.md).
 
 ## Documentation
 
 **Currently maintained**
 
-- [Configuration reference](docs/configuration.md) — every key, its default, and remote embedding details
-- [Architecture and internals](docs/architecture.md) — layout, the two databases, storage and retrieval, component map
-- [Settings UI contract](docs/dsh-plugin-settings-ui-contract.md) — host seams and copy rules for the settings page
-- [Operations runbook](docs/dsh-plugin-operations-runbook-2026-10-10.md) — routine checks, thresholds, incident handling
-- [Upgrade follow-up](docs/dsh-plugin-upgrade-followup.md) — the re-alignment process; §1 is a historical baseline
-- [Package identity and release](docs/independent-package-release.md) — package identity, migration, release flow
-- [PARITY.md](PARITY.md) — line-by-line alignment with the upstream OpenCode / Pi adapters
+- [Configuration reference](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/configuration.md) — every key, its default, and remote embedding details
+- [Architecture and internals](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/architecture.md) — layout, the two databases, storage and retrieval, component map
+- [Settings UI contract](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-settings-ui-contract.md) — host seams and copy rules for the settings page
+- [Operations runbook](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-operations-runbook-2026-10-10.md) — routine checks, thresholds, incident handling
+- [Upgrade follow-up](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-upgrade-followup.md) — the re-alignment process; §1 is a historical baseline
+- [Package identity and release](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/independent-package-release.md) — package identity, migration, release flow
+- [PARITY.md](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/PARITY.md) — line-by-line alignment with the upstream OpenCode / Pi adapters
 
 **Historical material**
 
 Kept for provenance only, not a current guarantee. Each file opens with its own status note and evidence baseline:
 
-[Memory write contract](docs/dsh-plugin-memory-write-contract.md), [memory promotion contract](docs/dsh-plugin-memory-promotion-contract.md), [memory acceptance](docs/dsh-plugin-memory-acceptance.md), [config UI contract](docs/dsh-plugin-config-ui-contract.md), [main-UI telemetry contract](docs/dsh-plugin-ui-telemetry-contract.md), [hooks coverage](docs/dsh-plugin-hooks-coverage-2026-10-08.md), [port feasibility](docs/dsh-port-feasibility-2026-10-06.md), [platform takeover and domains](docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md), [dreamer vector decision](docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md), [memory mechanisms inventory](docs/memory-mechanisms-inventory-2026-10-09.md), [upstream source analysis](docs/upstream-source-analysis-2026-10-09.md), [domain source investigation](docs/global-domain-source-finding-2026-10-10.md), [memory architecture challenge](docs/memory-architecture-challenge-2026-10-10.md), [domain naming decision](docs/domain-naming-work-global-2026-10-25.md), [test design audit](docs/dsh-plugin-test-design-audit-2026-10-07.md), [surface write audit](docs/dsh-surface-write-audit-2026-10-09.md), [local embedding runtime audit](docs/local-embedding-runtime-audit-2026-10-15.md), [upstream follow-up v0.46.0 → v0.49.30](docs/upstream-followup-2026-10-30.md), [/ctx-flush research handoff](docs/research-handoff-ctx-flush-2026-11-11.md).
+[Memory write contract](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-memory-write-contract.md), [memory promotion contract](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-memory-promotion-contract.md), [memory acceptance](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-memory-acceptance.md), [config UI contract](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-config-ui-contract.md), [main-UI telemetry contract](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-ui-telemetry-contract.md), [hooks coverage](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-hooks-coverage-2026-10-08.md), [port feasibility](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-port-feasibility-2026-10-06.md), [platform takeover and domains](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md), [dreamer vector decision](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md), [memory mechanisms inventory](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/memory-mechanisms-inventory-2026-10-09.md), [upstream source analysis](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/upstream-source-analysis-2026-10-09.md), [domain source investigation](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/global-domain-source-finding-2026-10-10.md), [memory architecture challenge](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/memory-architecture-challenge-2026-10-10.md), [domain naming decision](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/domain-naming-work-global-2026-10-25.md), [test design audit](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-test-design-audit-2026-10-07.md), [surface write audit](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-surface-write-audit-2026-10-09.md), [local embedding runtime audit](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/local-embedding-runtime-audit-2026-10-15.md), [upstream follow-up v0.46.0 → v0.49.30](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/upstream-followup-2026-10-30.md), [/ctx-flush research handoff](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/research-handoff-ctx-flush-2026-11-11.md).
 
 ## Contributing
 
-- [CONTRIBUTING.md](CONTRIBUTING.md) — environment, code conventions, PR flow
-- [SECURITY.md](SECURITY.md) — report vulnerabilities privately
-- [CHANGELOG.md](CHANGELOG.md) — release notes
+- [CONTRIBUTING.md](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/CONTRIBUTING.md) — environment, code conventions, PR flow
+- [SECURITY.md](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/SECURITY.md) — report vulnerabilities privately
+- [CHANGELOG.md](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/CHANGELOG.md) — release notes
 
 This repository uses npm as its only package manager, with `package-lock.json` as the authority. CI runs typecheck, tests, build and the i18n check on Node 22.x and 24.x.
 
@@ -239,4 +239,4 @@ This fork guarantees only its own plugin behaviour and data migrations. It does 
 - **Upstream DSH adapter**: `wk544863858/dsh-plugin-magic-context`, npm `dsh-plugin-magic-context@0.11.2`, MIT, Copyright (c) 2026 wukai. The direct upstream of this repository. Changes in this fork are Copyright (c) 2026 elvisw, also MIT.
 - **magic-context**: MIT, Copyright (c) 2025 Ufuk Altinok. The originating project, extracted from upstream tag v0.46.0 (`651c105a9`). Adapter-specific commits were replayed verbatim from local checkout `dsh` branch `e34eda955` (2026-10-08).
 - **DeepSeek Harness**: MIT, consumed as a dependency rather than bundled. Written against 0.2.1-rc.1 (checkout `1600d8a1e`). Note that the `latest` tags on these packages lag by one release line; take exact versions from devDependencies.
-- Bundled third-party code: `vendor/onnx/` (a WASM subset of onnxruntime-web, MIT © Microsoft) and `tests/helpers/mock-adapter.ts` (embedded verbatim from the DSH test tree). Details in [NOTICE](NOTICE), license in [LICENSE](LICENSE).
+- Bundled third-party code: `vendor/onnx/` (a WASM subset of onnxruntime-web, MIT © Microsoft) and `tests/helpers/mock-adapter.ts` (embedded verbatim from the DSH test tree). Details in [NOTICE](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/NOTICE), license in [LICENSE](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/LICENSE).

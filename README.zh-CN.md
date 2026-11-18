@@ -2,11 +2,11 @@
 
 [![CI](https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml/badge.svg)](https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/@elvisw/dsh-magic-context)](https://www.npmjs.com/package/@elvisw/dsh-magic-context)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D22.19-brightgreen.svg)](package.json)
-[![DeepSeek Harness](https://img.shields.io/badge/DSH-0.2.x-blue.svg)](package.json)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D22.19-brightgreen.svg)](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/package.json)
+[![DeepSeek Harness](https://img.shields.io/badge/DSH-0.2.x-blue.svg)](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/package.json)
 
-> [English](README.md) | **简体中文**
+> [English](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/README.md) | **简体中文**
 
 跑过长会话的人大概都遇过这几件事：上个会话弄明白的项目细节，这个会话全忘光，同一个坑再踩一遍；上下文被几十条工具输出撑爆；一压缩，缓存前缀全失效，贵的那部分重来一遍。
 
@@ -16,7 +16,7 @@
 
 本插件把这套能力接到 **DeepSeek Harness（DSH）** 上。以 bundle 形式装进 profile，在运行中的应用里直接开始工作。
 
-上游跟进已核到 v0.49.30。宿主 0.2.2-rc.1 上实测运行正常，日常在 Web profile 里用着。仓库历史和出处见 [NOTICE](NOTICE)。
+上游跟进已核到 v0.49.30。宿主 0.2.2-rc.1 上实测运行正常，日常在 Web profile 里用着。仓库历史和出处见 [NOTICE](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/NOTICE)。
 ## 安装
 
 需要 Node ≥ 22.19，以及带 Web 客户端的 DSH 0.2.x 宿主（桌面应用或 `web` profile）。
@@ -31,9 +31,9 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 
 > **包名。** npm 上无 scope 的 `dsh-magic-context` 是另一位维护者的独立实现，不是这个 fork，也不是它的上游。本 fork 只以 `@elvisw/dsh-magic-context` 发布，安装命令里的 `@elvisw/` 不能省。
 
-如果你之前装过 `@elvisw/dsh-plugin-magic-context`（0.12.x）或上游的 `dsh-plugin-magic-context`，先卸掉旧包。三者用同一个 loader row id（`magic-context-dsh`），装在一起只会加载一行，设置页可能直接消失。0.12.x 升级还要迁移一次 profile patch 里的包名，脚本和步骤在 [独立包名与发布](docs/independent-package-release.md)。
+如果你之前装过 `@elvisw/dsh-plugin-magic-context`（0.12.x）或上游的 `dsh-plugin-magic-context`，先卸掉旧包。三者用同一个 loader row id（`magic-context-dsh`），装在一起只会加载一行，设置页可能直接消失。0.12.x 升级还要迁移一次 profile patch 里的包名，脚本和步骤在 [独立包名与发布](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/independent-package-release.md)。
 
-可选的压缩接管只对 flat/headless 组合有效，**在 Web 和桌面端不起作用**，原因见[配置参考](docs/configuration.md)。
+可选的压缩接管只对 flat/headless 组合有效，**在 Web 和桌面端不起作用**，原因见[配置参考](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/configuration.md)。
 
 ## 装完会看到什么
 
@@ -93,7 +93,7 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 | `/ctx-profile` | 用户画像候选的确认、拒绝、退休 |
 | `/ctx-global` | 全域成员管理与候选审批 |
 
-对照 cortexkit v0.49.59，`/ctx-dream` 和 `/ctx-embed` 没有注册。前者需要完整的 dreamer 任务集，后者的目标是会话历史、记忆和 git 提交，而本适配器的向量只覆盖记忆。逐条矩阵见 [PARITY.md](PARITY.md#command-surface-upstream-commands-checked-at-v04959)。
+对照 cortexkit v0.49.59，`/ctx-dream` 和 `/ctx-embed` 没有注册。前者需要完整的 dreamer 任务集，后者的目标是会话历史、记忆和 git 提交，而本适配器的向量只覆盖记忆。逐条矩阵见 [PARITY.md](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/PARITY.md#command-surface-upstream-commands-checked-at-v04959)。
 
 ## 设置
 
@@ -111,7 +111,7 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 - **Historian 路由。** 可以钉死 provider 和 model，也可以留空跟随会话。推理强度从宿主模型列表里选。
 - **向量检索。** 默认本地 MiniLM。要换 OpenAI 兼容的嵌入 API（比如硅基流动），在这个分区选预设、加载模型、测试连接。密钥只写不读，存进宿主凭据库，卡片只显示「已配置 / 未配置」。
 
-完整键表和默认值在[配置参考](docs/configuration.md)。手写 profile 覆盖行时注意 `config` 是**整体替换**，不是深合并。
+完整键表和默认值在[配置参考](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/configuration.md)。手写 profile 覆盖行时注意 `config` 是**整体替换**，不是深合并。
 
 ### 遥测徽标
 
@@ -142,15 +142,15 @@ dsh plugin --profile web add @elvisw/dsh-magic-context@0.18.0
 - **上下文面板。** 从对话打开时严格按那个会话取数，从「全部功能」打开时标成全局视图。缺失值显示 `—`，不写成 0。手机端不重新统计 token。
 - **向量检索面板。** 显示 provider、模型、探测维度、覆盖率、重建进度。可以加载模型 ID、测试连接、确认后开始重建、暂停继续。打开面板或保存配置都不会自动探测或重建。
 
-![本会话上下文](docs/img/dsh-go-context.zh.png)
-![向量重建进度](docs/img/dsh-go-embedding.zh.png)
-![原生配置](docs/img/dsh-go-config.zh.png)
+![本会话上下文](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/dsh-go-context.zh.png)
+![向量重建进度](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/dsh-go-embedding.zh.png)
+![原生配置](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/dsh-go-config.zh.png)
 
 远程向量的密钥在桌面或 Web 设置页录入。原生设置页声明了同一组 role，但 dsh-go 1.1.0 的桥接还没把凭据引用传给 App，所以原生密钥输入框现在是禁用状态，见 [dsh-go issue #1493](https://github.com/ccch1mneyyy/dsh-Go/issues/1493)。在这之前手机端用本地 MiniLM 就行，不需要密钥。
 
 ### 手机上验到哪一步
 
-2026-11-18 用**已发布的 0.18.0 包**在同一台手机上跑通了完整的本地向量链路：三条记忆由维护 tick 回填成 384 维向量，`ctx_memory action=search` 对同时命中关键词和向量的行返回 `match=hybrid`，对只有向量能找回的行返回 `match=semantic`，引擎重启后共享空间门禁报告 `parity: 1`。详见 [T25 报告](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-18-t25-local-vector/acceptance-report.md)。
+2026-11-18 用**已发布的 0.18.0 包**在同一台手机上跑通了完整的本地向量链路：三条记忆由维护 tick 回填成 384 维向量，`ctx_memory action=search` 对同时命中关键词和向量的行返回 `match=hybrid`，对只有向量能找回的行返回 `match=semantic`，引擎重启后共享空间门禁报告 `parity: 1`。详见 [T25 报告](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-18-t25-local-vector/acceptance-report.md)。
 
 更早的 T23 验收跑在预发布候选上，覆盖真实记忆写入检索、原生面板、配置和重启后检索，嵌入用的是 16 维模拟服务，不是 SiliconFlow。
 
@@ -183,31 +183,31 @@ node scripts/mc-acceptance.mjs [--hours 72]    # 语料库验收，失败退出 
 
 复盘报告里有 execute/defer 比例、净回收、historian 失败率和耗时、紧急回收、工具调用统计，以及「窗口内没有 execute pass」这类健康提示。
 
-完整 journal 分类见[架构文档](docs/architecture.md)。
+完整 journal 分类见[架构文档](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/architecture.md)。
 
 ## 文档
 
 **当前维护的**
 
-- [配置参考](docs/configuration.md)——全部配置键、默认值和远程向量细节
-- [架构与内部结构](docs/architecture.md)——目录、双库、存储与检索引擎、组件地图
-- [设置界面契约](docs/dsh-plugin-settings-ui-contract.md)（英文）——设置页的宿主接缝与文案规则
-- [运维手册](docs/dsh-plugin-operations-runbook-2026-10-10.md)——日常检查、阈值、故障处置
-- [升级跟随](docs/dsh-plugin-upgrade-followup.md)——重新对齐流程，§1 是历史基线
-- [独立包名与发布](docs/independent-package-release.md)——包身份、迁移、发布流程
-- [PARITY.md](PARITY.md)——与上游 OpenCode / Pi 适配器的逐条对齐
+- [配置参考](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/configuration.md)——全部配置键、默认值和远程向量细节
+- [架构与内部结构](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/architecture.md)——目录、双库、存储与检索引擎、组件地图
+- [设置界面契约](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-settings-ui-contract.md)（英文）——设置页的宿主接缝与文案规则
+- [运维手册](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-operations-runbook-2026-10-10.md)——日常检查、阈值、故障处置
+- [升级跟随](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-upgrade-followup.md)——重新对齐流程，§1 是历史基线
+- [独立包名与发布](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/independent-package-release.md)——包身份、迁移、发布流程
+- [PARITY.md](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/PARITY.md)——与上游 OpenCode / Pi 适配器的逐条对齐
 
 **历史资料**
 
 以下只作溯源保留，不是当前保证，每份文件开头都有自己的状态说明和证据基线：
 
-[记忆写契约](docs/dsh-plugin-memory-write-contract.md)、[记忆提升契约](docs/dsh-plugin-memory-promotion-contract.md)、[记忆验收](docs/dsh-plugin-memory-acceptance.md)、[配置界面契约](docs/dsh-plugin-config-ui-contract.md)、[主界面遥测契约](docs/dsh-plugin-ui-telemetry-contract.md)、[hooks 覆盖](docs/dsh-plugin-hooks-coverage-2026-10-08.md)、[移植可行性](docs/dsh-port-feasibility-2026-10-06.md)、[平台接管与全域](docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md)、[dreamer 向量决策](docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md)、[记忆机制清单](docs/memory-mechanisms-inventory-2026-10-09.md)、[上游源码分析](docs/upstream-source-analysis-2026-10-09.md)、[全域来源调查](docs/global-domain-source-finding-2026-10-10.md)、[记忆架构挑战](docs/memory-architecture-challenge-2026-10-10.md)、[域命名决定](docs/domain-naming-work-global-2026-10-25.md)、[测试设计审计](docs/dsh-plugin-test-design-audit-2026-10-07.md)、[surface 写审计](docs/dsh-surface-write-audit-2026-10-09.md)、[本地向量运行时审计](docs/local-embedding-runtime-audit-2026-10-15.md)、[上游跟进 v0.46.0 → v0.49.30](docs/upstream-followup-2026-10-30.md)、[/ctx-flush 研究交接](docs/research-handoff-ctx-flush-2026-11-11.md)。
+[记忆写契约](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-memory-write-contract.md)、[记忆提升契约](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-memory-promotion-contract.md)、[记忆验收](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-memory-acceptance.md)、[配置界面契约](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-config-ui-contract.md)、[主界面遥测契约](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-ui-telemetry-contract.md)、[hooks 覆盖](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-hooks-coverage-2026-10-08.md)、[移植可行性](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-port-feasibility-2026-10-06.md)、[平台接管与全域](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md)、[dreamer 向量决策](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md)、[记忆机制清单](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/memory-mechanisms-inventory-2026-10-09.md)、[上游源码分析](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/upstream-source-analysis-2026-10-09.md)、[全域来源调查](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/global-domain-source-finding-2026-10-10.md)、[记忆架构挑战](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/memory-architecture-challenge-2026-10-10.md)、[域命名决定](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/domain-naming-work-global-2026-10-25.md)、[测试设计审计](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-test-design-audit-2026-10-07.md)、[surface 写审计](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-surface-write-audit-2026-10-09.md)、[本地向量运行时审计](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/local-embedding-runtime-audit-2026-10-15.md)、[上游跟进 v0.46.0 → v0.49.30](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/upstream-followup-2026-10-30.md)、[/ctx-flush 研究交接](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/research-handoff-ctx-flush-2026-11-11.md)。
 
 ## 参与
 
-- [CONTRIBUTING.md](CONTRIBUTING.md)：环境、代码约定、PR 流程
-- [SECURITY.md](SECURITY.md)：安全问题走私密通道
-- [CHANGELOG.md](CHANGELOG.md)：变更记录
+- [CONTRIBUTING.md](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/CONTRIBUTING.md)：环境、代码约定、PR 流程
+- [SECURITY.md](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/SECURITY.md)：安全问题走私密通道
+- [CHANGELOG.md](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/CHANGELOG.md)：变更记录
 
 本仓库以 npm 为唯一包管理器，以 `package-lock.json` 为准。CI 在 Node 22.x 和 24.x 上跑 typecheck、测试、构建和 i18n 检查。
 
@@ -238,4 +238,4 @@ row id 相同，所以上游包、0.12.x 的 fork 包和本包**不能共装**�
 - **上游 DSH 适配器**：`wk544863858/dsh-plugin-magic-context`，npm `dsh-plugin-magic-context@0.11.2`，MIT，Copyright (c) 2026 wukai。本仓库的直接上游。本 fork 的修改部分 Copyright (c) 2026 elvisw，同样 MIT。
 - **magic-context**：MIT，Copyright (c) 2025 Ufuk Altinok。衍生来源，抽取自上游 tag v0.46.0（`651c105a9`）。适配器自有提交从本地 checkout `dsh` 分支的 `e34eda955`（2026-10-08）原样重放。
 - **DeepSeek Harness**：MIT，作为依赖消费，不包含在内。代码针对 0.2.1-rc.1 编写（checkout `1600d8a1e`）。注意这些包的 `latest` 标签落后一个发布线，精确版本以 devDependencies 为准。
-- 内嵌第三方：`vendor/onnx/`（onnxruntime-web 的 WASM 子集，MIT © Microsoft）、`tests/helpers/mock-adapter.ts`（DSH 测试树原样内嵌）。明细见 [NOTICE](NOTICE)，许可见 [LICENSE](LICENSE)。
+- 内嵌第三方：`vendor/onnx/`（onnxruntime-web 的 WASM 子集，MIT © Microsoft）、`tests/helpers/mock-adapter.ts`（DSH 测试树原样内嵌）。明细见 [NOTICE](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/NOTICE)，许可见 [LICENSE](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/LICENSE)。
