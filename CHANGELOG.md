@@ -10,12 +10,14 @@
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-11-18
+
 ### Added
 
-- 远程向量 API Key 改为配置界面录入（T24）：桌面「向量检索」与 Android dsh-go 原生表单使用只写字段，值写入宿主凭据库；`embedding.apiKeyEnv` 是 `role('credential-ref')` 引用名，`embedding.apiKey` 是 `role('secret')` 的宿主桥接字段。运行时按字面 `apiKey` → 凭据库 → 环境变量解析；`apiKeyEnv` 默认 `SILICONFLOW_API_KEY`；空值表示未绑定；自定义预设下保存空引用即无认证，SiliconFlow 预设下仍会回退到默认环境变量。环境回退继续保留。已有 `.env` / 进程环境变量仍作为回退。桌面通过 `remote.credentials.set/unset` 写入，不经过 `configForms.mutate`；状态只报告已配置/未配置与来源，不回显密钥。
+- 远程向量 API Key 改为配置界面录入（T24）：桌面「向量检索」使用只写字段，值写入宿主凭据库；`embedding.apiKeyEnv` 是 `role('credential-ref')` 引用名，`embedding.apiKey` 是 `role('secret')` 的宿主桥接字段。运行时按字面 `apiKey` → 凭据库 → 环境变量解析；`apiKeyEnv` 默认 `SILICONFLOW_API_KEY`；空值表示未绑定；自定义预设下保存空引用即无认证，SiliconFlow 预设下仍会回退到默认环境变量。环境回退继续保留。已有 `.env` / 进程环境变量仍作为回退。桌面通过 `remote.credentials.set/unset` 写入，不经过 `configForms.mutate`；状态只报告已配置/未配置与来源，不回显密钥。Android 原生表单声明同一组 role，但 dsh-go 1.1.0 的 bridge 尚未返回 `credentialRef`，原生密钥输入当前仍被禁用（[issue #1493](https://github.com/ccch1mneyyy/dsh-Go/issues/1493)）。
 - Android dsh-go 1.1.0 原生面（T23）：输入框状态条、上下文面板、向量检索面板。通过可选的 `ctx.inject(['dshGo'], …)` 注册，无桥接的桌面端照常加载；状态条与面板复用现有遥测摘要与向量车道，不在手机重算 token 或另写 embedding 客户端/配置写入器。
 - 原生面向量操作：加载模型（可复制模型 ID）、测试连接、确认后开始重建、暂停/继续；网络动作走宿主 deferred 协议并传递取消信号。
-- 原生配置说明与分组元数据；README 中英文补充 Android 安装与原生配置入口。Android 原生面是未发布候选，文档只给出本地 `.tgz` 安装路径，不把 npm `latest` 描述成已包含该能力。
+- 原生配置说明与分组元数据；Android 可从 npm 安装同一个包，原生面要求 dsh-go 1.1.0。桌面密钥录入已验收；Android 原生表单使用同一组 role，但受 dsh-go bridge 的 `credentialRef` 缺口限制，原生密钥输入仍不可用。本轮只验收 Android 本机引擎、原生面板与本地 MiniLM WASM 原语；真机 gate 跑在预发布 T23 候选上，早于 T24 的原生视图改动，不声称 iOS、真实嵌入供应商或完整本地检索链路已验证。
 
 ### Changed
 
@@ -301,6 +303,7 @@ npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布�
 
 0.12.0 之前的 tag 位于上游仓库 `wk544863858/dsh-plugin-magic-context`；从 0.12.0 起，版本与 tag 属于本 fork。
 
+[0.18.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.14.0...v0.15.0

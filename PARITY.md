@@ -29,8 +29,8 @@ This document records the **effective-behavior contract** between the DSH adapte
 | Decision baseline | **v0.49.55** — `v0.49.50 → v0.49.55` still not swept; `v0.49.55 → v0.49.56` reviewed with no port |
 | MC store contract | shape inherited at the v95 cutover, **own lineage since 2026-10-13** (`src/core/memory-bridge.ts:45`; `MEMORY_SCHEMA_MAX_VERSION = 95`) |
 | DeepSeek Harness | **Desktop 0.2.1-rc.1** (host paths below are relative to the DSH checkout) |
-| Android native host | **dsh-go 1.1.0** (`e9d3239bee18029d48618c7514303bc7fa7bbf8f`); limited LOCAL device gate passed 2026-11-18 for the unreleased T23 candidate; scope below |
-| Adapter | `@elvisw/dsh-magic-context` 0.17.0, own store **schema v11** (`src/core/stores.ts`) |
+| Android native host | **dsh-go 1.1.0** (`e9d3239bee18029d48618c7514303bc7fa7bbf8f`); limited LOCAL device gate passed 2026-11-18 on the pre-release T23 candidate; scope below |
+| Adapter | `@elvisw/dsh-magic-context` 0.18.0, own store **schema v11** (`src/core/stores.ts`) |
 
 Scope split: `docs/dsh-plugin-upgrade-followup.md` says **how** to follow an
 upgrade; this file says **where we differ**. Three verdicts are used below:
@@ -208,9 +208,12 @@ lane:
   `loader/volatile-update` listener, even with no panel open.
 
 Host-imposed consequences: T24 exposes the key as a `role('secret')` config
-field with a sibling `role('credential-ref')` reference, so the native settings
-form writes the host credential store instead of requiring a `.env` file. The
-runtime still falls back to the referenced environment variable (including
+field with a sibling `role('credential-ref')` reference. The desktop form writes
+the host credential store instead of requiring a `.env` file. dsh-go 1.1.0's
+bridge does not yet return `credentialRef` to the App, so the native secret input
+renders as unbound and disabled ([issue #1493](https://github.com/ccch1mneyyy/dsh-Go/issues/1493));
+desktop key entry is verified, Android native key entry is not. The runtime
+still falls back to the referenced environment variable (including
 `$DSH_HOME/.env`) for headless or older hosts; the plugin reads the value only
 to send the auth header. The agent, panels, config values, logs and evidence
 never receive the raw key. Remote probes use the host's deferred-action protocol, the schema
@@ -225,8 +228,11 @@ an engine restart. The final observed rebuild was partial (2/3), not complete.
 Real embedding vendors, the full Android local retrieval/backfill lane, English
 phone rendering, and mobile failure/lifecycle matrices were not tested. The
 shipped local MiniLM WASM primitive itself was verified on the Android device
-(384 dimensions, 891 ms for two texts; T24 probe). The candidate retains
-package version 0.17.0 but is not the published npm 0.17.0 artifact.
+(384 dimensions, 891 ms for two texts; T24 probe). The T23 evidence was taken on
+the pre-release T23 candidate. 0.18.0 packages the T24 candidate runtime, which
+also refreshed native credential state and error copy in `go-native`/`go-view`;
+that device gate predates those edits. The final tarball differs from the tested
+candidate only in version and docs.
 
 ## C. Not ported
 

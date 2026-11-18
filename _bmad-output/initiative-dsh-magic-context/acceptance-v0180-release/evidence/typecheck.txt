@@ -1,0 +1,6 @@
+
+> @elvisw/dsh-magic-context@0.18.0 typecheck
+> tsc --noEmit
+
+
+exit_code=0

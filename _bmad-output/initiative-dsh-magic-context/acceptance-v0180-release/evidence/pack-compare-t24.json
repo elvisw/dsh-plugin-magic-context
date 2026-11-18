@@ -1,0 +1,22 @@
+{
+  "packedTarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\v0180-pack-20261118-final\\elvisw-dsh-magic-context-0.18.0.tgz",
+  "packedSha256": "0ab7f5168bda13cf38db83c9af68067a14f5f78c764757ad80d73d0ce852aa30",
+  "packedSha1": "73f39de5185622f74046be396cba1aedcc000a86",
+  "packedBytes": 4087402,
+  "packedFiles": 71,
+  "registry": "pending npm publication; no registry artifact existed when this file was written",
+  "previousTarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t24-pack\\elvisw-dsh-magic-context-0.17.0.tgz",
+  "previousSha256": "e3c7b7b4dced12feb41f2d99620154e38f166e4198a7ca2727f37a1f1790b2c3",
+  "previousBytes": 4086969,
+  "rawChangedMembers": [
+    "package/README.md",
+    "package/README.zh-CN.md",
+    "package/package.json"
+  ],
+  "normalizedChangedMembers": [
+    "package/README.md",
+    "package/README.zh-CN.md",
+    "package/package.json"
+  ],
+  "libNormalizedChanged": []
+}

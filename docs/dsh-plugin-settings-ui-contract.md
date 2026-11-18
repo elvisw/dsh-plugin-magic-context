@@ -209,9 +209,11 @@ background timeout, query timeout and batch size.
   reference is **unset**: on the SiliconFlow preset it still falls back to the
   default environment variable, while on a custom preset it means no auth
   (the desktop card saves an explicit empty string rather than unsetting it).
-  dsh-go hides `role('credential-ref')` fields, so the native form binds the
-  secret to the saved reference or that default; a different reference must be
-  saved on desktop first.
+  dsh-go hides `role('credential-ref')` fields, so the native form is designed
+  to bind the secret to the saved reference or that default; a different
+  reference must be saved on desktop first. dsh-go 1.1.0's bridge does not yet
+  return `credentialRef`, so its native input currently renders unbound and
+  disabled ([issue #1493](https://github.com/ccch1mneyyy/dsh-Go/issues/1493)).
 - The desktop card's secret row is bound to the **saved** reference. It calls
   `remote.credentials.set(ref, value)` / `unset(ref)`, never
   `configForms.mutate`; it clears the input after save, shows only
@@ -220,7 +222,9 @@ background timeout, query timeout and batch size.
   credential store. The environment fallback remains available in those cases.
   Android's native form uses the same schema: the sibling
   `role('credential-ref')` field names the credential, and the host's
-  `SecretFieldTile` calls its credential store. No Flutter change is required.
+  `SecretFieldTile` is designed to call its credential store. No Flutter change
+  is required, but the 1.1.0 bridge gap above must be fixed before the native
+  input can be enabled.
 - The client shows only key presence and source, warns about sending memory text
   to the endpoint, and labels plain HTTP on non-local endpoints. Load models and
   Test remain available while the form is dirty; they first run the ordinary

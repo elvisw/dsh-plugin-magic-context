@@ -37,9 +37,8 @@
   Web/Desktop preset override.
 
 Requires **Node ≥ 22.19** and a **DSH 0.2.x host with the Web client** (the desktop app or
-a `web` profile). Android **dsh-go 1.1.0** uses the same package through its native bridge
-(see [Android dsh-go](#android-dsh-go-native-panels--unreleased-candidate)); that native
-surface is an unreleased candidate installed from a local `.tgz`, not from npm `latest`.
+a `web` profile). Starting with `0.18.0`, Android **dsh-go 1.1.0** uses the same
+npm package through its native bridge (see [Android dsh-go](#android-dsh-go-native-panels)).
 No Flutter build and no separate package are involved. The quick start below uses the Web
 profile; the Desktop profile is not separately verified. The optional compaction takeover
 is for flat/headless compositions and is **not effective on DSH Web or Desktop**. The
@@ -54,10 +53,9 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 > is published only as `@elvisw/dsh-magic-context`; keep the `@elvisw/` scope in
 > every install command.
 
-`0.13.0` introduced this package name; the current release is `0.17.0`, which adds
-the manual `/ctx-wrapup` live-history command (`0.16.0` added remote vector search
-and the host-native Settings redesign; `0.15.0` added the telemetry v2 panel;
-`0.14.0` added the top-level Settings page). If you installed
+`0.18.0` adds native Android panels and desktop credential-backed remote-embedding key entry (the Android native key field remains blocked by a dsh-go bridge gap). `0.17.0` added the manual `/ctx-wrapup`
+live-history command, and `0.16.0` added remote vector search and redesigned
+the Web Settings page. `0.13.0` introduced the current package name. If you installed
 `@elvisw/dsh-plugin-magic-context` (0.12.x) or the upstream
 `dsh-plugin-magic-context`, remove it first: all three use the same loader row id
 (`magic-context-dsh`), so co-install is unsupported: the loader keeps one row and
@@ -269,13 +267,20 @@ and pricing change; check the vendor's current pages, for example the
 [SiliconFlow API docs](https://api-docs.siliconflow.cn/docs/api/models-get) and
 [embeddings docs](https://api-docs.siliconflow.cn/docs/api/embeddings-post).
 
-### Android dsh-go (native panels) — unreleased candidate
+### Android dsh-go (native panels)
 
 The same npm package also ships an optional native surface for **Android dsh-go
 1.1.0** (contract pinned to upstream commit `e9d3239bee18029d48618c7514303bc7fa7bbf8f`).
-This surface is **not published yet**: npm `latest` (`0.17.0`) has no `dshGo`
-contribution. Candidate builds are installed from the local `.tgz`, not from
-the registry. No Flutter change and no separate package are needed: the host
+Choose your phone's **local engine**. In the App's plugin market, search for
+`@elvisw/dsh-magic-context` under **Adapted for DSH Go** once the catalog entry
+is available. If it is not listed yet, install the exact npm version from the
+App's local terminal, then restart the engine:
+
+```bash
+dsh plugin --profile web add @elvisw/dsh-magic-context@0.18.0
+```
+
+No Flutter change and no separate package are needed: the host
 bridge registers the strip and both panels only when
 `ctx.inject(['dshGo'], …)` finds the bridge; a desktop or a Web profile without
 it loads exactly as before.
@@ -292,13 +297,6 @@ it loads exactly as before.
   Saving config or opening the panel never probes or rebuilds automatically;
   **Start rebuild** arms the target and continues in the background.
 
-Install the candidate tarball from the App's local terminal, then restart the
-engine:
-
-```bash
-dsh plugin --profile web add /absolute/path/to/elvisw-dsh-magic-context-0.17.0.tgz
-```
-
 The App's plugin settings page is the configuration entry. It uses the same
 volatile schema as the desktop form, with descriptions and collapsed groups.
 Those schema descriptions are concise labels: the released dsh-go form
@@ -309,17 +307,16 @@ in this README. `memory` stays intentionally undeclared in that schema (native
 config does not offer a memory switch). Memory is on by default, exactly as on
 desktop; set `memory.enabled: false` in the profile patch only to opt out.
 
-Remote embedding keys can be entered on the phone. The native settings form
-renders `embedding.apiKey` as a write-only secret field; its sibling
-`role('credential-ref')` field `apiKeyEnv` names the credential. Saving calls the
-host credential store, so no `.env`, terminal or engine restart is required. The
-stored value is never displayed or written to the profile. The native form hides
-the `role('credential-ref')` field; it uses the saved reference, or the schema
-default `SILICONFLOW_API_KEY`. Set a different reference on desktop first if you
-need one. Existing `.env` / process environment variables remain a fallback for
-headless or older hosts; a saved credential takes precedence. If the host mounts
-no credential store, the field is disabled and the environment fallback is unchanged. The **agent, native
-panels, config values, logs and evidence never receive the raw key**.
+Remote embedding keys are entered on desktop. The native settings form declares
+the same role pair, but dsh-go 1.1.0's bridge does not yet pass the sibling
+`role('credential-ref')` (`apiKeyEnv`) to the App, so the native secret input
+currently renders as unbound and disabled
+([issue #1493](https://github.com/ccch1mneyyy/dsh-Go/issues/1493)). Until the
+bridge is fixed, use the local MiniLM lane on the phone (no key), or save the
+credential from the desktop/Web settings page. Existing `.env` / process
+environment variables remain a fallback for headless or older hosts; a saved
+credential takes precedence. The **agent, native panels, config values, logs and
+evidence never receive the raw key**.
 
 Switching the provider back to `local` (or `off`) disarms an armed remote rebuild
 immediately, even with no panel open. Switching back to the same remote config
@@ -327,10 +324,13 @@ requires an explicit **Start rebuild** again. Android is the only delivery gate
 for this surface; iOS is not claimed. The desktop Web matrix and the browser
 overlay are unchanged.
 
-The limited Android LOCAL gate passed on 2026-11-18: real memory-tool writes and
+The limited Android LOCAL gate passed on 2026-11-18 on the pre-release **T23 candidate**:
+real memory-tool writes and
 recall, native panels/configuration, explicit fixture embedding actions, and
 recall after an engine restart. Embeddings used a simulated 16-dimensional
-provider, not SiliconFlow. The shipped local MiniLM WASM primitive was verified
+provider, not SiliconFlow. 0.18.0 adds T24 credential handling to the native
+views; that phone gate predates those edits, so it is not a fresh end-to-end run
+of the shipped Android bytes. The shipped local MiniLM WASM primitive was verified
 separately on the same phone (384 dimensions, 891 ms for two texts; see
 [the T24 probe](_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-18-t24-credential-key/android/phone-local-embed.json)),
 but the full local retrieval/backfill lane and an English phone UI were not
@@ -608,7 +608,7 @@ and publishes as **`@elvisw/dsh-magic-context`** from `0.13.0`. Its versions and
 fork. The upstream repository and npm package remain under their original maintainer; this fork does
 not modify them.
 
-Differences from upstream `0.11.2`, accumulated through `0.17.0`:
+Differences from upstream `0.11.2`, accumulated through `0.18.0`:
 
 - **Recovery semantics**: `ctx_expand` no longer rewrites placeholders in place. It reads the persisted
   original `tool/result`, returns it as a new tool result, and assigns a new tag. The old placeholder is

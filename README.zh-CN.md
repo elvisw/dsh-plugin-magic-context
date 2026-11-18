@@ -22,9 +22,8 @@
 > 仓库历史与出处见 [NOTICE](NOTICE)；数据目录见[观测与运维](#观测与运维)。
 
 需要 **Node ≥ 22.19** 与带 Web 客户端的 **DSH 0.2.x 宿主**（桌面应用或 `web` profile）。
-Android **dsh-go 1.1.0** 通过宿主原生桥接使用同一个包（见
-[Android dsh-go](#android-dsh-go原生面板未发布候选)）；该原生面是未发布候选，只能从本地
-`.tgz` 安装，不能从 npm `latest` 获得。不需要 Flutter 构建，也不拆第二个包。下面的快速上手
+从 `0.18.0` 起，Android **dsh-go 1.1.0** 可通过原生桥接使用同一个 npm 包（见
+[Android dsh-go](#android-dsh-go原生面板)）。不需要 Flutter 构建，也不拆第二个包。下面的快速上手
 使用 Web profile；可选的压缩接管只适用于 flat/headless 组合，**在 DSH Web 和桌面端都无效**。
 包内自带编译产物，直接从 npm registry 安装：
 
@@ -34,7 +33,7 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 
 > 包名说明：npm 上无 scope 的 `dsh-magic-context` 是另一位维护者的独立实现，不是本 fork，也不是它的上游；本 fork 只以 `@elvisw/dsh-magic-context` 发布。所有安装命令都必须保留 `@elvisw/` scope。
 
-`0.13.0` 引入本包名；当前发布是 `0.17.0`，新增手动 `/ctx-wrapup` live-history 压缩（`0.16.0` 新增远程向量检索与宿主原生设置页重做，`0.15.0` 新增遥测 v2 面板，`0.14.0` 新增顶层设置页）。如果之前装过 `@elvisw/dsh-plugin-magic-context`（0.12.x）或上游
+`0.18.0` 新增 Android 原生面板与桌面远程向量密钥录入（Android 原生密钥字段仍受 dsh-go bridge 限制）；`0.17.0` 新增手动 `/ctx-wrapup` 历史压缩，`0.16.0` 新增远程向量检索并重做 Web 设置页。当前包名由 `0.13.0` 引入。如果之前装过 `@elvisw/dsh-plugin-magic-context`（0.12.x）或上游
 `dsh-plugin-magic-context`，请先移除旧包：三者使用同一个 loader row id（`magic-context-dsh`），不支持共装；共装时只会加载一行，设置页可能消失。
 从 0.12.x 升级还需要一次性迁移 profile patch 的包名，见
 [docs/independent-package-release.md](docs/independent-package-release.md)；迁移脚本随 npm tarball 与 hand-out 一起发布。
@@ -201,11 +200,17 @@ revision-fenced Save 提交 provider 变更。远程失败只会降级到全文�
 [SiliconFlow 模型接口](https://api-docs.siliconflow.cn/docs/api/models-get) 与
 [嵌入接口](https://api-docs.siliconflow.cn/docs/api/embeddings-post)。
 
-### Android dsh-go（原生面板）——未发布候选
+### Android dsh-go（原生面板）
 
 同一个 npm 包也为 **Android dsh-go 1.1.0** 提供可选的原生面（契约固定到上游提交
-`e9d3239bee18029d48618c7514303bc7fa7bbf8f`）。该原生面**尚未发布**：npm `latest`
-（`0.17.0`）不包含 `dshGo` 贡献。候选构建只能从本地 `.tgz` 安装，不能从 registry 安装。
+`e9d3239bee18029d48618c7514303bc7fa7bbf8f`）。选择**手机本机引擎**。市场条目可用后，
+打开「插件市场 → 适配 DSH Go」，搜索 `@elvisw/dsh-magic-context`。如果还搜不到，
+可在 App 的本机终端安装准确版本，然后重启引擎：
+
+```bash
+dsh plugin --profile web add @elvisw/dsh-magic-context@0.18.0
+```
+
 不需要改 Flutter，也不拆第二个包：只有 `ctx.inject(['dshGo'], …)` 找到桥接时，宿主半侧才
 注册状态条和两个面板；没有桥接的桌面端或 Web profile 照常加载。
 
@@ -217,12 +222,6 @@ revision-fenced Save 提交 provider 变更。远程失败只会降级到全文�
   ID（带复制动作）、测试连接、确认后开始重建、暂停与继续。保存配置或打开面板都不会自动
   探测/重建；**开始重建** 才启用目标空间，并快速转入后台。
 
-在 App 的本机终端安装候选 `.tgz`，然后重启引擎：
-
-```bash
-dsh plugin --profile web add /绝对路径/elvisw-dsh-magic-context-0.17.0.tgz
-```
-
 配置入口沿用 App 自带的插件设置页；它与桌面表单共用同一份 volatile schema，并带说明和
 折叠分组。这些 schema 说明是简短标签：已发布 dsh-go 表单
 （`app/lib/ui/engine_settings/schema_fields.dart`，`labelFor` → `_fitsTitle`）只有在说明
@@ -230,21 +229,21 @@ dsh plugin --profile web add /绝对路径/elvisw-dsh-magic-context-0.17.0.tgz
 README。`memory` 仍刻意不写进该 schema（原生配置不提供记忆开关）；记忆与桌面端一致
 **默认开启**，只有需要退出时才在 profile 补丁里写 `memory.enabled: false`。
 
-远程向量的密钥可以直接在手机上录入。原生设置页把 `embedding.apiKey` 渲染为只写密钥字段，
-由同级 `role('credential-ref')` 字段 `apiKeyEnv` 指定引用名；保存时写入宿主凭据库，
-不需要 `.env`、终端或重启引擎。保存的值不会回显，也不会写进 profile。原生表单隐藏
-`role('credential-ref')` 字段，使用已保存的引用名或 schema 默认值
-`SILICONFLOW_API_KEY`；需要别的引用名时，先在桌面端保存。已有的 `.env` /
-进程环境变量仍作为 headless 或旧宿主的回退；保存的凭据优先。宿主没有挂载凭据库时，
-字段禁用，环境变量回退保持不变。**代理、原生面板、配置值、日志与证据都不会收到原始密钥**。
+远程向量的密钥在桌面设置页录入；原生设置页也声明了同一组 role，但 dsh-go 1.1.0 的
+bridge 尚未把同级 `role('credential-ref')`（`apiKeyEnv`）传给 App，所以原生密钥输入框
+当前显示为未绑定并禁用（[issue #1493](https://github.com/ccch1mneyyy/dsh-Go/issues/1493)）。
+在 bridge 修复前，手机端可以直接使用本地 MiniLM（无需密钥）；需要远程向量时，请在
+桌面/Web 设置页保存凭据。已有的 `.env` / 进程环境变量仍作为 headless 或旧宿主的回退；
+保存的凭据优先。**代理、原生面板、配置值、日志与证据都不会收到原始密钥**。
 
 把 provider 切回 `local`（或 `off`）会立即解除已武装的远程重建，即使没有打开面板；再切回
 相同远程配置仍须显式点一次 **开始重建**。本轮只以 Android 为交付验收面，不声称 iOS；桌面
 Web 矩阵与浏览器浮层不变。
 
-2026-11-18 的 Android 本机最小路径已通过：真实记忆工具写入/检索、原生面板和配置、
+2026-11-18 的 Android 本机最小路径在**预发布的 T23 候选**上通过：真实记忆工具写入/检索、原生面板和配置、
 显式操作模拟嵌入服务，以及引擎重启后的检索。嵌入使用 16 维测试服务，**不是 SiliconFlow
-验收**。随包的本地 MiniLM WASM 原语已在同一台手机上单独验证（384 维，两条中英文文本 891 ms，
+验收**。0.18.0 在这些原生视图上新增了 T24 凭据处理，真机 gate 早于这批改动，因此不等于已对
+发布的 Android 字节做过完整端到端验证。随包的本地 MiniLM WASM 原语已在同一台手机上单独验证（384 维，两条中英文文本 891 ms，
 见 [T24 真机探针](_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-18-t24-credential-key/android/phone-local-embed.json)），
 但完整的本地检索/回填链路和手机英文界面尚未实测。详见[证据与覆盖边界](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-17-t23/acceptance-report.md)。
 
@@ -477,7 +476,7 @@ typecheck → test → build → check:i18n。
 `0.13.0` 起以 **`@elvisw/dsh-magic-context`** 发布；版本与 tag 归本 fork。
 上游仓库和上游 npm 包仍由原维护者维护，本 fork 不修改它们。
 
-相对上游 `0.11.2`，累计到 `0.17.0` 的主要差异：
+相对上游 `0.11.2`，累计到 `0.18.0` 的主要差异：
 
 - **恢复语义**：`ctx_expand` 不再原地改写占位符，而是读取持久化的原始 `tool/result`，作为新的工具结果返回并分配新 tag；旧占位符保持不变，旧 tag 仍是 dropped，再次 `ctx_reduce` 是 no-op（`already dropped`）。这是 breaking change。
 - **Historian 之后仍可读原文**：`ctx_expand` 新增 `message` 定位，接受当前会话的 DSH log event seq（包括被 Historian shadow 的原始 `tool/result`）；不重跑原工具、不改写摘要或 compartment。

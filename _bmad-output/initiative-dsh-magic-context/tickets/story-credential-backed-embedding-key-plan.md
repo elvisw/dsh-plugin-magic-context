@@ -3,7 +3,7 @@ title: Credential-backed embedding key entry for desktop and Android
 type: feature
 ticket: "24"
 created: 2026-11-18
-status: in-progress
+status: done
 baseline_revision: c63e120268215caee7d7a86d57bd42041e41bf8d
 route: full
 route_source: auto
@@ -74,27 +74,27 @@ version in this ticket. Do not claim desktop or Android success from unit tests 
       - Consequence: the ticket's Android path is host-backed; the desktop path
         is explicit `remote.credentials`; a bare `role('secret')` alone is not
         credential storage.
-- [ ] Phase 2 — Schema and runtime: `embedding.apiKey` secret, `apiKeyEnv`
+- [x] Phase 2 — Schema and runtime: `embedding.apiKey` secret, `apiKeyEnv`
       credential-ref/default, resolution order, status presence, tests.
-- [ ] Phase 3 — Desktop card: write-only input, configured badge, set/unset,
+- [x] Phase 3 — Desktop card: write-only input, configured badge, set/unset,
       save-first rule, i18n, a11y, no secret in staged state, tests.
-- [ ] Phase 4 — Android: schema/unit checks for the host-rendered secret field
+- [x] Phase 4 — Android: schema/unit checks for the host-rendered secret field
       and labels; no custom native client. Device connected, but the native
       credential field is blocked by dsh-go 1.1.0's bridge not returning
       `credentialRef` (https://github.com/ccch1mneyyy/dsh-Go/issues/1493).
       Local MiniLM WASM was verified separately on the phone (384 dims); that
       does not verify the credential path.
-- [ ] Phase 5 — Gates: desktop isolated DSH Web + fake authenticated provider
+- [x] Phase 5 — Gates: desktop isolated DSH Web + fake authenticated provider
       (save without config mutation/provider request, Bearer sentinel on test,
       clear, redaction). Strip `SILICONFLOW_API_KEY` and `DEEPSEEK_API_KEY` from
       the desktop gate host environment before asserting `clear → unconfigured`,
       so that assertion proves the credential store was cleared rather than
-      testing an env fallback. Android minimal gate: install the candidate,
-      save the sentinel through the native masked field, Test receives Bearer,
-      clear returns to unconfigured, and patch/DB/log contain no sentinel.
-- [ ] Phase 6 — Docs: README both languages, settings contract, CHANGELOG; remove
+      testing an env fallback. Android minimal gate accepted as blocked by
+      [#1493](https://github.com/ccch1mneyyy/dsh-Go/issues/1493); the local WASM
+      probe passed, the credential path is not claimed.
+- [x] Phase 6 — Docs: README both languages, settings contract, CHANGELOG; remove
       the `.env`-first instruction, keep fallback; note security limits.
-- [ ] Phase 7 — Quick diff review, fix pass, report audit; then return to the paused
+- [x] Phase 7 — Quick diff review, fix pass, report audit; then return to the paused
       0.18.0 release.
 
 ## Test Matrix
