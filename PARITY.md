@@ -222,8 +222,10 @@ The [T23 device report](_bmad-output/initiative-dsh-magic-context/acceptance-and
 records Android LOCAL memory write/recall, session-scoped context, native config,
 explicit simulated embedding probe/rebuild/pause/resume, and persistence across
 an engine restart. The final observed rebuild was partial (2/3), not complete.
-Real embedding vendors, Android local WASM embedding, English phone rendering,
-and mobile failure/lifecycle matrices were not tested. The candidate retains
+Real embedding vendors, the full Android local retrieval/backfill lane, English
+phone rendering, and mobile failure/lifecycle matrices were not tested. The
+shipped local MiniLM WASM primitive itself was verified on the Android device
+(384 dimensions, 891 ms for two texts; T24 probe). The candidate retains
 package version 0.17.0 but is not the published npm 0.17.0 artifact.
 
 ## C. Not ported

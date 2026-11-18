@@ -1,0 +1,9 @@
+{
+  "status": "restored",
+  "pluginRemoved": true,
+  "originalPatchRestored": true,
+  "testDataRetained": true,
+  "restoredSha256": "fb3ba638958c631944e9a3cffc4bebe38de35fc5379a5362d701d5bb2c618796",
+  "originalSha256": "fb3ba638958c631944e9a3cffc4bebe38de35fc5379a5362d701d5bb2c618796",
+  "needsEngineRestart": true
+}

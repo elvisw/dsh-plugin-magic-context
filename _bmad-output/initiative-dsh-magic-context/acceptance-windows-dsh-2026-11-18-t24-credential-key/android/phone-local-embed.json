@@ -1,0 +1,39 @@
+{
+  "at": "2026-11-18T07:20:42.252Z",
+  "cacheDir": "/sdcard/Download/dsh-mc-t24/models",
+  "assets": [
+    {
+      "name": "model.onnx",
+      "bytes": 90387606,
+      "sha256": true
+    },
+    {
+      "name": "tokenizer.json",
+      "bytes": 711661,
+      "sha256": true
+    },
+    {
+      "name": "tokenizer_config.json",
+      "bytes": 366,
+      "sha256": true
+    }
+  ],
+  "entry": "/root/.dsh/profiles/web/node_modules/@elvisw/dsh-magic-context/lib/index.js",
+  "modulePath": "/root/.dsh/profiles/web/node_modules/@elvisw/dsh-magic-context/lib/core/embedding-local.js",
+  "vectors": [
+    384,
+    384
+  ],
+  "first": {
+    "dims": 384,
+    "norm": 1.0000000058595313,
+    "head": [
+      0.05223345011472702,
+      -0.007437610067427158,
+      0.015514406375586987,
+      -0.06831958144903183
+    ]
+  },
+  "elapsedMs": 891,
+  "status": "ok"
+}

@@ -4,8 +4,33 @@
   "entries": [
     {
       "path": "acceptance-report.md",
-      "bytes": 4073,
-      "sha256": "2c8e4bd5dd4ae0ba3cf9b70701ee40bddaa86c3b638b5ea5780ae62bb799b09a"
+      "bytes": 5651,
+      "sha256": "dd64dbc294a2073a2c759cfdbd25bd0539a456272015c310db0be448df87dc6d"
+    },
+    {
+      "path": "android/phone-install-restore.json",
+      "bytes": 319,
+      "sha256": "3804fffd84e611ff183bd4e9423a7b159b1027a6328a810c72d95b56ba615d73"
+    },
+    {
+      "path": "android/phone-local-embed.json",
+      "bytes": 851,
+      "sha256": "87f92c09657dd98019b6be1582d9033cd790509d8e85e7f602c8de0d9b224922"
+    },
+    {
+      "path": "android/phone-t24-install.cjs",
+      "bytes": 6960,
+      "sha256": "fc21cc6c4ec573b8eb15c4d5d4bd09beb793907ad44316fb21b69c86221f4350"
+    },
+    {
+      "path": "android/phone-t24-local-embed.cjs",
+      "bytes": 3095,
+      "sha256": "f28bb71be99b36c1214e7f46483574b6288200491d067c66d9793fb7683af049"
+    },
+    {
+      "path": "android/phone-t24-observe.cjs",
+      "bytes": 2472,
+      "sha256": "b8b2a1d65905682c7767137244dd707cb941a6d9ca7a41c028356b4a0567fded"
     },
     {
       "path": "collect_t24.py",

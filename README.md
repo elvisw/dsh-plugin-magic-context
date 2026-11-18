@@ -330,7 +330,10 @@ overlay are unchanged.
 The limited Android LOCAL gate passed on 2026-11-18: real memory-tool writes and
 recall, native panels/configuration, explicit fixture embedding actions, and
 recall after an engine restart. Embeddings used a simulated 16-dimensional
-provider, not SiliconFlow; local WASM embedding and an English phone UI were not
+provider, not SiliconFlow. The shipped local MiniLM WASM primitive was verified
+separately on the same phone (384 dimensions, 891 ms for two texts; see
+[the T24 probe](_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-18-t24-credential-key/android/phone-local-embed.json)),
+but the full local retrieval/backfill lane and an English phone UI were not
 tested. See the [evidence and limits](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-17-t23/acceptance-report.md).
 
 <details>

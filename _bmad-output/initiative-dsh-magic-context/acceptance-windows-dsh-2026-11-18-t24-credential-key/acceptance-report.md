@@ -1,7 +1,9 @@
 # T24 — credential-backed embedding key
 
-**Status:** desktop gate PASS; real Android device gate BLOCKED (no device connected
-during this run). This report does not claim an Android pass.
+**Status:** desktop gate PASS. The Android device gate for credential entry is
+BLOCKED by a dsh-go 1.1.0 bridge gap ([issue #1493](https://github.com/ccch1mneyyy/dsh-Go/issues/1493));
+the local MiniLM WASM primitive was separately verified on the same phone
+(384 dimensions, 891 ms). This report does not claim an Android credential pass.
 
 ## Identity
 
@@ -55,12 +57,36 @@ preset still falls back to the default environment variable, while a custom
 preset saves an explicit empty string and means no auth. This is documented in
 both READMEs and the settings contract.
 
+## Android local-model probe
+
+Separate from the credential gate, the shipped local embedding primitive was run
+on the same Android device (Android 17, dsh-go 1.1.0, local engine, Node 24.22.1)
+with no network fetch: three pinned assets were pushed to
+`/sdcard/Download/dsh-mc-t24/models`, and
+`android/phone-t24-local-embed.cjs` loaded
+`lib/core/embedding-local.js` from the installed candidate, validated the three
+SHA-256 values, and embedded two Chinese/English strings.
+
+Result (`android/phone-local-embed.json`): both vectors are 384-dimensional,
+the first norm is 1.0000000059, and the run took 891 ms including model/session
+load. This proves the WASM MiniLM primitive and tokenizer work on this phone; it
+does **not** prove the full local retrieval/backfill lane or a local-only search
+path on mobile.
+
+After the probes, `phone-t24-install.cjs --restore` returned
+`status: restored`, `pluginRemoved: true`, `originalPatchRestored: true`, and
+`restoredSha256` equal to the original `fb3ba638958c631944e9a3cffc4bebe38de35fc5379a5362d701d5bb2c618796`
+(`android/phone-install-restore.json`). The app profile is back to its original
+patch; the test data directory is retained, and no test plugin remains installed.
+
 ## What is not verified
 
-- **Android real device:** no `adb` device was connected for this run. The
-  `role('secret')` + sibling `role('credential-ref')` schema and the native view
-  were checked by unit tests and the dsh-go v1.1.0 schema, not on a phone. The
-  T23 fake-provider phone gate remains the last device evidence for dsh-go.
+- **Android credential entry:** the device was later connected and the candidate
+  was installed in an isolated test profile, but dsh-go 1.1.0's bridge does not
+  return `credentialRef` to the App, so the native masked field is disabled and
+  the flow cannot be completed. Root cause and a proposed bridge patch are in
+  [issue #1493](https://github.com/ccch1mneyyy/dsh-Go/issues/1493); the plugin
+  schema and the desktop gate are verified, the Android credential path is not.
 - **Real SiliconFlow / paid provider:** the gate uses a local authenticated
   fixture; no real key or quota was used.
 - **Host without a credential store:** the schema and code keep the environment

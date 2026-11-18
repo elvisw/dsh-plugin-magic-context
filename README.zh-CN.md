@@ -244,7 +244,9 @@ Web 矩阵与浏览器浮层不变。
 
 2026-11-18 的 Android 本机最小路径已通过：真实记忆工具写入/检索、原生面板和配置、
 显式操作模拟嵌入服务，以及引擎重启后的检索。嵌入使用 16 维测试服务，**不是 SiliconFlow
-验收**；未实测本地 WASM 嵌入或手机英文界面。详见[证据与覆盖边界](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-17-t23/acceptance-report.md)。
+验收**。随包的本地 MiniLM WASM 原语已在同一台手机上单独验证（384 维，两条中英文文本 891 ms，
+见 [T24 真机探针](_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-18-t24-credential-key/android/phone-local-embed.json)），
+但完整的本地检索/回填链路和手机英文界面尚未实测。详见[证据与覆盖边界](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-17-t23/acceptance-report.md)。
 
 <details>
 <summary>真机截图（中文界面，模拟嵌入服务）</summary>

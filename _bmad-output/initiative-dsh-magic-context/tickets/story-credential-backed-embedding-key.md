@@ -89,9 +89,12 @@ fake OpenAI-compatible endpoint verifies: save key through the card without a co
 mutation or provider request, test connection sends `Authorization: Bearer <sentinel>`
 and probes 16 dimensions, clear stops auth and shows unconfigured, and the profile
 patch/database/log contain no sentinel. Android uses the same `role('secret')` +
-`credential-ref` schema and passes schema/unit checks, but no real-device gate was run
-because no device was connected; Android is not claimed as verified. No real vendor
-call, no `.env` edit by the agent, no host/Flutter change, no new provider, no database
-schema, no release/publish.
+`credential-ref` schema and passes schema/unit checks, but the native credential entry
+is blocked by dsh-go 1.1.0's bridge not returning `credentialRef`
+(https://github.com/ccch1mneyyy/dsh-Go/issues/1493); Android is not claimed as verified.
+A separate phone probe did verify the shipped local MiniLM WASM primitive (384 dims,
+891 ms, pinned assets); that is not the credential path. No real vendor call, no `.env`
+edit by the agent, no host/Flutter change, no new provider, no database schema, no
+release/publish.
 Docs replace the `.env`-first instruction with the UI path and keep env fallback as an
 advanced note.

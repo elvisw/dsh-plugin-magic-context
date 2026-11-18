@@ -47,7 +47,7 @@ version in this ticket. Do not claim desktop or Android success from unit tests 
 | Env only (existing install) | status configured via env fallback; upgrade works without editing |
 | Literal `apiKey` materialized by host | highest precedence; never returned by status |
 | Clear credential | unset; status unconfigured; env fallback may still apply |
-| Empty ref (`apiKeyEnv: ''`) | treated as unset, not as an auth switch: preset default env applies (siliconflow ⇒ `SILICONFLOW_API_KEY`); if that is also absent, no request is sent and status is unconfigured; key input disabled because no ref exists to bind |
+| Empty ref (`apiKeyEnv: ''`) | custom preset: explicit empty string means no auth; SiliconFlow preset: falls back to the default `SILICONFLOW_API_KEY`; key input disabled because no ref exists to bind |
 | Malformed ref | refuse writes and report `invalid-key-env`; do not send |
 | Credential service absent | desktop field unavailable; env fallback only; no config write |
 | Ref edited while dirty | require Save first; key input uses the saved ref |
@@ -79,14 +79,19 @@ version in this ticket. Do not claim desktop or Android success from unit tests 
 - [ ] Phase 3 — Desktop card: write-only input, configured badge, set/unset,
       save-first rule, i18n, a11y, no secret in staged state, tests.
 - [ ] Phase 4 — Android: schema/unit checks for the host-rendered secret field
-      and labels; no custom native client. Real-device gate deferred until a
-      device is connected, and not claimed.
+      and labels; no custom native client. Device connected, but the native
+      credential field is blocked by dsh-go 1.1.0's bridge not returning
+      `credentialRef` (https://github.com/ccch1mneyyy/dsh-Go/issues/1493).
+      Local MiniLM WASM was verified separately on the phone (384 dims); that
+      does not verify the credential path.
 - [ ] Phase 5 — Gates: desktop isolated DSH Web + fake authenticated provider
       (save without config mutation/provider request, Bearer sentinel on test,
       clear, redaction). Strip `SILICONFLOW_API_KEY` and `DEEPSEEK_API_KEY` from
       the desktop gate host environment before asserting `clear → unconfigured`,
       so that assertion proves the credential store was cleared rather than
-      testing an env fallback. Android gate blocked without a device.
+      testing an env fallback. Android minimal gate: install the candidate,
+      save the sentinel through the native masked field, Test receives Bearer,
+      clear returns to unconfigured, and patch/DB/log contain no sentinel.
 - [ ] Phase 6 — Docs: README both languages, settings contract, CHANGELOG; remove
       the `.env`-first instruction, keep fallback; note security limits.
 - [ ] Phase 7 — Quick diff review, fix pass, report audit; then return to the paused
@@ -96,12 +101,12 @@ version in this ticket. Do not claim desktop or Android success from unit tests 
 
 | Area | Test |
 |---|---|
-| Resolution | literal > credential > env (including preset default env); empty ref is "unset", not "no auth"; missing; empty credential; malformed ref |
+| Resolution | literal > credential > env (including preset default env); empty ref on custom = no auth, on SiliconFlow = default env; missing; empty credential; malformed ref |
 | Redaction | status JSON, journal line, error text, client snapshot contain no sentinel |
 | Desktop UI | unconfigured → save → configured; clear; save-first on dirty ref; service unavailable |
 | Android schema | `role('secret')` + sibling `role('credential-ref')`; native field present; no `.env` path |
 | Desktop gate | fake authenticated endpoint checks Bearer sentinel; no mutation/provider call on save; patch/database/log scan; clear |
-| Android gate | blocked: no device connected; schema/unit checks only, not claimed |
+| Android gate | blocked by dsh-go bridge issue #1493 (no `credentialRef`); local WASM primitive verified separately, credential path not claimed |
 
 ## Release Handoff
 
