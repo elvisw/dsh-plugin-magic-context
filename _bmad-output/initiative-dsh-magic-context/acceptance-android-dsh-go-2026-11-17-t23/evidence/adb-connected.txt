@@ -1,0 +1,11 @@
+kind=derived-safe-summary
+command=adb devices -l
+authorized_device_count=1
+serial=redacted
+app_package=io.github.ccch1mneyyy.dsh_app
+versionName=1.1.0
+versionCode=11150838
+candidate_transferred_bytes=4080948
+destination=/sdcard/Download/dsh-mc-t23/
+phone_installation_attempted=false
+phone_configuration_changed=false

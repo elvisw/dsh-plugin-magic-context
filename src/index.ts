@@ -72,6 +72,7 @@ import { SearchHintTracker } from './dsh/search-hint.ts'
 import { registerMagicCompactionEngine, type EngineHandle } from './dsh/compaction-engine.ts'
 import { liveJournal } from './dsh/live-journal.ts'
 import { createTelemetryService, type MessageCompositionSnapshot } from './dsh/telemetry.ts'
+import { attachOptionalGoNative, installVolatileDisarm, type GoNativeEventHost } from './dsh/go-native.ts'
 import { openMemoryLane } from './dsh/memory-lane.ts'
 import { injectReduceGuidance, preStepListener, type PreStepProjects } from './dsh/pre-step.ts'
 import { wireMaintenance } from './dsh/maintenance-wiring.ts'
@@ -312,6 +313,16 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
   const on = (name: string, listener: unknown): void => {
     disposers.push((ctx.on as unknown as (n: string, l: unknown) => () => void).call(ctx, name, listener))
   }
+
+  // T23: a committed local/off embedding provider disarms immediately, even
+  // when no native panel or Web status read ever observes the new state. The
+  // released loader emits `loader/volatile-update` after the reference commit,
+  // synchronously; this listener is closed with the parent (disposers).
+  disposers.push(installVolatileDisarm(
+    ctx as unknown as GoNativeEventHost,
+    lane.embedding,
+    ctx.logger,
+  ))
 
   // ── The compaction seam ────────────────────────────────────────────────────
   // Occupying `ctx.compaction` is what makes this adapter authoritative over
@@ -812,6 +823,8 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
   // `ctx.inject` waits for the service and re-runs on its lifecycle, which is
   // how @deepseek-ai/dsh-client-modules attaches its own route.
   let sessionsRef: { get(id: string): Session | undefined } | undefined
+  /** Set when the Web route is actually registered (the service itself is parent-owned now). */
+  let telemetryRouteAttached = false
   let projectionRegistryRef: {
     snapshot(session: Session, keys?: readonly string[]): { values: { contextBreakdown?: { systemTokens?: number; toolsTokens?: number; messageTokens?: number } } }
     onChanged(listener: (session: { id?: string }, key: string, value: unknown) => void): () => void
@@ -845,149 +858,12 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
     sessionsRef = sessions
     return () => { sessionsRef = undefined }
   })
-  let telemetry: ReturnType<typeof createTelemetryService> | undefined
-  ctx.inject(['webServer'], (scope) => {
-    const webServer = (scope as unknown as {
-      webServer: {
-        register(route: {
-          kind: 'prefix'
-          path: string
-          handler: (req: never, res: never) => void
-        }): () => void
-      }
-    }).webServer
-    telemetry = createTelemetryService({
-      stores,
-      ...journal === undefined ? {} : { journal },
-      meta: () => ({
-        engine: stores.getMeta('compaction_engine'),
-        memory: stores.getMeta('memory_bridge'),
-        memoryWrite: stores.getMeta('memory_write'),
-        toolsMode: toolMode,
-      }),
-      adapterVersion: adapterVersionOf,
-      policy: () => {
-        const current = activePolicy()
-        return {
-          executeThreshold: current.executeThreshold,
-          forceThreshold: current.forceThreshold,
-        }
-      },
-      projection: (sessionId: string) => {
-        const session = sessionsRef?.get(sessionId)
-        if (session === undefined) return undefined
-        const cached = projectionCache.get(sessionId)
-        if (cached !== undefined) return { contextBreakdown: cached }
-        if (projectionMisses.has(sessionId)) return undefined
-        if (projectionRegistryRef === undefined) return undefined
-        try {
-          const snapshot = projectionRegistryRef.snapshot(session, ['contextBreakdown'])
-          const value = snapshot.values.contextBreakdown
-          if (value === undefined) {
-            rememberProjectionMiss(sessionId)
-            return undefined
-          }
-          cacheProjection(sessionId, value)
-          return { contextBreakdown: value }
-        } catch {
-          return undefined
-        }
-      },
-      messageComposition: (sessionId: string, _messageTokens: number) => {
-        const session = sessionsRef?.get(sessionId)
-        if (session === undefined) return undefined
-        const latest = (kind: JournalKind): Record<string, unknown> | undefined =>
-          stores.listJournal({ kinds: [kind], limit: 1, sessionId })[0]?.data
-        const numberField = (data: Record<string, unknown> | undefined, field: string): number | null => {
-          const value = data?.[field]
-          return typeof value === 'number' && Number.isFinite(value) ? value : null
-        }
-        return messageCompositionOf(
-          session,
-          stores.listCompartments(sessionId),
-          Date.now(),
-          numberField(latest('memory-recall'), 'estTokens'),
-          numberField(latest('profile-recall'), 'estTokens'),
-        )
-      },
-      historian: (sessionId: string) => {
-        const compartments = stores.listCompartments(sessionId)
-        const published = stores.listJournal({
-          kinds: ['compartment-published'],
-          limit: 1,
-          sessionId,
-        })[0]
-        return {
-          running: historianInFlight(sessionId) !== undefined,
-          compartments: compartments.length,
-          coveredTokens: compartments.reduce((total, compartment) => total + compartment.coveredTokens, 0),
-          lastPublishedAt: published?.at ?? null,
-        }
-      },
-      surface: (sessionId: string) => {
-        const session = sessionsRef?.get(sessionId)
-        if (session === undefined) return undefined
-        const nodes = enumerateSurfaceToolResults(session, callId =>
-          stores.getTag(sessionId, { kind: 'tool-result', callId }))
-        return {
-          tagged: nodes.filter(node => node.tagNumber !== undefined).length,
-          dropped: nodes.filter(node => node.isPlaceholder).length,
-          reclaimableTokens: nodes.reduce((total, node) =>
-            total + (node.isPlaceholder ? 0 : estimateTokensFromLength(node.textLength)), 0),
-        }
-      },
-      // Dreamer-slice KPIs for the panel: the viewed session's project
-      // verification coverage + the newest maintenance tally. Lazy getters —
-      // the panel polls them, nothing runs at mount.
-      memoryStats: (sessionId?: string, identity?: string) => {
-        if (memoryWriter === undefined) return undefined
-        // The identity telemetry resolved from this scope's newest recall comes
-        // first: it is the very project the header shows, and the process
-        // serves several sessions (first-seen would answer for someone else's
-        // project). Config and the session registry are the fallbacks.
-        const resolved = identity
-          ?? config.memory?.project
-          ?? (sessionId !== undefined ? projects.sessionIdentity.get(sessionId) : undefined)
-          ?? [...projects.seenIdentities][0]
-        if (resolved === undefined) return undefined
-        try {
-          const stats = memoryWriter.stats(resolved)
-          return { total: stats.rows, verified: stats.verified, unverified: stats.unverified }
-        } catch {
-          return undefined
-        }
-      },
-      maintenanceLast: maintenance.maintenanceLast,
-      startedAt,
-    })
-    const service = telemetry
-    scope.effect(() => webServer.register({
-      kind: 'prefix',
-      path: '/mc-telemetry',
-      handler: (req, res) => service.handle(
-        req as unknown as Parameters<typeof service.handle>[0],
-        res as unknown as Parameters<typeof service.handle>[1],
-      ),
-    }))
-    journal?.info('boot', 'telemetry route attached for the browser half', {
-      telemetry: '/mc-telemetry',
-      routes: ['/mc-telemetry/summary', '/mc-telemetry/events'],
-    })
-    scope.effect(() => webServer.register({
-      kind: 'prefix',
-      path: '/mc-embedding',
-      handler: (req, res) => lane.embedding.handle(
-        req as unknown as Parameters<typeof lane.embedding.handle>[0],
-        res as unknown as Parameters<typeof lane.embedding.handle>[1],
-      ),
-    }))
-    journal?.info('boot', 'embedding route attached for the browser half', {
-      embedding: '/mc-embedding',
-      routes: ['/mc-embedding/status', '/mc-embedding/models', '/mc-embedding/probe', '/mc-embedding/rebuild'],
-    })
-  })
-
-  // ── Maintenance tick (the adapter's slice of MC's dreamer) ─────────────────
+  // The telemetry service is parent-owned (T23): the Web route and the
+  // optional dsh-go bridge share ONE summary source. Constructing it inside
+  // the webServer inject meant a route remount replaced the service and a
+  // native-only host never had one; constructing it after `maintenance` also
+  // removes the mount-order race where `maintenanceLast` was read before the
+  // tick existed.
   const maintenance = wireMaintenance({
     ctx,
     config,
@@ -1003,6 +879,163 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
     disposers,
     isDisposed: () => adapterDisposed,
   })
+
+  const telemetry = createTelemetryService({
+    stores,
+    ...journal === undefined ? {} : { journal },
+    meta: () => ({
+      engine: stores.getMeta('compaction_engine'),
+      memory: stores.getMeta('memory_bridge'),
+      memoryWrite: stores.getMeta('memory_write'),
+      toolsMode: toolMode,
+    }),
+    adapterVersion: adapterVersionOf,
+    policy: () => {
+      const current = activePolicy()
+      return {
+        executeThreshold: current.executeThreshold,
+        forceThreshold: current.forceThreshold,
+      }
+    },
+    projection: (sessionId: string) => {
+      const session = sessionsRef?.get(sessionId)
+      if (session === undefined) return undefined
+      const cached = projectionCache.get(sessionId)
+      if (cached !== undefined) return { contextBreakdown: cached }
+      if (projectionMisses.has(sessionId)) return undefined
+      if (projectionRegistryRef === undefined) return undefined
+      try {
+        const snapshot = projectionRegistryRef.snapshot(session, ['contextBreakdown'])
+        const value = snapshot.values.contextBreakdown
+        if (value === undefined) {
+          rememberProjectionMiss(sessionId)
+          return undefined
+        }
+        cacheProjection(sessionId, value)
+        return { contextBreakdown: value }
+      } catch {
+        return undefined
+      }
+    },
+    messageComposition: (sessionId: string, _messageTokens: number) => {
+      const session = sessionsRef?.get(sessionId)
+      if (session === undefined) return undefined
+      const latest = (kind: JournalKind): Record<string, unknown> | undefined =>
+        stores.listJournal({ kinds: [kind], limit: 1, sessionId })[0]?.data
+      const numberField = (data: Record<string, unknown> | undefined, field: string): number | null => {
+        const value = data?.[field]
+        return typeof value === 'number' && Number.isFinite(value) ? value : null
+      }
+      return messageCompositionOf(
+        session,
+        stores.listCompartments(sessionId),
+        Date.now(),
+        numberField(latest('memory-recall'), 'estTokens'),
+        numberField(latest('profile-recall'), 'estTokens'),
+      )
+    },
+    historian: (sessionId: string) => {
+      const compartments = stores.listCompartments(sessionId)
+      const published = stores.listJournal({
+        kinds: ['compartment-published'],
+        limit: 1,
+        sessionId,
+      })[0]
+      return {
+        running: historianInFlight(sessionId) !== undefined,
+        compartments: compartments.length,
+        coveredTokens: compartments.reduce((total, compartment) => total + compartment.coveredTokens, 0),
+        lastPublishedAt: published?.at ?? null,
+      }
+    },
+    surface: (sessionId: string) => {
+      const session = sessionsRef?.get(sessionId)
+      if (session === undefined) return undefined
+      const nodes = enumerateSurfaceToolResults(session, callId =>
+        stores.getTag(sessionId, { kind: 'tool-result', callId }))
+      return {
+        tagged: nodes.filter(node => node.tagNumber !== undefined).length,
+        dropped: nodes.filter(node => node.isPlaceholder).length,
+        reclaimableTokens: nodes.reduce((total, node) =>
+          total + (node.isPlaceholder ? 0 : estimateTokensFromLength(node.textLength)), 0),
+      }
+    },
+    // Dreamer-slice KPIs for the panel: the viewed session's project
+    // verification coverage + the newest maintenance tally. Lazy getters —
+    // the panel polls them, nothing runs at mount.
+    memoryStats: (sessionId?: string, identity?: string) => {
+      if (memoryWriter === undefined) return undefined
+      // The identity telemetry resolved from this scope's newest recall comes
+      // first: it is the very project the header shows, and the process
+      // serves several sessions (first-seen would answer for someone else's
+      // project). Config and the session registry are the fallbacks.
+      const resolved = identity
+        ?? config.memory?.project
+        ?? (sessionId !== undefined ? projects.sessionIdentity.get(sessionId) : undefined)
+        ?? [...projects.seenIdentities][0]
+      if (resolved === undefined) return undefined
+      try {
+        const stats = memoryWriter.stats(resolved)
+        return { total: stats.rows, verified: stats.verified, unverified: stats.unverified }
+      } catch {
+        return undefined
+      }
+    },
+    maintenanceLast: maintenance.maintenanceLast,
+    startedAt,
+  })
+
+  // The browser half's routes. The service above is shared, so a webServer
+  // remount only re-registers routes.
+  ctx.inject(['webServer'], (scope) => {
+    const webServer = (scope as unknown as {
+      webServer: {
+        register(route: {
+          kind: 'prefix'
+          path: string
+          handler: (req: never, res: never) => void
+        }): () => void
+      }
+    }).webServer
+    scope.effect(() => webServer.register({
+      kind: 'prefix',
+      path: '/mc-telemetry',
+      handler: (req, res) => telemetry.handle(
+        req as unknown as Parameters<typeof telemetry.handle>[0],
+        res as unknown as Parameters<typeof telemetry.handle>[1],
+      ),
+    }))
+    journal?.info('boot', 'telemetry route attached for the browser half', {
+      telemetry: '/mc-telemetry',
+      routes: ['/mc-telemetry/summary', '/mc-telemetry/events'],
+    })
+    telemetryRouteAttached = true
+    scope.effect(() => webServer.register({
+      kind: 'prefix',
+      path: '/mc-embedding',
+      handler: (req, res) => lane.embedding.handle(
+        req as unknown as Parameters<typeof lane.embedding.handle>[0],
+        res as unknown as Parameters<typeof lane.embedding.handle>[1],
+      ),
+    }))
+    journal?.info('boot', 'embedding route attached for the browser half', {
+      embedding: '/mc-embedding',
+      routes: ['/mc-embedding/status', '/mc-embedding/models', '/mc-embedding/probe', '/mc-embedding/rebuild'],
+    })
+  })
+
+  // The Android/desktop bridge is OPTIONAL. `['dshGo']` (never `['dshGo?']`)
+  // keeps a bridge-less desktop mounting normally; the inject callback simply
+  // never runs there. The same telemetry service and embedding lane feed it.
+  attachOptionalGoNative(ctx as unknown as Parameters<typeof attachOptionalGoNative>[0], {
+    telemetry,
+    embedding: lane.embedding,
+    logger: ctx.logger,
+  })
+
+  // ── Maintenance tick (the adapter's slice of MC's dreamer) ─────────────────
+  // (wired above, before telemetry, because the summary's maintenance KPI
+  // reads its tally).
 
   // The occupancy gauge the native meter shows, from the SAME source: the
   // host's `contextPressure` projection. projectedTokens is the last
@@ -1094,7 +1127,7 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
     engine: stores.getMeta('compaction_engine'),
     memory: stores.getMeta('memory_bridge'),
     memoryWrite: stores.getMeta('memory_write'),
-    telemetry: telemetry === undefined ? 'pending (registers with webServer)' : '/mc-telemetry',
+    telemetry: telemetryRouteAttached ? '/mc-telemetry' : 'pending (registers with webServer)',
     // Resolved once for display; the tick itself resolves at decision time.
     maintenance: {
       enabled: liveBoolean(config.maintenance?.enabled, true) !== false,
@@ -1145,7 +1178,7 @@ export async function apply(ctx: Context, config: MagicContextDshConfig = {}): P
     // before it can touch any of the handles being closed below.
     adapterDisposed = true
     for (const dispose of disposers.splice(0)) dispose()
-    telemetry?.close()
+    telemetry.close()
     memoryWriter?.close()
     profileWriter?.close()
     memorySearch?.close()
@@ -1185,18 +1218,35 @@ export { policyOf } from './dsh/volatile.ts'
  * nested objects with their defaults, so declaring it would hand every profile
  * a `memory` object even when the user configured none — and in this plugin the
  * mere presence of `memory` opens the read/write bridge on the shared store.
- * Memory stays opt-in by configuration; its thresholds are edited in the patch.
+ * Memory is ON by default (the distribution default since 0.9.0); only an
+ * explicit `memory.enabled: false` opts out. Its thresholds are edited in the
+ * patch.
+ *
+ * dsh-go's released schema form derives field and group LABELS from
+ * `meta.description` (schema_fields.dart `labelFor` → `_describedText`:
+ * `_fitsTitle` is ≤18 runes and no newline; longer English descriptions cannot
+ * use the Chinese-only `leadingPhrase` path). These descriptions are therefore
+ * concise labels, not long hints, in both languages. Tests pin the 18-rune
+ * limit so the phone gets real zh/en labels instead of humanized keys.
  */
 export const Config = z.object({
-  historianEnabled: z.boolean().default(true).volatile(),
-  registerCompactionEngine: z.boolean().default(false).volatile(),
+  historianEnabled: z.boolean().default(true)
+    .extra('description', { zh: '后台历史摘要', en: 'Historian' })
+    .volatile(),
+  registerCompactionEngine: z.boolean().default(false)
+    .extra('description', { zh: '压缩接管', en: 'Compaction seam' })
+    .volatile(),
   /** One notice entry in the session stream per action-bearing pass (see session-notice.ts). */
-  sessionNotices: z.boolean().default(true).volatile(),
+  sessionNotices: z.boolean().default(true)
+    .extra('description', { zh: '会话提示', en: 'Session notices' })
+    .volatile(),
   /**
    * Auto-search hint: one "you may recall something related" entry per user turn,
    * built from the user's own words (see search-hint.ts).
    */
-  searchHint: z.boolean().default(true).volatile(),
+  searchHint: z.boolean().default(true)
+    .extra('description', { zh: '检索提示', en: 'Search hint' })
+    .volatile(),
 
   /**
    * Maintenance tick (the adapter's slice of MC's dreamer): TTL expiry always
@@ -1204,12 +1254,22 @@ export const Config = z.object({
    * needs an explicit route because a tick has no session to inherit one from.
    */
   maintenance: z.object({
-    enabled: z.boolean().default(true).volatile(),
-    intervalMs: z.number().min(60_000).default(1_800_000).volatile(),
+    enabled: z.boolean().default(true)
+      .extra('description', { zh: '启用维护', en: 'Maintenance on' })
+      .volatile(),
+    intervalMs: z.number().min(60_000).default(1_800_000)
+      .extra('description', { zh: '维护间隔', en: 'Interval' })
+      .volatile(),
     /** Empty provider/model = verify off (schemastery objects cannot be optional). */
-    verifyProvider: z.string().default('').volatile(),
-    verifyModel: z.string().default('').volatile(),
-  }),
+    verifyProvider: z.string().default('')
+      .extra('description', { zh: '验证服务', en: 'Verify provider' })
+      .volatile(),
+    verifyModel: z.string().default('')
+      .extra('description', { zh: '验证模型', en: 'Verify model' })
+      .volatile(),
+  })
+    .extra('description', { zh: '维护', en: 'Maintenance' })
+    .collapse(),
 
   /**
    * Generation route: the out-of-band historian and `/compact` summaries.
@@ -1222,11 +1282,19 @@ export const Config = z.object({
    * materialised empty object switches nothing on.
    */
   historian: z.object({
-    provider: z.string().default('').volatile(),
-    model: z.string().default('').volatile(),
+    provider: z.string().default('')
+      .extra('description', { zh: '摘要服务', en: 'Historian provider' })
+      .volatile(),
+    model: z.string().default('')
+      .extra('description', { zh: '摘要模型', en: 'Historian model' })
+      .volatile(),
     /** Optional provider/model-specific reasoning effort; blank = host default. */
-    reasoningEffort: z.string().default('').volatile(),
-  }),
+    reasoningEffort: z.string().default('')
+      .extra('description', { zh: '推理强度', en: 'Reasoning effort' })
+      .volatile(),
+  })
+    .extra('description', { zh: '历史摘要', en: 'Historian' })
+    .collapse(),
 
   /**
    * T20: project-memory embedding provider. Local MiniLM is the default; the
@@ -1234,62 +1302,130 @@ export const Config = z.object({
    * has no side effect unless `provider` is switched away from `local`.
    */
   embedding: z.object({
-    provider: z.string().default('local').volatile(),
-    preset: z.string().default('siliconflow').volatile(),
-    endpoint: z.string().default('').volatile(),
-    authHeader: z.string().default('authorization').volatile(),
-    model: z.string().default('').volatile(),
-    apiKeyEnv: z.string().default('').volatile(),
-    dimensions: z.union([z.number(), z.const(null)]).default(0).volatile(),
-    queryInstruction: z.string().default('').volatile(),
-    documentPrefix: z.string().default('').volatile(),
+    provider: z.string().default('local')
+      .extra('description', { zh: '向量服务', en: 'Embedding provider' })
+      .volatile(),
+    preset: z.string().default('siliconflow')
+      .extra('description', { zh: '服务预设', en: 'Preset' })
+      .volatile(),
+    endpoint: z.string().default('')
+      .extra('description', { zh: '接口地址', en: 'Endpoint' })
+      .volatile(),
+    authHeader: z.string().default('authorization')
+      .extra('description', { zh: '认证头', en: 'Auth header' })
+      .volatile(),
+    model: z.string().default('')
+      .extra('description', { zh: '模型 ID', en: 'Model ID' })
+      .volatile(),
+    apiKeyEnv: z.string().default('')
+      .extra('description', { zh: '密钥变量', en: 'Key variable' })
+      .volatile(),
+    dimensions: z.union([z.number(), z.const(null)]).default(0)
+      .extra('description', { zh: '向量维度', en: 'Dimensions' })
+      .volatile(),
+    queryInstruction: z.string().default('')
+      .extra('description', { zh: '查询前缀', en: 'Query prefix' })
+      .volatile(),
+    documentPrefix: z.string().default('')
+      .extra('description', { zh: '文档前缀', en: 'Document prefix' })
+      .volatile(),
     // Bounds live in `resolveEmbeddingConfig` so a malformed hand-edited value
     // falls back instead of aborting profile boot.
-    timeoutMs: z.number().default(8_000).volatile(),
-    queryTimeoutMs: z.number().default(2_500).volatile(),
-    batchSize: z.number().default(16).volatile(),
-  }),
+    timeoutMs: z.number().default(8_000)
+      .extra('description', { zh: '请求超时', en: 'Timeout' })
+      .volatile(),
+    queryTimeoutMs: z.number().default(2_500)
+      .extra('description', { zh: '查询超时', en: 'Query timeout' })
+      .volatile(),
+    batchSize: z.number().default(16)
+      .extra('description', { zh: '批大小', en: 'Batch size' })
+      .volatile(),
+  })
+    .extra('description', { zh: '向量检索', en: 'Embedding' })
+    .collapse(),
 
   journal: z.object({
-    enabled: z.boolean().default(true).volatile(),
-    level: z.string().default('info').volatile(),
+    enabled: z.boolean().default(true)
+      .extra('description', { zh: '启用日志', en: 'Journal on' })
+      .volatile(),
+    level: z.string().default('info')
+      .extra('description', { zh: '日志级别', en: 'Log level' })
+      .volatile(),
     /** min(1): a stray 0/negative would prune the whole table at open. */
-    retentionDays: z.number().min(1).default(30).volatile(),
-    mirror: z.boolean().default(true).volatile(),
-  }),
+    retentionDays: z.number().min(1).default(30)
+      .extra('description', { zh: '保留天数', en: 'Retention days' })
+      .volatile(),
+    mirror: z.boolean().default(true)
+      .extra('description', { zh: '文本镜像', en: 'Text mirror' })
+      .volatile(),
+  })
+    .extra('description', { zh: '日志', en: 'Journal' })
+    .collapse(),
 
   policy: z.object({
     /** Usage percent (0-100) at which the execute band opens. */
-    executeThreshold: z.number().min(0).max(100).default(65).volatile(),
+    executeThreshold: z.number().min(0).max(100).default(65)
+      .extra('description', { zh: '执行阈值', en: 'Execute threshold' })
+      .volatile(),
     /** Usage percent (0-100) at which reclaim becomes unconditional. */
-    forceThreshold: z.number().min(0).max(100).default(85).volatile(),
+    forceThreshold: z.number().min(0).max(100).default(85)
+      .extra('description', { zh: '强制阈值', en: 'Force threshold' })
+      .volatile(),
     /**
      * Window assumed for scheduling when the routed model discloses none.
      * Without it a route that publishes no window defers 'no-window' forever,
      * which silently disables the execute band.
      */
-    assumedContextWindow: z.number().min(1).default(256_000).volatile(),
-    ttlMs: z.number().default(300_000).volatile(),
-    protectedToolResults: z.number().default(8).volatile(),
-    historianProtectedNodes: z.number().default(8).volatile(),
-    historianMinNodes: z.number().default(3).volatile(),
+    assumedContextWindow: z.number().min(1).default(256_000)
+      .extra('description', { zh: '假定窗口', en: 'Assumed window' })
+      .volatile(),
+    ttlMs: z.number().default(300_000)
+      .extra('description', { zh: '决策缓存', en: 'Decision cache' })
+      .volatile(),
+    protectedToolResults: z.number().default(8)
+      .extra('description', { zh: '保护结果', en: 'Protected results' })
+      .volatile(),
+    historianProtectedNodes: z.number().default(8)
+      .extra('description', { zh: '摘要保护', en: 'Summary guard' })
+      .volatile(),
+    historianMinNodes: z.number().default(3)
+      .extra('description', { zh: '摘要节点', en: 'Historian nodes' })
+      .volatile(),
     /** Wall-clock budget for one historian run; a spent budget journals `failed`.
      *  120s: large backlogs (600+ pending nodes) measured ~60s+ per digest. */
-    historianTimeoutMs: z.number().default(120_000).volatile(),
+    historianTimeoutMs: z.number().default(120_000)
+      .extra('description', { zh: '摘要超时', en: 'Historian timeout' })
+      .volatile(),
     /** Generation cap for the historian; the historian raises anything below 8192. */
-    historianMaxTokens: z.number().default(8_192).volatile(),
+    historianMaxTokens: z.number().default(8_192)
+      .extra('description', { zh: '摘要上限', en: 'Historian cap' })
+      .volatile(),
     /** Ceiling the historian may escalate to after a token-cap truncation (retry doubling). */
-    historianMaxTokensCeiling: z.number().default(32_768).volatile(),
-    historianMinBudgetTokens: z.number().default(5_000).volatile(),
-    baselineTokens: z.number().default(2_000).volatile(),
-    memoryBudgetTokens: z.number().default(8_000).volatile(),
-    memoryLimit: z.number().default(40).volatile(),
+    historianMaxTokensCeiling: z.number().default(32_768)
+      .extra('description', { zh: '摘要封顶', en: 'Summary ceiling' })
+      .volatile(),
+    historianMinBudgetTokens: z.number().default(5_000)
+      .extra('description', { zh: '摘要预算', en: 'Historian budget' })
+      .volatile(),
+    baselineTokens: z.number().default(2_000)
+      .extra('description', { zh: '基线预算', en: 'Baseline budget' })
+      .volatile(),
+    memoryBudgetTokens: z.number().default(8_000)
+      .extra('description', { zh: '记忆预算', en: 'Memory budget' })
+      .volatile(),
+    memoryLimit: z.number().default(40)
+      .extra('description', { zh: '记忆条数', en: 'Memory limit' })
+      .volatile(),
     /**
      * Overflow-path wait on an in-flight historian before the drop lane
      * (0 = never wait — the shipped default; flip after observation).
      */
-    forceWaitReadyMs: z.number().min(0).default(0).volatile(),
-  }),
+    forceWaitReadyMs: z.number().min(0).default(0)
+      .extra('description', { zh: '溢出等待', en: 'Overflow wait' })
+      .volatile(),
+  })
+    .extra('description', { zh: '回收策略', en: 'Reclaim policy' })
+    .collapse(),
 })
 
 /**

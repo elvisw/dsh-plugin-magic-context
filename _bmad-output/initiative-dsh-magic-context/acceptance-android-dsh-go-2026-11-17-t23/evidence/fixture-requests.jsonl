@@ -1,0 +1,7 @@
+{"at": "2026-11-17T15:57:40.950827+00:00", "method": "GET", "path": "/v1/models", "inputs": 0, "authPresent": false, "simulatedProvider": true}
+{"at": "2026-11-17T15:57:40.963859+00:00", "method": "POST", "path": "/v1/embeddings", "inputs": 1, "authPresent": false, "simulatedProvider": true}
+{"at": "2026-11-17T16:28:30.661229+00:00", "method": "GET", "path": "/v1/models", "inputs": 0, "authPresent": false, "simulatedProvider": true}
+{"at": "2026-11-17T16:28:42.352263+00:00", "method": "POST", "path": "/v1/embeddings", "inputs": 1, "authPresent": false, "simulatedProvider": true}
+{"at": "2026-11-17T16:40:16.780703+00:00", "method": "POST", "path": "/v1/embeddings", "inputs": 1, "authPresent": false, "simulatedProvider": true}
+{"at": "2026-11-17T16:46:31.891903+00:00", "method": "POST", "path": "/v1/embeddings", "inputs": 1, "authPresent": false, "simulatedProvider": true}
+{"at": "2026-11-17T17:03:45.170239+00:00", "method": "POST", "path": "/v1/embeddings", "inputs": 1, "authPresent": false, "simulatedProvider": true}

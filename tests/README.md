@@ -1,6 +1,7 @@
 # The adapter's test suite
 
-73 specs / 761 tests, plus the shared fixtures under `helpers/`. They run in this
+Vitest specs, plus the shared fixtures under `helpers/`; the current count is
+reported by `npm test`. They run in this
 repository, against this repository's `src/`:
 
 ```bash

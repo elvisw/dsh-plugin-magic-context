@@ -1,0 +1,7 @@
+{
+  "status": "installed",
+  "candidateSha256": "397f7ef89b254ecd20c7728411f3ee99f0adc9e5ac563d1279f8153d25eda5d2",
+  "dataDir": "/root/.dsh/dsh-go/mc-t23-397f7ef8/data",
+  "corpusDb": "/root/.dsh/dsh-go/mc-t23-397f7ef8/data/memories.db",
+  "runtimeVerified": false
+}

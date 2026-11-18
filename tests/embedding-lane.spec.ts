@@ -274,4 +274,283 @@ describe('embedding lane state machine', () => {
     expect(lane.remoteWritable()).toBe(true)
     expect(planBackfill(corpus, { targetModelId: target, includePermanent: true }).candidates).toEqual([2])
   })
+
+  it('refuses every remote action while memory is disabled, before any request', async () => {
+    const root = tempDir()
+    const corpus = join(root, 'memories.db')
+    makeCorpus(corpus)
+    let requests = 0
+    const lane = openEmbeddingLane({
+      config: { ...config(), memory: { enabled: false } },
+      corpusDbPath: corpus,
+      dataDir: root,
+      env: { [ENV_NAME]: 'test-key' },
+      logger: { info: () => {}, warn: () => {} },
+      fetchImpl: async () => {
+        requests += 1
+        return response({ model: 'fixture-embed-a', data: [{ embedding: vector(16), index: 0 }] })
+      },
+    })
+    expect(await lane.probe()).toEqual({ ok: false, error: 'memory-disabled' })
+    expect(await lane.models()).toEqual({ ok: false, error: 'memory-disabled' })
+    expect(await lane.start()).toEqual({ ok: false, error: 'memory-disabled' })
+    expect(requests).toBe(0)
+  })
+
+  it('requires a probe and non-empty coverage before start, and refuses a second start', async () => {
+    const root = tempDir()
+    const corpus = join(root, 'memories.db')
+    makeCorpus(corpus, [])
+    const lane = openEmbeddingLane({
+      config: config(),
+      corpusDbPath: corpus,
+      dataDir: root,
+      env: { [ENV_NAME]: 'test-key' },
+      logger: { info: () => {}, warn: () => {} },
+      fetchImpl: async () => response({ model: 'fixture-embed-a', data: [{ embedding: vector(16), index: 0 }] }),
+    })
+    expect(await lane.start()).toEqual({ ok: false, error: 'probe-required' })
+    await lane.probe()
+    expect(await lane.start()).toEqual({ ok: false, error: 'coverage-missing' })
+
+    const withRows = tempDir()
+    const fullCorpus = join(withRows, 'memories.db')
+    makeCorpus(fullCorpus)
+    const full = openEmbeddingLane({
+      config: config(),
+      corpusDbPath: fullCorpus,
+      dataDir: withRows,
+      env: { [ENV_NAME]: 'test-key' },
+      logger: { info: () => {}, warn: () => {} },
+      fetchImpl: async () => response({ model: 'fixture-embed-a', data: [{ embedding: vector(16), index: 0 }] }),
+    })
+    await full.probe()
+    expect(await full.start()).toEqual({ ok: true })
+    expect(await full.start()).toEqual({ ok: false, error: 'already-running' })
+    addVector(fullCorpus, 1, full.targetModelId()!)
+    expect(full.pause()).toEqual({ ok: true })
+    expect(await full.start()).toEqual({ ok: false, error: 'paused' })
+    expect(full.resume()).toEqual({ ok: true })
+  })
+
+  it('blocks model loading and probing while the rebuild is migrating or paused', async () => {
+    const root = tempDir()
+    const corpus = join(root, 'memories.db')
+    makeCorpus(corpus)
+    const lane = openEmbeddingLane({
+      config: config(),
+      corpusDbPath: corpus,
+      dataDir: root,
+      env: { [ENV_NAME]: 'test-key' },
+      logger: { info: () => {}, warn: () => {} },
+      fetchImpl: async (_url, init) => {
+        if (init?.method === 'GET') return response({ data: [{ id: 'fixture-embed-a' }] })
+        return response({ model: 'fixture-embed-a', data: [{ embedding: vector(16), index: 0 }] })
+      },
+    })
+    await lane.probe()
+    await lane.start()
+    const target = lane.targetModelId()!
+    addVector(corpus, 1, target)
+    expect(lane.status().state).toBe('remote-migrating')
+    expect(await lane.models()).toEqual({ ok: false, error: 'busy' })
+    expect(await lane.probe()).toEqual({ ok: false, error: 'busy' })
+    expect(lane.pause()).toEqual({ ok: true })
+    expect(await lane.models()).toEqual({ ok: false, error: 'busy' })
+    expect(await lane.probe()).toEqual({ ok: false, error: 'busy' })
+  })
+
+  it('uses the authoritative rebuild state when coverage is zero', async () => {
+    const root = tempDir()
+    const corpus = join(root, 'memories.db')
+    makeCorpus(corpus)
+    let requests = 0
+    const lane = openEmbeddingLane({
+      config: config(),
+      corpusDbPath: corpus,
+      dataDir: root,
+      env: { [ENV_NAME]: 'test-key' },
+      logger: { info: () => {}, warn: () => {} },
+      fetchImpl: async () => {
+        requests += 1
+        return response({ model: 'fixture-embed-a', data: [{ embedding: vector(16), index: 0 }] })
+      },
+    })
+    await lane.probe()
+    expect(await lane.start()).toEqual({ ok: true })
+    expect(lane.status().state).toBe('remote-target-missing')
+    expect(lane.rebuildState()?.state).toBe('running')
+
+    // The display name says target-missing; the authoritative state says a
+    // rebuild is running. User load/probe must be refused, pause must work.
+    expect(await lane.models()).toEqual({ ok: false, error: 'busy' })
+    expect(await lane.probe()).toEqual({ ok: false, error: 'busy' })
+    expect(requests).toBe(1)
+    // Internal dimension repair is not the user action and stays available.
+    expect(await lane.probe({ internal: true })).toMatchObject({ ok: true, dimensions: 16 })
+    expect(requests).toBe(2)
+
+    expect(lane.pause()).toEqual({ ok: true })
+    expect(lane.status().state).toBe('remote-paused')
+    expect(await lane.models()).toEqual({ ok: false, error: 'busy' })
+    expect(lane.resume()).toEqual({ ok: true })
+    expect(lane.rebuildState()?.state).toBe('running')
+  })
+
+  it('requires a fresh successful probe after a models failure before arming', async () => {
+    const root = tempDir()
+    const corpus = join(root, 'memories.db')
+    makeCorpus(corpus)
+    let failModels = false
+    const lane = openEmbeddingLane({
+      config: config(),
+      corpusDbPath: corpus,
+      dataDir: root,
+      env: { [ENV_NAME]: 'test-key' },
+      logger: { info: () => {}, warn: () => {} },
+      fetchImpl: async (_url, init) => {
+        if (init?.method === 'GET') {
+          return failModels ? new Response('boom', { status: 500 }) : response({ data: [{ id: 'fixture-embed-a' }] })
+        }
+        return response({ model: 'fixture-embed-a', data: [{ embedding: vector(16), index: 0 }] })
+      },
+    })
+    await lane.probe()
+    failModels = true
+    expect(await lane.models()).toEqual({ ok: false, error: 'server-error' })
+    expect(lane.status().state).toBe('remote-error')
+    expect(await lane.start()).toEqual({ ok: false, error: 'not-ready' })
+  })
+
+  it('schedules the rebuild runner without waiting for the background pass', async () => {
+    const root = tempDir()
+    const corpus = join(root, 'memories.db')
+    makeCorpus(corpus)
+    const lane = openEmbeddingLane({
+      config: config(),
+      corpusDbPath: corpus,
+      dataDir: root,
+      env: { [ENV_NAME]: 'test-key' },
+      logger: { info: () => {}, warn: () => {} },
+      fetchImpl: async () => response({ model: 'fixture-embed-a', data: [{ embedding: vector(16), index: 0 }] }),
+    })
+    await lane.probe()
+    let runnerCalls = 0
+    lane.setRunner(() => {
+      runnerCalls += 1
+      return new Promise(() => {
+        /* deliberately never settles: start must not await it */
+      })
+    })
+    await expect(lane.start()).resolves.toEqual({ ok: true })
+    expect(runnerCalls).toBe(1)
+  })
+
+  it('cancels model and probe requests without writing a cache entry', async () => {
+    const root = tempDir()
+    const corpus = join(root, 'memories.db')
+    makeCorpus(corpus)
+    const lane = openEmbeddingLane({
+      config: config(),
+      corpusDbPath: corpus,
+      dataDir: root,
+      env: { [ENV_NAME]: 'test-key' },
+      logger: { info: () => {}, warn: () => {} },
+      fetchImpl: (_url, init) => new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')))
+      }),
+    })
+    const controller = new AbortController()
+    const pending = lane.probe({ signal: controller.signal })
+    await Promise.resolve()
+    controller.abort()
+    expect(await pending).toEqual({ ok: false, error: 'cancelled' })
+    expect(lane.status().state).toBe('remote-unprobed')
+
+    const modelController = new AbortController()
+    const modelsPending = lane.models({ signal: modelController.signal })
+    await Promise.resolve()
+    modelController.abort()
+    expect(await modelsPending).toEqual({ ok: false, error: 'cancelled' })
+    expect(lane.status().state).toBe('remote-unprobed')
+  })
+
+  it('rejects a probe result whose target changed and keeps the new target cache', async () => {
+    const root = tempDir()
+    const corpus = join(root, 'memories.db')
+    makeCorpus(corpus)
+    const configValue = config()
+    let release!: (value: Response) => void
+    let started!: () => void
+    const startedPromise = new Promise<void>(resolve => { started = resolve })
+    let slow = false
+    const lane = openEmbeddingLane({
+      config: configValue,
+      corpusDbPath: corpus,
+      dataDir: root,
+      env: { [ENV_NAME]: 'test-key' },
+      logger: { info: () => {}, warn: () => {} },
+      fetchImpl: async () => {
+        if (slow) {
+          started()
+          return new Promise<Response>(resolve => { release = resolve })
+        }
+        const model = configValue.embedding!.model
+        return response({
+          model,
+          data: [{ embedding: vector(model === 'fixture-embed-a' ? 8 : 16), index: 0 }],
+        })
+      },
+    })
+    expect(await lane.probe()).toMatchObject({ ok: true, dimensions: 8 })
+    configValue.embedding!.model = 'fixture-embed-b'
+    expect(await lane.probe()).toMatchObject({ ok: true, dimensions: 16 })
+    expect(lane.status().dimensions).toBe(16)
+
+    // A probe for A is still in flight when the user commits B. Its result
+    // must not be reported, written, or allowed to evict B's cache entry.
+    configValue.embedding!.model = 'fixture-embed-a'
+    slow = true
+    const pending = lane.probe()
+    await startedPromise
+    configValue.embedding!.model = 'fixture-embed-b'
+    release(response({ model: 'fixture-embed-a', data: [{ embedding: vector(8), index: 0 }] }))
+    expect(await pending).toEqual({ ok: false, error: 'target-changed' })
+    expect(lane.status().dimensions).toBe(16)
+    expect(lane.status().state).toBe('remote-configured-not-started')
+  })
+
+  it('rejects a models result whose target changed during the await', async () => {
+    const root = tempDir()
+    const corpus = join(root, 'memories.db')
+    makeCorpus(corpus)
+    const configValue = config()
+    let release!: (value: Response) => void
+    let started!: () => void
+    const startedPromise = new Promise<void>(resolve => { started = resolve })
+    let slow = false
+    const lane = openEmbeddingLane({
+      config: configValue,
+      corpusDbPath: corpus,
+      dataDir: root,
+      env: { [ENV_NAME]: 'test-key' },
+      logger: { info: () => {}, warn: () => {} },
+      fetchImpl: async () => {
+        if (slow) {
+          started()
+          return new Promise<Response>(resolve => { release = resolve })
+        }
+        return response({ data: [{ id: 'fixture-embed-a' }] })
+      },
+    })
+    slow = true
+    const pending = lane.models()
+    await startedPromise
+    configValue.embedding!.model = 'fixture-embed-b'
+    release(response({ data: [{ id: 'fixture-embed-a' }] }))
+    expect(await pending).toEqual({ ok: false, error: 'target-changed' })
+    // The stale list was not cached: a fresh call for B hits the network.
+    slow = false
+    expect(await lane.models()).toEqual({ ok: true, models: ['fixture-embed-a'] })
+  })
 })

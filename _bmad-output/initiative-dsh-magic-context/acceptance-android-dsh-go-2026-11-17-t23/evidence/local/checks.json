@@ -1,0 +1,22 @@
+[
+  {
+    "command": "npm test -- --maxWorkers=4",
+    "exitCode": 0,
+    "log": "unit-test.txt"
+  },
+  {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "log": "typecheck.txt"
+  },
+  {
+    "command": "npm run check:i18n",
+    "exitCode": 0,
+    "log": "i18n.txt"
+  },
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "log": "build.txt"
+  }
+]

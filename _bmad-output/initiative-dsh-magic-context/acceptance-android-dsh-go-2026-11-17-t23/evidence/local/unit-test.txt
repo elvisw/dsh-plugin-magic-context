@@ -1,0 +1,22 @@
+command=npm test -- --maxWorkers=4
+
+> @elvisw/dsh-magic-context@0.17.0 test
+> vitest run --maxWorkers=4
+
+
+ RUN  v4.1.12 C:/Users/elvis/Documents/dev/plugin/dsh-plugin-magic-context
+
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+
+ Test Files  85 passed (85)
+      Tests  1044 passed (1044)
+   Start at  00:14:21
+   Duration  41.84s (transform 3.02s, setup 0ms, import 19.07s, tests 123.96s, environment 6ms)
+
+
+exit_code=0

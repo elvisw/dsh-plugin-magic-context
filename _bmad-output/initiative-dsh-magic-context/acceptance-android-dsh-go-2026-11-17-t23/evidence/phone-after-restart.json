@@ -1,0 +1,172 @@
+{
+  "phase": "after-restart",
+  "at": "2026-11-17T17:04:41.142Z",
+  "dataDir": "/root/.dsh/dsh-go/mc-t23-397f7ef8/data",
+  "databases": [
+    {
+      "file": "dsh-magic-context.db",
+      "journal": [
+        {
+          "at": 1794935023825,
+          "kind": "tool-call",
+          "sessionId": "session-a887bf8d-209e-406a-8d48-48574e181bf2",
+          "action": "search",
+          "hits": 3,
+          "ok": true
+        },
+        {
+          "at": 1794934999630,
+          "kind": "boot",
+          "sessionId": null
+        },
+        {
+          "at": 1794934999627,
+          "kind": "boot",
+          "sessionId": null
+        },
+        {
+          "at": 1794934998920,
+          "kind": "boot",
+          "sessionId": null
+        },
+        {
+          "at": 1794933990558,
+          "kind": "vector-lane",
+          "sessionId": null,
+          "outcome": "backfill",
+          "created": 1
+        },
+        {
+          "at": 1794933615457,
+          "kind": "vector-lane",
+          "sessionId": null,
+          "outcome": "backfill",
+          "created": 1
+        },
+        {
+          "at": 1794933176633,
+          "kind": "tool-call",
+          "sessionId": "session-a887bf8d-209e-406a-8d48-48574e181bf2",
+          "action": "search",
+          "hits": 3,
+          "ok": true
+        },
+        {
+          "at": 1794933174272,
+          "kind": "tool-call",
+          "sessionId": "session-a887bf8d-209e-406a-8d48-48574e181bf2",
+          "action": "write",
+          "ok": true
+        },
+        {
+          "at": 1794933174263,
+          "kind": "tool-call",
+          "sessionId": "session-a887bf8d-209e-406a-8d48-48574e181bf2",
+          "action": "write",
+          "ok": true
+        },
+        {
+          "at": 1794933174251,
+          "kind": "tool-call",
+          "sessionId": "session-a887bf8d-209e-406a-8d48-48574e181bf2",
+          "action": "write",
+          "ok": true
+        },
+        {
+          "at": 1794932601224,
+          "kind": "boot",
+          "sessionId": null
+        },
+        {
+          "at": 1794932601223,
+          "kind": "boot",
+          "sessionId": null
+        },
+        {
+          "at": 1794932600723,
+          "kind": "boot",
+          "sessionId": null
+        },
+        {
+          "at": 1794932564410,
+          "kind": "boot",
+          "sessionId": null
+        },
+        {
+          "at": 1794932564409,
+          "kind": "boot",
+          "sessionId": null
+        },
+        {
+          "at": 1794932563513,
+          "kind": "boot",
+          "sessionId": null
+        },
+        {
+          "at": 1794931186290,
+          "kind": "boot",
+          "sessionId": null
+        },
+        {
+          "at": 1794931186289,
+          "kind": "boot",
+          "sessionId": null
+        },
+        {
+          "at": 1794931186285,
+          "kind": "boot",
+          "sessionId": null
+        }
+      ]
+    },
+    {
+      "file": "memories.db",
+      "memoryCount": 3,
+      "fixtureMemories": [
+        {
+          "id": 1,
+          "project_path": "dir:eaea33d8b70c",
+          "category": "CONFIG_VALUES",
+          "content": "T23_ALPHA 的验收代号是琥珀海豚。",
+          "status": "active"
+        },
+        {
+          "id": 2,
+          "project_path": "dir:eaea33d8b70c",
+          "category": "CONFIG_VALUES",
+          "content": "T23_BETA 的验收代号是青铜雨燕。",
+          "status": "active"
+        },
+        {
+          "id": 3,
+          "project_path": "dir:eaea33d8b70c",
+          "category": "CONFIG_VALUES",
+          "content": "T23_GAMMA 的验收代号是紫晶松鼠。",
+          "status": "active"
+        }
+      ],
+      "fixtureVectors": [
+        {
+          "memory_id": 2,
+          "model_id": "embedding-remote:c03009ede909b5197b79fef7deea3f29",
+          "vector_bytes": 64
+        },
+        {
+          "memory_id": 3,
+          "model_id": "embedding-remote:c03009ede909b5197b79fef7deea3f29",
+          "vector_bytes": 64
+        }
+      ]
+    }
+  ],
+  "installedNativeSha256": "e6087ff5bc8f91fd699b256f4041412f8ad8fe8f11031010db01ca38ef4df4d5",
+  "rebuild": {
+    "state": "running",
+    "targetIdentity": "embedding-remote:c03009ede909b5197b79fef7deea3f29",
+    "processed": 2,
+    "total": 3,
+    "failures": 0,
+    "updatedAt": 1794933990562
+  },
+  "status": "observed"
+}

@@ -1,0 +1,18 @@
+{
+  "status": "preflight-only",
+  "node": "v24.22.1",
+  "platform": "linux",
+  "arch": "arm64",
+  "home": "/root",
+  "dshHome": "/root/.dsh",
+  "profile": "/root/.dsh/profiles/web",
+  "profilePackageExists": true,
+  "pluginDeclared": false,
+  "dshVersion": "0.2.2-rc.1",
+  "dshVersionExitCode": 0,
+  "candidateSha256": "397f7ef89b254ecd20c7728411f3ee99f0adc9e5ac563d1279f8153d25eda5d2",
+  "candidateBytes": 4080948,
+  "installed": false,
+  "configurationChanged": false,
+  "credentialsRead": false
+}

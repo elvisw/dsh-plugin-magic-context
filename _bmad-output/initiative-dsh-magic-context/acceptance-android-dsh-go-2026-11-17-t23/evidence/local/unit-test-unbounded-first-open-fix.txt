@@ -1,0 +1,68 @@
+command=npm test
+
+> @elvisw/dsh-magic-context@0.17.0 test
+> vitest run
+
+
+ RUN  v4.1.12 C:/Users/elvis/Documents/dev/plugin/dsh-plugin-magic-context
+
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+ ❯ tests/compaction-conflict.spec.ts (4 tests | 2 failed) 3110ms
+   × sanity: ours alone (takeover on) owns the seam 880ms
+   × stock order: basic first wins; the adapter mount succeeds but the engine quietly stands down 804ms
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'file.txt', LF will be replaced by CRLF the next time Git touches it
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/compaction-conflict.spec.ts > sanity: ours alone (takeover on) owns the seam
+AssertionError: expected undefined to be 'MagicContextCompactionEngine' // Object.is equality
+
+- Expected:
+"MagicContextCompactionEngine"
+
++ Received:
+undefined
+
+ ❯ tests/compaction-conflict.spec.ts:136:17
+    134| it('sanity: ours alone (takeover on) owns the seam', async () => {
+    135|   const { owner } = await boot({ takeover: true })
+    136|   expect(owner).toBe(OURS)
+       |                 ^
+    137| })
+    138|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/compaction-conflict.spec.ts > stock order: basic first wins; the adapter mount succeeds but the engine quietly stands down
+AssertionError: no rejection may escape the guarded mount paths: expected [ 'Error: database is not open' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "Error: database is not open",
++ ]
+
+ ❯ tests/compaction-conflict.spec.ts:62:67
+     60|   await settle()
+     61|   const seen = unhandled.splice(0)
+     62|   expect(seen, 'no rejection may escape the guarded mount paths').toEq…
+       |                                                                   ^
+     63|   for (const ctx of contexts.splice(0).reverse()) {
+     64|     try {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 84 passed (85)
+      Tests  2 failed | 1042 passed (1044)
+   Start at  00:11:35
+   Duration  37.88s (transform 29.96s, setup 0ms, import 115.48s, tests 323.62s, environment 7ms)
+
+
+exit_code=1

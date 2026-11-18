@@ -145,4 +145,57 @@ describe('runtime Config schema', () => {
     expect(liveRoute('', 'm')).toBeUndefined()
     expect(liveRoute(undefined, undefined)).toBeUndefined()
   })
+
+  it('adds localized native labels/groups that the released schema form can render', () => {
+    const json = Config.toJSON() as unknown as {
+      uid: number
+      refs: Record<string, {
+        type: string
+        meta?: { description?: unknown; collapse?: boolean; default?: unknown }
+        dict?: Record<string, string>
+      }>
+    }
+    const node = (path: readonly string[]): (typeof json.refs)[string] => {
+      let current = json.refs[String(json.uid)]!
+      for (const key of path) {
+        const id = current.dict?.[key]
+        expect(id, `missing schema node ${path.join('.')}`).toBeDefined()
+        current = json.refs[id!]!
+      }
+      return current
+    }
+
+    // Pin the released renderer's rule: labelFor -> _describedText treats a
+    // description as a title only when _fitsTitle (<=18 runes, no newline).
+    // Longer English descriptions fall through to humanizeKey(key).
+    const allDescriptions: Array<{ path: string; text: string }> = []
+    for (const [id, schema] of Object.entries(json.refs)) {
+      const description = schema.meta?.description
+      if (description === undefined) continue
+      expect(typeof description, `description on ref ${id} should be a locale map`).toBe('object')
+      const dict = description as Record<string, unknown>
+      for (const locale of ['zh', 'en'] as const) {
+        const text = dict[locale]
+        expect(typeof text, `${id} ${locale} description`).toBe('string')
+        expect((text as string).trim().length, `${id} ${locale} description is empty`).toBeGreaterThan(0)
+        expect((text as string).includes('\n'), `${id} ${locale} description must be one line`).toBe(false)
+        expect(Array.from(text as string).length, `${id} ${locale} description exceeds the 18-rune label limit`)
+          .toBeLessThanOrEqual(18)
+        allDescriptions.push({ path: `${id}.${locale}`, text: text as string })
+      }
+    }
+    expect(allDescriptions.length).toBeGreaterThan(40)
+
+    expect(node(['embedding']).meta?.collapse).toBe(true)
+    expect(node(['embedding']).meta?.description).toEqual({ zh: '向量检索', en: 'Embedding' })
+    expect(node(['embedding', 'apiKeyEnv']).meta?.description).toEqual({ zh: '密钥变量', en: 'Key variable' })
+    expect(node(['embedding', 'model']).meta?.description).toEqual({ zh: '模型 ID', en: 'Model ID' })
+    expect(node(['policy']).meta?.collapse).toBe(true)
+
+    // Metadata only: the declared defaults and the memory gate are unchanged.
+    const value = Config({}) as unknown as Record<string, any>
+    expect((value.embedding.provider as Volatile).get()).toBe('local')
+    expect((value.embedding.dimensions as Volatile).get()).toBe(0)
+    expect((value.memory as unknown)).toBeUndefined()
+  })
 })

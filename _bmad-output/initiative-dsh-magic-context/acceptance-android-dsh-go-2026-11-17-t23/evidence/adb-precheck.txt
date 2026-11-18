@@ -1,0 +1,6 @@
+command=adb devices -l
+List of devices attached
+
+result=blocked: no connected ADB device
+phone_installation_attempted=false
+android_gate_executed=false

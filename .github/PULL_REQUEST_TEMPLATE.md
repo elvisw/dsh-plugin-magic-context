@@ -9,7 +9,7 @@
 ## 测试方式 / How tested
 
 - [ ] `npm run typecheck`
-- [ ] `npm test`（vitest，73 个 spec / 761 个用例）
+- [ ] `npm test`（Vitest 全量测试；实际数量以本次输出为准）
 - [ ] `npm run gate`（完整本地闸门：typecheck + suite + build + acceptance + 记忆审计 + records）
 - [ ] `npm run check:i18n`（改动了客户端文案 / 字典时必跑）
 

@@ -1,0 +1,13 @@
+{
+  "package": "@elvisw/dsh-magic-context@0.17.0",
+  "unpublishedCandidate": true,
+  "gateStage": "first-open-runtime-fix",
+  "path": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t23-candidate-first-open-fix\\elvisw-dsh-magic-context-0.17.0.tgz",
+  "bytes": 4081023,
+  "sha256": "6fa8178c71ad55f5d6e4b553940206d486d9ec012d6e9031b445814a67bb93f4",
+  "files": 71,
+  "libFilesCompared": 60,
+  "libMismatches": [],
+  "supersedesSha256": "397f7ef89b254ecd20c7728411f3ee99f0adc9e5ac563d1279f8153d25eda5d2",
+  "dshGoContractRevision": "e9d3239bee18029d48618c7514303bc7fa7bbf8f"
+}

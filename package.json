@@ -61,6 +61,49 @@
       "platform": "web"
     }
   },
+  "dshGo": {
+    "v": 1,
+    "title": {
+      "zh": "魔法上下文",
+      "en": "Magic Context"
+    },
+    "icon": "sparkle",
+    "contributes": {
+      "composer.strip": [
+        {
+          "id": "ctx-strip",
+          "icon": "chart",
+          "panel": "ctx-context"
+        }
+      ],
+      "panels": [
+        {
+          "id": "ctx-context",
+          "title": {
+            "zh": "上下文",
+            "en": "Context"
+          },
+          "icon": "chart",
+          "placement": [
+            "session.tab",
+            "features"
+          ]
+        },
+        {
+          "id": "ctx-embedding",
+          "title": {
+            "zh": "向量检索",
+            "en": "Embedding"
+          },
+          "icon": "model",
+          "placement": [
+            "session.tab",
+            "features"
+          ]
+        }
+      ]
+    }
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && node scripts/copy-client.mjs",
     "pack:dist": "node scripts/mc-pack-dist.mjs",

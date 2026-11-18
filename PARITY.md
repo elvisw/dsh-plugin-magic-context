@@ -29,6 +29,7 @@ This document records the **effective-behavior contract** between the DSH adapte
 | Decision baseline | **v0.49.55** — `v0.49.50 → v0.49.55` still not swept; `v0.49.55 → v0.49.56` reviewed with no port |
 | MC store contract | shape inherited at the v95 cutover, **own lineage since 2026-10-13** (`src/core/memory-bridge.ts:45`; `MEMORY_SCHEMA_MAX_VERSION = 95`) |
 | DeepSeek Harness | **Desktop 0.2.1-rc.1** (host paths below are relative to the DSH checkout) |
+| Android native host | **dsh-go 1.1.0** (`e9d3239bee18029d48618c7514303bc7fa7bbf8f`); limited LOCAL device gate passed 2026-11-18 for the unreleased T23 candidate; scope below |
 | Adapter | `@elvisw/dsh-magic-context` 0.17.0, own store **schema v11** (`src/core/stores.ts`) |
 
 Scope split: `docs/dsh-plugin-upgrade-followup.md` says **how** to follow an
@@ -188,6 +189,40 @@ The adapter budgets one historian run as `Math.min(600_000, timeoutMs ×
 plannedCalls + merge)` (`src/dsh/historian.ts:478`); MC keeps an independent
 budget structure (upgrade guide §5). Same user-visible outcome, different
 arithmetic.
+
+### B10. Android native presentation (dsh-go 1.1.0)
+
+The phone cannot render the browser half's `shell.overlay` or settings cards, so
+the same package declares a `dshGo` v1 manifest and registers a strip plus two
+panels inside `ctx.inject(['dshGo'], …)`. This is presentation, not a forked
+lane:
+
+- the Context panel maps the unchanged `TelemetryService.summary(sessionId?)`
+  payload the desktop pill consumes; it never recounts tokens on the phone;
+- the Embedding panel maps the unchanged `EmbeddingStatus` and calls the same
+  `models` / `probe` / `start` / `pause` / `resume` / `disarm` methods the Web
+  route uses; model IDs are copied, never written by a second settings writer;
+- native config reuses the same volatile `Config` schema, with localized
+  descriptions and collapsed groups; `memory` remains undeclared on purpose;
+- a committed `local` / `off` provider disarms through the parent-owned
+  `loader/volatile-update` listener, even with no panel open.
+
+Host-imposed consequences: keys remain environment-variable names; the host
+loads `$DSH_HOME/.env` (a plaintext local file) into `process.env`, and the
+plugin reads the named variable only to send the auth header to the configured
+provider. The agent, panels, config values, logs and evidence never receive the
+raw key. Remote probes use the host's deferred-action protocol, the schema
+form's labels come from short localized descriptions (its `labelFor` treats a
+description as a title only at ≤18 runes), and the Android device gate is
+separate from the desktop Web matrix. iOS is not claimed.
+
+The [T23 device report](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-17-t23/acceptance-report.md)
+records Android LOCAL memory write/recall, session-scoped context, native config,
+explicit simulated embedding probe/rebuild/pause/resume, and persistence across
+an engine restart. The final observed rebuild was partial (2/3), not complete.
+Real embedding vendors, Android local WASM embedding, English phone rendering,
+and mobile failure/lifecycle matrices were not tested. The candidate retains
+package version 0.17.0 but is not the published npm 0.17.0 artifact.
 
 ## C. Not ported
 

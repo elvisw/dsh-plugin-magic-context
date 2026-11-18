@@ -1,0 +1,22 @@
+Observed on Android dsh-go 1.1.0: the remote-unprobed panel rendered status and key/value rows but no action buttons.
+The registered view read controls initialized remote=false, while only a later data producer updated them.
+The first refresh can precede subscriber attachment. The view must read current local status independently.
+
+RED:
+npx vitest run tests/go-native.spec.ts -t "renders current controls before a data subscriber exists"
+Failed at tests/go-native.spec.ts:175: expected [] to equal ['models', 'probe'].
+
+FIX:
+Read current EmbeddingStatus in the view callback; derive controls through the same private mapping as the feed.
+Do not invoke models/probe/start during rendering. No changes to the host, protocol, or embedding engine.
+
+GREEN:
+npx vitest run tests/compaction-conflict.spec.ts tests/go-native.spec.ts tests/go-view.spec.ts
+3 files / 44 tests passed.
+npm test -- --maxWorkers=4
+85 files / 1044 tests passed; typecheck, i18n and build also passed.
+
+An earlier unbounded-worker full run failed two fixed-delay host initialization tests.
+Its output is retained in local/unit-test-unbounded-first-open-fix.txt; it is not omitted or claimed as passing.
+The conflict fixture uses a fixed 10 x 25ms settle. It passed the focused rerun unchanged.
+No unrelated production/test timing changes were made. Phone confirmation of the new artifact remains pending.

@@ -34,7 +34,7 @@ npm install
 | 命令 | 作用 |
 |---|---|
 | `npm run typecheck` | `tsc --noEmit`，最便宜的一步，先跑它 |
-| `npm test` | `vitest run`，当前 73 个 spec 文件 / 770 个用例 |
+| `npm test` | `vitest run` 全量测试，实际文件和用例数以输出为准 |
 | `npm run test:watch` | vitest watch 模式，开发时用 |
 | `npm run build` | `tsc -p tsconfig.build.json` + `scripts/copy-client.mjs`，产出 `lib/` |
 | `npm run check:i18n` | 校验宿主 notice 文案与客户端中英文字典一致 |
@@ -122,7 +122,7 @@ Short version — the Chinese section above is authoritative.
 - **Prerequisites**: Node.js >= 22.19 (built-in `node:sqlite`; no native modules), **npm**
   (`package-lock.json` is canonical), DSH 0.2.x.
 - **Setup**: `git clone … && npm install`. Do not regenerate the lockfile with pnpm/yarn.
-- **Commands**: `npm run typecheck`, `npm test` (vitest, 73 specs / 770 tests),
+- **Commands**: `npm run typecheck`, `npm test` (the full Vitest suite),
   `npm run build`, `npm run check:i18n`, and `npm run gate` for the full local gate.
   Run `gate` (or at least typecheck + test + build + check:i18n) before opening a PR.
 - **Conventions**:

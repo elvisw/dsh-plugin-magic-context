@@ -1,0 +1,56 @@
+{
+  "package": "@elvisw/dsh-magic-context@0.17.0",
+  "unpublishedCandidate": true,
+  "path": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t23-candidate-final\\elvisw-dsh-magic-context-0.17.0.tgz",
+  "bytes": 4080948,
+  "sha256": "397f7ef89b254ecd20c7728411f3ee99f0adc9e5ac563d1279f8153d25eda5d2",
+  "files": 71,
+  "libFilesCompared": 60,
+  "libMismatches": [],
+  "headBeforeCandidate": "4e1fa1ca01cc3772305f8b7ca36d681541e1f50a",
+  "sourceState": "reviewed uncommitted worktree; not an npm release",
+  "dshGoContractRevision": "e9d3239bee18029d48618c7514303bc7fa7bbf8f",
+  "dshGo": {
+    "v": 1,
+    "title": {
+      "zh": "魔法上下文",
+      "en": "Magic Context"
+    },
+    "icon": "sparkle",
+    "contributes": {
+      "composer.strip": [
+        {
+          "id": "ctx-strip",
+          "icon": "chart",
+          "panel": "ctx-context"
+        }
+      ],
+      "panels": [
+        {
+          "id": "ctx-context",
+          "title": {
+            "zh": "上下文",
+            "en": "Context"
+          },
+          "icon": "chart",
+          "placement": [
+            "session.tab",
+            "features"
+          ]
+        },
+        {
+          "id": "ctx-embedding",
+          "title": {
+            "zh": "向量检索",
+            "en": "Embedding"
+          },
+          "icon": "model",
+          "placement": [
+            "session.tab",
+            "features"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -82,6 +82,79 @@ export interface EmbeddingProbeResult {
   readonly error?: string
 }
 
+export interface EmbeddingCancellableOptions {
+  readonly signal?: AbortSignal
+}
+
+export interface EmbeddingProbeOptions extends EmbeddingCancellableOptions {
+  /**
+   * Internal dimension repair after `dimensions-changed`. It may run while a
+   * rebuild is armed; the user-facing probe is still refused as `busy`.
+   */
+  readonly internal?: boolean
+}
+
+export interface EmbeddingRebuildSnapshot {
+  readonly state: 'running' | 'paused' | 'complete'
+  readonly targetIdentity: string
+}
+
+/** The native panel and the HTTP lane share these action names. */
+export type EmbeddingActionName = 'models' | 'probe' | 'start' | 'pause' | 'resume'
+
+/**
+ * The authoritative action gate (T23). The browser keeps its presentation
+ * gates, but a native panel or a direct HTTP caller must not be able to bypass
+ * them: memory off, a configured-but-absent key, an unprobed target, an empty
+ * corpus and a running/paused rebuild are all refusals decided HERE.
+ *
+ * `rebuilt` is the armed rebuild state for the CURRENT target, not the
+ * presentation name: `deriveState` reports `remote-target-missing` while an
+ * authoritative rebuild is already running with zero covered rows, so using
+ * only `status.state` wrongly allowed models/probes there and made Pause say
+ * `not-running`.
+ *
+ * Returns a stable error code, or `undefined` when the action may proceed.
+ * Pure and server-importable so both the lane and its specs use one matrix.
+ */
+export function embeddingActionRefusal(
+  action: EmbeddingActionName,
+  status: EmbeddingStatus,
+  rebuilt: EmbeddingRebuildSnapshot | null = null,
+): string | undefined {
+  if (status.provider !== 'openai-compatible') return 'not-remote'
+  if (!status.memoryEnabled) return 'memory-disabled'
+  const keyMissing = status.keyEnv !== '' && !status.keyPresent
+  if (action === 'models' || action === 'probe') {
+    if (rebuilt?.state === 'running' || rebuilt?.state === 'paused') return 'busy'
+    if (status.endpoint === '') return 'endpoint-required'
+    if (action === 'probe' && status.model.trim() === '') return 'model-required'
+    if (keyMissing) return 'missing-key'
+    return undefined
+  }
+  if (action === 'start') {
+    if (status.model.trim() === '') return 'model-required'
+    if (keyMissing) return 'missing-key'
+    if (status.state === 'remote-unprobed') return 'probe-required'
+    if (rebuilt?.state === 'running') return 'already-running'
+    if (rebuilt?.state === 'paused') return 'paused'
+    if (status.state === 'remote-ready') return 'already-complete'
+    // Coverage must exist and be non-empty, but `covered` may legitimately be
+    // zero here: Start is exactly the action that begins covering the target.
+    if (status.coverage === null || status.coverage.total === 0) return 'coverage-missing'
+    // Match the Web gate: a failed probe/models call leaves the lane in
+    // `remote-error` and the user must test again before arming.
+    if (status.state !== 'remote-configured-not-started') return 'not-ready'
+    return undefined
+  }
+  if (action === 'pause') {
+    if (rebuilt?.state === 'paused') return 'already-paused'
+    return rebuilt?.state === 'running' ? undefined : 'not-running'
+  }
+  if (action === 'resume') return rebuilt?.state === 'paused' ? undefined : 'not-paused'
+  return undefined
+}
+
 export interface EmbeddingLane {
   readonly status: () => EmbeddingStatus
   readonly localEmbedder: () => LocalEmbedder | undefined
@@ -92,12 +165,16 @@ export interface EmbeddingLane {
   readonly dimensions: () => number | null
   readonly remoteQueryModelId: () => string | null
   readonly remoteWritable: () => boolean
-  readonly models: () => Promise<EmbeddingModelsResult>
-  readonly probe: () => Promise<EmbeddingProbeResult>
+  readonly models: (options?: EmbeddingCancellableOptions) => Promise<EmbeddingModelsResult>
+  readonly probe: (options?: EmbeddingProbeOptions) => Promise<EmbeddingProbeResult>
   readonly start: () => Promise<{ ok: boolean; error?: string }>
   readonly pause: () => { ok: boolean; error?: string }
   readonly resume: () => { ok: boolean; error?: string }
   readonly disarm: () => { ok: boolean; error?: string }
+  /** The authoritative armed rebuild for the current target (not display state). */
+  readonly rebuildState: () => EmbeddingRebuildSnapshot | null
+  /** The loader event handler and the native bridge use this to avoid a no-op disarm. */
+  readonly hasRebuildState: () => boolean
   readonly setRunner: (runner: (() => Promise<VectorBackfillOutcome | undefined>) | undefined) => void
   readonly embedPassages: (texts: readonly string[]) => Promise<readonly Float32Array[]>
   readonly embedQuery: (text: string, signal?: AbortSignal) => Promise<Float32Array | null>
@@ -179,7 +256,7 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
     }
   }
 
-  const cacheKey = (rem: ResolvedRemoteEmbedding): string => [
+  const cacheKeyOf = (rem: ResolvedRemoteEmbedding): string => [
     rem.endpoint,
     rem.preset,
     rem.authHeader,
@@ -188,11 +265,36 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
     keyPresent(rem, env) ? 'key' : 'nokey',
   ].join('|')
 
+  /** The cache key of an ENTRY (not of the current config). */
+  const entryKey = (entry: ProbeCacheEntry): string => [
+    entry.endpoint,
+    entry.preset,
+    entry.authHeader,
+    entry.model,
+    String(entry.dimensionsOverride),
+    entry.keyPresent ? 'key' : 'nokey',
+  ].join('|')
+
+  /** The probe target plus the in-memory key fingerprint: a completed probe
+   * belongs to exactly this tuple, never to whatever the config says later. */
+  const targetFingerprint = (): string => {
+    const cfg = resolved()
+    if (cfg.provider !== 'openai-compatible') return cfg.provider
+    let fingerprint = 'invalid-key-env'
+    try {
+      fingerprint = keyFingerprint(cfg.remote, env)
+    } catch {
+      // An invalid env-var name is its own target: never let the comparison
+      // itself throw inside a catch path.
+    }
+    return `${cacheKeyOf(cfg.remote)}|${fingerprint}`
+  }
+
   const readCache = (): ProbeCacheEntry | undefined => {
     const raw = readJsonFile<{ entries?: unknown }>(cachePath)
     if (raw === undefined || !Array.isArray(raw.entries)) return undefined
     const rem = remote()
-    const wanted = cacheKey(rem)
+    const wanted = cacheKeyOf(rem)
     for (const entry of raw.entries) {
       if (entry === null || typeof entry !== 'object') continue
       const row = entry as Record<string, unknown>
@@ -207,15 +309,7 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
         dims: row.dims,
         probedAt: typeof row.probedAt === 'number' ? row.probedAt : 0,
       }
-      const key = [
-        candidate.endpoint,
-        candidate.preset,
-        candidate.authHeader,
-        candidate.model,
-        String(candidate.dimensionsOverride),
-        candidate.keyPresent ? 'key' : 'nokey',
-      ].join('|')
-      if (key === wanted && Number.isFinite(candidate.dims) && candidate.dims > 0) return candidate
+      if (entryKey(candidate) === wanted && Number.isFinite(candidate.dims) && candidate.dims > 0) return candidate
     }
     return undefined
   }
@@ -223,8 +317,10 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
   const writeCache = (entry: ProbeCacheEntry): boolean => {
     const raw = readJsonFile<{ entries?: unknown }>(cachePath)
     const entries = raw !== undefined && Array.isArray(raw.entries) ? raw.entries : []
-    const rem = remote()
-    const key = cacheKey(rem)
+    // Evict only the entry this write replaces — derived from the CAPTURED
+    // entry, not from the config a slower request may have raced past. Using
+    // the current config here evicted the new target's cache on an old probe.
+    const key = entryKey(entry)
     const kept = entries.filter((candidate) => {
       if (candidate === null || typeof candidate !== 'object') return false
       const row = candidate as Record<string, unknown>
@@ -455,10 +551,11 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
     }
   }
 
-  const models = async (): Promise<EmbeddingModelsResult> => {
-    if (resolved().provider !== 'openai-compatible') return { ok: false, error: 'not-remote' }
+  const models = async (options: EmbeddingCancellableOptions = {}): Promise<EmbeddingModelsResult> => {
+    const refusal = embeddingActionRefusal('models', status(), armedState() ?? null)
+    if (refusal !== undefined) return { ok: false, error: refusal }
+    const captured = targetFingerprint()
     const rem = remote()
-    if (rem.model === '' && rem.endpoint === '') return { ok: false, error: 'endpoint-required' }
     try {
       if (rem.apiKeyEnv !== '' && apiKeyOf(rem, env) === undefined) {
         lastError = 'missing-key'
@@ -477,29 +574,45 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
         env,
         ...deps.fetchImpl === undefined ? {} : { fetchImpl: deps.fetchImpl },
         ...deps.lookupImpl === undefined ? {} : { lookupImpl: deps.lookupImpl },
+        ...options.signal === undefined ? {} : { signal: options.signal },
       })
+      // A probe/list that outlived its target must not cache or report its
+      // models as the current provider's. The captured fingerprint is the
+      // boundary; compare after every await.
+      if (options.signal?.aborted === true) return { ok: false, error: 'cancelled' }
+      if (targetFingerprint() !== captured) return { ok: false, error: 'target-changed' }
       modelCache = { key, at: now(), models: list.models }
       lastError = undefined
       return { ok: true, models: list.models }
     } catch (error) {
+      if (options.signal?.aborted === true) return { ok: false, error: 'cancelled' }
+      if (targetFingerprint() !== captured) return { ok: false, error: 'target-changed' }
       lastError = error instanceof Error ? error.message : 'models-failed'
       deps.logger.warn(`embedding models failed: ${lastError}`)
       return { ok: false, error: lastError }
     }
   }
 
-  const probe = async (): Promise<EmbeddingProbeResult> => {
-    if (resolved().provider !== 'openai-compatible') return { ok: false, error: 'not-remote' }
+  const probe = async (options: EmbeddingProbeOptions = {}): Promise<EmbeddingProbeResult> => {
+    // Internal dimension repair must remain allowed while a rebuild is armed;
+    // a user probe is refused as busy by the same gate.
+    const refusal = embeddingActionRefusal('probe', status(), options.internal === true ? null : armedState() ?? null)
+    if (refusal !== undefined) return { ok: false, error: refusal }
     const rem = remote()
-    if (rem.endpoint === '') return { ok: false, error: 'endpoint-required' }
-    if (rem.model === '') return { ok: false, error: 'model-required' }
+    const captured = targetFingerprint()
     try {
       const result = await probeRemoteEmbedding(rem, {
         env,
         ...deps.fetchImpl === undefined ? {} : { fetchImpl: deps.fetchImpl },
         ...deps.lookupImpl === undefined ? {} : { lookupImpl: deps.lookupImpl },
         ...deps.now === undefined ? {} : { now: deps.now },
+        ...options.signal === undefined ? {} : { signal: options.signal },
       })
+      if (options.signal?.aborted === true) return { ok: false, error: 'cancelled' }
+      // Full target/key comparison after the await: a changed model, endpoint,
+      // preset, dimension override or key must not be written under the old
+      // result, and must not report success for the new target.
+      if (targetFingerprint() !== captured) return { ok: false, error: 'target-changed' }
       if (!writeCache({
         endpoint: rem.endpoint,
         preset: rem.preset,
@@ -516,7 +629,11 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
       lastError = undefined
       return { ok: true, model: result.model, dimensions: result.dimensions, latencyMs: result.latencyMs }
     } catch (error) {
+      if (options.signal?.aborted === true) return { ok: false, error: 'cancelled' }
+      if (targetFingerprint() !== captured) return { ok: false, error: 'target-changed' }
       lastError = error instanceof Error ? error.message : 'probe-failed'
+      // `clearCache` is target-sensitive too: an old failure must not delete
+      // the cache the user just probed under a different target.
       if (lastError === 'dimensions-unsupported') clearCache()
       deps.logger.warn(`embedding probe failed: ${lastError}`)
       return { ok: false, error: lastError }
@@ -524,9 +641,9 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
   }
 
   const start = async (): Promise<{ ok: boolean; error?: string }> => {
+    const refusal = embeddingActionRefusal('start', status(), armedState() ?? null)
+    if (refusal !== undefined) return { ok: false, error: refusal }
     const rem = remote()
-    if (resolved().provider !== 'openai-compatible') return { ok: false, error: 'not-remote' }
-    if (rem.model.trim() === '') return { ok: false, error: 'model-required' }
     const entry = readCache()
     if (entry === undefined) return { ok: false, error: 'probe-required' }
     if (rem.dimensions > 0 && entry.dims !== rem.dimensions) return { ok: false, error: 'probe-required' }
@@ -558,6 +675,8 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
   }
 
   const pause = (): { ok: boolean; error?: string } => {
+    const refusal = embeddingActionRefusal('pause', status(), armedState() ?? null)
+    if (refusal !== undefined) return { ok: false, error: refusal }
     const state = armedState()
     if (state === undefined || state.state !== 'running') return { ok: false, error: 'not-running' }
     return writeState({ ...state, state: 'paused', updatedAt: now() })
@@ -566,6 +685,8 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
   }
 
   const resume = (): { ok: boolean; error?: string } => {
+    const refusal = embeddingActionRefusal('resume', status(), armedState() ?? null)
+    if (refusal !== undefined) return { ok: false, error: refusal }
     const state = armedState()
     if (state === undefined || state.state !== 'paused') return { ok: false, error: 'not-paused' }
     if (!writeState({ ...state, state: 'running', updatedAt: now() })) {
@@ -619,7 +740,7 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
     } catch (error) {
       if (error instanceof EmbeddingRemoteError && error.code === 'dimensions-changed') {
         clearCache()
-        const repaired = await probe()
+        const repaired = await probe({ internal: true })
         if (!repaired.ok) throw error
         const { rem: fresh, entry: freshEntry } = providerForEmbed()
         const batch = await embedRemoteBatch(fresh, {
@@ -781,6 +902,11 @@ export function openEmbeddingLane(deps: EmbeddingLaneDeps): EmbeddingLane {
     pause,
     resume,
     disarm,
+    rebuildState: () => {
+      const state = armedState()
+      return state === undefined ? null : { state: state.state, targetIdentity: state.targetIdentity }
+    },
+    hasRebuildState: () => readState() !== undefined,
     setRunner: (next) => { runner = next },
     embedPassages,
     embedQuery,

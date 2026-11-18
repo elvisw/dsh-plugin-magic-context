@@ -37,10 +37,13 @@
   Web/Desktop preset override.
 
 Requires **Node ≥ 22.19** and a **DSH 0.2.x host with the Web client** (the desktop app or
-a `web` profile). The quick start below uses the Web profile; the Desktop profile is not
-separately verified. The optional compaction takeover is for flat/headless compositions
-and is **not effective on DSH Web or Desktop**. The package ships compiled — install
-straight from the npm registry:
+a `web` profile). Android **dsh-go 1.1.0** uses the same package through its native bridge
+(see [Android dsh-go](#android-dsh-go-native-panels--unreleased-candidate)); that native
+surface is an unreleased candidate installed from a local `.tgz`, not from npm `latest`.
+No Flutter build and no separate package are involved. The quick start below uses the Web
+profile; the Desktop profile is not separately verified. The optional compaction takeover
+is for flat/headless compositions and is **not effective on DSH Web or Desktop**. The
+package ships compiled — install straight from the npm registry:
 
 ```bash
 dsh plugin --profile web add @elvisw/dsh-magic-context
@@ -257,6 +260,77 @@ HTTPS (plain HTTP is only expected for localhost/LAN servers). Model availabilit
 and pricing change; check the vendor's current pages, for example the
 [SiliconFlow API docs](https://api-docs.siliconflow.cn/docs/api/models-get) and
 [embeddings docs](https://api-docs.siliconflow.cn/docs/api/embeddings-post).
+
+### Android dsh-go (native panels) — unreleased candidate
+
+The same npm package also ships an optional native surface for **Android dsh-go
+1.1.0** (contract pinned to upstream commit `e9d3239bee18029d48618c7514303bc7fa7bbf8f`).
+This surface is **not published yet**: npm `latest` (`0.17.0`) has no `dshGo`
+contribution. Candidate builds are installed from the local `.tgz`, not from
+the registry. No Flutter change and no separate package are needed: the host
+bridge registers the strip and both panels only when
+`ctx.inject(['dshGo'], …)` finds the bridge; a desktop or a Web profile without
+it loads exactly as before.
+
+- **Composer strip** — the same scoped telemetry summary as the desktop pill,
+  for example `Context 62% · 3 pending`. It yields to the host while a reply is
+  generating.
+- **Context panel** — opened from a chat, it reads only that `sessionId`; opened
+  from **All features**, it says so explicitly and shows the global view. Missing
+  values render as `—`, never as `0`; the numbers are not recounted on the phone.
+- **Embedding panel** — shows the effective provider, model, probed dimensions,
+  coverage, rebuild progress and the current state. It can load model IDs (with a
+  copy action), test the connection, start a confirmed rebuild, pause and resume.
+  Saving config or opening the panel never probes or rebuilds automatically;
+  **Start rebuild** arms the target and continues in the background.
+
+Install the candidate tarball from the App's local terminal, then restart the
+engine:
+
+```bash
+dsh plugin --profile web add /absolute/path/to/elvisw-dsh-magic-context-0.17.0.tgz
+```
+
+The App's plugin settings page is the configuration entry. It uses the same
+volatile schema as the desktop form, with descriptions and collapsed groups.
+Those schema descriptions are concise labels: the released dsh-go form
+(`app/lib/ui/engine_settings/schema_fields.dart`, `labelFor` → `_fitsTitle`)
+derives a label from a description only when it is at most 18 runes and one
+line, so long English hints would fall back to humanized keys. Field details stay
+in this README. `memory` stays intentionally undeclared in that schema (native
+config does not offer a memory switch). Memory is on by default, exactly as on
+desktop; set `memory.enabled: false` in the profile patch only to opt out.
+
+Remote embedding keys remain **environment-variable names only**. On Android the
+user must add the real key to `$DSH_HOME/.env` — a plaintext local file — and
+restart the engine. The host itself loads that file into `process.env`; the
+plugin reads only the named variable, and only to send the auth header to the
+configured provider. The **agent, native panels, config values, logs and
+evidence never receive the raw key**, and the key is not sent to the App's
+credential vault either (App credentials are not injected into the plugin's
+`process.env`). Do not paste keys into a shell command: terminal history is a
+separate plaintext copy.
+
+Switching the provider back to `local` (or `off`) disarms an armed remote rebuild
+immediately, even with no panel open. Switching back to the same remote config
+requires an explicit **Start rebuild** again. Android is the only delivery gate
+for this surface; iOS is not claimed. The desktop Web matrix and the browser
+overlay are unchanged.
+
+The limited Android LOCAL gate passed on 2026-11-18: real memory-tool writes and
+recall, native panels/configuration, explicit fixture embedding actions, and
+recall after an engine restart. Embeddings used a simulated 16-dimensional
+provider, not SiliconFlow; local WASM embedding and an English phone UI were not
+tested. See the [evidence and limits](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-17-t23/acceptance-report.md).
+
+<details>
+<summary>On-device screenshots (Chinese UI; simulated embeddings)</summary>
+
+| Session context | Partial vector rebuild | Native settings |
+|---|---|---|
+| <img src="docs/img/dsh-go-context.zh.png" width="240" alt="Android session-scoped context panel in Chinese"> | <img src="docs/img/dsh-go-embedding.zh.png" width="240" alt="Android fixture rebuild at two of three memories"> | <img src="docs/img/dsh-go-config.zh.png" width="240" alt="Android native plugin configuration groups in Chinese"> |
+
+</details>
 
 ## Tools & commands
 

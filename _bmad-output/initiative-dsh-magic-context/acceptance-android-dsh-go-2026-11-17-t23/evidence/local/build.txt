@@ -1,0 +1,8 @@
+command=npm run build
+
+> @elvisw/dsh-magic-context@0.17.0 build
+> tsc -p tsconfig.build.json && node scripts/copy-client.mjs
+
+copy-client: C:\Users\elvis\Documents\dev\plugin\dsh-plugin-magic-context\src\client\index.js -> C:\Users\elvis\Documents\dev\plugin\dsh-plugin-magic-context\lib\client.js
+
+exit_code=0

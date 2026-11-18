@@ -21,9 +21,12 @@
 > 状态：**已在真实 DSH Web（web profile）日常运行**，仓内测试门禁与真实宿主证据见下文；Desktop profile 未单独验收。
 > 仓库历史与出处见 [NOTICE](NOTICE)；数据目录见[观测与运维](#观测与运维)。
 
-需要 **Node ≥ 22.19** 与带 Web 客户端的 **DSH 0.2.x 宿主**（桌面应用或 `web` profile）。下面的快速上手使用 Web
-profile；可选的压缩接管只适用于 flat/headless 组合，**在 DSH Web 和桌面端都无效**。包内自带编译产物，
-直接从 npm registry 安装：
+需要 **Node ≥ 22.19** 与带 Web 客户端的 **DSH 0.2.x 宿主**（桌面应用或 `web` profile）。
+Android **dsh-go 1.1.0** 通过宿主原生桥接使用同一个包（见
+[Android dsh-go](#android-dsh-go原生面板未发布候选)）；该原生面是未发布候选，只能从本地
+`.tgz` 安装，不能从 npm `latest` 获得。不需要 Flutter 构建，也不拆第二个包。下面的快速上手
+使用 Web profile；可选的压缩接管只适用于 flat/headless 组合，**在 DSH Web 和桌面端都无效**。
+包内自带编译产物，直接从 npm registry 安装：
 
 ```bash
 dsh plugin --profile web add @elvisw/dsh-magic-context
@@ -192,6 +195,58 @@ revision-fenced Save 提交 provider 变更。远程失败只会降级到全文�
 价格会变化，请以服务商当前页面为准，例如
 [SiliconFlow 模型接口](https://api-docs.siliconflow.cn/docs/api/models-get) 与
 [嵌入接口](https://api-docs.siliconflow.cn/docs/api/embeddings-post)。
+
+### Android dsh-go（原生面板）——未发布候选
+
+同一个 npm 包也为 **Android dsh-go 1.1.0** 提供可选的原生面（契约固定到上游提交
+`e9d3239bee18029d48618c7514303bc7fa7bbf8f`）。该原生面**尚未发布**：npm `latest`
+（`0.17.0`）不包含 `dshGo` 贡献。候选构建只能从本地 `.tgz` 安装，不能从 registry 安装。
+不需要改 Flutter，也不拆第二个包：只有 `ctx.inject(['dshGo'], …)` 找到桥接时，宿主半侧才
+注册状态条和两个面板；没有桥接的桌面端或 Web profile 照常加载。
+
+- **输入框状态条**：与桌面胶囊同源的会话遥测摘要，例如 `上下文 62% · 待回收 3`；生成回复时
+  让位给宿主。
+- **上下文面板**：从某个对话打开时严格按该 `sessionId` 取数；从「全部功能」打开时明确标注
+  全局视图。缺失值显示 `—`，不写成 `0`；手机端不重新统计 token。
+- **向量检索面板**：显示当前 provider、模型、探测维度、覆盖率、重建进度与状态；可加载模型
+  ID（带复制动作）、测试连接、确认后开始重建、暂停与继续。保存配置或打开面板都不会自动
+  探测/重建；**开始重建** 才启用目标空间，并快速转入后台。
+
+在 App 的本机终端安装候选 `.tgz`，然后重启引擎：
+
+```bash
+dsh plugin --profile web add /绝对路径/elvisw-dsh-magic-context-0.17.0.tgz
+```
+
+配置入口沿用 App 自带的插件设置页；它与桌面表单共用同一份 volatile schema，并带说明和
+折叠分组。这些 schema 说明是简短标签：已发布 dsh-go 表单
+（`app/lib/ui/engine_settings/schema_fields.dart`，`labelFor` → `_fitsTitle`）只有在说明
+不超过 18 个码点且单行时才把它当标签，过长的英文说明会退回 humanizeKey。字段细节保留在本
+README。`memory` 仍刻意不写进该 schema（原生配置不提供记忆开关）；记忆与桌面端一致
+**默认开启**，只有需要退出时才在 profile 补丁里写 `memory.enabled: false`。
+
+远程向量的密钥仍然**只保存环境变量名**。Android 用户需把真实密钥写进 `$DSH_HOME/.env`
+（本机明文文件）并重启引擎。宿主会自行把该文件载入 `process.env`；插件只读取指定的变量，
+且只用于向已配置的 provider 发送认证头。**代理、原生面板、配置值、日志与证据都不会收到
+原始密钥**；密钥也不会进入 App 的凭据库（App 凭据不会自动变成插件的 `process.env`）。
+不要把密钥粘进终端命令：命令历史是另一份明文。
+
+把 provider 切回 `local`（或 `off`）会立即解除已武装的远程重建，即使没有打开面板；再切回
+相同远程配置仍须显式点一次 **开始重建**。本轮只以 Android 为交付验收面，不声称 iOS；桌面
+Web 矩阵与浏览器浮层不变。
+
+2026-11-18 的 Android 本机最小路径已通过：真实记忆工具写入/检索、原生面板和配置、
+显式操作模拟嵌入服务，以及引擎重启后的检索。嵌入使用 16 维测试服务，**不是 SiliconFlow
+验收**；未实测本地 WASM 嵌入或手机英文界面。详见[证据与覆盖边界](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-17-t23/acceptance-report.md)。
+
+<details>
+<summary>真机截图（中文界面，模拟嵌入服务）</summary>
+
+| 本会话上下文 | 向量重建的部分进度 | 原生配置 |
+|---|---|---|
+| <img src="docs/img/dsh-go-context.zh.png" width="240" alt="Android 中文本会话上下文详情"> | <img src="docs/img/dsh-go-embedding.zh.png" width="240" alt="Android 测试向量重建覆盖二分之三"> | <img src="docs/img/dsh-go-config.zh.png" width="240" alt="Android 中文原生插件配置分组"> |
+
+</details>
 
 ## 工具与命令
 

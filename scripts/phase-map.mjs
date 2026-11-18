@@ -125,6 +125,9 @@ const PHASE_D = [
   'tests/historian-pairing.spec.ts',
   'tests/baseline-stability.spec.ts',
   'tests/report-dilution.spec.ts',
+  // T23: the optional Android dsh-go surface (pure views + bridge-shaped host half).
+  'tests/go-view.spec.ts',
+  'tests/go-native.spec.ts',
 ]
 
 export const PHASES = [
@@ -201,6 +204,8 @@ export const PHASES = [
       'profile 依赖卫生判据（tests/profile-checks.spec.ts，2026-10-11 启动失败后加）是静态检查：'
       + '只看 profile 根 node_modules/@deepseek-ai/（Node 真能解析到的位置），看不到 .pnpm 内部未提升的副本；'
       + '宿主包清单读不到时（app.asar 不可达）dependencies 一项降级为 WARN，不冒充绿灯',
+      'T23 的 dsh-go 原生面只在本机的结构化桥接 fake 上验证：真机渲染、bridge 版本协商、'
+      + 'volatile 事件时序与 App 交互由候选包的一次 Android gate 承担，不在本相位内',
     ],
   },
 ]

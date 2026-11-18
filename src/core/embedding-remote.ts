@@ -50,6 +50,8 @@ export interface RemoteCallDeps {
   readonly lookupImpl?: EmbeddingLookup
   readonly env?: NodeJS.ProcessEnv
   readonly now?: () => number
+  /** Caller cancellation (native deferred actions, query teardown). */
+  readonly signal?: AbortSignal
 }
 
 export interface RemoteModelList {
@@ -345,8 +347,12 @@ async function postWithDeadline(
   await guardHost(url.hostname, lookupImpl)
   const fetchImpl = deps.fetchImpl ?? fetch
   const controller = new AbortController()
+  let timedOut = false
   const abort = (): void => controller.abort()
-  const timer = setTimeout(abort, Math.max(1, timeoutMs))
+  const timer = setTimeout(() => {
+    timedOut = true
+    abort()
+  }, Math.max(1, timeoutMs))
   let settled = false
   const done = (): void => {
     if (settled) return
@@ -374,7 +380,8 @@ async function postWithDeadline(
   } catch (error) {
     done()
     if (error instanceof EmbeddingRemoteError) throw error
-    throw new EmbeddingRemoteError(controller.signal.aborted ? 'timeout' : 'network')
+    if (signal?.aborted === true) throw new EmbeddingRemoteError('cancelled')
+    throw new EmbeddingRemoteError(timedOut ? 'timeout' : 'network')
   }
 }
 
@@ -403,7 +410,19 @@ export async function listRemoteModels(
   const path = remote.preset === 'siliconflow' ? '/models?sub_type=embedding' : '/models'
   const fetchImpl = deps.fetchImpl ?? fetch
   const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), remote.timeoutMs)
+  let timedOut = false
+  const onAbort = (): void => controller.abort()
+  const timer = setTimeout(() => {
+    timedOut = true
+    controller.abort()
+  }, remote.timeoutMs)
+  if (deps.signal !== undefined) {
+    if (deps.signal.aborted) {
+      clearTimeout(timer)
+      throw new EmbeddingRemoteError('cancelled')
+    }
+    deps.signal.addEventListener('abort', onAbort, { once: true })
+  }
   try {
     const response = await fetchImpl(`${remote.endpoint.replace(/\/+$/, '')}${path}`, {
       method: 'GET',
@@ -426,9 +445,11 @@ export async function listRemoteModels(
     return { models, endpoint: remote.endpoint }
   } catch (error) {
     if (error instanceof EmbeddingRemoteError) throw error
-    throw new EmbeddingRemoteError(controller.signal.aborted ? 'timeout' : 'network')
+    if (deps.signal?.aborted === true) throw new EmbeddingRemoteError('cancelled')
+    throw new EmbeddingRemoteError(timedOut ? 'timeout' : 'network')
   } finally {
     clearTimeout(timer)
+    deps.signal?.removeEventListener('abort', onAbort)
   }
 }
 
@@ -445,7 +466,7 @@ export async function probeRemoteEmbedding(
     model: remote.model,
     input: ['dimension probe'],
     ...remote.dimensions > 0 ? { dimensions: remote.dimensions } : {},
-  }, remote.timeoutMs)
+  }, remote.timeoutMs, deps.signal)
   const { response } = deadline
   if (!response.ok) {
     deadline.done()
