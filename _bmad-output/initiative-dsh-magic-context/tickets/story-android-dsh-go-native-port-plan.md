@@ -3,7 +3,7 @@ title: Android dsh-go native telemetry and embedding controls
 type: feature
 ticket: "23"
 created: 2026-11-17
-status: built
+status: done
 baseline_revision: bf9c62fa694884fb4390b1564fc2f0cf138174ae
 route: full
 route_source: auto
