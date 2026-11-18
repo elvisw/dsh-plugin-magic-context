@@ -134,13 +134,11 @@ Expect `{"hybrid":[1,2],"semantic":[3],"fts":[]}` and a `sanitize` attempt
 same `porter unicode61` tokenizer and the same query builders on the fixture text the seed wrote, so
 it is a genuine re-derivation rather than a restatement.
 
-To re-verify the static artifacts still on the phone:
-
-```sh
-node phone-t25-artifacts.cjs
-```
-
-Expect `status: verified` with `sha256Match`/`sha512Match` true for all four files.
+Optional, and only while step 9 has not yet removed the pushed files: `node phone-t25-artifacts.cjs` on
+the device would re-hash the four files still under `/sdcard/Download/dsh-mc-t25` and print a
+device-side hex listing. **This was not done for the committed evidence.** The files were deleted by
+step 9 before the packet was written, so the committed `evidence/phone-artifacts.json` is a PC-side
+hash of the pre-push staging copies instead; see its `method`/`provenance` fields.
 
 ## 8. Collect evidence
 

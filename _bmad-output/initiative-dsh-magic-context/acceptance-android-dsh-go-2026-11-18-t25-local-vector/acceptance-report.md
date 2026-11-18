@@ -61,19 +61,24 @@ re-reads the copy, recomputes its SHA-256 and throws `ASSET_MISMATCH_<name>` on 
 the run could not have reached `status: installed` with a mismatched file. It does not record the hex
 digest, though, so on its own a reviewer cannot compare against the pin.
 
-`evidence/phone-artifacts.json` closes that gap. The four files were pulled off the device with
-`adb` and hashed on the PC, giving measured values to compare against the pinned constants:
+`evidence/phone-artifacts.json` records the measured hex digests, but read it with the right
+provenance: **those four files were hashed on the PC from the copies staged before the push, not read
+back off the device.** The record states this in its `method` and `provenance` fields. So the file
+establishes that the bytes sent to the phone matched the pinned constants. It does not establish what
+arrived on the phone — that half rests on the install script's own re-read and its recorded byte
+counts, described in the paragraph above. Neither half is a device-side hex listing, and this packet
+contains no such listing.
 
-| File | bytes | SHA-256 (measured) | matches pin |
+| File | bytes | SHA-256 (PC-side, pre-push copy) | matches pin |
 |---|---|---|---|
 | `model.onnx` | 90,387,606 | `759c3cd2…469c46e` | yes |
 | `tokenizer.json` | 711,661 | `da0e7993…d2c62a0` | yes |
 | `tokenizer_config.json` | 366 | `9261e7d7…6172ab3` | yes |
 | tarball | 4,087,402 | `0ab7f516…852aa30` | yes, and sha512 = `dist.integrity` |
 
-Full digests are in that file; `allOk: true`. This is a hash of what sat on `/sdcard`, which is the
-same set the install copied into `…/data/models/` before hashing it there, so it is an independent
-re-measurement of the same bytes, not a copy of the pin.
+`allOk: true`. Read it as one half of the claim: the PC-side hashes show the source matched the pins.
+The other half is the install script's device-side re-read described above — `status: installed` could
+not have been reached with a mismatched copy.
 
 The backfill produced 384-dim vectors, which is only possible if the real ONNX model ran. The
 observer dump (`evidence/phone-after-backfill.json`, boot rows 2–8) shows no asset-download line, but
@@ -193,10 +198,15 @@ an observation, not as an explanation.
 - The rendered tool text, which was operator testimony, corroborated by the journal and by the FTS
   re-derivation described in Requirement 5.
 - The exact contents of the pre-restart profile patch, which is described only by its SHA-256.
+- Device-side hex digests of the pushed artifacts. The pushed copies were deleted by step 9 before the
+  packet was written, and the install script records only booleans plus byte counts. The hex digests in
+  `evidence/phone-artifacts.json` are PC-side measurements of the pre-push staging copies.
 
 `phone-t25-artifacts.cjs` was written for the device's App terminal and is kept in the packet for
-reproduction; the committed `evidence/phone-artifacts.json` was produced by pulling the same four
-files with `adb` and hashing them on the PC, because `adb shell` has no `node`.
+reproduction, **but it was never run on the device.** The pushed copies were deleted at the end of the
+run (`rm -rf /sdcard/Download/dsh-mc-t25`, step 9 of `REPRODUCE.md`), so the committed
+`evidence/phone-artifacts.json` cannot come from them — it is the PC-side hash of the pre-push staging
+copies, as its `method` and `provenance` fields say.
 
 ## Defects found in the product
 

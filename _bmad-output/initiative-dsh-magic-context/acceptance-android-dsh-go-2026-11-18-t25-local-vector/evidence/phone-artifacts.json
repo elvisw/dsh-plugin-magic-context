@@ -1,5 +1,5 @@
 {
-  "method": "files pulled from /sdcard/Download/dsh-mc-t25 on the device with adb, then hashed on the PC; the comparison targets are the constants pinned in src/core/embedding-local.ts and the registry metadata",
+  "method": "the four files were hashed on the PC from the same copies staged before the adb push (pre-push staging copies, not files read back off the device); the comparison targets are the constants pinned in src/core/embedding-local.ts and the registry metadata",
   "allOk": true,
   "files": [
     {
@@ -36,5 +36,11 @@
       "sha512Match": true,
       "ok": true
     }
-  ]
+  ],
+  "provenance": {
+    "hashedOn": "PC",
+    "source": "pre-push staging copies",
+    "deviceSideCheck": "phone-t25-install.cjs copies each asset into .../data/models/, re-reads it, recomputes SHA-256 and throws ASSET_MISMATCH_<name> on any difference; phone-install.json records status=installed plus the three byte counts, but no device-side hex digests",
+    "deviceSideHexDigestsInThisPacket": false
+  }
 }

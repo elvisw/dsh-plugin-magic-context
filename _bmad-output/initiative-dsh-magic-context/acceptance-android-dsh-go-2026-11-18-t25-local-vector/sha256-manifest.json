@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "acceptance-report.md",
-      "bytes": 13243,
-      "sha256": "9c9f647b97ed8701dd4d26ebe7b84d2d734840df54ea09d104fc3538eaeedc2c"
+      "bytes": 14154,
+      "sha256": "8f0ed74ed1f65a4d8a3aee2a1178560b01c4a93c1d14ec39268f97a83342819c"
     },
     {
       "path": "evidence/out-fts-rows.txt",
@@ -39,8 +39,8 @@
     },
     {
       "path": "evidence/phone-artifacts.json",
-      "bytes": 1303,
-      "sha256": "40ce598aa41997ac8f8f46dde15bc40016f2556f88003a7a4dc491efd3362818"
+      "bytes": 1766,
+      "sha256": "3807b473478abe78a3065bdef8b18845b0b93d3fe79ba09b3829a7e0c7b461d9"
     },
     {
       "path": "evidence/phone-install.json",
@@ -119,8 +119,8 @@
     },
     {
       "path": "REPRODUCE.md",
-      "bytes": 7033,
-      "sha256": "d19c5f1cc7fda2e3d6acb91dfe83773d32383a21cdcac9b6a263b94b9582b9cf"
+      "bytes": 7336,
+      "sha256": "f2c55c3f11b22cee44f1c2b798184a85a67ab6965c4304744cc69a6da9287411"
     }
   ]
 }
