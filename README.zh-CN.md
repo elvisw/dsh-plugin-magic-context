@@ -8,511 +8,234 @@
 
 > [English](README.md) | **简体中文**
 
-> 跑过长会话的人都认得这些症状：上个会话弄明白的项目细节，这个会话全忘光，同一个坑再踩
-> 一遍；上下文被几十条工具输出撑爆；一压缩，cache 前缀全失效、贵的部分重来一遍。
->
-> [Magic Context](https://github.com/cortexkit/magic-context) 的回答：**知识应该沉淀，上下文
-> 应该被管理**。会话中提炼的事实沉淀为项目记忆——跨会话复用、全文+本地向量混合检索、经人工
-> 审批的机器/组织共享域；同时上下文本身被当作资产经营——工具输出打标回收、需要时原样恢复，
-> 被消化的历史变成四层摘要而不是消失。本插件把这套能力完整接到 **DeepSeek Harness（DSH）**：
-> 以 bundle 形态装进 profile，出现在 GUI"插件"页，在运行中的应用里即时开始工作。
->
-> 上游跟进已核到 **v0.49.30**（适配器对齐面 0 变动）· 宿主 **0.2.2-rc.1** 实测运行正常 ·
-> 状态：**已在真实 DSH Web（web profile）日常运行**，仓内测试门禁与真实宿主证据见下文；Desktop profile 未单独验收。
-> 仓库历史与出处见 [NOTICE](NOTICE)；数据目录见[观测与运维](#观测与运维)。
+跑过长会话的人大概都遇过这几件事：上个会话弄明白的项目细节，这个会话全忘光，同一个坑再踩一遍；上下文被几十条工具输出撑爆；一压缩，缓存前缀全失效，贵的那部分重来一遍。
 
-需要 **Node ≥ 22.19** 与带 Web 客户端的 **DSH 0.2.x 宿主**（桌面应用或 `web` profile）。
-从 `0.18.0` 起，Android **dsh-go 1.1.0** 可通过原生桥接使用同一个 npm 包（见
-[Android dsh-go](#android-dsh-go原生面板)）。不需要 Flutter 构建，也不拆第二个包。下面的快速上手
-使用 Web profile；可选的压缩接管只适用于 flat/headless 组合，**在 DSH Web 和桌面端都无效**。
-包内自带编译产物，直接从 npm registry 安装：
+[Magic Context](https://github.com/cortexkit/magic-context) 处理的就是这两件事：让知识沉淀下来，让上下文被管起来。
+
+会话里提炼出的事实存成项目记忆，跨会话可用。检索走全文加本地向量，两条通道一起给结果。需要共享时走人工审批的机器域和组织域。上下文这边，工具输出可以打标签回收，要用时把原文取回；被消化的历史收成摘要，而不是直接丢掉。
+
+本插件把这套能力接到 **DeepSeek Harness（DSH）** 上。以 bundle 形式装进 profile，在运行中的应用里直接开始工作。
+
+上游跟进已核到 v0.49.30。宿主 0.2.2-rc.1 上实测运行正常，日常在 Web profile 里用着。仓库历史和出处见 [NOTICE](NOTICE)。
+## 装
+
+需要 Node ≥ 22.19，以及带 Web 客户端的 DSH 0.2.x 宿主（桌面应用或 `web` profile）。
 
 ```bash
 dsh plugin --profile web add @elvisw/dsh-magic-context
 ```
 
-> 包名说明：npm 上无 scope 的 `dsh-magic-context` 是另一位维护者的独立实现，不是本 fork，也不是它的上游；本 fork 只以 `@elvisw/dsh-magic-context` 发布。所有安装命令都必须保留 `@elvisw/` scope。
+包内自带编译产物，装完重启 profile 就能用。该 profile 开了 HMR 的话会热加载。
 
-`0.18.0` 新增 Android 原生面板与桌面远程向量密钥录入（Android 原生密钥字段仍受 dsh-go bridge 限制）；`0.17.0` 新增手动 `/ctx-wrapup` 历史压缩，`0.16.0` 新增远程向量检索并重做 Web 设置页。当前包名由 `0.13.0` 引入。如果之前装过 `@elvisw/dsh-plugin-magic-context`（0.12.x）或上游
-`dsh-plugin-magic-context`，请先移除旧包：三者使用同一个 loader row id（`magic-context-dsh`），不支持共装；共装时只会加载一行，设置页可能消失。
-从 0.12.x 升级还需要一次性迁移 profile patch 的包名，见
-[docs/independent-package-release.md](docs/independent-package-release.md)；迁移脚本随 npm tarball 与 hand-out 一起发布。
+从 0.18.0 起，Android 的 dsh-go 1.1.0 用同一个包，见 [Android 一节](#android)。不需要 Flutter 构建，也没有第二个包。
 
-五分钟上手见[快速上手](#快速上手)；配置、工具与架构见下文各节。
+> **包名。** npm 上无 scope 的 `dsh-magic-context` 是另一位维护者的独立实现，不是这个 fork，也不是它的上游。本 fork 只以 `@elvisw/dsh-magic-context` 发布，安装命令里的 `@elvisw/` 不能省。
 
-## 快速上手
+如果你之前装过 `@elvisw/dsh-plugin-magic-context`（0.12.x）或上游的 `dsh-plugin-magic-context`，先卸掉旧包。三者用同一个 loader row id（`magic-context-dsh`），装在一起只会加载一行，设置页可能直接消失。0.12.x 升级还要迁移一次 profile patch 里的包名，脚本和步骤在 [独立包名与发布](docs/independent-package-release.md)。
 
-装好后重启 profile；如果该 profile 启用了 HMR，则会热加载。下一个会话里你会看到：
+可选的压缩接管只对 flat/headless 组合有效，**在 Web 和桌面端不起作用**，原因见[配置参考](docs/configuration.md)。
 
-- 工具结果带上 `§N§` 标签；overlay 里出现**遥测徽标**，显示实时上下文占用，点开是
-  宿主 token 构成、估算消息构成、中英分区与操作记录。
-- 「设置 → Magic Context」顶层设置页可编辑卡片列出的 volatile 选项。GUI「插件」页的旧卡片已移除；宿主若没有 `settings.section` 槽位，将不再有 Magic Context 配置入口。
-- `ctx_reduce` / `ctx_expand` / `ctx_memory` 三个工具已注册；项目记忆**默认开启**——
-  historian 提炼的事实跨会话沉淀，注入模型读取的位置。
+## 装完会看到什么
 
-一次对话里的上下文回收（真实参数名）：
+- 工具结果带上 `§N§` 标签。overlay 里多一个遥测徽标，显示实时上下文占用，点开是 token 构成和操作记录。
+- 设置里多一个顶层「Magic Context」页。旧的「插件」页卡片已经移除，宿主如果没有 `settings.section` 槽位，就没有配置入口了。
+- 三个工具注册好了：`ctx_reduce`、`ctx_expand`、`ctx_memory`。项目记忆**默认开着**，historian 提炼的事实会自动沉淀。
+
+一次真实的回收长这样：
 
 ```text
-你：   ctx_reduce {"drop": "4-7"}      # 四条工具输出不再值这些 token
+你：   ctx_reduce {"drop": "4-7"}
 模型： 已入队 4 项——落地为占位符，发生在下一个回收带
-……稍后的对话流里……
+
+…… 稍后 ……
 [dropped §4§] [dropped §5§] [dropped §6§] [dropped §7§]
-你：   ctx_expand {"tag": "5"}         # 等等，§5 里原来是什么？
+
+你：   ctx_expand {"tag": "5"}
 结果： §5 的原文作为新工具结果返回；§5 占位符保持 dropped
 ```
 
-唯一需要主动开启的是压缩接管（`registerCompactionEngine`，默认关，见[配置](#配置)）；在 DSH 0.2.2-rc.1 中，它只对
-根 compaction-basic 行已停用的 flat/headless profile 生效，不适用于 Web 或桌面端的 agent preset。
-
 ## 它做什么
 
-记忆在前、上下文管理在后——前五行为记忆系统，后五行为上下文管理（完整设计见[架构](#架构)与
-[PARITY.md](PARITY.md)）：
-
-| 能力 | 机制 |
+| 能力 | 说明 |
 |---|---|
-| **项目记忆（自有语料库）** | 插件自有 SQLite 库（`memories.db`），与上游硬分家——存储不共享、无兼容义务；项目身份自动推导（`git:<root-sha>` / `dir:<hash>`）；注入 m[0] 基线并由 `ctx_memory` 读写；historian facts 自动提升；FTS 0.7 / 向量 0.3 混合检索 |
-| **本地向量车道** | MiniLM 向量经内置 onnxruntime-web WASM 本地运行——无原生编译、无 API key；模型下载钉 revision+sha256（双镜像回退），缓存于插件数据目录；检索候选内嵌 + 维护 tick 回填；任何失败 fail-open 降级全文检索 |
-| **m[0]/m[1] 记忆基线** | 合成 notice 节点承载冻结基线 + 增量车道（`<new-memories>` / `<memory-updates>` / `<user-profile>`）；每类增量独立水位，**新记忆永不重建缓存前缀**；内容未变则零变更 |
-| **全局域 + 用户画像** | 机器 / 组织域：**入队可自动化**（维护 tick、LLM 域分类），**发布永远是人**（审批卡、`/ctx-global approve`）；用户画像 render / collect / review 三开关分离 |
-| **维护 tick（MC dreamer 切片）** | 每 30 min：TTL 归档 → 批量 LLM verify（keep / update / archive）→ 向量回填 → 全域候选入队 |
-| **可逆上下文回收** | 工具结果打 `§N§` 标签；`ctx_reduce` **只入队**——落地发生在 execute 带内，成为引用原文的 `[dropped §N§]` 占位符；`ctx_expand` 把原文作为新结果返回，占位符保持 dropped。绝不自发打断缓存前缀 |
-| **压力调度** | 持久 usage（含 cache 读写）→ 压力分 → execute/defer 决策（65% 阈值、5 min cache TTL、85% 强制带）；`CONTEXT_WINDOW_EXCEEDED` 触发紧急回收 + retry；reduce-guidance 分级引导 |
-| **historian（带外摘要）** | 一次 LLM 调用重放真前缀（保 KV cache）→ 四层摘要 p1–p4 + facts/events，**只写 store 不动线缆**；execute 带内发布为 `[compacted §C<n>§]` 范围替换；`/ctx-recomp` 原地重做已压缩历史 |
-| **压缩接缝** | `registerCompactionEngine` 可接管 `ctx.compaction`（真实 `compaction/start\|summary\|replace\|end` 协议）；**默认关**，宿主 compaction-basic（根或 preset）保持原位。**仅 flat/headless**：在 DSH 0.2.2-rc.1 中，DSH Web 与桌面端的 agent preset 自己挂载压缩引擎，本开关不会替换 preset 引擎 |
-| **界面集成** | 顶层「设置 → Magic Context」页（旧「插件」页卡片已移除；volatile 字段保存即生效）；catalog-backed Historian 推理强度选择器；`shell.overlay` 遥测徽标 + 胶囊面板（宿主 token 构成、估算消息构成、中英分区、操作记录）；`session-notice` 会话流提示；卡片文案与面板分区/空状态中英即时切换（操作明细保持记录原文） |
+| **项目记忆** | 插件自己的 SQLite 库，与上游存储完全分开。项目身份从 git 根自动推导。模型通过 `ctx_memory` 读写。 |
+| **本地向量检索** | 包内 WASM 跑 MiniLM，不需要 API key，不需要编译原生模块。模型按哈希钉住，缓存在插件数据目录。失败就退回全文检索，不影响使用。 |
+| **记忆基线** | 冻结的基线加增量车道。新记忆不会触发缓存前缀重建；内容没变就零变更。 |
+| **全局域与用户画像** | 入队可以自动，**发布永远要人点**。画像的读取、收集、评审三个开关分开。 |
+| **维护 tick** | 每 30 分钟跑一轮：TTL 归档、批量核验、向量回填、全域候选入队。 |
+| **可逆回收** | 工具结果打标签，`ctx_reduce` 只入队，真正落地发生在下一个回收带。`ctx_expand` 把原文当新结果返回。 |
+| **压力调度** | 按持久化的 usage 算压力，65% 阈值、85% 强制带。窗口超限时触发紧急回收并重试。 |
+| **历史摘要** | historian 重放真前缀（保住 KV cache），产出四层摘要和事实。只写存储不动线缆，发布发生在 execute 带内。 |
+| **压缩接缝** | 可以接管宿主的压缩引擎，但只对 flat/headless 有效，默认关闭。 |
+| **设置页** | 顶层分区页，五个分区加四项摘要。字段中英文即时切换。 |
+| **遥测面板** | token 构成条、估算消息构成、历史摘要/记忆/队列/维护分区。宿主没上报的值显示 `—`，不写成 0。 |
 
-## 安装
+## 工具
 
-从 npm registry 安装（推荐；包内自带编译产物 `lib/` 与 `vendor/`，无需本地构建）：
+挂载时注册。`registerTools: false` 可以关掉。
 
-```bash
-dsh plugin --profile web add @elvisw/dsh-magic-context
-```
+| 工具 | 作用 |
+|---|---|
+| `ctx_reduce` | 解析范围语法（`"3-5,8"`）并入队。落地是有代价的缓存失效，所以要等回收带，不会自己触发。 |
+| `ctx_expand` | 按 `tag`、`message`（会话内日志事件 seq），或一段 `start`/`end` 区间取回原文。取回的是新的工具结果，旧占位符和旧 tag 保持原样。 |
+| `ctx_memory` | 记忆的读写口。读用 `list` / `search` / `get`，写用 `write` / `update` / `archive` / `merge`。另有 `review_global` 处理共享域审批，`promote` 走单条即时入池。每个动作都能带 `project` 操作别的项目。 |
 
-registry 版本由 tag 推送自动发布（带 npm provenance 签名），发布流程见
-[CONTRIBUTING](CONTRIBUTING.md) 的「发布」一节。
+## 命令
 
-### 从源码安装（开发）
+`registerStatusCommand: false` 关掉整个命令面。
 
-```bash
-git clone https://github.com/elvisw/dsh-plugin-magic-context
-cd dsh-plugin-magic-context
-npm install
-npm run build     # tsc → lib/（多文件 ESM）+ 浏览器半侧拷贝为 lib/client.js
-dsh plugin --profile web add <本仓库路径>   # 应用自带 CLI；spec 可以是 Git 地址、本地路径或 registry 版本
-```
+| 命令 | 作用 |
+|---|---|
+| `/ctx-status` | 压力、决策、回收台账、compartments、基线、策略 |
+| `/ctx-flush` | 把已排队的回收标记为下一次消息强制落地。不启动 historian，不调模型。 |
+| `/ctx-recomp` | 重跑 historian，原地替换存储里的摘要 |
+| `/ctx-wrapup` | 为下一次 pre-step 排队一次手动压缩，保留最新 N 条（默认 20） |
+| `/ctx-profile` | 用户画像候选的确认、拒绝、退休 |
+| `/ctx-global` | 全域成员管理与候选审批 |
 
-安装做三件事：profile 里 `pnpm add`（本地路径用 `link:`）、把包名追加进 `dsh.profile.bundles`、
-由 loader 组合。profile 启用 HMR 时改动立即热生效（无需重启，运行中的会话即刻开始打标签）；
-否则刷新页面或重启 profile。
+对照 cortexkit v0.49.59，`/ctx-dream` 和 `/ctx-embed` 没有注册。前者需要完整的 dreamer 任务集，后者的目标是会话历史、记忆和 git 提交，而本适配器的向量只覆盖记忆。逐条矩阵见 [PARITY.md](PARITY.md#command-surface-upstream-commands-checked-at-v04959)。
 
-- `peerDependencies` 里的 `@deepseek-ai/*` 全部声明为 `"*"`——兼容性预检对任何 DSH 0.2.x 放行；
-  运行时真正 import 的宿主包同时列为**精确版本 dependencies**（随包解析，link: 开发安装由本仓
-  自己的 node_modules 提供）。
-- 运行环境需要 **Node ≥ 22.19**：自有存储基于内建的 `node:sqlite`，无原生模块；CLI/`web` profile
-  运行在 Node 上，桌面应用提供 Electron RunAsNode 运行时，两者都需要 Node 22.19 所带的 `node:sqlite`。
-- **工具构造器解析**：`config.defineTool`（宿主注入，树内 glue 用）优先，其次动态
-  `import('@deepseek-ai/dsh-tools')`（硬依赖，任何安装形态物理可解析）。二者皆不可用时**响亮
-  失败**（挂载中止）——ctx_* 工具是回收标记的唯一入口，不能静默半启动。
-- 两种加载模式：**patch-overlay / 文件 URL**（开发期，overlay yml + `config.defineTool` 注入）
-  与 **profile 安装**（生产，包名行 + link 依赖）。生产路径即上面的 `dsh plugin add`。
+## 设置
 
-卸载 / 停用：GUI 插件页停用该 bundle（写 profile patch 的 `disabled`），或
-`dsh plugin --profile web remove @elvisw/dsh-magic-context`。
+设置页在**设置 → Magic Context**。五个分区、四项摘要、跳转行和高级折叠，宿主底栏上方有一条纯文本状态条。旧「插件」页卡片已移除。
 
-## 配置
+![设置页上半部](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-top.zh.png)
 
-改配置有两种途径，语义不同（详见[设置界面契约](docs/dsh-plugin-settings-ui-contract.md)）：
+![设置页下半部](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-bottom.zh.png)
 
-- **GUI 设置页（设置 → Magic Context）**：暴露 `policy.*`（含 historian 生成上限 / 上限抬升 / 超时）、
-  `historianEnabled`、`registerCompactionEngine`、`journal.*`、`maintenance.*`、`historian.*` 等 volatile 字段。
-  两组 provider/model **路由钉**（maintenance 的 verify、historian 的生成）优先从**宿主已配置的模型目录**
-  （客户端 `remote.session.modelCatalog()`）下拉选择，并带「Auto = 跟随会话路由」与清空；宿主不提供该
-  RPC 的 shell 退回纯文本输入（值仍可手填）。`embedding` 模型由插件自己的 `/mc-embedding/models`
-  端点加载，不依赖宿主 catalog。Historian 推理强度字段使用同一个 catalog-backed 选择器：
-  `默认`、路由模型实际公布的 id，以及用于旧值/未知值的 `自定义`；Auto 路由保留文本输入。写回走 settings
-  链路：非 volatile 键原样保留、未触碰的字段不会 materialize 进覆盖行——**保存即生效**
-  （host 侧读取一律经 `liveNumber/liveBoolean/liveString/liveRoute` 在决策点现取）。
-- **手写 profile 覆盖行**：`config` 是**整体替换**包内 patch 的 config，**不是深合并**。只写
-  `memory:` 会把 `registerCompactionEngine: false` 抹掉。手写覆盖时必须把要保留的键一并写出。
+![向量检索分区](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-embedding.zh.png)
 
-bundle 自带配置只有一行：`registerCompactionEngine: false`——保守首装，宿主压缩引擎保持原位
-（记忆、回收与 historian 均默认开启）。
+常用几项：
 
-> **适用范围：** GUI 开关只控制根 `ctx.compaction` seam。在 DSH 0.2.2-rc.1 里，Web 与桌面端的
-> agent 运行在各自的 agent preset 内，每个 preset 自己挂载 `compaction` group；profile patch 顶层的
-> `compaction-basic` 行不会替换 preset 内的引擎。因此本开关**只适用于 flat/headless 宿主**，
-> 且必须先停用该组合的根 `compaction-basic` 行。上游 0.11.2 的两行接管方案也有同样的 flat-only
-> 限制；已反馈到
-> [上游 issue #16](https://github.com/wk544863858/dsh-plugin-magic-context/issues/16)。
+- **记忆开关。** 默认开。要退出就在 profile 补丁里写 `memory.enabled: false`。
+- **Historian 路由。** 可以钉死 provider 和 model，也可以留空跟随会话。推理强度从宿主模型列表里选。
+- **向量检索。** 默认本地 MiniLM。要换 OpenAI 兼容的嵌入 API（比如硅基流动），在这个分区选预设、加载模型、测试连接。密钥只写不读，存进宿主凭据库，卡片只显示「已配置 / 未配置」。
 
-对于没有 preset 自有压缩引擎的 flat/headless profile，可以手写 profile 覆盖行接管压缩：
+完整键表和默认值在[配置参考](docs/configuration.md)。手写 profile 覆盖行时注意 `config` 是**整体替换**，不是深合并。
 
-```yaml
-- id: magic-context-dsh
-  name: '@elvisw/dsh-magic-context'
-  config:
-    registerCompactionEngine: true
-- id: compaction-basic
-  name: '@deepseek-ai/dsh-compaction-basic'
-  disabled: true          # 仅 flat/headless；不是 DSH Web/桌面端 preset 的覆盖行
-```
+### 遥测徽标
 
-配置参考（完整类型见 [src/dsh/config.ts](src/dsh/config.ts)；除注明外均为 profile 覆盖行可写）：
+composer 上方有个胶囊，收起时显示实时压力、token 对、Historian 状态和回收队列（`H` / `Q<n>`）。窗口窄的时候切成图标。
 
-| 组 | 键（默认值） | 说明 |
-|---|---|---|
-| 总开关 | `enabled` (true) · `registerTools` (true) · `registerStatusCommand` (true) · `sessionNotices` (true) · `reduceGuidance` (true) · `searchHint` (true) | `enabled: false` 保持加载但完全惰性；`sessionNotices` 控制会话流内的管理提示行 |
-| 压缩接缝 | `registerCompactionEngine`（代码默认可解析即挂；**bundle 随发 false**）· `compactionBase`（宿主注入基类） | 仅 flat/headless 根 seam；该组合下接管需同时禁用根 compaction-basic。在 DSH 0.2.2-rc.1 中，Web 与桌面端的 agent preset 自带压缩引擎，本键不会替换 preset 引擎。pre-step 每步 `reconcileEngine` 动态挂/卸 |
-| 压力策略 | `policy.*`：`executeThreshold` (65) · `forceThreshold` (85) · `ttlMs` (5 min) · `assumedContextWindow` (256k) · `protectedToolResults` (8) · `historianTimeoutMs` (120 s) · `historianMaxTokens` (8192，低于会被抬到 8192) · `historianMaxTokensCeiling` (32768) · `baselineTokens` (2000) · `memoryBudgetTokens` (8000) · `memoryLimit` (40) · `forceWaitReadyMs` (0) | 阈值在下一个决策点生效（含 `/ctx-status` 与 compaction engine 路径）。`compartmentGuardMode` / `compartmentEntrantTokens`（发布护栏）已退役，不再是可配置项 |
-| historian | `historianEnabled` (true) · `historian.{provider, model}`（**成对钉住**；空 = 跟随会话最后路由）· `historian.reasoningEffort`（可选，留空 = 模型默认） | 带外摘要与 `/compact` 摘要的生成路由；GUI 设置页有「Historian provider/model」下拉（Auto = 跟随会话，推荐）和 catalog-backed 推理强度选择器：`默认`、路由模型实际公布的 id，以及用于旧值/未知值的 `自定义`。Auto 路由下仍保留文本输入（此时不知道会话模型）；未公布的 id 不会被静默改写或夹取。provider 级 `OUTPUT_TOKEN_LIMIT` 空补全会走正常的预算翻倍重试。verify 之外的唯一 LLM 消耗点 |
-| 项目记忆 | `memory.{}`：`enabled`（true，0.9.0 起默认开启——`enabled: false` 退出）· `dbPath` · `project`（省略用会话 cwd）· `domainProjects` · `shareCategories` · `autoPromote` (true) · `write` (true) | `write: false` 让 `ctx_memory` 退回只读 |
-| 检索 / 向量 | `memory.embedBackfill` (true，查询侧内嵌补分) · `memory.vectorBackfill` (true，维护 tick 回填) · `memory.vectorBackfillLimit` (24 行/tick) | 向量车道任何失败 fail-open 降级 FTS |
-| 远程向量（T20/T24） | `embedding.provider` (local) · `embedding.preset` (siliconflow) · `embedding.endpoint` · `embedding.authHeader` (authorization) · `embedding.model` · `embedding.apiKeyEnv` (凭据引用；默认 `SILICONFLOW_API_KEY`；空 = 未绑定，SiliconFlow 预设仍使用默认环境变量，自定义预设即无认证) · `embedding.apiKey` (空；role secret，仅宿主桥接) · `embedding.dimensions` (0 = 探测) · `embedding.queryInstruction` · `embedding.documentPrefix` · `embedding.timeoutMs` (8000) · `embedding.queryTimeoutMs` (2500) · `embedding.batchSize` (16) | 可选的 OpenAI 兼容远程向量空间。模型 ID 从 `/models` 获取或手动填写，维度靠探测、不写死。整个 block 按设计只作为用户级配置；当前宿主未暴露 project/tier 来源，因此运行时尚未强制拒绝项目级覆盖。密钥按字面 `apiKey` → `apiKeyEnv` 下的宿主凭据库 → 环境变量解析；设置页只写凭据库，只显示已配置/未配置与来源，不回显值。远程空间带 `embedding-remote:` 命名。保存远程配置不消耗额度；`开始重建` 才启用目标空间，支持暂停/继续，回滚走普通 Save。远程检索不与本地向量混用，失败降级 FTS |
-| S(t) 衰减 | `memory.scoring.{enabled (true)，alpha (0.4)，beta (0.2)，archiveThreshold (2)，halfLives}` | 统计恒收集；分发缺省 enabled=true 接管排序；profile-JSON only，不进设置卡片 |
-| 全局域 | `memory.global.machine.{enabled (true)，excludeProjects，autoStage (true)}` · `memory.global.user.{render (true)，collect (true)，review (true)}` · `memory.global.review.batchLimit` (50) | 分发缺省全开：入队可自动化（≤3 条/pass、≥10 候选待审时暂停），**发布永远是人**；LLM 分类失败 fail-closed |
-| 用户画像 | `memory.global.user.{render (true)，collect (false)，review (false)}` | 读 / 收集 / 评审三半独立；写共享库的两个半边默认关 |
-| 域解析 | `memory.domains.source` (`adapter` \| `contract`) | `contract` 是对照用的回退杆，不是支持终态 |
-| 维护 | `maintenance.{enabled，intervalMs (30 min)，verifyProvider，verifyModel}` | LLM verify 需显式路由（未钉则跟随主对话最新路线）；GUI 卡片可从宿主模型目录下拉选择，Auto = 不钉（两组 pin 同款选择器） |
-| 观测 | `journal.{enabled (true)，level (info)，retentionDays (30)，mirror (true)}` | level/mirror 对下一条写入生效；挂载时就是 off 的 journal 运行中打开需重启；`retentionDays` 有 `min(1)` 下限防误剪。§N§ tag 行没有按天 TTL；本适配器当前没有自动的消息/会话删除路径 |
+点开是面板：
 
-### 远程向量（可选）
+- **宿主 token 构成条**，分成系统 / 工具定义 / 消息三段，旁边是绝对 token 对（`11.8k / 1M`）。
+- **估算的消息构成**，分成对话 / 工具调用 / 压缩段 / 记忆 / 用户画像 / 其他。没有估算来源的行直接不显示，不写成 0。
+- **历史摘要、记忆、回收队列、维护、可回收、警告**几个分区。
+- **实时操作记录**，最多 12 条，相邻同类折叠成 `×N`。
 
-默认仍然使用本地 MiniLM 向量。若要使用 OpenAI 兼容的嵌入 API（例如硅基流动），打开
-**设置 → Magic Context → 向量检索**，选择 `OpenAI 兼容 API`，加载模型列表、选择模型，
-然后点 **测试连接**。插件会用一条短文本探测维度；模型 ID 和维度都不会写死在代码里。
-API Key 直接在同一个分区录入：字段只写不读，插件把值保存到 `apiKeyEnv` 指向的宿主凭据库，
-卡片只显示**已配置 / 未配置**与来源。密钥值不会进入 profile patch、日志、数据库或浏览器状态。
-已有的 `$DSH_HOME/.env` 或进程环境变量仍作为回退；保存的凭据优先于环境变量。
-默认引用名是 `SILICONFLOW_API_KEY`；在自定义预设下清空引用名就是无认证（保存空值），
-SiliconFlow 预设下清空仍会回退到默认环境变量。宿主没有提供凭据库时，
-字段禁用，环境变量回退保持不变。
+打开时焦点锁在面板内。点外面、按 Esc、窗口失焦或点关闭按钮都能关，焦点会还回胶囊。面板底部有 `/ctx-status` 入口。
 
-点 **开始重建向量** 才会启用目标空间并开始有界回填。在此之前，远程检索只走全文检索，
-保存配置也不会发送 embedding 请求。旧本地向量会保留；**回滚到本地** 通过普通的
-revision-fenced Save 提交 provider 变更。远程失败只会降级到全文检索，绝不会回退到本地
-向量。远程空间带独立命名，覆盖率按 `active` + `permanent` 记忆计算。
+## Android
 
-这是一个 local-first 插件：启用远程端点后，你检索的记忆文本会发送到该端点。请使用可信
-或自建端点，并优先使用 HTTPS（只有 localhost/局域网服务器才适合明文 HTTP）。模型可用性与
-价格会变化，请以服务商当前页面为准，例如
-[SiliconFlow 模型接口](https://api-docs.siliconflow.cn/docs/api/models-get) 与
-[嵌入接口](https://api-docs.siliconflow.cn/docs/api/embeddings-post)。
+同一个 npm 包为 **Android dsh-go 1.1.0** 提供原生面板。选**手机本机引擎**。
 
-### Android dsh-go（原生面板）
-
-同一个 npm 包也为 **Android dsh-go 1.1.0** 提供可选的原生面（契约固定到上游提交
-`e9d3239bee18029d48618c7514303bc7fa7bbf8f`）。选择**手机本机引擎**。市场条目可用后，
-打开「插件市场 → 适配 DSH Go」，搜索 `@elvisw/dsh-magic-context`。如果还搜不到，
-可在 App 的本机终端安装准确版本，然后重启引擎：
+市场条目可用后，在「插件市场 → 适配 DSH Go」里搜 `@elvisw/dsh-magic-context`。搜不到就在 App 的本机终端装准确版本，然后重启引擎：
 
 ```bash
 dsh plugin --profile web add @elvisw/dsh-magic-context@0.18.0
 ```
 
-不需要改 Flutter，也不拆第二个包：只有 `ctx.inject(['dshGo'], …)` 找到桥接时，宿主半侧才
-注册状态条和两个面板；没有桥接的桌面端或 Web profile 照常加载。
+不用改 Flutter，也不用拆第二个包。只有找到桥接时，宿主半侧才注册状态条和面板；没有桥接的桌面端和 Web profile 照常加载。
 
-- **输入框状态条**：与桌面胶囊同源的会话遥测摘要，例如 `上下文 62% · 待回收 3`；生成回复时
-  让位给宿主。
-- **上下文面板**：从某个对话打开时严格按该 `sessionId` 取数；从「全部功能」打开时明确标注
-  全局视图。缺失值显示 `—`，不写成 `0`；手机端不重新统计 token。
-- **向量检索面板**：显示当前 provider、模型、探测维度、覆盖率、重建进度与状态；可加载模型
-  ID（带复制动作）、测试连接、确认后开始重建、暂停与继续。保存配置或打开面板都不会自动
-  探测/重建；**开始重建** 才启用目标空间，并快速转入后台。
+- **输入框状态条。** 和桌面胶囊同源的摘要，比如 `上下文 62% · 待回收 3`。生成回复时让位给宿主。
+- **上下文面板。** 从对话打开时严格按那个会话取数，从「全部功能」打开时标成全局视图。缺失值显示 `—`，不写成 0。手机端不重新统计 token。
+- **向量检索面板。** 显示 provider、模型、探测维度、覆盖率、重建进度。可以加载模型 ID、测试连接、确认后开始重建、暂停继续。打开面板或保存配置都不会自动探测或重建。
 
-配置入口沿用 App 自带的插件设置页；它与桌面表单共用同一份 volatile schema，并带说明和
-折叠分组。这些 schema 说明是简短标签：已发布 dsh-go 表单
-（`app/lib/ui/engine_settings/schema_fields.dart`，`labelFor` → `_fitsTitle`）只有在说明
-不超过 18 个码点且单行时才把它当标签，过长的英文说明会退回 humanizeKey。字段细节保留在本
-README。`memory` 仍刻意不写进该 schema（原生配置不提供记忆开关）；记忆与桌面端一致
-**默认开启**，只有需要退出时才在 profile 补丁里写 `memory.enabled: false`。
+![本会话上下文](docs/img/dsh-go-context.zh.png)
+![向量重建进度](docs/img/dsh-go-embedding.zh.png)
+![原生配置](docs/img/dsh-go-config.zh.png)
 
-远程向量的密钥在桌面设置页录入；原生设置页也声明了同一组 role，但 dsh-go 1.1.0 的
-bridge 尚未把同级 `role('credential-ref')`（`apiKeyEnv`）传给 App，所以原生密钥输入框
-当前显示为未绑定并禁用（[issue #1493](https://github.com/ccch1mneyyy/dsh-Go/issues/1493)）。
-在 bridge 修复前，手机端可以直接使用本地 MiniLM（无需密钥）；需要远程向量时，请在
-桌面/Web 设置页保存凭据。已有的 `.env` / 进程环境变量仍作为 headless 或旧宿主的回退；
-保存的凭据优先。**代理、原生面板、配置值、日志与证据都不会收到原始密钥**。
+远程向量的密钥在桌面或 Web 设置页录入。原生设置页声明了同一组 role，但 dsh-go 1.1.0 的桥接还没把凭据引用传给 App，所以原生密钥输入框现在是禁用状态，见 [dsh-go issue #1493](https://github.com/ccch1mneyyy/dsh-Go/issues/1493)。在这之前手机端用本地 MiniLM 就行，不需要密钥。
 
-把 provider 切回 `local`（或 `off`）会立即解除已武装的远程重建，即使没有打开面板；再切回
-相同远程配置仍须显式点一次 **开始重建**。本轮只以 Android 为交付验收面，不声称 iOS；桌面
-Web 矩阵与浏览器浮层不变。
+### 手机上验到哪一步
 
-2026-11-18 的 Android 本机最小路径在**预发布的 T23 候选**上通过：真实记忆工具写入/检索、原生面板和配置、
-显式操作模拟嵌入服务，以及引擎重启后的检索。嵌入使用 16 维测试服务，**不是 SiliconFlow
-验收**。0.18.0 在这些原生视图上新增了 T24 凭据处理，真机 gate 早于这批改动，因此不等于已对
-发布的 Android 字节做过完整端到端验证。随包的本地 MiniLM WASM 原语已在同一台手机上单独验证（384 维，两条中英文文本 891 ms，
-见 [T24 真机探针](_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-18-t24-credential-key/android/phone-local-embed.json)）。
-T25 随后在同一台设备上用**已发布的 0.18.0 包**把这条链路打通：三条记忆由维护 tick 回填成 384
-维向量，`ctx_memory action=search` 对同时命中关键词与向量的行返回 `match=hybrid`、对只有向量能
-找回的行返回 `match=semantic`，引擎重启后共享空间门禁报告 `parity: 1`。详见
-[T25 报告](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-18-t25-local-vector/acceptance-report.md)。
-手机英文界面、iOS、长历史吞吐与中文关键词检索仍未实测。
+2026-11-18 用**已发布的 0.18.0 包**在同一台手机上跑通了完整的本地向量链路：三条记忆由维护 tick 回填成 384 维向量，`ctx_memory action=search` 对同时命中关键词和向量的行返回 `match=hybrid`，对只有向量能找回的行返回 `match=semantic`，引擎重启后共享空间门禁报告 `parity: 1`。详见 [T25 报告](_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-18-t25-local-vector/acceptance-report.md)。
 
-<details>
-<summary>真机截图（中文界面，模拟嵌入服务）</summary>
+更早的 T23 验收跑在预发布候选上，覆盖真实记忆写入检索、原生面板、配置和重启后检索，嵌入用的是 16 维模拟服务，不是 SiliconFlow。
 
-| 本会话上下文 | 向量重建的部分进度 | 原生配置 |
-|---|---|---|
-| <img src="docs/img/dsh-go-context.zh.png" width="240" alt="Android 中文本会话上下文详情"> | <img src="docs/img/dsh-go-embedding.zh.png" width="240" alt="Android 测试向量重建覆盖二分之三"> | <img src="docs/img/dsh-go-config.zh.png" width="240" alt="Android 中文原生插件配置分组"> |
+还没测的：手机英文界面、iOS、长历史吞吐、真实厂商流量、中文关键词检索。
 
-</details>
+## 已知限制
 
-## 工具与命令
+- historian 的触发和预算按字符数除以 4 估算，不是真 tokenizer。检索向量那条路用的是真 tokenizer。
+- 四层摘要在一次调用内产完，上游是跨调用累积。
+- 中文关键词检索很弱。FTS5 的 `porter unicode61` 不切分中文，整段连续汉字算一个 token，所以中文查询基本只能靠向量通道。这是上游既有行为。
+- `review_global` 的审批卡必须由 agent 在轮内触发。headless 没有应答器时会明确拒绝，不改任何状态。
+- 挂载时就是关的 journal，运行中打开需要重启。
+- 桌面端不持久化宿主 logger，可观测性完全靠插件自己记的 journal。
+- 压缩接管只对 flat/headless 有效。
 
-Agent 工具（挂载时注册；`registerTools: false` 可关）：
+## 观测与排障
 
-| 工具 | 作用 |
-|---|---|
-| `ctx_reduce` | 解析 MC 范围语法（`"3-5,8"`）→ **只入队**；落地是有价 bust，等待回收带，绝不自发 |
-| `ctx_expand` | 按 `tag`（单个，正式）、已弃用的 `tags` 别名，或 `message`（当前会话中已 drop 项的 DSH 日志事件 seq；不接受 `[compacted §C…§]` 节点），从持久化日志**把原文作为新结果返回**；旧占位符及其已用尽的 tag 保持原位。tag 是主入口，message 是备用定位，不是通用历史浏览器。`start`/`end`（闭区间 DSH 日志事件 seq，不是原版消息序号）只读转录 `user`/`assistant`/`tool/result`，不要求先 drop；`verbose` 每 part 预览 200 字符，共享 15k token 预算。`[compacted §C…§]` 记录被排除；读取原始历史时 `[dropped §N§]` 按字面保留，若范围内可读事件都仍在 live surface 上则返回一句 live-surface 说明而不重复内容；原始事件已不存在时不承诺恢复 |
-| `ctx_memory` | 共享记忆库的读写口。读：`list` / `search` / `get`；写：`write` / `update` / `archive` / `merge`（与 MC 相同的规范化内容哈希、mutation log 与 authority 守卫全程在环）；`review_global`（把机器/组织域候选逐条弹成审批卡，批准才发布）；`promote`（单条项目记忆即时入池弹卡，无复现门槛的人工通道）。每个动作可带 `project`（绝对路径或 git 根）操作其它项目 |
+宿主不持久化 `ctx.logger` 的输出，所以插件把决策和结果写进自己的 journal：
 
-斜杠命令（`registerStatusCommand: false` 关闭整个斜杠命令面）：
+- `~/.local/share/cortexkit/magic-context-dsh-poc/dsh-magic-context.db` 的 `journal` 表，结构化，可以 SQL 查
+- 同目录的 `activity.log`，单行文本镜像，超过 5 MiB 自动轮转
 
-| 命令 | 作用 |
-|---|---|
-| `/ctx-status` | 压力 / 决策 / 回收台账 / compartments / 基线 / 策略 |
-| `/ctx-flush` | 把当前会话已排队的 `ctx_reduce` 标记为下一次消息强制落地；回执 requested / already marked / pendingNext；队列为空时显示本会话最近一次落地的数量与时间；不启动 historian、recomp、摘要或模型调用 |
-| `/ctx-recomp` `all` \| `last:<n>` \| `<startSeq>-<endSeq>` | 重跑 historian 并**原地替换** store 里的摘要（区间按 compartment 吸附、绝不切分；身份与已落地占位符不变，下一趟 pre-step 重建基线） |
-| `/ctx-wrapup` `[messages_to_keep]` | 为下一次 pre-step 排队一次手动 historian；保留最新 N 条 eligible surface 条目（默认 20），先落地 pending drop，再走正常 execute lane 发布，该趟跳过 force band |
-| `/ctx-profile` `confirm` \| `reject` \| `retire` | 用户画像候选的确认 / 拒绝 / 退休；晋升进共享 profile 在下一维护 tick 发生 |
-| `/ctx-global` `add` \| `remove` \| `status` \| `promote` \| `approve` \| `reject` | 全域成员管理与候选审批的人工通道（与审批卡走同一 gate→publish 路径，`source_type=user`） |
-
-对照 cortexkit `v0.49.59`，`/ctx-dream`、`/ctx-embed` 没有注册：
-`/ctx-dream` 需要完整的 dreamer 任务集；`/ctx-embed` 面向会话历史 compartments、
-记忆和 git commits，而本适配器的嵌入控制只覆盖记忆向量通道。`/ctx-wrapup` 已支持，
-作为对仍在线上的历史排队一次手动压缩。逐条矩阵见
-[PARITY.md](PARITY.md#command-surface-upstream-commands-checked-at-v04959)。
-
-## 界面与遥测
-
-两个界面能力都靠同一个浏览器半侧（`src/client/index.js`，构建时原样拷为 `lib/client.js`）：
-
-- **「设置 → Magic Context」顶层设置页**：五个分区、四项摘要、跳转行、高级折叠，以及宿主底栏上方的纯文本状态条；上文 volatile 配置项的可视化编辑，保存即生效（见“配置”一节）。旧「插件」页卡片已移除；宿主若没有 `settings.section` 槽位，将不再有配置入口。
-
-  ![DSH 设置页顶层的 Magic Context 页面——四项摘要、五分区跳转行与两列常规分区](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-top.zh.png)
-
-  ![Magic Context 设置页下半部——维护与诊断、宿主底栏状态与保存按钮](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-bottom.zh.png)
-
-  ![向量检索分区——向量提供方、服务预设、接口地址、模型 ID、API Key 引用名、只写密钥输入框与当前本地/远程状态](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-embedding.zh.png)
-
-- **`shell.overlay` 遥测徽标 + 胶囊面板**：收起态保留实时压力、token 对、Historian 状态与回收队列
-  （`H` / `Q<n>`）；composer 变窄时切换成图标宽度变体。面板里是：
-  - **100% 宿主 token 构成条**，分成 **系统 / 工具定义 / 消息**，旁边是绝对 token 对
-    （`11.8k / 1M`）；
-  - **估算的消息构成**（对话 / 工具调用 / 压缩段 / 记忆 / 用户画像 / 其他）；没有估算来源的行
-    直接省略，不显示成 `0`；
-  - **历史摘要 / 记忆 / 回收队列 / 维护 / 可回收 / 警告**分区；宿主没上报的值用
-    `—` / `空` / `尚未运行`，不伪造 0；
-  - **实时操作记录**（最多 12 条，相邻同操作折叠 `×N`）：🧠 写入记忆 · 🔎 加载记忆 ·
-    🗑️ 回收入队 · 🧭 恢复原文 · ✂️ 压缩上下文 · 🗑️ 丢弃上下文 · 🧭 归档已存 ·
-    🧰 维护巡检 · ⚠️ 失败。
-
-  打开时焦点锁在面板内；点击面板/徽标之外、按 Esc、窗口失焦或点关闭按钮即关闭，并把焦点
-  还给徽标。底部提供 `/ctx-status`，用于查看完整诊断。
-
-  ![遥测胶囊面板 v2——宿主 token 构成（系统/工具定义/消息）、估算的消息构成、历史摘要/记忆/回收队列/维护/可回收/警告分区与实时操作记录](https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/telemetry-panel-v2.png)
-- 数据来自本插件自己的 HTTP 路由（harness 的 Remote 事件白名单是编译期常量，第三方 bundle 的
-  受支持口子是 `ctx.webServer.register`）：
-  - `GET /mc-telemetry/summary` — 一次性快照（适配器 / 项目 / 健康状态 + 最近事件）；v2
-    payload 增加 `adapterVersion`、`policy`、`contextBreakdown`、`messageComposition`、
-    `historian`、`queue`、`memory` 与 `surface`。
-  - `GET /mc-telemetry/events` — SSE 实时尾
-- **安全**：路由仅 loopback、无 token 鉴权，因此**只输出计数与单行摘要**——不含消息正文、
-  不含文件路径、不含凭据。
-- **多语言**：浏览器侧 `magic-context` 命名空间字典（zh/en）；卡片的全部自有文案——字段 label/hint、路由占位、摘要、表单框架与选择器说明——跟随「设置 → 通用」即时切换、无需刷新。遥测徽标与面板共用同一份字典，分区名、标签和空状态文案也随宿主语言切换。宿主 catalog 的值（provider/model/effort 名称）保持宿主原文。写进会话流、模型可见的 `session-notice` 保持英文常量（避免同会话中途换语言造成 cached prefix 抖动）。机制见[设置界面契约](docs/dsh-plugin-settings-ui-contract.md)与[主界面遥测契约（历史）](docs/dsh-plugin-ui-telemetry-contract.md)。
-
-## 观测与运维
-
-Desktop **不持久化 `ctx.logger` 输出**，所以插件把决策与结果写进自己的 append-only journal：
-
-- `~/.local/share/cortexkit/magic-context-dsh-poc/dsh-magic-context.db` → `journal` 表
-  （结构化，可 SQL 查询）
-- `~/.local/share/cortexkit/magic-context-dsh-poc/activity.log` → 单行文本镜像
-  （`tail`/grep 友好，超 5 MiB 自动轮转为 `.1`）
-
-**隐私**：消息正文**永不记录**。只记计数、标签号、token 估算、原因与耗时；字符串截断 300 字符、
-数组上限 20 项（`redactData` 兜底）。
-
-journal 覆盖（按组）：生命周期（`boot` / `config-drift` / `session-first-seen`）；回收与压缩
-（`pass` —— execute 全量记录，含 **tokensBefore→After 净回收证明** 与 defer 原因、`drop-landed`、
-`compartment-published`/`-recomp`/`-guard`、`force-path`、`emergency-reclaim`、`context-pressure`）；
-historian 与基线（`historian` —— 含 start/done/failed 配对与 LLM 用量、`baseline`、`session-notice`、
-`wire-repair`）；记忆（`memory-recall` / `profile-recall` / `memory-promote` / `memory-stats` /
-`vector-lane` / `search-hint` / `project-drift` / `global-review`）；维护（`maintenance`）；
-工具与引擎（`tool-call` / `engine` / `error` —— 所有 fail-open 吞掉的异常）。
-
-### 运维命令
+消息正文永远不记录。只记计数、标签号、token 估算、原因和耗时。字符串截断 300 字符，数组上限 20 项。
 
 ```sh
-npm test               # vitest run
-npm run gate           # 全门禁：typecheck + 套件 + build + 验收 + 记忆审计 + records
-npm run doctor         # 只读健康报告：corpus fence / 事件车道心跳 / 悬空 run / embedding 车道
-
-node scripts/mc-report.mjs --days 7 [--json] [--session <id>]   # journal 复盘报告
-node scripts/mc-acceptance.mjs [--hours 72 --json]              # 语料库验收，失败 exit 1
-npm run phase          # 阶段门：跑某一阶段的套件并给出裁决与盲区
+npm run doctor         # 只读健康报告
+node scripts/mc-report.mjs --days 7 [--json]   # journal 复盘
+node scripts/mc-acceptance.mjs [--hours 72]    # 语料库验收，失败退出 1
 ```
 
-复盘报告含：库与状态、按 kind/按天计数、关键指标（execute/defer 比例与原因分布、净回收、
-historian 失败率与耗时、紧急回收、工具调用）、最近事件明细与健康提示（"窗口内没有 execute
-pass" / "historian 从未运行" / "存在 error" / "journal 最新事件超过 24h" 等）。
+复盘报告里有 execute/defer 比例、净回收、historian 失败率和耗时、紧急回收、工具调用统计，以及「窗口内没有 execute pass」这类健康提示。
 
-`scripts/` 专项工具：检索权重 A/B（`retrieval-eval`）、S(t) 排序离线 diff（`score-diff`）、
-稀释与 fold 仪表（`report-dilution`）、域命中统计（`report-hits`）、historian 失败分类
-（`report-classify`）、向量模型预检（`embedder-precheck`）、参考种子重建（`npm run build:seeds`）、
-面板分类校验（`mc-records-check`）、多语言检查（`npm run check:i18n`）。
+完整 journal 分类见[架构文档](docs/architecture.md)。
 
-## 架构
+## 文档
 
-```
-src/
-  dsh/     # ← 全包唯一允许 import @deepseek-ai/* 的目录（防腐层）。
-           #    事件名、payload 形状、surface 词汇表全部收拢在这里，
-           #    DSH 升级只改这个目录。
-  core/    # 中性逻辑与存储：policy/stores/journal/memory-*/domains。
-           #    不依赖 DSH。
-  client/  # 浏览器半侧（设置卡片 + 遥测徽标），纯 JS，
-           #    构建时原样拷为 lib/client.js。
-  index.ts # 组合根：boot probe（fail-loud）→ 接缝监听 → 中性存储。
-```
+**当前维护的**
 
-隔离纪律（DSH 处于 developer preview，破坏性变更预期之内；这就是本包的结构策略）：
+- [配置参考](docs/configuration.md)——全部配置键、默认值和远程向量细节
+- [架构与内部结构](docs/architecture.md)——目录、双库、存储与检索引擎、组件地图
+- [设置界面契约](docs/dsh-plugin-settings-ui-contract.md)（英文）——设置页的宿主接缝与文案规则
+- [运维手册](docs/dsh-plugin-operations-runbook-2026-10-10.md)——日常检查、阈值、故障处置
+- [升级跟随](docs/dsh-plugin-upgrade-followup.md)——重新对齐流程，§1 是历史基线
+- [独立包名与发布](docs/independent-package-release.md)——包身份、迁移、发布流程
+- [PARITY.md](PARITY.md)——与上游 OpenCode / Pi 适配器的逐条对齐
 
-- **能力探测 fail-loud**：`probeDshSeams` 启动期校验接缝可用性，不可用即抛错，绝不静默假装
-  在管理上下文；
-- **版本 fence**：适配器库 schema 链当前 **v11**（前向迁移，库比新即拒开）；**自有语料库**
-  `memories.db` 版本线继承 **v95** 起点（2026-10-13 切换，续号归本插件；`MEMORY_SCHEMA_MAX_VERSION`
-  守自有迁移线），超出即读路径拒绝、写路径转只读并响亮告警；
-- **测试即探针**：集成测试同时是接缝契约测试——DSH 升级后重跑，破坏点精确定位到 `src/dsh/`；
-- **双库结构**：
-  - **适配器库** `~/.local/share/cortexkit/magic-context-dsh-poc/dsh-magic-context.db`
-    （tags / usage / pending_drops / compartments / baseline / domains / queues / journal…，
-    schema v11）；
-  - **自有语料库** `~/.local/share/cortexkit/magic-context-dsh-poc/memories.db`
-    （项目记忆 + 全域行 + 画像 + 向量；legacy `context.db` 已封存不读——2026-10-13 硬切换，
-    与上游只做功能跟进、无存储兼容义务）；
-- **上游对齐账本**：与 OpenCode / Pi 两个上游适配器的逐条有效行为对齐与刻意差异见
-  [PARITY.md](PARITY.md)（aligned / host-imposed / intentional 三种裁决，每条引用宿主文件）。
+**历史资料**
 
-## 文档索引
+以下只作溯源保留，不是当前保证，每份文件开头都有自己的状态说明和证据基线：
 
-链接文档随本仓库维护；多数为中文，少数为英文。
+[记忆写契约](docs/dsh-plugin-memory-write-contract.md)、[记忆提升契约](docs/dsh-plugin-memory-promotion-contract.md)、[记忆验收](docs/dsh-plugin-memory-acceptance.md)、[配置界面契约](docs/dsh-plugin-config-ui-contract.md)、[主界面遥测契约](docs/dsh-plugin-ui-telemetry-contract.md)、[hooks 覆盖](docs/dsh-plugin-hooks-coverage-2026-10-08.md)、[移植可行性](docs/dsh-port-feasibility-2026-10-06.md)、[平台接管与全域](docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md)、[dreamer 向量决策](docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md)、[记忆机制清单](docs/memory-mechanisms-inventory-2026-10-09.md)、[上游源码分析](docs/upstream-source-analysis-2026-10-09.md)、[全域来源调查](docs/global-domain-source-finding-2026-10-10.md)、[记忆架构挑战](docs/memory-architecture-challenge-2026-10-10.md)、[域命名决定](docs/domain-naming-work-global-2026-10-25.md)、[测试设计审计](docs/dsh-plugin-test-design-audit-2026-10-07.md)、[surface 写审计](docs/dsh-surface-write-audit-2026-10-09.md)、[本地向量运行时审计](docs/local-embedding-runtime-audit-2026-10-15.md)、[上游跟进 v0.46.0 → v0.49.30](docs/upstream-followup-2026-10-30.md)、[/ctx-flush 研究交接](docs/research-handoff-ctx-flush-2026-11-11.md)。
 
-### 本 fork 维护的当前文档
+## 参与
 
-- [Magic Context 设置界面契约](docs/dsh-plugin-settings-ui-contract.md)（英文）——当前顶层设置页、
-  中英文案与 catalog-backed effort 选择器。
-- [运维手册](docs/dsh-plugin-operations-runbook-2026-10-10.md)——每日/每周检查、阈值、故障处置与备份命令。
-- [升级跟随](docs/dsh-plugin-upgrade-followup.md)——当前重新对齐流程；§1 是 v0.49.30 历史基线，
-  **不**代表已经完成 v0.49.55 parity。
-- [独立包名与发布](docs/independent-package-release.md)——`@elvisw/dsh-magic-context` 的包身份、迁移与发布流程。
+- [CONTRIBUTING.md](CONTRIBUTING.md)：环境、代码约定、PR 流程
+- [SECURITY.md](SECURITY.md)：安全问题走私密通道
+- [CHANGELOG.md](CHANGELOG.md)：变更记录
 
-### 历史研究与上游快照
-
-以下文档仅作溯源保留，**不是当前保证**；每份文件标题后都有自己的 `> Status:` 与证据基线。
-
-**历史契约**
-
-- [记忆写契约](docs/dsh-plugin-memory-write-contract.md)——混合的 2026-10 存储快照；
-  当前语料库是 `memories.db`，§8 authority 已属历史。
-- [记忆提升契约](docs/dsh-plugin-memory-promotion-contract.md)——上游提升机制研究。
-- [记忆验收](docs/dsh-plugin-memory-acceptance.md)——2026-10 证据（v6/v94 时期）。
-- [配置界面契约](docs/dsh-plugin-config-ui-contract.md)——历史文档；插件相关结论已由当前设置界面契约取代。
-- [主界面遥测契约](docs/dsh-plugin-ui-telemetry-contract.md)——历史宿主接缝分析。
-- [hooks 覆盖（2026-10-08）](docs/dsh-plugin-hooks-coverage-2026-10-08.md)——历史覆盖审计。
-
-**设计决策**
-
-- [移植可行性（接缝地图）](docs/dsh-port-feasibility-2026-10-06.md)
-- [平台接管与全域](docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md)
-- [dreamer 向量决策](docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md)
-- [记忆机制清单](docs/memory-mechanisms-inventory-2026-10-09.md)
-- [上游源码分析](docs/upstream-source-analysis-2026-10-09.md)
-- [全域来源调查](docs/global-domain-source-finding-2026-10-10.md)
-- [记忆架构挑战](docs/memory-architecture-challenge-2026-10-10.md)
-- [域命名决定（2026-10-25）](docs/domain-naming-work-global-2026-10-25.md)
-
-**复盘与审计**
-
-- [测试设计审计](docs/dsh-plugin-test-design-audit-2026-10-07.md)
-- [surface 写审计](docs/dsh-surface-write-audit-2026-10-09.md)
-- [本地向量运行时审计](docs/local-embedding-runtime-audit-2026-10-15.md)
-
-**报告**
-
-- [dreamer token 用量](docs/reports/dreamer-token-usage.md)
-- [记忆方案对比](docs/reports/memory-solutions-comparison.md)
-
-**上游交接**
-
-- [上游跟进 v0.46.0 → v0.49.30](docs/upstream-followup-2026-10-30.md)
-- [/ctx-flush 研究交接（0.11.1）](docs/research-handoff-ctx-flush-2026-11-11.md)
-
-## 已知边界
-
-- historian 的触发与预算用 **chars/4 估算**，不是真 tokenizer（检索向量的分词是真
-  tokenizer）；四层摘要在**一次调用**内产出（MC 是跨调用累积）；
-- `review_global` 审批卡必须由 agent 轮内触发；headless 无审答器时明确拒绝、零状态变更；
-- 挂载时就是 off 的 journal，运行中打开需要重启（其余 journal / 阈值改动均即时生效）；
-- Desktop 不持久化 harness logger——可观测性完全由自记 journal 承担。
-
-## 贡献
-
-- 贡献指南：[CONTRIBUTING.md](CONTRIBUTING.md)（环境、代码约定、PR 流程）
-- 安全漏洞请走私密报告通道：[SECURITY.md](SECURITY.md)
-- 行为准则：[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-- 变更记录：[CHANGELOG.md](CHANGELOG.md)
-
-本仓库以 npm 为唯一包管理器（`package-lock.json` 为准），CI 在 Node 22.x / 24.x 上跑
-typecheck → test → build → check:i18n。
+本仓库以 npm 为唯一包管理器，以 `package-lock.json` 为准。CI 在 Node 22.x 和 24.x 上跑 typecheck、测试、构建和 i18n 检查。
 
 ## 出处与许可
 
-### 与上游 DSH 适配器的差异
+### 和上游 DSH 适配器的差异
 
-本仓库是 [`wk544863858/dsh-plugin-magic-context`](https://github.com/wk544863858/dsh-plugin-magic-context)
-（npm 包 `dsh-plugin-magic-context`）的 fork。上游最后一个公开发布是 `dsh-plugin-magic-context@0.11.2`
-（2026-11-11）；本 fork 自 `0.12.0` 到 `0.12.3` 以 `@elvisw/dsh-plugin-magic-context` 发布，
-`0.13.0` 起以 **`@elvisw/dsh-magic-context`** 发布；版本与 tag 归本 fork。
-上游仓库和上游 npm 包仍由原维护者维护，本 fork 不修改它们。
+本仓库是 [`wk544863858/dsh-plugin-magic-context`](https://github.com/wk544863858/dsh-plugin-magic-context)（npm `dsh-plugin-magic-context`）的 fork。上游最后一个公开发布是 `dsh-plugin-magic-context@0.11.2`（2026-11-11）。本 fork 从 `0.12.0` 到 `0.12.3` 以 `@elvisw/dsh-plugin-magic-context` 发布，`0.13.0` 起改成 `@elvisw/dsh-magic-context`。版本和 tag 归本 fork，上游仓库和 npm 包仍由原维护者维护。
 
-相对上游 `0.11.2`，累计到 `0.18.0` 的主要差异：
+相对上游 0.11.2，累计到 0.18.0 的主要差异：
 
-- **恢复语义**：`ctx_expand` 不再原地改写占位符，而是读取持久化的原始 `tool/result`，作为新的工具结果返回并分配新 tag；旧占位符保持不变，旧 tag 仍是 dropped，再次 `ctx_reduce` 是 no-op（`already dropped`）。这是 breaking change。
-- **Historian 之后仍可读原文**：`ctx_expand` 新增 `message` 定位，接受当前会话的 DSH log event seq（包括被 Historian shadow 的原始 `tool/result`）；不重跑原工具、不改写摘要或 compartment。
-- **手动 flush**：新增 `/ctx-flush`，只把当前会话已 pending 的 drop 标记为下一次 preStep 落地；不启动 Historian、recomp、摘要或模型调用。
-- **持久 drop 状态**：`ctx_reduce`/`ctx_expand` 以 `pending_drops` 的 `none`/`pending`/`landed` 状态判定，而不是依赖当前 surface 上是否还有占位符；旧 tag 在 restore 后不会再显示假的 “Queued”。
-- **tag 保留策略**：移除挂载时的 30 天 tag prune、`tags.retentionDays` 配置与 `AdapterStores.pruneTags`；旧 profile 里的该键保留但被忽略，且每进程最多告警一次。
-- **设置界面**：插件只注册顶层 `settings.section`（Magic Context），字段文案与选择器支持中英文，Historian 推理强度从当前模型 catalog 读取；GUI「插件」页卡片已移除，缺少 `settings.section` 的旧宿主不再有配置入口。
-- **遥测 v2**：胶囊保留压力、token 对、Historian 状态与回收队列；面板新增 100% 宿主 token 构成条、估算消息构成、Historian/记忆/队列/维护/可回收/警告分区，分区与空状态文案本地化。宿主没上报的值显示 `—` / `空` / `尚未运行`，不伪造 0。
-- **schema 与包名**：插件数据库升到 v11（`pending_drops.flush_requested`，v10 自动迁移）；npm 包名在 `0.12.x` 为
-  `@elvisw/dsh-plugin-magic-context`，`0.13.0` 改为 `@elvisw/dsh-magic-context`，但 loader row id
-  `magic-context-dsh`、settings namespace、插件数据目录 `magic-context-dsh-poc`、schema 与存储格式不变。
-- **升级迁移**：0.12.x 的 profile patch 行仍写着旧包名；DSH loader 同时匹配 `id` 与 `name`，不匹配时整行跳过，
-  所以在打开 Settings 前要用 `tools/migrate-profile-package-name.mjs --patch <cordis.patch.yml>` 迁移一次。
-  迁移 `name` 行后，插件记忆、journal、schema 与自定义 `dataDir` 的路径不变，改名不做数据迁移；`0.13.0`
-  宿主 gate 只验证配置生效，没有打开旧库。
+- **恢复语义改了，这是 breaking change。** `ctx_expand` 不再原地改写占位符，而是读出持久化的原始工具结果，作为新结果返回并分配新 tag。旧占位符保持不动，旧 tag 仍是 dropped，再次回收它是 no-op。
+- **historian 之后仍能读原文。** `ctx_expand` 新增 `message` 定位，接受会话日志事件 seq，包括被 historian 挡住的原始工具结果。不重跑工具，不改摘要。
+- **新增 `/ctx-flush`。** 只把已排队的回收标记为下一次 pre-step 落地，不启动 historian、recomp 或模型调用。
+- **回收状态持久化。** 用 `pending_drops` 的 `none` / `pending` / `landed` 判定，不看当前 surface 上还有没有占位符。旧 tag 取回后不会假装还在排队。
+- **tag 不再按天清理。** 移除了挂载时的 30 天 prune 和 `tags.retentionDays`。旧 profile 里留着的键会被忽略，每进程最多告警一次。
+- **设置界面重做。** 只注册顶层 `settings.section`，中英文案即时切换，推理强度从宿主模型列表读取。GUI「插件」页的卡片已移除，缺 `settings.section` 的旧宿主没有配置入口了。
+- **遥测 v2。** 新增 token 构成条、估算消息构成、历史摘要/记忆/队列/维护/可回收/警告分区。宿主没上报的值显示 `—`、`空`、`尚未运行`，不伪造 0。
+- **插件库 schema 到 v11**，带 `pending_drops.flush_requested`，v10 自动迁移。
+- **改名不做数据迁移。** 0.12.x 的 profile patch 里还写着旧包名，DSH loader 同时匹配 `id` 和 `name`，不匹配就整行跳过，所以打开设置前要用 `tools/migrate-profile-package-name.mjs --patch <cordis.patch.yml>` 迁一次。迁完记忆、journal、schema 和自定义 `dataDir` 路径都不变。
 
-因为 row id 相同，上游 `dsh-plugin-magic-context`、0.12.x 的 fork 包与本包**不支持共装**；升级前先移除旧包。
-本 gate 只观察到 config dump 同时接受两行并保留两个名字；“loader 只保留一条”与“设置页隐藏重复 id”
-是源码层推断，不是 gate 观测。本 fork 只保证自己的插件行为与数据迁移，不承诺与上游 0.11.x 的
-UX/API 长期兼容；兼容语义以原版 `cortexkit/magic-context` 为参照，DSH 仍是宿主。
+row id 相同，所以上游包、0.12.x 的 fork 包和本包**不能共装**，升级前先卸旧的。
+
+本 fork 只保证自己的插件行为和数据迁移，不承诺与上游 0.11.x 的 UX/API 长期兼容。兼容语义以原版 `cortexkit/magic-context` 为参照，DSH 仍是宿主。
 
 ### 版权与第三方
 
-- **上游 DSH 适配器**（`wk544863858/dsh-plugin-magic-context`，npm `dsh-plugin-magic-context@0.11.2`，MIT，
-  Copyright (c) 2026 wukai — the DeepSeek Harness adapter in this repository）：本 fork 的直接上游。
-  本 fork 的修改部分 Copyright (c) 2026 elvisw，同样以 MIT 发布。
-- **magic-context**（MIT，Copyright (c) 2025 Ufuk Altinok — magic-context）：本仓库的衍生来源。抽取自上游 tag
-  v0.46.0（`651c105a9`）；适配器自有提交从本地 checkout `dsh` 分支的 `e34eda955`
-  （2026-10-08）原样重放。
-- **DeepSeek Harness**（MIT）：以依赖消费，不含在内。代码针对 0.2.1-rc.1 编写
-  （checkout `1600d8a1e`，npm 协调 dist-tag `next`；注意这些包的 `latest`
-  标签落后一个发布线，精确钉版以 devDependencies 为准）。
-- 内嵌第三方：`vendor/onnx/`（onnxruntime-web WASM 子集，MIT © Microsoft）、
-  `tests/helpers/mock-adapter.ts`（DSH 测试树原样内嵌）。明细见 [NOTICE](NOTICE)，
-  许可见 [LICENSE](LICENSE)。
+- **上游 DSH 适配器**：`wk544863858/dsh-plugin-magic-context`，npm `dsh-plugin-magic-context@0.11.2`，MIT，Copyright (c) 2026 wukai。本仓库的直接上游。本 fork 的修改部分 Copyright (c) 2026 elvisw，同样 MIT。
+- **magic-context**：MIT，Copyright (c) 2025 Ufuk Altinok。衍生来源，抽取自上游 tag v0.46.0（`651c105a9`）。适配器自有提交从本地 checkout `dsh` 分支的 `e34eda955`（2026-10-08）原样重放。
+- **DeepSeek Harness**：MIT，作为依赖消费，不包含在内。代码针对 0.2.1-rc.1 编写（checkout `1600d8a1e`）。注意这些包的 `latest` 标签落后一个发布线，精确版本以 devDependencies 为准。
+- 内嵌第三方：`vendor/onnx/`（onnxruntime-web 的 WASM 子集，MIT © Microsoft）、`tests/helpers/mock-adapter.ts`（DSH 测试树原样内嵌）。明细见 [NOTICE](NOTICE)，许可见 [LICENSE](LICENSE)。
