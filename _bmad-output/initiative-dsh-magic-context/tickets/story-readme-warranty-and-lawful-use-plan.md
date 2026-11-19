@@ -1,7 +1,7 @@
 ---
 title: README warranty and lawful-use statement
 ticket: 29
-status: built
+status: done
 ---
 
 # Plan — warranty and lawful-use statement
