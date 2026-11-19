@@ -49,3 +49,6 @@ npm-debug.log*
 /_bmad-output/**/experiment-root.json
 /_bmad-output/**/__pycache__/
 *.py[cod]
+
+# Local code index (machine-specific)
+/.codegraph/
