@@ -1,0 +1,20 @@
+{
+  "spec": "@elvisw/dsh-magic-context@0.18.1",
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\v0181-smoke",
+  "checks": {
+    "installExitZero": true,
+    "installedVersion": "0.18.1",
+    "dumpExitZero": true,
+    "pluginRowPresent": true,
+    "installedMatchesTestedBuild": true,
+    "installedLibSha256": "fc0995e048d5df8b7280f40bc93e596064dceae6cfa17de01b9f8698c102402c",
+    "enumConstantsPresent": true,
+    "stayedOutOfDailyHome": true
+  },
+  "allPass": true,
+  "notCovered": [
+    "loader-level schema validation (dump-config echoes composed rows; it does not mount the plugin)",
+    "any model call",
+    "the phone rendering itself"
+  ]
+}

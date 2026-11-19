@@ -1,0 +1,20 @@
+$ C:\Users\elvis\AppData\Local\Author Software\nvm\.nodejs\node.EXE C:\Users\elvis\AppData\Local\Temp\opencode\mc-t0-2026-11-13\tools\dsh\node_modules\@deepseek-ai\dsh\lib\bin.js plugin --profile headless add @elvisw/dsh-magic-context@0.18.1 --ignore-scripts
+exit=0
+--- stdout ---
+Added 1 entry to minimumReleaseAgeExclude in pnpm-workspace.yaml (set minimumReleaseAgeStrict to true to gate these updates with a prompt):
+  @elvisw/dsh-magic-context@0.18.1
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: C:\Users\elvis\AppData\Local\pnpm\store\v11
+  Virtual store is at:             node_modules/.pnpm
+Packages: +3
++++
+Progress: resolved 3, reused 3, downloaded 0, added 3, done
+[WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
+
+dependencies:
++ @elvisw/dsh-magic-context 0.18.1
+
+Done in 274ms using pnpm v12.18.0
+
+--- stderr ---
+dsh: initialized profile headless at C:\Users\elvis\AppData\Local\Temp\opencode\v0181-smoke\dsh-home\profiles\headless

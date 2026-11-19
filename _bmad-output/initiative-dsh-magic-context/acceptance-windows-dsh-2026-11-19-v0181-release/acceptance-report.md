@@ -54,6 +54,39 @@ members changed:
 `package/lib/client.js` and `package/vendor/**` are byte-identical, which is why the
 settings UI needed no re-verification of its 45-step gate.
 
+## Publication
+
+| Item | Value |
+|---|---|
+| Tag | `v0.18.1` on `481af12` |
+| Workflow | `44479270631` — success |
+| `dist-tags.latest` | `0.18.1` |
+| Tarball | 4,067,232 bytes, SHA-256 `59b14c16faac65e64f349a725ab24dd2f7011ee243e90647df84e0148e1cff3b` |
+| `dist.shasum` / `dist.integrity` | match the local pack |
+| Registry vs local pack | byte-identical (`evidence/registry.json`) |
+
+Registry metadata did not appear for about a minute after the workflow finished — normal
+propagation, confirmed by polling rather than assumed.
+
+## Registry install smoke
+
+`smoke_0181.py` installs `@elvisw/dsh-magic-context@0.18.1` from the registry into a fresh
+`DSH_HOME` under `%TEMP%` (`evidence/registry-smoke-*.txt`, `evidence/registry-smoke-smoke.json`).
+
+| Check | Result |
+|---|---|
+| install exit code | 0 |
+| version in the profile | `0.18.1` |
+| loader row `magic-context-dsh` present | yes |
+| installed `lib/index.js` == the build the unit tests ran against | yes, SHA-256 `fc0995e0…402c` |
+| the four unions and their constants present in the shipped file | yes |
+| daily `~/.dsh` untouched | yes |
+
+What it does not prove is stated in the artifact itself: `--dump-config` echoes composed
+loader rows and never mounts the plugin, so loader-level schema validation is not exercised
+there. The schema assertions come from `tests/config-schema.spec.ts`, and the byte-identity
+check is what carries them over to the published file.
+
 ## What was not re-verified
 
 - **No host gate.** The changed library code is the config schema; the browser client and

@@ -1,0 +1,69 @@
+{
+  "root": "acceptance-windows-dsh-2026-11-19-v0181-release",
+  "count": 12,
+  "excluded": [
+    "evidence/sha256-manifest.json"
+  ],
+  "entries": [
+    {
+      "path": "acceptance-report.md",
+      "bytes": 4658,
+      "sha256": "b19cbc093ff9a9ca9342fb6f7127615894b7049bd1f48da4ff0a5a12b95231bc"
+    },
+    {
+      "path": "evidence/build.txt",
+      "bytes": 276,
+      "sha256": "cc4f8c60620b2fcb30a85cffa9280fb961d0e0b84d0f9846c8c3c5bc3f8b56ce"
+    },
+    {
+      "path": "evidence/i18n.txt",
+      "bytes": 2143,
+      "sha256": "a2090a19823daa69a30f076a5dd65f2357dda7f170a797507bf7851a691e1284"
+    },
+    {
+      "path": "evidence/npm-pack.txt",
+      "bytes": 3442,
+      "sha256": "9c3141f9b7c9c5cf6599790062ea4a967d943b444fb0ea2e524319975f4d931a"
+    },
+    {
+      "path": "evidence/pack-compare-0180.json",
+      "bytes": 643,
+      "sha256": "f808d96f23602d81e8bffb230b2a3c55af60472dc997ce380cb023b8b40d6d1c"
+    },
+    {
+      "path": "evidence/registry-smoke-dump-config.txt",
+      "bytes": 12968,
+      "sha256": "4bf67691c4a9ed599ffa93cf4cb8c537a117f2bedf7c729dbaedd44353529673"
+    },
+    {
+      "path": "evidence/registry-smoke-install.txt",
+      "bytes": 1049,
+      "sha256": "37856071b4c3df392b65080ff6e49e2e65067f2a97b29a71f7dafff8f63641c0"
+    },
+    {
+      "path": "evidence/registry-smoke-smoke.json",
+      "bytes": 664,
+      "sha256": "09332faf57abd4a0f445af275dc3b10f179d33c567016fbd376fd46f18844607"
+    },
+    {
+      "path": "evidence/registry.json",
+      "bytes": 529,
+      "sha256": "3a128634f1fc2d292ab6f90e568e6434740384c2376e0abc164f70b5735c47ce"
+    },
+    {
+      "path": "evidence/typecheck.txt",
+      "bytes": 61,
+      "sha256": "7c149106cb4c7ec078ec986b91ddc0981514fbc394edf0db5106e3f00178d87f"
+    },
+    {
+      "path": "evidence/unit-test.txt",
+      "bytes": 932,
+      "sha256": "d0850d8c719ff5f5be3edc1b0643460b1908075cb6f063ec465f49b9efb5633c"
+    },
+    {
+      "path": "smoke_0181.py",
+      "bytes": 5159,
+      "sha256": "36f3a2efdebd96b929326521114ac8bf60d7c863decdb4965ef11572d7df6f02"
+    }
+  ]
+}
