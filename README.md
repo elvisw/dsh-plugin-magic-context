@@ -56,7 +56,7 @@ written in Chinese.
 
 | Term | What it means |
 |---|---|
-| `§N§` | The tag on a tool result; reclaim and expand both address items by it |
+| `§N§` | The tag on a tool result; the model addresses items by it, and you never type it |
 | overlay | The layer the host draws above the conversation; the telemetry badge lives there |
 | composer | The input area at the bottom; the badge sits above it |
 | surface | The exact message list the host sends to the model; rewriting it invalidates the cache prefix |
@@ -104,6 +104,11 @@ triggered by `/ctx-wrapup`, a pass with no pressure reading, or one whose readin
 does it fire when dropping every reclaimable result still could not make the request fit a
 known window.
 
+Reclaimed output is not lost either. The tag stays a pointer, and when the model needs the
+original — because a result it already consumed turns out to matter — it calls `ctx_expand` and
+gets the text back as a new tool result; the placeholder stays where it was. That is an agent
+move, not a user task: nothing in the UI asks you to pick a tag.
+
 If the provider rejects a request as too long, a second path first publishes any digest that
 is ready, then drops the same way — same window, same class order — and retries once, but
 only after the surface actually changed: with nothing published and nothing dropped, the
@@ -118,29 +123,12 @@ Reminders ask; they never drop anything.
 
 ## Common tasks
 
-**Reclaim a run of tool output.** Ask for it in your own words and the model calls `ctx_reduce` —
-it is a tool, not a slash command. It only queues. Rewriting the conversation would invalidate the
-cache prefix, and that costs real money, so landing waits for the next reclaim band: the step where
-pressure passes the execute threshold (65% by default), the step where the queue passes the
-five-minute age limit, or the next message after you run `/ctx-flush`.
-
-```text
-you:     drop tags 4 through 7
-model:   ctx_reduce {"drop": "4-7"}
-         queued 4 — they land as placeholders in the next reclaim band
-
-... later, in a later reclaim band ...
-[dropped §4§] [dropped §5§] [dropped §6§] [dropped §7§]
-```
-
-**Get the original back.** Same shape: you ask, the model calls `ctx_expand`. What comes back is a new
-tool result; the placeholder and the old tag stay as they were.
-
-```text
-you:     bring back tag 5
-model:   ctx_expand {"tag": "5"}
-result:  §5's original text comes back as a new tool result; §5 stays dropped
-```
+**You do not manage reclaim.** It runs as described above: the model stamps what it has finished
+with, and at 85% the force band drops tagged results outside the protected window. A queued
+reclaim lands on the next reclaim band rather than immediately because rewriting the
+conversation invalidates the cache prefix. If a stamped reclaim should land now rather than wait
+for that band, `/ctx-flush` makes queued ones land on your next message. You don't need to name
+a tag and you never pick which output goes.
 
 **Record a project fact.** Memories are per project, and project identity comes from the git root.
 You can also use this directly from the model's tool call when it learns something worth keeping.
@@ -160,12 +148,12 @@ manual entry point that keeps the newest N entries.
 
 ## Commands and tools
 
-Tools are registered at mount time; `registerTools: false` turns them off. The slash commands are
-turned off with `registerStatusCommand: false`.
+The model calls these tools; you reach them by asking in words, not by typing ranges. The slash
+commands below are yours to type.
 
 | Tool | Purpose |
 |---|---|
-| `ctx_reduce` | Parses range syntax (`"3-5,8"`) and queues; landing waits for the reclaim band |
+| `ctx_reduce` | Queues outputs for reclaim (a range or a list); landing waits for the reclaim band |
 | `ctx_expand` | Retrieves original text by `tag`, by `message` (a session log event seq) or by a `start`/`end` range |
 | `ctx_memory` | Memory read/write: `list` / `search` / `get` / `write` / `update` / `archive` / `merge`, plus `review_global` and `promote` |
 
@@ -392,8 +380,9 @@ and npm package remain with their maintainer.
 
 Changes in this fork since upstream 0.11.2, up to 0.18.2:
 
-- **Recovery semantics changed, and it is a breaking change.** See the expand example above: the old
-  placeholder stays untouched, the old tag stays dropped, and reducing it again is a no-op.
+- **Recovery semantics changed, and it is a breaking change.** `ctx_expand` hands the original back
+  without moving anything on the surface: the old placeholder stays untouched, its tag stays spent,
+  and reclaiming the same tag again is refused as already dropped.
 - **Original text stays readable after the historian.** `ctx_expand` gained `message` addressing,
   which accepts a session log event seq, including original tool results shadowed by the historian. It
   re-runs no tool and rewrites no summary.

@@ -1,0 +1,743 @@
+{
+  "summary": {
+    "when": "2026-11-19T12:38:40.304Z",
+    "files": [
+      "README.md",
+      "README.zh-CN.md",
+      "docs/glossary.md",
+      "docs/configuration.md",
+      "docs/architecture.md"
+    ],
+    "unique": 100,
+    "repoPaths": 74,
+    "relativePaths": 4,
+    "anchors": 2,
+    "externalLinks": 20,
+    "uniqueExternalUrls": 11,
+    "failed": 0
+  },
+  "results": [
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/LICENSE",
+      "kind": "repo-path",
+      "path": "LICENSE",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/package.json",
+      "kind": "repo-path",
+      "path": "package.json",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/README.zh-CN.md",
+      "kind": "repo-path",
+      "path": "README.zh-CN.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "#android",
+      "kind": "anchor",
+      "ok": true,
+      "note": "not requested"
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/independent-package-release.md",
+      "kind": "repo-path",
+      "path": "docs/independent-package-release.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/glossary.md",
+      "kind": "repo-path",
+      "path": "docs/glossary.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/PARITY.md",
+      "kind": "repo-path",
+      "path": "PARITY.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-top.png",
+      "kind": "repo-path",
+      "path": "docs/img/settings-page-v2-top.png",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-bottom.png",
+      "kind": "repo-path",
+      "path": "docs/img/settings-page-v2-bottom.png",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/configuration.md",
+      "kind": "repo-path",
+      "path": "docs/configuration.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/dsh-go-context.zh.png",
+      "kind": "repo-path",
+      "path": "docs/img/dsh-go-context.zh.png",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/dsh-go-embedding.zh.png",
+      "kind": "repo-path",
+      "path": "docs/img/dsh-go-embedding.zh.png",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-18-t25-local-vector/acceptance-report.md",
+      "kind": "repo-path",
+      "path": "_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-18-t25-local-vector/acceptance-report.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/architecture.md",
+      "kind": "repo-path",
+      "path": "docs/architecture.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-settings-ui-contract.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-settings-ui-contract.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-operations-runbook-2026-10-10.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-operations-runbook-2026-10-10.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-upgrade-followup.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-upgrade-followup.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-memory-write-contract.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-memory-write-contract.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-memory-promotion-contract.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-memory-promotion-contract.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-memory-acceptance.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-memory-acceptance.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-config-ui-contract.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-config-ui-contract.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-ui-telemetry-contract.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-ui-telemetry-contract.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-hooks-coverage-2026-10-08.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-hooks-coverage-2026-10-08.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-port-feasibility-2026-10-06.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-port-feasibility-2026-10-06.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/memory-mechanisms-inventory-2026-10-09.md",
+      "kind": "repo-path",
+      "path": "docs/memory-mechanisms-inventory-2026-10-09.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/upstream-source-analysis-2026-10-09.md",
+      "kind": "repo-path",
+      "path": "docs/upstream-source-analysis-2026-10-09.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/global-domain-source-finding-2026-10-10.md",
+      "kind": "repo-path",
+      "path": "docs/global-domain-source-finding-2026-10-10.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/memory-architecture-challenge-2026-10-10.md",
+      "kind": "repo-path",
+      "path": "docs/memory-architecture-challenge-2026-10-10.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/domain-naming-work-global-2026-10-25.md",
+      "kind": "repo-path",
+      "path": "docs/domain-naming-work-global-2026-10-25.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-test-design-audit-2026-10-07.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-test-design-audit-2026-10-07.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-surface-write-audit-2026-10-09.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-surface-write-audit-2026-10-09.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/local-embedding-runtime-audit-2026-10-15.md",
+      "kind": "repo-path",
+      "path": "docs/local-embedding-runtime-audit-2026-10-15.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/CONTRIBUTING.md",
+      "kind": "repo-path",
+      "path": "CONTRIBUTING.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/SECURITY.md",
+      "kind": "repo-path",
+      "path": "SECURITY.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/CHANGELOG.md",
+      "kind": "repo-path",
+      "path": "CHANGELOG.md",
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/NOTICE",
+      "kind": "repo-path",
+      "path": "NOTICE",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/LICENSE",
+      "kind": "repo-path",
+      "path": "LICENSE",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/package.json",
+      "kind": "repo-path",
+      "path": "package.json",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/README.md",
+      "kind": "repo-path",
+      "path": "README.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "#android",
+      "kind": "anchor",
+      "ok": true,
+      "note": "not requested"
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/independent-package-release.md",
+      "kind": "repo-path",
+      "path": "docs/independent-package-release.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/glossary.md",
+      "kind": "repo-path",
+      "path": "docs/glossary.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/PARITY.md",
+      "kind": "repo-path",
+      "path": "PARITY.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-top.zh.png",
+      "kind": "repo-path",
+      "path": "docs/img/settings-page-v2-top.zh.png",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/settings-page-v2-bottom.zh.png",
+      "kind": "repo-path",
+      "path": "docs/img/settings-page-v2-bottom.zh.png",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/configuration.md",
+      "kind": "repo-path",
+      "path": "docs/configuration.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/dsh-go-context.zh.png",
+      "kind": "repo-path",
+      "path": "docs/img/dsh-go-context.zh.png",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://raw.githubusercontent.com/elvisw/dsh-plugin-magic-context/main/docs/img/dsh-go-embedding.zh.png",
+      "kind": "repo-path",
+      "path": "docs/img/dsh-go-embedding.zh.png",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-18-t25-local-vector/acceptance-report.md",
+      "kind": "repo-path",
+      "path": "_bmad-output/initiative-dsh-magic-context/acceptance-android-dsh-go-2026-11-18-t25-local-vector/acceptance-report.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/architecture.md",
+      "kind": "repo-path",
+      "path": "docs/architecture.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-settings-ui-contract.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-settings-ui-contract.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-operations-runbook-2026-10-10.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-operations-runbook-2026-10-10.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-upgrade-followup.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-upgrade-followup.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-memory-write-contract.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-memory-write-contract.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-memory-promotion-contract.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-memory-promotion-contract.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-memory-acceptance.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-memory-acceptance.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-config-ui-contract.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-config-ui-contract.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-ui-telemetry-contract.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-ui-telemetry-contract.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-hooks-coverage-2026-10-08.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-hooks-coverage-2026-10-08.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-port-feasibility-2026-10-06.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-port-feasibility-2026-10-06.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-platform-takeover-and-global-domains-2026-10-09.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-dreamer-vector-decision-2026-10-08.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/memory-mechanisms-inventory-2026-10-09.md",
+      "kind": "repo-path",
+      "path": "docs/memory-mechanisms-inventory-2026-10-09.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/upstream-source-analysis-2026-10-09.md",
+      "kind": "repo-path",
+      "path": "docs/upstream-source-analysis-2026-10-09.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/global-domain-source-finding-2026-10-10.md",
+      "kind": "repo-path",
+      "path": "docs/global-domain-source-finding-2026-10-10.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/memory-architecture-challenge-2026-10-10.md",
+      "kind": "repo-path",
+      "path": "docs/memory-architecture-challenge-2026-10-10.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/domain-naming-work-global-2026-10-25.md",
+      "kind": "repo-path",
+      "path": "docs/domain-naming-work-global-2026-10-25.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-plugin-test-design-audit-2026-10-07.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-plugin-test-design-audit-2026-10-07.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/dsh-surface-write-audit-2026-10-09.md",
+      "kind": "repo-path",
+      "path": "docs/dsh-surface-write-audit-2026-10-09.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/docs/local-embedding-runtime-audit-2026-10-15.md",
+      "kind": "repo-path",
+      "path": "docs/local-embedding-runtime-audit-2026-10-15.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/CONTRIBUTING.md",
+      "kind": "repo-path",
+      "path": "CONTRIBUTING.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/SECURITY.md",
+      "kind": "repo-path",
+      "path": "SECURITY.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/CHANGELOG.md",
+      "kind": "repo-path",
+      "path": "CHANGELOG.md",
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/blob/main/NOTICE",
+      "kind": "repo-path",
+      "path": "NOTICE",
+      "ok": true
+    },
+    {
+      "file": "docs/configuration.md",
+      "href": "../src/dsh/config.ts",
+      "kind": "relative",
+      "onDisk": true,
+      "ok": true
+    },
+    {
+      "file": "docs/architecture.md",
+      "href": "memory-architecture-challenge-2026-10-10.md",
+      "kind": "relative",
+      "onDisk": true,
+      "ok": true
+    },
+    {
+      "file": "docs/architecture.md",
+      "href": "../src/",
+      "kind": "relative",
+      "onDisk": true,
+      "ok": true
+    },
+    {
+      "file": "docs/architecture.md",
+      "href": "../PARITY.md",
+      "kind": "relative",
+      "onDisk": true,
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml/badge.svg",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://img.shields.io/npm/v/@elvisw/dsh-magic-context",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://www.npmjs.com/package/@elvisw/dsh-magic-context",
+      "kind": "external",
+      "pending": true,
+      "status": 403,
+      "ok": true,
+      "note": "anti-bot 403, page exists"
+    },
+    {
+      "file": "README.md",
+      "href": "https://img.shields.io/badge/License-MIT-yellow.svg",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://img.shields.io/badge/node-%3E%3D22.19-brightgreen.svg",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/ccch1mneyyy/dsh-Go/issues/1493",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "README.md",
+      "href": "https://github.com/wk544863858/dsh-plugin-magic-context",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml/badge.svg",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/elvisw/dsh-plugin-magic-context/actions/workflows/ci.yml",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://img.shields.io/npm/v/@elvisw/dsh-magic-context",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://www.npmjs.com/package/@elvisw/dsh-magic-context",
+      "kind": "external",
+      "pending": true,
+      "status": 403,
+      "ok": true,
+      "note": "anti-bot 403, page exists"
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://img.shields.io/badge/License-MIT-yellow.svg",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://img.shields.io/badge/node-%3E%3D22.19-brightgreen.svg",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/ccch1mneyyy/dsh-Go/issues/1493",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "README.zh-CN.md",
+      "href": "https://github.com/wk544863858/dsh-plugin-magic-context",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "docs/configuration.md",
+      "href": "https://github.com/wk544863858/dsh-plugin-magic-context/issues/16",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "docs/configuration.md",
+      "href": "https://api-docs.siliconflow.cn/docs/api/models-get",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "docs/configuration.md",
+      "href": "https://api-docs.siliconflow.cn/docs/api/embeddings-post",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    },
+    {
+      "file": "docs/configuration.md",
+      "href": "https://github.com/ccch1mneyyy/dsh-Go/issues/1493",
+      "kind": "external",
+      "pending": true,
+      "status": 200,
+      "ok": true
+    }
+  ]
+}

@@ -324,3 +324,15 @@ after = [26]
 hitl = true
 risk = "low"
 refine = true
+
+[[entry]]
+id = 28
+type = "story"
+title = "Lead with automatic reclaim, stop teaching tag-level operation"
+description = "The T27 README update added the automatic-reclaim facts but left the tag-level tutorial in front of them: the first Common tasks item is a scripted dialogue where the user says 'drop tags 4 through 7' and the second says 'bring back tag 5'. Nobody interacts with the plugin that way. The model stamps outputs it has finished with, the force band drops at 85%, and retrieval is a question in words that the model resolves to a tag. Requirements: open Common tasks by stating that the reader does not manage context, naming the two automatic paths and keeping the cache-prefix reason as one sentence rather than a procedure; replace the ctx_expand dialogue with a question in words and no tag number; tell the reader in the tools-table lead-in that these are the model's tools; say in the section sign term row that the reader never types a tag; mirror all of it in Chinese; keep the heading structure and the T27 assertions passing. Scope is the two READMEs only: no product code, no config, no version bump inside the ticket, no re-litigating the T27 section."
+verify = "Neither README contains a dialogue in which the user names a tag number, both open Common tasks with the automatic behaviour, and the tools table says the model calls these tools. The T27 readme-lint copy reports 82 checks and 0 failures, link-check reports 0 failures, and one read-only review confirms the text matches reduce-guidance.ts, pre-step.ts and tool-bridge.ts. No test suite, build, pack or host gate runs, and the report says so."
+covers = ["README.md", "README.zh-CN.md", "_bmad-output/initiative-dsh-magic-context/acceptance-readme-automatic-reclaim-2026-11-19/"]
+after = [27]
+hitl = true
+risk = "low"
+refine = true
