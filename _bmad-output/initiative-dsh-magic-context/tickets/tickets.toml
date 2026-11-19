@@ -336,3 +336,15 @@ after = [27]
 hitl = true
 risk = "low"
 refine = true
+
+[[entry]]
+id = 29
+type = "story"
+title = "Add a plain-language warranty and lawful-use statement to the READMEs"
+description = "The READMEs link to LICENSE but never state in plain language that the software has no warranty, that it deletes content by design, and that lawful use is the user's responsibility. Requirements: point at the MIT text rather than replace it and say the paragraph is not legal advice; avoid absolute wording ('not responsible for anything'), which cannot be enforced for gross negligence or against mandatory consumer rights and would conflict with the license; name the real risk (rewrites conversation history, drops tool output by design, stores memories in local SQLite) and tell the reader to back up; state lawful use as the user's responsibility rather than as a license condition, since MIT grants use without restriction; mention that model providers, embedding endpoints and the dsh-go app have their own terms and billing; keep it to three short paragraphs inside the existing Provenance and license section with no new heading; mirror in Chinese, with the sentence '请遵守当地法律' rather than 'how you use it is up to you'. Scope is the two READMEs only: no product code, no version bump inside the ticket."
+verify = "Both READMEs carry the three paragraphs before the closing NOTICE/LICENSE line, neither conflicts with LICENSE, the heading counts are unchanged, readme-lint reports 82 checks and 0 failures, link-check reports 0 failures, and one read-only review confirms the text matches what the plugin does to user data and that it is not stronger than the MIT text. No test suite, build, pack or host gate runs."
+covers = ["README.md", "README.zh-CN.md", "_bmad-output/initiative-dsh-magic-context/acceptance-readme-automatic-reclaim-2026-11-19/"]
+after = [28]
+hitl = true
+risk = "low"
+refine = true

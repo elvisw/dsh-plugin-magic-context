@@ -356,5 +356,14 @@ Copyright (c) 2026 wukai），本仓库的直接上游；本 fork 的修改部�
 包内 vendored 了 `vendor/onnx/`（onnxruntime-web 的 WASM 子集，MIT © Microsoft）
 与测试用的 `tests/helpers/mock-adapter.ts`（从 DSH 测试树原样内嵌）。
 
+**不提供担保，数据请自己备份。** 本软件按 MIT 许可证以“现状”提供，不附带任何明示或默示担保。
+它会按设计改写对话历史、丢弃工具输出，并把记忆保存在本地 SQLite 文件里——无法承受丢失的数据
+请自行备份。因使用本软件造成的数据丢失、提供商费用或其他损失，维护者不承担责任。
+
+**合法使用由你负责。** 本仓库没有授予你违法或侵犯他人权利的许可；请遵守当地法律。
+
+**第三方服务。** 模型提供商、向量服务与其他应用各有自己的条款与计费。
+以上是便于阅读的说明，不构成法律意见；以 `LICENSE` 原文为准。
+
 明细见 [NOTICE](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/NOTICE)，
 许可见 [LICENSE](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/LICENSE)。

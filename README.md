@@ -421,5 +421,18 @@ exact versions from devDependencies. The package vendors `vendor/onnx/` (a WASM 
 onnxruntime-web, MIT © Microsoft) and embeds `tests/helpers/mock-adapter.ts` verbatim from the DSH
 test tree.
 
+**No warranty; your data is your responsibility.** The software is provided "as is", with no
+warranty of any kind, as the MIT license states. It rewrites conversation history and drops tool
+output by design, and it keeps memories in local SQLite files — back up anything you cannot afford
+to lose. The maintainer is not liable for data loss, provider charges, or other damages arising
+from its use.
+
+**Lawful use is your responsibility.** Nothing here grants permission to break the law or infringe
+the rights of others; follow your local laws.
+
+**Third-party services.** Model providers, embedding endpoints and other applications are governed
+by their own terms and billing. These paragraphs are a plain-language summary, not legal advice;
+`LICENSE` is the operative text.
+
 Details in [NOTICE](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/NOTICE), license in
 [LICENSE](https://github.com/elvisw/dsh-plugin-magic-context/blob/main/LICENSE).
