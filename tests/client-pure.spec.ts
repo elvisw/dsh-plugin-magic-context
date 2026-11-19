@@ -91,6 +91,7 @@ const api = factory((name) => {
       memoryEnabled: boolean
       dimensionsUnsupported: boolean
     }
+    embeddingFieldVisible: (key: string, provider: string, keyStored?: boolean) => boolean
     embeddingKeyRowState: (input: {
       savedRef?: string
       refDirty?: boolean
@@ -585,7 +586,7 @@ describe('routePairOps — the pin-pair write semantics', () => {
 })
 
 describe('settings information architecture (T21)', () => {
-  const { fieldSpecs, fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingKeyRowState, embeddingStateKeys } = api.__diagnostics
+  const { fieldSpecs, fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingFieldVisible, embeddingKeyRowState, embeddingStateKeys } = api.__diagnostics
 
   it('gives every field exactly one section and one placement', () => {
     const sections = fieldSections()
@@ -729,6 +730,39 @@ describe('settings information architecture (T21)', () => {
     expect(embeddingStatusFlags({ keyPresent: false, keyEnv: '', keyEnvInvalid: true })).toEqual({
       keyPresent: false, memoryEnabled: true, dimensionsUnsupported: false,
     })
+
+    // T31: the local and off paths read none of the twelve remote fields, so the
+    // card hides them. Only `openai-compatible` shows them, and the provider row
+    // itself is always visible.
+    const remoteOnly = [
+      'embedding.preset', 'embedding.endpoint', 'embedding.model', 'embedding.apiKeyEnv',
+      'embedding.apiKey', 'embedding.authHeader', 'embedding.dimensions',
+      'embedding.queryInstruction', 'embedding.documentPrefix', 'embedding.timeoutMs',
+      'embedding.queryTimeoutMs', 'embedding.batchSize',
+    ]
+    for (const key of remoteOnly) {
+      expect(embeddingFieldVisible(key, 'local'), `${key} local`).toBe(false)
+      expect(embeddingFieldVisible(key, 'off'), `${key} off`).toBe(false)
+      expect(embeddingFieldVisible(key, 'openai-compatible'), `${key} remote`).toBe(true)
+    }
+    expect(embeddingFieldVisible('embedding.provider', 'local')).toBe(true)
+    expect(embeddingFieldVisible('embedding.provider', 'off')).toBe(true)
+    // The runtime lowercases the provider; a hand-edited value must not flip the
+    // card into hiding everything the remote path needs.
+    expect(embeddingFieldVisible('embedding.endpoint', 'OpenAI-Compatible')).toBe(true)
+    expect(embeddingFieldVisible('embedding.endpoint', ' LOCAL ')).toBe(false)
+    // A stored secret keeps its own row so it can be deleted without switching.
+    expect(embeddingFieldVisible('embedding.apiKey', 'local', true)).toBe(true)
+    expect(embeddingFieldVisible('embedding.apiKey', 'off', true)).toBe(true)
+    expect(embeddingFieldVisible('embedding.apiKey', 'local', false)).toBe(false)
+    expect(embeddingFieldVisible('embedding.endpoint', 'local', true)).toBe(false)
+    // Non-embedding keys are untouched by the rule.
+    expect(embeddingFieldVisible('policy.executeThreshold', 'local')).toBe(true)
+    // Every remote-only key in the schema is covered by the list above.
+    const embeddingKeys = fieldSpecs
+      .map((spec) => spec.path.join('.'))
+      .filter((key) => key.startsWith('embedding.') && key !== 'embedding.provider')
+    expect([...embeddingKeys].sort()).toEqual([...remoteOnly].sort())
 
     const keyBase = {
       savedRef: 'SILICONFLOW_API_KEY', refDirty: false, writable: true,

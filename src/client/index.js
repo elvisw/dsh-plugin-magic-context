@@ -590,6 +590,40 @@ window.__ModuleLoader__.load({
     }
 
     /**
+     * T31: the fields only the remote path reads. `src/core/embedding-remote.ts`
+     * is the sole consumer of queryInstruction, documentPrefix, authHeader and
+     * dimensions; the local MiniLM and `off` paths never consult any of the
+     * twelve, so the Web card hides them rather than asking for a configuration
+     * that cannot apply.
+     */
+    const REMOTE_ONLY_EMBEDDING = [
+      'embedding.preset',
+      'embedding.endpoint',
+      'embedding.model',
+      'embedding.apiKeyEnv',
+      'embedding.apiKey',
+      'embedding.authHeader',
+      'embedding.dimensions',
+      'embedding.queryInstruction',
+      'embedding.documentPrefix',
+      'embedding.timeoutMs',
+      'embedding.queryTimeoutMs',
+      'embedding.batchSize',
+    ]
+
+    function embeddingFieldVisible(key, provider, keyStored) {
+      // `resolveEmbeddingConfig` lowercases the provider, so the predicate does
+      // too: a hand-edited `OpenAI-Compatible` is remote, not local.
+      const normalized = typeof provider === 'string' ? provider.trim().toLowerCase() : ''
+      if (normalized === 'openai-compatible') return true
+      // A saved secret stays on screen: the key row is the only place that can
+      // delete a literal or credential-store value, and hiding it with the rest
+      // would force a switch to remote just to clear it.
+      if (key === 'embedding.apiKey') return keyStored === true
+      return !REMOTE_ONLY_EMBEDDING.includes(key)
+    }
+
+    /**
      * Pure state for the write-only API key row. Kept outside the React
      * component so the disabled/first-ref/credential-source branches can be
      * asserted without a DOM.
@@ -717,6 +751,8 @@ window.__ModuleLoader__.load({
       'settings.effort.unknownHint',
       'settings.embedding.title',
       'settings.embedding.privacy',
+      'settings.embedding.localNote',
+      'settings.embedding.offNote',
       'settings.embedding.status',
       'settings.embedding.savedFirst',
       'settings.embedding.keyPresent',
@@ -1186,6 +1222,30 @@ window.__ModuleLoader__.load({
           }
         }
 
+        /** T31: the embedding provider the card is showing, draft first. */
+        const providerSpec = FIELDS.find((spec) => fieldKey(spec.path) === 'embedding.provider')
+        // `resolveEmbeddingConfig` lowercases the provider, so a hand-edited
+        // `OpenAI-Compatible` runs remote; the card must agree with the runtime.
+        const providerText = providerSpec === undefined
+          ? 'local'
+          : (view(providerSpec).text.trim() === '' ? 'local' : view(providerSpec).text.trim().toLowerCase())
+        const storedKeyPresent = embeddingStatus !== null && typeof embeddingStatus === 'object'
+          && (embeddingStatus.keySource === 'credential' || embeddingStatus.keySource === 'literal')
+        const specVisible = (spec) => embeddingFieldVisible(fieldKey(spec.path), providerText, storedKeyPresent)
+
+        // A snapshot refresh can change the saved provider while a remote draft
+        // is still staged. Prune those drafts here, not only on the select event,
+        // or Save would stay dirty with nothing visible to write.
+        const providerSeen = useRef(providerText)
+        useEffect(() => {
+          if (providerSeen.current === providerText) return
+          providerSeen.current = providerText
+          if (providerText === 'openai-compatible') return
+          let removed = false
+          for (const key of REMOTE_ONLY_EMBEDDING) if (staged.delete(key)) removed = true
+          if (removed) setRevision((value) => value + 1)
+        }, [providerText])
+
         /**
          * The route pins, resolved once per render. Each pin is a PAIR (both
          * halves non-empty — the host rule), so the card treats it as one unit:
@@ -1492,6 +1552,8 @@ window.__ModuleLoader__.load({
           for (const spec of FIELDS) {
             // The route pairs are coupled and planned below.
             if (spec.kind === 'route-provider' || spec.kind === 'route-model') continue
+            // T31: a hidden field cannot block a visible save.
+            if (!specVisible(spec)) continue
             const draft = staged.get(fieldKey(spec.path))
             if (draft === undefined) continue
             if (spec.kind === 'effort') {
@@ -1643,7 +1705,7 @@ window.__ModuleLoader__.load({
         // reveal the bad field" can never run. Open the advanced disclosure and
         // focus the first invalid field as soon as it becomes invalid.
         useEffect(() => {
-          const invalid = FIELDS.find((spec) => view(spec).invalid)
+          const invalid = FIELDS.find((spec) => specVisible(spec) && view(spec).invalid)
           const key = invalid === undefined ? '' : fieldKey(invalid.path)
           if (key === lastInvalidKey.current) return
           lastInvalidKey.current = key
@@ -1831,13 +1893,17 @@ window.__ModuleLoader__.load({
             el('span', { key: 'status', style: { fontSize: 11.5, opacity: 0.8 } },
               t('settings.embedding.status') + ': ' + t(embeddingStateKey(status.state))
                 + ' · ' + modelLabel + ' · ' + dimensions + ' · ' + coverage),
-            el('span', { key: 'key', style: { fontSize: 11.5, opacity: 0.7 } },
-              keyLabel + (status.keyEnv ? ' (' + status.keyEnv + ')' : '')),
+            providerText === 'openai-compatible'
+              ? el('span', { key: 'key', style: { fontSize: 11.5, opacity: 0.7 } },
+                keyLabel + (status.keyEnv ? ' (' + status.keyEnv + ')' : ''))
+              : null,
             status.httpWarning === 'plain-http'
               ? el('span', { key: 'http', style: { fontSize: 11.5, color: 'var(--dsw-alias-label-warning, #b8860b)' } },
                 t('settings.embedding.plainHttp'))
               : null,
-            el('span', { key: 'privacy', style: { fontSize: 11.5, opacity: 0.7 } }, t('settings.embedding.privacy')),
+            providerText === 'openai-compatible'
+              ? el('span', { key: 'privacy', style: { fontSize: 11.5, opacity: 0.7 } }, t('settings.embedding.privacy'))
+              : null,
             status.memoryEnabled === false
               ? el('span', { key: 'memory-off', style: { fontSize: 11.5, color: 'var(--dsw-alias-label-warning, #b8860b)' } }, t('settings.embedding.memoryOff'))
               : null,
@@ -1854,7 +1920,7 @@ window.__ModuleLoader__.load({
             actionRow.length > 0
               ? el('div', { key: 'remote-actions', style: { display: 'flex', gap: 6, flexWrap: 'wrap' } }, actionRow)
               : null,
-            embeddingModels.length > 0
+            providerText === 'openai-compatible' && embeddingModels.length > 0
               ? el('select', {
                 key: 'model-select',
                 'aria-label': t('settings.embedding.modelPlaceholder'),
@@ -2137,7 +2203,7 @@ window.__ModuleLoader__.load({
         }, t(section.titleKey))))
 
         const renderStatusStrip = () => {
-          const invalidCount = FIELDS.filter((spec) => view(spec).invalid).length
+          const invalidCount = FIELDS.filter((spec) => specVisible(spec) && view(spec).invalid).length
           let text = t('settings.status.saved')
           if (!shell.available) text = labels.unavailable
           else if (failed) text = labels.saveFailed
@@ -2156,11 +2222,13 @@ window.__ModuleLoader__.load({
         }
 
         const renderSection = (section) => {
-          const advanced = section.advanced.length > 0
+          const commonSpecs = section.common.filter(specVisible)
+          const advancedSpecs = section.advanced.filter(specVisible)
+          const advanced = advancedSpecs.length > 0
           const open = advanced && (advancedOpen[section.id] === true
-            || section.advanced.some((spec) => view(spec).invalid))
-          const fields = section.common.map(renderField)
-          const advancedFields = open ? section.advanced.map(renderField) : []
+            || advancedSpecs.some((spec) => view(spec).invalid))
+          const fields = commonSpecs.map(renderField)
+          const advancedFields = open ? advancedSpecs.map(renderField) : []
           const chip = section.id === 'embedding' && embeddingStatus !== null
             ? t(embeddingStateKey(embeddingStatus.state))
             : null
@@ -2183,6 +2251,10 @@ window.__ModuleLoader__.load({
               disabled: !shell.writable,
               style: { border: 0, padding: 0, margin: 0, minWidth: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))', columnGap: 12 },
             }, fields),
+            section.id === 'embedding' && providerText !== 'openai-compatible'
+              ? el('p', { key: 'embedding-mode-note', style: { margin: '4px 0 0', fontSize: 11.5, opacity: 0.7 } },
+                t(providerText === 'off' ? 'settings.embedding.offNote' : 'settings.embedding.localNote'))
+              : null,
             section.id === 'embedding' ? renderEmbeddingTools() : null,
             advanced ? el('button', {
               key: 'advanced-toggle',
@@ -2832,6 +2904,8 @@ window.__ModuleLoader__.load({
         'settings.embedding.auth.apiKey': 'api-key 头',
         'settings.embedding.title': '向量检索',
         'settings.embedding.privacy': '启用远程向量会把你检索的记忆文本发送到该端点；请使用可信端点。',
+        'settings.embedding.localNote': '本地 MiniLM 使用首次运行下载的 384 维模型，不需要接口地址、模型 ID 或密钥；远程设置已隐藏。',
+        'settings.embedding.offNote': '语义检索已关闭，远程设置已隐藏。',
         'settings.embedding.status': '状态',
         'settings.embedding.savedFirst': '先保存当前修改，再执行远程操作。',
         'settings.embedding.keyPresent': 'API Key：已配置',
@@ -3150,6 +3224,8 @@ window.__ModuleLoader__.load({
         'settings.embedding.auth.apiKey': 'api-key header',
         'settings.embedding.title': 'Embedding search',
         'settings.embedding.privacy': 'Enabling remote embeddings sends the memory text you search to that endpoint; use a trusted endpoint.',
+        'settings.embedding.localNote': 'Local MiniLM uses a 384-dimension model downloaded on first use; no endpoint, model ID or key is needed. Remote settings are hidden.',
+        'settings.embedding.offNote': 'Semantic search is off; the remote settings are hidden.',
         'settings.embedding.status': 'Status',
         'settings.embedding.savedFirst': 'Save the current edits before using remote actions.',
         'settings.embedding.keyPresent': 'API key: configured',
@@ -4404,7 +4480,8 @@ window.__ModuleLoader__.load({
         /** Settings copy + catalog-backed effort picker helpers. */
         settingsCopyKeys, reasoningEffortsOf, effortSelectionOf, effortPlanOps, effortDraftOf,
         EFFORT_CUSTOM_SENTINEL, fieldSpecs: FIELDS,
-        fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingKeyRowState, embeddingStateKeys: EMBEDDING_STATE_KEYS,
+        fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags,
+        embeddingFieldVisible, embeddingKeyRowState, embeddingStateKeys: EMBEDDING_STATE_KEYS,
         // The number/text formatters are the panel's display contract; the
         // node-side spec pins them so a formatting regression (the scope bug
         // that briefly unmounted the pill) cannot come back silently.

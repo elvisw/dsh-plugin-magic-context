@@ -8,6 +8,18 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
+## [0.18.6] - 2026-11-19
+
+### Changed
+
+- 设置页按向量提供方收起远程配置（T31）。Web 版选择**本地 MiniLM**（或关闭语义检索）时，
+  服务预设、接口地址、模型 ID、密钥、认证头、维度、查询/文档前缀、两个超时与批大小这 12 项
+  直接隐藏，并显示一句说明；切回 OpenAI 兼容会重新出现，已保存的值不会被清空。切换提供方时
+  这些字段的未保存草稿会被丢弃，隐藏的非法值也不会再阻止保存。
+- 手机端受 dsh-go 的 schema 表单限制（只支持静态 `hidden`，不能依赖另一个字段的当前值），
+  不能条件隐藏，因此改为在文案上标注：这 12 项的标签带「仅远程」，其中服务预设写作
+  「服务预设（本地不适用）」。已向上游提出条件显示能力的 issue。
+
 ## [0.18.5] - 2026-11-19
 
 ### Changed
@@ -364,6 +376,7 @@ npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布�
 
 0.12.0 之前的 tag 位于上游仓库 `wk544863858/dsh-plugin-magic-context`；从 0.12.0 起，版本与 tag 属于本 fork。
 
+[0.18.6]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.5...v0.18.6
 [0.18.5]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.4...v0.18.5
 [0.18.4]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.3...v0.18.4
 [0.18.3]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.2...v0.18.3

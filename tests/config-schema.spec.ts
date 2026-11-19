@@ -216,7 +216,15 @@ describe('runtime Config schema', () => {
 
     // Pin the released renderer's rule: labelFor -> _describedText treats a
     // description as a title only when _fitsTitle (<=18 runes, no newline).
-    // Longer English descriptions fall through to humanizeKey(key).
+    // Longer descriptions become the row's hint and the label falls back to the
+    // host's common key label (T31 uses that on purpose for the remote-only
+    // embedding fields, because "Auth header (remote)" is 20 runes).
+    // T31: the twelve remote-only embedding fields cannot all carry a marker
+    // inside an 18-rune title, so their English description is a hint sentence.
+    const HINT_DESCRIPTIONS = new Set([
+      'Remote provider only',
+      'Preset (not used by local MiniLM)',
+    ])
     const allDescriptions: Array<{ path: string; text: string }> = []
     for (const [id, schema] of Object.entries(json.refs)) {
       const description = schema.meta?.description
@@ -228,8 +236,11 @@ describe('runtime Config schema', () => {
         expect(typeof text, `${id} ${locale} description`).toBe('string')
         expect((text as string).trim().length, `${id} ${locale} description is empty`).toBeGreaterThan(0)
         expect((text as string).includes('\n'), `${id} ${locale} description must be one line`).toBe(false)
-        expect(Array.from(text as string).length, `${id} ${locale} description exceeds the 18-rune label limit`)
-          .toBeLessThanOrEqual(18)
+        const runes = Array.from(text as string).length
+        if (runes > 18) {
+          expect(HINT_DESCRIPTIONS.has(text as string), `${id} ${locale} description exceeds the 18-rune label limit`)
+            .toBe(true)
+        }
         allDescriptions.push({ path: `${id}.${locale}`, text: text as string })
       }
     }
@@ -237,11 +248,35 @@ describe('runtime Config schema', () => {
 
     expect(node(['embedding']).meta?.collapse).toBe(true)
     expect(node(['embedding']).meta?.description).toEqual({ zh: '向量检索', en: 'Embedding' })
-    expect(node(['embedding', 'apiKeyEnv']).meta?.description).toEqual({ zh: '密钥变量', en: 'Key variable' })
+    // T31: every remote-only field says so. The zh label carries the marker; the
+    // English one is a hint, because the marker does not fit in 18 runes.
+    const REMOTE_ZH: Record<string, string> = {
+      preset: '服务预设（本地不适用）',
+      endpoint: '接口地址（仅远程）',
+      authHeader: '认证头（仅远程）',
+      model: '模型 ID（仅远程）',
+      apiKeyEnv: '密钥变量（仅远程）',
+      apiKey: '密钥（仅远程）',
+      dimensions: '向量维度（仅远程）',
+      queryInstruction: '查询前缀（仅远程）',
+      documentPrefix: '文档前缀（仅远程）',
+      timeoutMs: '请求超时（仅远程）',
+      queryTimeoutMs: '查询超时（仅远程）',
+      batchSize: '批大小（仅远程）',
+    }
+    for (const [key, zh] of Object.entries(REMOTE_ZH)) {
+      const description = node(['embedding', key]).meta?.description as { zh: string; en: string }
+      expect(description.zh, `embedding.${key} zh description`).toBe(zh)
+      expect(description.en, `embedding.${key} en description`).toBe(
+        key === 'preset' ? 'Preset (not used by local MiniLM)' : 'Remote provider only',
+      )
+      expect(Array.from(description.zh).length, `embedding.${key} zh label length`).toBeLessThanOrEqual(18)
+    }
+    expect(node(['embedding', 'apiKeyEnv']).meta?.description).toEqual({ zh: '密钥变量（仅远程）', en: 'Remote provider only' })
     expect(node(['embedding', 'apiKeyEnv']).meta?.role).toBe('credential-ref')
-    expect(node(['embedding', 'apiKey']).meta?.description).toEqual({ zh: '密钥', en: 'API key' })
+    expect(node(['embedding', 'apiKey']).meta?.description).toEqual({ zh: '密钥（仅远程）', en: 'Remote provider only' })
     expect(node(['embedding', 'apiKey']).meta?.role).toBe('secret')
-    expect(node(['embedding', 'model']).meta?.description).toEqual({ zh: '模型 ID', en: 'Model ID' })
+    expect(node(['embedding', 'model']).meta?.description).toEqual({ zh: '模型 ID（仅远程）', en: 'Remote provider only' })
     expect(node(['policy']).meta?.collapse).toBe(true)
 
     // Metadata only: the declared defaults and the memory gate are unchanged.

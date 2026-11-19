@@ -1,0 +1,10 @@
+{
+  "gatedTarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t31-pack\\elvisw-dsh-magic-context-0.18.6.tgz",
+  "gatedSha256": "25a9cdc949d38b98247436b9bd75a2e8f811a06a414a428f3165dc175efaf856",
+  "gatedBytes": 4071264,
+  "finalTarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t31-pack-final\\elvisw-dsh-magic-context-0.18.6.tgz",
+  "finalSha256": "25a9cdc949d38b98247436b9bd75a2e8f811a06a414a428f3165dc175efaf856",
+  "finalBytes": 4071264,
+  "libIdentical": true,
+  "changedMembers": []
+}

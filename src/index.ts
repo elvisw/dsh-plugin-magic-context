@@ -1328,19 +1328,19 @@ export const Config = z.object({
       z.const('siliconflow').extra('description', { zh: '硅基流动', en: 'SiliconFlow' }),
       z.const('custom').extra('description', { zh: '自定义', en: 'Custom' }),
     ]).default('siliconflow')
-      .extra('description', { zh: '服务预设', en: 'Preset' })
+      .extra('description', { zh: '服务预设（本地不适用）', en: 'Preset (not used by local MiniLM)' })
       .volatile(),
     endpoint: z.string().default('')
-      .extra('description', { zh: '接口地址', en: 'Endpoint' })
+      .extra('description', { zh: '接口地址（仅远程）', en: 'Remote provider only' })
       .volatile(),
     authHeader: z.union([
       z.const('authorization').extra('description', { zh: 'Authorization', en: 'Authorization' }),
       z.const('api-key').extra('description', { zh: 'api-key', en: 'api-key' }),
     ]).default('authorization')
-      .extra('description', { zh: '认证头', en: 'Auth header' })
+      .extra('description', { zh: '认证头（仅远程）', en: 'Remote provider only' })
       .volatile(),
     model: z.string().default('')
-      .extra('description', { zh: '模型 ID', en: 'Model ID' })
+      .extra('description', { zh: '模型 ID（仅远程）', en: 'Remote provider only' })
       .volatile(),
     // The default must be non-empty: dsh-go's native form hides
     // `role('credential-ref')` fields and binds a secret through its sibling's
@@ -1348,31 +1348,31 @@ export const Config = z.object({
     // endpoint; the runtime still treats an empty reference as unbound.
     apiKeyEnv: z.string().default('SILICONFLOW_API_KEY')
       .role('credential-ref')
-      .extra('description', { zh: '密钥变量', en: 'Key variable' })
+      .extra('description', { zh: '密钥变量（仅远程）', en: 'Remote provider only' })
       .volatile(),
     apiKey: z.string().default('')
       .role('secret')
-      .extra('description', { zh: '密钥', en: 'API key' })
+      .extra('description', { zh: '密钥（仅远程）', en: 'Remote provider only' })
       .volatile(),
     dimensions: z.union([z.number(), z.const(null)]).default(0)
-      .extra('description', { zh: '向量维度', en: 'Dimensions' })
+      .extra('description', { zh: '向量维度（仅远程）', en: 'Remote provider only' })
       .volatile(),
     queryInstruction: z.string().default('')
-      .extra('description', { zh: '查询前缀', en: 'Query prefix' })
+      .extra('description', { zh: '查询前缀（仅远程）', en: 'Remote provider only' })
       .volatile(),
     documentPrefix: z.string().default('')
-      .extra('description', { zh: '文档前缀', en: 'Document prefix' })
+      .extra('description', { zh: '文档前缀（仅远程）', en: 'Remote provider only' })
       .volatile(),
     // Bounds live in `resolveEmbeddingConfig` so a malformed hand-edited value
     // falls back instead of aborting profile boot.
     timeoutMs: z.number().default(8_000)
-      .extra('description', { zh: '请求超时', en: 'Timeout' })
+      .extra('description', { zh: '请求超时（仅远程）', en: 'Remote provider only' })
       .volatile(),
     queryTimeoutMs: z.number().default(2_500)
-      .extra('description', { zh: '查询超时', en: 'Query timeout' })
+      .extra('description', { zh: '查询超时（仅远程）', en: 'Remote provider only' })
       .volatile(),
     batchSize: z.number().default(16)
-      .extra('description', { zh: '批大小', en: 'Batch size' })
+      .extra('description', { zh: '批大小（仅远程）', en: 'Remote provider only' })
       .volatile(),
   })
     .extra('description', { zh: '向量检索', en: 'Embedding' })

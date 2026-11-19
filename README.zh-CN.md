@@ -56,7 +56,7 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 | 压缩段（compartment） | historian 产出的一段摘要，覆盖一段连续历史 |
 | 基线（baseline） | 每次请求都注入的固定内容（项目记忆、用户画像、全域），冻结不变 |
 | FTS5 | SQLite 的全文检索扩展；它的中文表现见「已知限制」 |
-| embedding（嵌入） | 把文本变成向量做语义检索，默认包内 MiniLM，384 维 |
+| embedding（嵌入） | 把文本变成向量做语义检索，默认本地 MiniLM，384 维，模型文件在首次使用时下载 |
 | tick（维护循环） | 默认每 30 分钟一次的维护任务 |
 | parity（门禁 / gate） | 共享向量空间的一致性校验，首次写入时先比对样本向量，不过就退回全文检索 |
 | pre-step | 每次请求模型前宿主调用的钩子，插件的主要决策都发生在这里 |
@@ -187,10 +187,14 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 App 的本机终端装准确版本，然后重启引擎：
 
 ```bash
-dsh plugin --profile web add @elvisw/dsh-magic-context@0.18.5
+dsh plugin --profile web add @elvisw/dsh-magic-context@0.18.6
 ```
 
 只有找到桥接时，宿主侧才注册状态条和面板；没有桥接的桌面端和 Web profile 照常加载。
+
+手机上的配置表单是 dsh-go 按插件 schema 生成的，而 dsh-go 目前只支持静态隐藏，所以选本地
+MiniLM 时那 12 项远程配置仍然显示，只能逐项标成「仅远程」（英文标题放不下这个标记，显示在
+字段下面的说明行）；Web 设置页则是直接隐藏。
 
 - **输入框状态条。** 和桌面胶囊同源的摘要，比如 `上下文 62% · 待回收 3`。生成回复时让位给宿主。
 - **上下文面板。** 从对话打开时严格按那个会话取数，从「全部功能」打开时标成全局视图。
@@ -321,7 +325,7 @@ node scripts/mc-acceptance.mjs [--hours 72]    # 语料库验收，失败退出 
 本 fork 从 0.12.0 到 0.12.3 以 `@elvisw/dsh-plugin-magic-context` 发布，0.13.0 起改成
 `@elvisw/dsh-magic-context`。版本号和 tag 属于本 fork，上游仓库和 npm 包仍由原维护者维护。
 
-相对上游 0.11.2，累计到 0.18.5 的主要差异：
+相对上游 0.11.2，累计到 0.18.6 的主要差异：
 
 - **恢复语义改了，这是 breaking change。** `ctx_expand` 把原文交回来，surface 上的位置一点没动：
   旧占位符保持不动，旧的 tag 保持已用掉的状态，再回收同一个 tag 会被拒绝并标为 already dropped。

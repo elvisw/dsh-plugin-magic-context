@@ -360,3 +360,15 @@ after = [29]
 hitl = true
 risk = "low"
 refine = true
+
+[[entry]]
+id = 31
+type = "story"
+title = "Hide remote embedding fields when the local provider is selected"
+description = "Choosing Local MiniLM leaves twelve remote-only embedding fields on screen even though only src/core/embedding-remote.ts reads them. The Web settings card must hide them off the DRAFT provider value (so the change is immediate), keep the saved values, drop the unsaved drafts it hides, and stop hidden fields from blocking Save or the invalid counters. The Android settings page is host-rendered by dsh-go, whose schema form only honours a static meta.hidden, so it cannot hide conditionally; the phone instead labels the twelve fields remote-only in the schema description and the README explains why. A dsh-go issue asks for conditional visibility so the phone can hide later. No new config key, no migration, no new route."
+verify = "In an isolated Web host at a fresh root whose profile defaults to provider local: the twelve fields (preset, endpoint, model, apiKeyEnv, apiKey, authHeader, dimensions, queryInstruction, documentPrefix, timeoutMs, queryTimeoutMs, batchSize) are absent and a local note is shown; switching to openai-compatible shows them and the advanced disclosure; a saved endpoint and model reach the profile patch; an unsaved endpoint draft is dropped when the provider switches to local and never reaches the patch; the previously saved endpoint survives and is restored when the provider switches back. tests/client-pure.spec.ts pins the visibility rule over exactly those twelve keys, tests/config-schema.spec.ts pins the zh label length and the remote-only markers, and npm test / typecheck / check:i18n / build pass. The phone form is not run on a device: no host byte changed, and the schema copy is covered by the schema test."
+covers = ["src/client/index.js", "src/index.ts", "tests/client-pure.spec.ts", "tests/config-schema.spec.ts", "README.md", "README.zh-CN.md", "CHANGELOG.md", "PARITY.md", "_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-2026-11-19-t31-local-hides-remote/"]
+after = [30]
+hitl = true
+risk = "medium"
+refine = true

@@ -1,0 +1,17 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t31-20261119-220337",
+  "profile": "t31",
+  "overlay": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t31-20261119-220337\\overlays\\t31.yml",
+  "profile_patch": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t31-20261119-220337\\dsh-home\\profiles\\t31\\cordis.patch.yml",
+  "tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t31-pack\\elvisw-dsh-magic-context-0.18.6.tgz",
+  "tarball_sha256": "25a9cdc949d38b98247436b9bd75a2e8f811a06a414a428f3165dc175efaf856",
+  "tarball_bytes": 4071264,
+  "tarball_files": 71,
+  "profile_dependency": "file:C:/Users/elvis/AppData/Local/Temp/opencode/t31-pack/elvisw-dsh-magic-context-0.18.6.tgz",
+  "fake_port": 4461,
+  "bootstrap_exit_code": 0,
+  "add_exit_code": 0,
+  "dump_exit_code": 0,
+  "dump_has_embedding": true,
+  "deepseek_key_present": true
+}

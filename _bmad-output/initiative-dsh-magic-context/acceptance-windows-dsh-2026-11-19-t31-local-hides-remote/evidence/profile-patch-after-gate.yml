@@ -1,0 +1,39 @@
+# T31 isolated Web gate profile layer (settings can edit this row).
+- id: magic-context-dsh
+  name: '@elvisw/dsh-magic-context'
+  config:
+    dataDir: C:/Users/elvis/AppData/Local/Temp/opencode/dsh-mc-t31-20261119-220337/plugin-data
+    maintenance:
+      enabled: false
+    policy:
+      executeThreshold: 100
+      ttlMs: 999999999
+    memory:
+      enabled: true
+      embedBackfill: false
+      vectorBackfill: false
+      vectorBackfillLimit: 2
+      global:
+        machine:
+          enabled: false
+        user:
+          render: false
+          collect: false
+          review: false
+    embedding:
+      provider: local
+      preset: custom
+      endpoint: http://127.0.0.1:4461/v1
+      authHeader: authorization
+      model: fixture-embed-a
+      apiKeyEnv: ""
+      dimensions: 0
+      timeoutMs: 8000
+      queryTimeoutMs: 2500
+      batchSize: 2
+    historianEnabled: false
+    registerCompactionEngine: false
+- id: ui-settings-general
+  name: "@deepseek-ai/dsh-client-ui-settings-general"
+  config:
+    welcomeNoticeVersion: 2026-09-28.1

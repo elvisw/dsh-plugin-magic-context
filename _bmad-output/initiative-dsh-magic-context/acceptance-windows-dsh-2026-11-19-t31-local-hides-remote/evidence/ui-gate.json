@@ -1,0 +1,189 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t31-20261119-220337",
+  "steps": [
+    {
+      "name": "chinese-locale",
+      "at": "2026-11-19T14:04:00.528Z",
+      "ok": true
+    },
+    {
+      "name": "default-provider-local",
+      "at": "2026-11-19T14:04:00.537Z",
+      "ok": true,
+      "value": "local"
+    },
+    {
+      "name": "hidden-embedding.preset",
+      "at": "2026-11-19T14:04:00.540Z",
+      "ok": true
+    },
+    {
+      "name": "hidden-embedding.endpoint",
+      "at": "2026-11-19T14:04:00.546Z",
+      "ok": true
+    },
+    {
+      "name": "hidden-embedding.model",
+      "at": "2026-11-19T14:04:00.552Z",
+      "ok": true
+    },
+    {
+      "name": "hidden-embedding.apiKeyEnv",
+      "at": "2026-11-19T14:04:00.558Z",
+      "ok": true
+    },
+    {
+      "name": "hidden-embedding.apiKey",
+      "at": "2026-11-19T14:04:00.562Z",
+      "ok": true
+    },
+    {
+      "name": "hidden-embedding.authHeader",
+      "at": "2026-11-19T14:04:00.566Z",
+      "ok": true
+    },
+    {
+      "name": "hidden-embedding.queryInstruction",
+      "at": "2026-11-19T14:04:00.568Z",
+      "ok": true
+    },
+    {
+      "name": "hidden-embedding.documentPrefix",
+      "at": "2026-11-19T14:04:00.570Z",
+      "ok": true
+    },
+    {
+      "name": "local-note",
+      "at": "2026-11-19T14:04:00.573Z",
+      "ok": true
+    },
+    {
+      "name": "advanced-hidden-with-local",
+      "at": "2026-11-19T14:04:00.576Z",
+      "ok": true
+    },
+    {
+      "name": "shown-embedding.preset",
+      "at": "2026-11-19T14:04:01.200Z",
+      "ok": true
+    },
+    {
+      "name": "shown-embedding.endpoint",
+      "at": "2026-11-19T14:04:01.202Z",
+      "ok": true
+    },
+    {
+      "name": "shown-embedding.model",
+      "at": "2026-11-19T14:04:01.204Z",
+      "ok": true
+    },
+    {
+      "name": "shown-embedding.apiKeyEnv",
+      "at": "2026-11-19T14:04:01.206Z",
+      "ok": true
+    },
+    {
+      "name": "advanced-shown-with-remote",
+      "at": "2026-11-19T14:04:01.208Z",
+      "ok": true
+    },
+    {
+      "name": "shown-embedding.dimensions",
+      "at": "2026-11-19T14:04:01.568Z",
+      "ok": true
+    },
+    {
+      "name": "shown-embedding.timeoutMs",
+      "at": "2026-11-19T14:04:01.571Z",
+      "ok": true
+    },
+    {
+      "name": "shown-embedding.queryTimeoutMs",
+      "at": "2026-11-19T14:04:01.573Z",
+      "ok": true
+    },
+    {
+      "name": "shown-embedding.batchSize",
+      "at": "2026-11-19T14:04:01.575Z",
+      "ok": true
+    },
+    {
+      "name": "shown-embedding.authHeader",
+      "at": "2026-11-19T14:04:01.577Z",
+      "ok": true
+    },
+    {
+      "name": "shown-embedding.queryInstruction",
+      "at": "2026-11-19T14:04:01.580Z",
+      "ok": true
+    },
+    {
+      "name": "shown-embedding.documentPrefix",
+      "at": "2026-11-19T14:04:01.583Z",
+      "ok": true
+    },
+    {
+      "name": "shown-embedding.apiKey",
+      "at": "2026-11-19T14:04:01.586Z",
+      "ok": true
+    },
+    {
+      "name": "save-state",
+      "at": "2026-11-19T14:04:02.103Z",
+      "label": "remote-config",
+      "disabled": false
+    },
+    {
+      "name": "saved-endpoint",
+      "at": "2026-11-19T14:04:02.733Z",
+      "ok": true,
+      "endpoint": "http://127.0.0.1:4461/v1"
+    },
+    {
+      "name": "saved-provider-remote",
+      "at": "2026-11-19T14:04:02.734Z",
+      "ok": true
+    },
+    {
+      "name": "hidden-after-switch",
+      "at": "2026-11-19T14:04:03.703Z",
+      "ok": true
+    },
+    {
+      "name": "save-state",
+      "at": "2026-11-19T14:04:04.206Z",
+      "label": "switch-back-local",
+      "disabled": false
+    },
+    {
+      "name": "saved-provider-local",
+      "at": "2026-11-19T14:04:04.835Z",
+      "ok": true
+    },
+    {
+      "name": "hidden-draft-dropped",
+      "at": "2026-11-19T14:04:04.835Z",
+      "ok": true
+    },
+    {
+      "name": "endpoint-preserved",
+      "at": "2026-11-19T14:04:04.835Z",
+      "ok": true,
+      "endpoint": "http://127.0.0.1:4461/v1"
+    },
+    {
+      "name": "endpoint-restored",
+      "at": "2026-11-19T14:04:05.351Z",
+      "ok": true,
+      "value": "http://127.0.0.1:4461/v1"
+    },
+    {
+      "name": "save-state",
+      "at": "2026-11-19T14:04:06.190Z",
+      "label": "final-local",
+      "disabled": false
+    }
+  ],
+  "failures": [],
+  "errors": []
+}
