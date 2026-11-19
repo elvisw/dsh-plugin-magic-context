@@ -1,7 +1,7 @@
 ---
 title: README host and dsh-go links
 ticket: 30
-status: built
+status: done
 ---
 
 # Plan — host and dsh-go links
