@@ -8,6 +8,17 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
+## [0.18.2] - 2026-11-19
+
+### Fixed
+
+- README 没有说明插件会**自己**丢弃工具输出（T27）。85% 压力起的强制带、提供商以请求过长拒绝后的
+  回收加重试、以及 reduce-guidance 提醒，在文档里完全缺席，读者会以为不调用 `ctx_reduce` 就不会丢
+  内容。两份 README 现在写明「日常回收由模型驱动、只有强制带会自动丢弃」的拆分，以及触发条件、受保护
+  窗口、分档顺序、溢出路径与提醒阈值；`docs/glossary.md` 增加 `强制带` 与 `受保护窗口`；
+  `docs/configuration.md` 说明 `forceThreshold` 的作用范围。这是 0.18.1 重写 README 时丢掉的事实，
+  不是新增功能。
+
 ## [0.18.1] - 2026-11-19
 
 ### Verified
@@ -323,6 +334,7 @@ npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布�
 
 0.12.0 之前的 tag 位于上游仓库 `wk544863858/dsh-plugin-magic-context`；从 0.12.0 起，版本与 tag 属于本 fork。
 
+[0.18.2]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.1...v0.18.2
 [0.18.1]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.16.0...v0.17.0

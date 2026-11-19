@@ -1,0 +1,6 @@
+No product source change since v0.18.1.
+
+Command: git diff v0.18.1..HEAD --stat -- src tests scripts
+Output: empty (0 bytes), recorded before packaging on 2026-11-19.
+
+Therefore the 0.18.1 test run (85 files / 1052 cases) covers the same source tree.
