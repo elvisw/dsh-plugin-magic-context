@@ -657,6 +657,13 @@ export function goContextData(summary: Record<string, unknown>, locale: unknown)
     system: formatGoNumber(breakdown.systemTokens, locale),
     tools: formatGoNumber(breakdown.toolsTokens, locale),
     messages: formatGoNumber(breakdown.messageTokens, locale),
+    // T32: the donut's slices. Strings above are for the rows; the chart needs
+    // numbers and the host computes the percentages.
+    share: [
+      finite(breakdown.systemTokens),
+      finite(breakdown.toolsTokens),
+      finite(breakdown.messageTokens),
+    ],
     conversation: formatGoNumber(composition.conversation, locale),
     toolCalls: formatGoNumber(composition.toolCalls, locale),
     compartments: formatGoNumber(composition.compartments, locale),
@@ -701,10 +708,14 @@ function sessionContextView(locale: unknown): Record<string, unknown> {
         ],
       },
       section(c.composition),
+      {
+        type: 'chart',
+        kind: 'donut',
+        unit: 'tok',
+        categories: [c.system, c.tools, c.messages],
+        series: [{ values: { $: 'data.share' } }],
+      },
       kv([
-        [c.system, { $: 'data.system' }],
-        [c.tools, { $: 'data.tools' }],
-        [c.messages, { $: 'data.messages' }],
         [c.conversation, { $: 'data.conversation' }],
         [c.toolCalls, { $: 'data.toolCalls' }],
         [c.compartments, { $: 'data.compartments' }],

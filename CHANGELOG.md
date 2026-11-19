@@ -8,6 +8,14 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
+## [0.18.7] - 2026-11-19
+
+### Added
+
+- 手机（dsh-go）的会话上下文面板增加一张组成环形图：系统 / 工具 / 消息三类按 token 占比，
+  图例同时给出数值与百分比。数据来自既有的 `contextBreakdown`，不重新计算 token；缺数据时
+  扇区为空、图例显示「—」。原来的三行数字已并入图例，不再重复。
+
 ## [0.18.6] - 2026-11-19
 
 ### Changed
@@ -376,6 +384,7 @@ npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布�
 
 0.12.0 之前的 tag 位于上游仓库 `wk544863858/dsh-plugin-magic-context`；从 0.12.0 起，版本与 tag 属于本 fork。
 
+[0.18.7]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.6...v0.18.7
 [0.18.6]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.5...v0.18.6
 [0.18.5]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.4...v0.18.5
 [0.18.4]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.3...v0.18.4

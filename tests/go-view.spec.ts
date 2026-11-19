@@ -261,6 +261,44 @@ describe('context panel data and view', () => {
     ]))
   })
 
+  it('draws the composition as one donut and stops repeating the three rows', () => {
+    const { summary } = telemetry()
+    const data = goContextData(summary('s1'), 'zh-CN')
+    // Raw numbers for the host to slice; the strings above stay for the rows.
+    expect(data.share).toEqual([1000, 2000, 3000])
+
+    const view = goContextView({ sessionId: 's1' }, 'zh-CN')
+    const charts: Array<Record<string, unknown>> = []
+    const labels: string[] = []
+    const visit = (node: unknown): void => {
+      if (Array.isArray(node)) { node.forEach(visit); return }
+      if (node === null || typeof node !== 'object') return
+      const record = node as Record<string, unknown>
+      if (record.type === 'chart') charts.push(record)
+      if (typeof record.text === 'string') labels.push(record.text)
+      if (Array.isArray(record.categories)) labels.push(...record.categories as string[])
+      Object.values(record).forEach(visit)
+    }
+    visit(view)
+
+    expect(charts).toHaveLength(1)
+    const chart = charts[0]!
+    expect(chart.kind).toBe('donut')
+    expect(chart.unit).toBe('tok')
+    expect(chart.categories).toEqual(['系统', '工具定义', '消息'])
+    expect(chart.series).toEqual([{ values: { $: 'data.share' } }])
+
+    // The three labels moved into the chart instead of staying as duplicate rows.
+    for (const label of ['系统', '工具定义', '消息']) {
+      expect(labels.filter((text) => text === label), label).toHaveLength(1)
+    }
+
+    // A summary without a breakdown keeps null slices, never invented zeroes.
+    expect(goContextData(summary('s2'), 'zh-CN').share).toEqual([null, null, null])
+    // The global panel has no session composition chart.
+    expect(JSON.stringify(goContextView({}, 'zh-CN'))).not.toContain('donut')
+  })
+
   it('keeps missing additive sources null and a real empty queue as zero', () => {
     const { summary } = telemetry()
     const s2 = goContextData(summary('s2'), 'zh-CN')
