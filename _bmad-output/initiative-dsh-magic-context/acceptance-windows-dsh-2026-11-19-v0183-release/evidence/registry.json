@@ -1,0 +1,16 @@
+{
+  "tag": "v0.18.3",
+  "workflowRun": "44526071406",
+  "version": "0.18.3",
+  "gitHead": "d385a4a3123084df561a2337c73c0b322416c08a",
+  "shasum": "4fc8805e53ab52e72e0fc60beb2096ef26596892",
+  "integrity": "sha512-wCj2oVToKKGAU/LAxrc8z1pajROzSbo0qcHvcCz3zmVRjs216DHk8Cqh5vPZIN93bb7rodcv5VlW6ILopTZYag==",
+  "integrityMatchesDownload": true,
+  "distTags": {
+    "bootstrap": "0.0.0-bootstrap.0",
+    "latest": "0.18.3"
+  },
+  "bytes": 4068932,
+  "sha256": "8c3fb53e15ab43c9b7e28fbe2ff40ed164c2d16b8affaa0f9ad1fd2554e35596",
+  "byteIdenticalToLocalPack": true
+}
