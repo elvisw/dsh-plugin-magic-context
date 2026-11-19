@@ -11,7 +11,7 @@ result, not a footnote.
 | Tarball | 4,087,402 bytes, SHA-256 `0ab7f5168bda13cf38db83c9af68067a14f5f78c764757ad80d73d0ce852aa30` |
 | `dist.integrity` (sha512/base64) | `AHUrlgbHdj1Bqf8xxaO/9W5cEaoOopiHy7hBmQfVFQ8hx0Qf46E3HD5SIH55Co4qsEOZgTX9/4gEOCv4JhayTw==` — recomputed locally, identical |
 | `dist.shasum` | `73f39de5185622f74046be396cba1aedcc000a86` (SHA-1; recorded, not used as the SHA-256 claim) |
-| Device | Xiaomi `25102RKBEC`, Android 17, serial `e85bf1e` |
+| Device | Xiaomi `25102RKBEC`, Android 17 (serial not recorded) |
 | Host | dsh-go `1.1.0` (`versionCode 11150838`), DSH `0.2.2-rc.1`, Node `24.22.1`, engine LOCAL |
 | Embedder | in-package MiniLM WASM, 384 dims, offline |
 | Isolation | `dataDir` = `/root/.dsh/dsh-go/mc-t25-local-vector/data`, corpus `…/memories.db`, assets `…/models/` |

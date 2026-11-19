@@ -7,7 +7,7 @@
 
 ## 真机结果
 
-- 设备：`e85bf1e`（Xiaomi，Android 17），dsh-go 1.1.0，web profile。
+- 设备：Xiaomi，Android 17，dsh-go 1.1.0，web profile（序列号不记录）。
 - 安装回执（脚本写入手机后拉回）：`status: ok`、
   `rendererMatches: true`、
    安装后的 `lib/dsh/go-view.js` SHA-256 `f6d77c4686106460f1ffb1721e1e12afa744225f6dba32996781aaec67c1ce26`。

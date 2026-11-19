@@ -1,0 +1,32 @@
+{
+  "distTags": {
+    "bootstrap": "0.0.0-bootstrap.0",
+    "latest": "0.18.8"
+  },
+  "version": "0.18.8",
+  "gitHead": "a72f808e3dd7d7983ae139f2c4c9afd603824216",
+  "dist": {
+    "shasum": "9faf906eff4b5e8c534f9d1ed10f11387eae93a6",
+    "tarball": "https://registry.npmjs.org/@elvisw/dsh-magic-context/-/dsh-magic-context-0.18.8.tgz",
+    "fileCount": 71,
+    "integrity": "sha512-ACy9Xh10ISul6boU7I6Qeq3daB+7zEGdmDdZIrX10BTq4GHsjMJ7QZ9SWUQMda/KhgZ4CHsEGoRBj8lTTY8Kqg==",
+    "signatures": [
+      {
+        "sig": "MEYCIQCxcOxY+3FhwyyexI6BQafCPFUyAqEZ3TPuvwPJw3wQuAIhAI+U7gN8HyYst8ajIPJraxEMyIk9FbIYj/qphn8zXoZH",
+        "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+      },
+      {
+        "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+        "sig": "MEUCIEwJkoe9zr6lKxBkwY5SUOCNZiGxcPFmgdhQk1Ms8eLYAiEAlb4U60+fBmw/5LGvNDbtCIL1d+3lFV294/EukUI7KoI="
+      }
+    ],
+    "attestations": {
+      "url": "https://registry.npmjs.org/-/npm/v1/attestations/@elvisw%2fdsh-magic-context@0.18.8",
+      "provenance": {
+        "predicateType": "https://slsa.dev/provenance/v1"
+      }
+    },
+    "unpackedSize": 15638838
+  },
+  "time": "2026-11-19T14:56:30.917Z"
+}

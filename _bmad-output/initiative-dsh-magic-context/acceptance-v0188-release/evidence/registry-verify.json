@@ -1,0 +1,18 @@
+{
+  "version": "0.18.8",
+  "latest": "0.18.8",
+  "gitHead": "a72f808e3dd7d7983ae139f2c4c9afd603824216",
+  "distIntegrity": "sha512-ACy9Xh10ISul6boU7I6Qeq3daB+7zEGdmDdZIrX10BTq4GHsjMJ7QZ9SWUQMda/KhgZ4CHsEGoRBj8lTTY8Kqg==",
+  "localIntegrity": "sha512-ACy9Xh10ISul6boU7I6Qeq3daB+7zEGdmDdZIrX10BTq4GHsjMJ7QZ9SWUQMda/KhgZ4CHsEGoRBj8lTTY8Kqg==",
+  "integrityMatch": true,
+  "distShasum": "9faf906eff4b5e8c534f9d1ed10f11387eae93a6",
+  "localShasum": "9faf906eff4b5e8c534f9d1ed10f11387eae93a6",
+  "shasumMatch": true,
+  "registrySha256": "c2e0b06d685db8e9e5523246d03c07b1a6af10ecff4793c9fb3878f2d712a6b1",
+  "registryBytes": 4071563,
+  "localSha256": "c2e0b06d685db8e9e5523246d03c07b1a6af10ecff4793c9fb3878f2d712a6b1",
+  "localBytes": 4071563,
+  "byteIdentical": true,
+  "changedMembers": [],
+  "fileCount": 71
+}
