@@ -1,0 +1,21 @@
+{
+  "version": "0.18.6",
+  "latest": "0.18.6",
+  "gitHead": "94d683c895b3bf829861b13dcf2fe6c5347a771d",
+  "distIntegrity": "sha512-9G1dnlsksvbDxFZRBlFO1qbNQo3yCSsiz30moliLQ6vUGVrfZsr8Etwnoi8u97IkkoWr5/qnx7GcNCN1F5ItHw==",
+  "localIntegrity": "sha512-9G1dnlsksvbDxFZRBlFO1qbNQo3yCSsiz30moliLQ6vUGVrfZsr8Etwnoi8u97IkkoWr5/qnx7GcNCN1F5ItHw==",
+  "integrityMatch": true,
+  "distShasum": "4dae8170827c6207f67b7320c1335b98403ea3b8",
+  "localShasum": "4dae8170827c6207f67b7320c1335b98403ea3b8",
+  "shasumMatch": true,
+  "registryTarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t31-registry\\registry-0.18.6.tgz",
+  "registrySha256": "25a9cdc949d38b98247436b9bd75a2e8f811a06a414a428f3165dc175efaf856",
+  "registryBytes": 4071264,
+  "localTarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t31-pack-final\\elvisw-dsh-magic-context-0.18.6.tgz",
+  "localSha256": "25a9cdc949d38b98247436b9bd75a2e8f811a06a414a428f3165dc175efaf856",
+  "localBytes": 4071264,
+  "byteIdentical": true,
+  "changedMembers": [],
+  "addedMembers": [],
+  "fileCount": 71
+}

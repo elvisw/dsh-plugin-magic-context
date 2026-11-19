@@ -1,0 +1,30 @@
+{
+  "count": 5,
+  "files": [
+    {
+      "path": "evidence/pack-compare.json",
+      "bytes": 275,
+      "sha256": "43c745043ec069bf8837a00d51db7276de74a55789c8f33474a0f3f9fbf20caf"
+    },
+    {
+      "path": "evidence/registry-metadata.json",
+      "bytes": 1225,
+      "sha256": "28f98d0cd482b86957fb65a0f006cc88640f1f07ba5e4f4a6498f5ce3cbaa311"
+    },
+    {
+      "path": "evidence/registry-verify.json",
+      "bytes": 1080,
+      "sha256": "74a1e11e5e7bf571d2f72d751d4ce8727b5a421b803965cb70e9ffdad5df8c17"
+    },
+    {
+      "path": "release-report.md",
+      "bytes": 1739,
+      "sha256": "6f0a954202babff68a8f17af2757a25b3f1d892f367214f6572380d7bb8bd52d"
+    },
+    {
+      "path": "verify_registry_0186.py",
+      "bytes": 4299,
+      "sha256": "9644a2d400043c62d3c3323f9a8449931666a843131ecfaa1404ef84460c90f7"
+    }
+  ]
+}
