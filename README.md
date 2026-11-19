@@ -223,7 +223,7 @@ Once the market entry is available, open **Plugin market → DSH Go adapter** an
 terminal and restart the engine:
 
 ```bash
-dsh plugin --profile web add @elvisw/dsh-magic-context@0.18.4
+dsh plugin --profile web add @elvisw/dsh-magic-context@0.18.5
 ```
 
 The host side registers the status strip and panels only when the bridge is present; desktop and Web
@@ -382,7 +382,7 @@ This repository is a fork of
 `@elvisw/dsh-magic-context` at 0.13.0. Versions and tags belong to this fork; the upstream repository
 and npm package remain with their maintainer.
 
-Changes in this fork since upstream 0.11.2, up to 0.18.4:
+Changes in this fork since upstream 0.11.2, up to 0.18.5:
 
 - **Recovery semantics changed, and it is a breaking change.** `ctx_expand` hands the original back
   without moving anything on the surface: the old placeholder stays untouched, its tag stays spent,

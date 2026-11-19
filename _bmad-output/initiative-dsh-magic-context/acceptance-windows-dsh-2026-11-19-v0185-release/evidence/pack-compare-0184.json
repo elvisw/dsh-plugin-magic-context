@@ -1,0 +1,23 @@
+{
+  "old": {
+    "path": "elvisw-dsh-magic-context-0.18.4.tgz",
+    "bytes": 4069578,
+    "sha256": "f98772680ca48126cfe21bfa5e663aa345204dd1a33e8c50136969c8169e2b51",
+    "members": 71
+  },
+  "new": {
+    "path": "elvisw-dsh-magic-context-0.18.5.tgz",
+    "bytes": 4069711,
+    "sha256": "1fb3dc6f7c0d701980509606e25290217d822b58b651d4994a49ce049200a184",
+    "members": 71
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    "package/README.md",
+    "package/README.zh-CN.md",
+    "package/package.json"
+  ],
+  "libChanged": [],
+  "vendorChanged": []
+}
