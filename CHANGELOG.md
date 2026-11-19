@@ -8,6 +8,18 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
+## [0.18.3] - 2026-11-19
+
+### Changed
+
+- README 不再把「按标签号回收/取回」当成用户操作（T28）。原文「常用操作」的第一项是
+  `你：把 4 到 7 号标签回收掉`，第二项是 `把 5 号标签的原文取回来`——实际上没有人这样用：模型
+  干活时会自己给用完的输出打标记，压力到 85% 时强制带自己丢弃受保护窗口之外的结果；取回同样是
+  模型的动作，它在发现自己需要一条已被回收的结果时自己调 `ctx_expand`，占位符留在原地。两份
+  README 的「常用操作」改成先说明「这件事不用你管」，并写明界面上没有任何地方要求用户挑标签；
+  工具表注明这些是模型调用的工具，斜杠命令才是用户直接敲的。`registerTools` /
+  `registerStatusCommand` 这类不常用开关从 README 移除，仍记录在 `docs/configuration.md`。
+
 ## [0.18.2] - 2026-11-19
 
 ### Fixed
@@ -334,6 +346,7 @@ npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布�
 
 0.12.0 之前的 tag 位于上游仓库 `wk544863858/dsh-plugin-magic-context`；从 0.12.0 起，版本与 tag 属于本 fork。
 
+[0.18.3]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.2...v0.18.3
 [0.18.2]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.1...v0.18.2
 [0.18.1]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.17.0...v0.18.0

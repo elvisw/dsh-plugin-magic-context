@@ -30,7 +30,7 @@ This document records the **effective-behavior contract** between the DSH adapte
 | MC store contract | shape inherited at the v95 cutover, **own lineage since 2026-10-13** (`src/core/memory-bridge.ts:45`; `MEMORY_SCHEMA_MAX_VERSION = 95`) |
 | DeepSeek Harness | **Desktop 0.2.1-rc.1** (host paths below are relative to the DSH checkout) |
 | Android native host | **dsh-go 1.1.0** (`e9d3239bee18029d48618c7514303bc7fa7bbf8f`); limited LOCAL device gate passed 2026-11-18 on the pre-release T23 candidate; scope below |
-| Adapter | `@elvisw/dsh-magic-context` 0.18.2, own store **schema v11** (`src/core/stores.ts`) |
+| Adapter | `@elvisw/dsh-magic-context` 0.18.3, own store **schema v11** (`src/core/stores.ts`) |
 
 Scope split: `docs/dsh-plugin-upgrade-followup.md` says **how** to follow an
 upgrade; this file says **where we differ**. Three verdicts are used below:
