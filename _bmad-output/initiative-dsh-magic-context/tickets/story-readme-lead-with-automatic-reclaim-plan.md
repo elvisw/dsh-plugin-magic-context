@@ -1,7 +1,7 @@
 ---
 title: Lead with automatic reclaim
 ticket: 28
-status: draft
+status: built
 ---
 
 # Plan — lead with automatic reclaim
