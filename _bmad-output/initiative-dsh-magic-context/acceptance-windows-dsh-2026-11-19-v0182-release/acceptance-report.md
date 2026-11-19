@@ -41,12 +41,15 @@ Candidate SHA-256: `b144e0eb3390ea14d29a7a8a525bad63d949785f61e1e08d74ee3bf598ec
 
 | Item | Value |
 |---|---|
-| Tag | `v0.18.2` |
+| Tag | `v0.18.2` on `1aa1248` |
+| Workflow | `44490718207` — success |
 | npm `latest` | `0.18.2` |
-| `dist.shasum` / `dist.integrity` | compared with the local pack |
-| Registry tarball | byte-identical to the local pack |
+| `dist.shasum` | `530deaa80f013664f2a038ec9e61ec76014a9c88` (matches the local pack) |
+| `dist.integrity` | `sha512-gQJlJiyWHRPnB…JdCew==`, recomputed from the downloaded bytes |
+| Registry tarball | 4,068,953 bytes, byte-identical to the local pack (`evidence/registry.json`) |
 
-(Values filled in after the workflow completes.)
+Registry metadata took about a minute to appear after the workflow finished; that is
+propagation, confirmed by polling rather than assumed.
 
 ## Follow-up
 

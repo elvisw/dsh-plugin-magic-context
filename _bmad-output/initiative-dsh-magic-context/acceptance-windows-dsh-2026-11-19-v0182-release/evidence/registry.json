@@ -1,0 +1,18 @@
+{
+  "version": "0.18.2",
+  "tag": "v0.18.2",
+  "commit": "1aa12487d2b73aed7da2eeec0d29d5bcee72eda3",
+  "workflowRun": "44490718207",
+  "workflowConclusion": "success",
+  "gitHead": "1aa12487d2b73aed7da2eeec0d29d5bcee72eda3",
+  "distTags": {
+    "bootstrap": "0.0.0-bootstrap.0",
+    "latest": "0.18.2"
+  },
+  "shasum": "530deaa80f013664f2a038ec9e61ec76014a9c88",
+  "integrity": "sha512-gQJlJiyWHRPnB+pB4vylqkIwoltQtz8a65uB488RTsohU2QYRPU0msTXwiEL3Z1lwDdhFhHoZTCQAkBDXJdCew==",
+  "tarballBytes": 4068953,
+  "tarballSha256": "b144e0eb3390ea14d29a7a8a525bad63d949785f61e1e08d74ee3bf598ec4de9",
+  "integrityMatchesDownload": true,
+  "registryByteIdenticalToLocalPack": true
+}
