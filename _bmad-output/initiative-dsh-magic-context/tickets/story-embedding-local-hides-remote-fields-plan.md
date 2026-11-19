@@ -1,7 +1,7 @@
 ---
 title: Hide remote embedding fields when the provider is local
 ticket: 31
-status: built
+status: done
 ---
 
 # Plan: hide remote embedding fields when the provider is local (T31)
