@@ -1,0 +1,39 @@
+{
+  "root": "acceptance-windows-dsh-2026-11-19-v0185-release",
+  "count": 6,
+  "excluded": [
+    "evidence/sha256-manifest.json"
+  ],
+  "entries": [
+    {
+      "path": "acceptance-report.md",
+      "bytes": 2261,
+      "sha256": "74711e2d1e1b9de14897fe43fd28557a0c5c4d897158c9b716e7b44b4f6e2893"
+    },
+    {
+      "path": "evidence/build.txt",
+      "bytes": 281,
+      "sha256": "9cf342ac80149e100d2a70fac94f2ea7cdf8c1916b08a1e1f818bdbda0e16412"
+    },
+    {
+      "path": "evidence/npm-pack.txt",
+      "bytes": 3527,
+      "sha256": "6225971b3cf57bc8b217f8cdb53ea71d0ad7455b2b65f36dd3957c58e80de22a"
+    },
+    {
+      "path": "evidence/pack-compare-0184.json",
+      "bytes": 559,
+      "sha256": "6acb1762e8538fe04f1f34f06809558090e4d90383dad9ccaec426d814d47b64"
+    },
+    {
+      "path": "evidence/registry.json",
+      "bytes": 559,
+      "sha256": "a1a4e8545b49c0855c5c7ada923afde3159ea0a04b3e71590670ec7a5defb1ba"
+    },
+    {
+      "path": "evidence/source-diff-since-0184.txt",
+      "bytes": 117,
+      "sha256": "266b577482e832d7b05850ac111daec828600ff72be73a84d63f0da667e1be77"
+    }
+  ]
+}

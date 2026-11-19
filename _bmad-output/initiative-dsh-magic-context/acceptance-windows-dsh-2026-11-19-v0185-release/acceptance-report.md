@@ -36,8 +36,14 @@ Candidate SHA-256: `1fb3dc6f7c0d701980509606e25290217d822b58b651d4994a49ce049200
 
 | Item | Value |
 |---|---|
-| Tag | `v0.18.5` |
+| Tag | `v0.18.5` on `b5aaca8` |
+| Workflow | `44530305162` — success |
 | npm `latest` | `0.18.5` |
-| Registry tarball | compared against the local pack |
+| `dist.shasum` | `f94ca75c049337d5de4e7644952bab5103a39ef5` (matches the local pack) |
+| `dist.integrity` | recomputed from the downloaded bytes and equal to `sha512-JB7tTRrn28Lv3Fg6+5Lfp…` |
+| Registry tarball | 4,069,711 bytes, byte-identical to the local pack (`evidence/registry.json`) |
 
-(Confirmed after the workflow completes.)
+The daily `web` profile was upgraded to 0.18.5; its plugin row (`magic-context-dsh`), historian
+route and `registerCompactionEngine: true` are unchanged. Registry metadata took about two
+minutes to appear; the first two `dsh plugin add` attempts failed while pnpm still saw only
+0.18.4, and succeeded after propagation.
