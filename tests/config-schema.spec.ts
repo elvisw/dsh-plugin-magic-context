@@ -147,6 +147,54 @@ describe('runtime Config schema', () => {
     expect(liveRoute(undefined, undefined)).toBeUndefined()
   })
 
+  it('declares every enum field as a union of constants, which is the only shape the native phone form renders as a picker', () => {
+    // The phone's form (dsh-go `schema_fields.dart` kindOf) maps a `string` node to a
+    // text box and only maps a `union` whose members are all `const` to a choice. Our
+    // own client hard-codes `kind: 'select'`, so a plain `z.string()` looked correct on
+    // desktop while the phone showed free text. These four fields are enums in the
+    // TypeScript interface already; the schema has to say so too.
+    const json = Config.toJSON() as unknown as {
+      uid: number
+      refs: Record<string, {
+        type: string
+        meta?: Record<string, unknown>
+        dict?: Record<string, string>
+        list?: Array<string | number>
+        value?: unknown
+      }>
+    }
+    const node = (path: readonly string[]): (typeof json.refs)[string] => {
+      let current = json.refs[String(json.uid)]!
+      for (const key of path) {
+        current = json.refs[current.dict![key]!]!
+      }
+      return current
+    }
+    const enumOf = (path: readonly string[]): unknown[] => {
+      const union = node(path)
+      expect(union.type, `${path.join('.')} should be a union, not a ${union.type}`).toBe('union')
+      const members = (union.list ?? []).map((id) => json.refs[String(id)]!)
+      expect(members.length).toBeGreaterThan(1)
+      for (const member of members) expect(member.type).toBe('const')
+      return members.map((member) => member.value)
+    }
+
+    expect(enumOf(['embedding', 'provider'])).toEqual(['local', 'openai-compatible', 'off'])
+    expect(enumOf(['embedding', 'preset'])).toEqual(['siliconflow', 'custom'])
+    expect(enumOf(['embedding', 'authHeader'])).toEqual(['authorization', 'api-key'])
+    expect(enumOf(['journal', 'level'])).toEqual(['info', 'warn', 'error'])
+
+    // The union keeps the live-reference wrapper the form edits through.
+    const value = Config({}) as unknown as Record<string, any>
+    expect((value.embedding.provider as Volatile).get()).toBe('local')
+    expect((value.embedding.authHeader as Volatile).get()).toBe('authorization')
+    expect((value.journal.level as Volatile).get()).toBe('info')
+
+    // An enum rejects a value outside it instead of passing it through as before.
+    expect(() => Config({ embedding: { provider: 'bogus' } } as unknown as MagicContextDshConfig))
+      .toThrow()
+  })
+
   it('adds localized native labels/groups that the released schema form can render', () => {
     const json = Config.toJSON() as unknown as {
       uid: number

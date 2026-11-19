@@ -1,12 +1,12 @@
 # 独立包名与发布
 
-> Status: current — updated for the 0.18.0 release.
+> Status: current — updated for the 0.18.1 release.
 > Scope: package rename, user migration, and release procedure.
 
 本仓库 `0.12.0`–`0.12.3` 使用 npm 包名 **`@elvisw/dsh-plugin-magic-context`**；从 **`0.13.0`** 起改为
 **`@elvisw/dsh-magic-context`**。`0.12.1` 是同一代码线的 docs-only patch，`0.12.2` 是 historian 重试、
 reasoning effort 与两处观测口径的修复版，`0.12.3` 是 `/ctx-flush` 空队列反馈的 patch，`0.13.0` 是包名
-迁移 + `ctx_expand` range/verbose，`0.14.0` 是顶层设置页、全量中文化与 catalog-backed effort 选择器，`0.15.0` 是遥测 v2 面板与中英截图，`0.16.0` 是远程向量检索与宿主原生设置页重做（移除旧 Plugins 卡片入口，属 breaking change），`0.17.0` 是手动 `/ctx-wrapup` live-history 压缩，`0.18.0` 新增 Android dsh-go 原生面板与桌面凭据库密钥录入。上游包 `dsh-plugin-magic-context` 属于另一位
+迁移 + `ctx_expand` range/verbose，`0.14.0` 是顶层设置页、全量中文化与 catalog-backed effort 选择器，`0.15.0` 是遥测 v2 面板与中英截图，`0.16.0` 是远程向量检索与宿主原生设置页重做（移除旧 Plugins 卡片入口，属 breaking change），`0.17.0` 是手动 `/ctx-wrapup` live-history 压缩，`0.18.0` 新增 Android dsh-go 原生面板与桌面凭据库密钥录入，`0.18.1` 是 README 重写与 dsh-go 原生表单枚举字段的修复。上游包 `dsh-plugin-magic-context` 属于另一位
 维护者，本 fork 不修改、不覆盖它。
 
 ## 用户迁移
@@ -77,7 +77,7 @@ npm 的 Trusted Publishing 只能绑定到已经存在的包，因此首次发�
 ## 发布后核对
 
 ```bash
-npm view @elvisw/dsh-magic-context@0.18.0 version dist.integrity
+npm view @elvisw/dsh-magic-context@0.18.1 version dist.integrity
 npm view @elvisw/dsh-magic-context dist-tags
 npm trust list @elvisw/dsh-magic-context
 ```

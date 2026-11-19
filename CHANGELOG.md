@@ -8,7 +8,7 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
-## [Unreleased]
+## [0.18.1] - 2026-11-19
 
 ### Verified
 
@@ -21,6 +21,14 @@
 ### Added
 
 - 项目图标 `docs/img/plugin-icon.png`（512×512，另有 256 版）：括号收纳三枚方块，用于市场条目与 README。图标为本仓库原创，不沿用上游 `cortexkit/magic-context` 的徽标。
+
+### Fixed
+
+- dsh-go 原生表单把四个枚举字段显示成文本框：`embedding.provider`、`embedding.preset`、`embedding.authHeader`、`journal.level` 在 schema 里是 `z.string()`，而手机端只把「成员全是常量的 union」渲染成选择器，于是照 schema 显示成自由文本；桌面端不受影响，因为本插件的客户端自己写死了 `select`。四处改为 `union` of `const`，并给每个选项加了中英标签。`src/dsh/config.ts` 的接口原本就声明了这些联合类型，schema 只是比接口宽松。**行为变化**：写入枚举之外的值现在会在加载配置时报错，而不是静默按默认值运行。
+
+### Changed
+
+- README / README.zh-CN 重写（T26）：术语表新增 `docs/glossary.md`；风险标记一节按市场扫描器实测数字说明四项 flag；压缩后的技术细节移入 `docs/configuration.md` 与 `docs/architecture.md`；重复陈述收成一处；中文长句与直译改写。
 
 ## [0.18.0] - 2026-11-18
 
@@ -315,6 +323,7 @@ npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布�
 
 0.12.0 之前的 tag 位于上游仓库 `wk544863858/dsh-plugin-magic-context`；从 0.12.0 起，版本与 tag 属于本 fork。
 
+[0.18.1]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.0...v0.18.1
 [0.18.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.17.0...v0.18.0
 [0.17.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.15.0...v0.16.0

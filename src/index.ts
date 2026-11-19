@@ -1317,16 +1317,26 @@ export const Config = z.object({
    * has no side effect unless `provider` is switched away from `local`.
    */
   embedding: z.object({
-    provider: z.string().default('local')
+    provider: z.union([
+      z.const('local').extra('description', { zh: '本地 MiniLM', en: 'Local MiniLM' }),
+      z.const('openai-compatible').extra('description', { zh: 'OpenAI 兼容', en: 'OpenAI-compatible' }),
+      z.const('off').extra('description', { zh: '关闭语义检索', en: 'Off' }),
+    ]).default('local')
       .extra('description', { zh: '向量服务', en: 'Embedding provider' })
       .volatile(),
-    preset: z.string().default('siliconflow')
+    preset: z.union([
+      z.const('siliconflow').extra('description', { zh: '硅基流动', en: 'SiliconFlow' }),
+      z.const('custom').extra('description', { zh: '自定义', en: 'Custom' }),
+    ]).default('siliconflow')
       .extra('description', { zh: '服务预设', en: 'Preset' })
       .volatile(),
     endpoint: z.string().default('')
       .extra('description', { zh: '接口地址', en: 'Endpoint' })
       .volatile(),
-    authHeader: z.string().default('authorization')
+    authHeader: z.union([
+      z.const('authorization').extra('description', { zh: 'Authorization', en: 'Authorization' }),
+      z.const('api-key').extra('description', { zh: 'api-key', en: 'api-key' }),
+    ]).default('authorization')
       .extra('description', { zh: '认证头', en: 'Auth header' })
       .volatile(),
     model: z.string().default('')
@@ -1372,7 +1382,11 @@ export const Config = z.object({
     enabled: z.boolean().default(true)
       .extra('description', { zh: '启用日志', en: 'Journal on' })
       .volatile(),
-    level: z.string().default('info')
+    level: z.union([
+      z.const('info').extra('description', { zh: 'info（全部）', en: 'info (all)' }),
+      z.const('warn').extra('description', { zh: 'warn 起', en: 'warn and up' }),
+      z.const('error').extra('description', { zh: '仅 error', en: 'errors only' }),
+    ]).default('info')
       .extra('description', { zh: '日志级别', en: 'Log level' })
       .volatile(),
     /** min(1): a stray 0/negative would prune the whole table at open. */
