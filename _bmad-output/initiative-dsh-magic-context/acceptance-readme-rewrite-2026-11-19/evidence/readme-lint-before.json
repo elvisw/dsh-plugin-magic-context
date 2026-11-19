@@ -1,0 +1,377 @@
+{
+  "when": "before rewrite",
+  "total": 74,
+  "failed": 48,
+  "results": [
+    {
+      "name": "zh-h1-count",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "zh-h2-count",
+      "ok": true,
+      "detail": "12"
+    },
+    {
+      "name": "zh-no-h3",
+      "ok": false,
+      "detail": "遥测徽标 | 手机上验到哪一步 | 和上游 DSH 适配器的差异 | 版权与第三方"
+    },
+    {
+      "name": "zh-h2-order",
+      "ok": false,
+      "detail": "安装 | 装完会看到什么 | 它做什么 | 工具 | 命令 | 设置 | Android | 已知限制 | 观测与排障 | 文档 | 参与 | 出处与许可"
+    },
+    {
+      "name": "en-h1-count",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "en-h2-count",
+      "ok": true,
+      "detail": "12"
+    },
+    {
+      "name": "en-no-h3",
+      "ok": false,
+      "detail": "Telemetry badge | How far the phone has been verified | Differences from the upstream DSH adapter | Copyright and third parties"
+    },
+    {
+      "name": "en-h2-order",
+      "ok": false,
+      "detail": "Install | What you will see | What it does | Tools | Commands | Settings | Android | Known limits | Observability and troubleshooting | Documentation | Contributing | Provenance and license"
+    },
+    {
+      "name": "plan-has-hard-zh",
+      "ok": true,
+      "detail": "11"
+    },
+    {
+      "name": "plan-has-hard-en",
+      "ok": true,
+      "detail": "8"
+    },
+    {
+      "name": "banned-hard-zh",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "banned-hard-en",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "fact-exactly1-legacy-card",
+      "ok": false,
+      "detail": "zh=3 en=3"
+    },
+    {
+      "name": "fact-exactly1-flat-headless",
+      "ok": false,
+      "detail": "zh=3 en=3"
+    },
+    {
+      "name": "fact-exactly1-memory-default-on",
+      "ok": false,
+      "detail": "zh=2 en=2"
+    },
+    {
+      "name": "fact-exactly1-row-id-shared",
+      "ok": false,
+      "detail": "zh=2 en=2"
+    },
+    {
+      "name": "fact-exactly1-chinese-fts-limit",
+      "ok": true,
+      "detail": "zh=1 en=1"
+    },
+    {
+      "name": "fact-exactly1-package-scope-prose",
+      "ok": true,
+      "detail": "zh=1 en=1"
+    },
+    {
+      "name": "fact-atMost2-never-zero",
+      "ok": false,
+      "detail": "zh=4 en=3"
+    },
+    {
+      "name": "fact-atMost2-five-sections",
+      "ok": true,
+      "detail": "zh=2 en=2"
+    },
+    {
+      "name": "fact-atMost2-second-package",
+      "ok": true,
+      "detail": "zh=2 en=2"
+    },
+    {
+      "name": "fact-atMost2-ctx-expand-semantics",
+      "ok": false,
+      "detail": "zh=3 en=2"
+    },
+    {
+      "name": "forbidden-src_",
+      "ok": true,
+      "detail": "zh=false en=false"
+    },
+    {
+      "name": "forbidden-pending_drops",
+      "ok": false,
+      "detail": "zh=true en=true"
+    },
+    {
+      "name": "forbidden-flush_requested",
+      "ok": false,
+      "detail": "zh=true en=true"
+    },
+    {
+      "name": "forbidden-memory_embeddings",
+      "ok": true,
+      "detail": "zh=false en=false"
+    },
+    {
+      "name": "forbidden-compartments",
+      "ok": false,
+      "detail": "zh=true en=true"
+    },
+    {
+      "name": "forbidden-schema_v11",
+      "ok": true,
+      "detail": "zh=false en=false"
+    },
+    {
+      "name": "forbidden-schema___v11",
+      "ok": false,
+      "detail": "zh=true en=false"
+    },
+    {
+      "name": "forbidden-EMBEDDING_ASSETS",
+      "ok": true,
+      "detail": "zh=false en=false"
+    },
+    {
+      "name": "forbidden-defaultDataDir",
+      "ok": true,
+      "detail": "zh=false en=false"
+    },
+    {
+      "name": "singular-compartment-present",
+      "ok": true,
+      "detail": "en has singular"
+    },
+    {
+      "name": "no-line-over-400",
+      "ok": false,
+      "detail": "README.md:35=527 README.md:154=622 README.md:205=2564 README.md:219=494 README.zh-CN.md:204=2252"
+    },
+    {
+      "name": "no-line-over-5-links",
+      "ok": false,
+      "detail": "README.md:205=19 README.zh-CN.md:204=19"
+    },
+    {
+      "name": "glossary-exists",
+      "ok": true,
+      "detail": "docs\\glossary.md"
+    },
+    {
+      "name": "glossary-covers-terms",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "glossary-linked-zh",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "glossary-linked-en",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "shared-terms-present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "zh-terms-present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "en-terms-present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "scan-evidence-exists",
+      "ok": true,
+      "detail": "_bmad-output\\initiative-dsh-magic-context\\acceptance-readme-rewrite-2026-11-19\\evidence\\market-risk-scan.json"
+    },
+    {
+      "name": "risk-section-zh",
+      "ok": false,
+      "detail": "missing section"
+    },
+    {
+      "name": "risk-section-en",
+      "ok": false,
+      "detail": "missing section"
+    },
+    {
+      "name": "risk-number-4-zh",
+      "ok": false,
+      "detail": "absent in zh"
+    },
+    {
+      "name": "risk-number-4-en",
+      "ok": false,
+      "detail": "absent in en"
+    },
+    {
+      "name": "risk-number-12-zh",
+      "ok": false,
+      "detail": "absent in zh"
+    },
+    {
+      "name": "risk-number-12-en",
+      "ok": false,
+      "detail": "absent in en"
+    },
+    {
+      "name": "risk-number-2-zh",
+      "ok": false,
+      "detail": "absent in zh"
+    },
+    {
+      "name": "risk-number-2-en",
+      "ok": false,
+      "detail": "absent in en"
+    },
+    {
+      "name": "risk-number-10-zh",
+      "ok": false,
+      "detail": "absent in zh"
+    },
+    {
+      "name": "risk-number-10-en",
+      "ok": false,
+      "detail": "absent in en"
+    },
+    {
+      "name": "risk-number-52-zh",
+      "ok": false,
+      "detail": "absent in zh"
+    },
+    {
+      "name": "risk-number-52-en",
+      "ok": false,
+      "detail": "absent in en"
+    },
+    {
+      "name": "risk-level-native-code-zh",
+      "ok": false,
+      "detail": "want native-code=high"
+    },
+    {
+      "name": "risk-level-native-code-en",
+      "ok": false,
+      "detail": "want native-code=high"
+    },
+    {
+      "name": "risk-level-shell-zh",
+      "ok": false,
+      "detail": "want shell=medium"
+    },
+    {
+      "name": "risk-level-shell-en",
+      "ok": false,
+      "detail": "want shell=medium"
+    },
+    {
+      "name": "risk-level-network-zh",
+      "ok": false,
+      "detail": "want network=low"
+    },
+    {
+      "name": "risk-level-network-en",
+      "ok": false,
+      "detail": "want network=low"
+    },
+    {
+      "name": "risk-level-filesystem-zh",
+      "ok": false,
+      "detail": "want filesystem=medium"
+    },
+    {
+      "name": "risk-level-filesystem-en",
+      "ok": false,
+      "detail": "want filesystem=medium"
+    },
+    {
+      "name": "risk-artifact-ort-wasm-simd-threaded.wasm-zh",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "risk-artifact-ort-wasm-simd-threaded.wasm-en",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "risk-artifact-memory-bridge-zh",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "risk-artifact-memory-bridge-en",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "risk-artifact-project-drift-zh",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "risk-artifact-project-drift-en",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "risk-artifact-telemetry.invalid-zh",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "risk-artifact-telemetry.invalid-en",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "risk-artifact-embedding.invalid-zh",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "risk-artifact-embedding.invalid-en",
+      "ok": false,
+      "detail": ""
+    },
+    {
+      "name": "risk-no-src-zh",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "risk-no-src-en",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

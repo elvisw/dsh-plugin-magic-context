@@ -30,6 +30,10 @@ DSH 还在 developer preview，破坏性变更属于预期内。这个包的结�
 
 **自有语料库** `~/.local/share/cortexkit/magic-context-dsh-poc/memories.db`：项目记忆 + 全域行 + 画像 + 向量。legacy `context.db` 已封存不读，2026-10-13 硬切换，与上游只做功能跟进，没有存储兼容义务。
 
+**`flush_requested` 与 v10 → v11 迁移**：适配器库 schema v11 相对 v10 的唯一改动是给 `pending_drops` 加了一列 `flush_requested INTEGER NOT NULL DEFAULT 0`（`src/core/stores.ts:690-695`）。它记的是「这条已排队的回收被 `/ctx-flush` 要求在下一次消息强制落地」。设计上刻意放在队列表的行上而不是 tag 上：只有已经在排的回收才能被强制，且这个标记必须跨进程存活到下一个 pre-step（同处注释 687-689 行）。排队时写 1、落地时清 0、每次新入队也重置为 0。v10 的库打开时自动执行这条 `ALTER TABLE`，不需要手工迁移。
+
+**数据目录**：默认 `~/.local/share/cortexkit/magic-context-dsh-poc/`（`src/core/stores.ts` 的 `defaultDataDir()`，即 `join(homedir(), '.local','share','cortexkit','magic-context-dsh-poc')`）。两个库、`activity.log`、模型缓存都在这里。配置键 `dataDir`（`src/dsh/config.ts:11`）可以覆盖，读取点是 `src/index.ts:249` 的 `config.dataDir ?? defaultDataDir()`；适配器库、`memories.db`、journal 与模型缓存一起跟着走。
+
 ## 存储与检索引擎
 
 记忆行的身份是 `git:<root-sha>` 或 `dir:<hash>`，自动从工作目录推导。
@@ -58,6 +62,31 @@ DSH 还在 developer preview，破坏性变更属于预期内。这个包的结�
 | 遥测路由 | `src/dsh/telemetry.ts` |
 | 浏览器半侧 | `src/client/index.js` |
 | Android 原生桥接 | `src/dsh/go-native.ts`、`src/dsh/go-view.ts` |
+
+## 观测
+
+宿主不持久化 `ctx.logger` 的输出（Desktop 没有插件日志文件可事后查看），所以插件把决策和结果写进自己的 journal。这是排查「这一次为什么 defer」「这次请求花了多少」的唯一现场。
+
+两个落点，都在数据目录下：
+
+| 落点 | 内容 |
+|---|---|
+| 适配器库的 `journal` 表 | 结构化，可按 kind / level / session / 时间窗 SQL 查询 |
+| 同目录的 `activity.log` | 单行文本镜像，便于 `tail` / grep；超过 5 MiB 自动轮转（`mirrorMaxBytes`，`src/core/journal.ts:277`） |
+
+隐私与体量的纪律在 `src/core/journal.ts:13-16` 写死了：**消息正文永远不记录**，调用点只传计数、tag 号、token 估算、原因与耗时；每个字符串被截断、每个数组被设上限，长会话也不会把库撑大。
+
+`JournalKind` 是封闭联合类型（`src/core/journal.ts:28-59`），当前 29 种：
+
+```
+boot · config-drift · session-first-seen · pass · drop-landed · compartment-published
+compartment-recomp · compartment-guard（已退役，仅供读旧行） · force-path · memory-stats
+historian · baseline · emergency-reclaim · wire-repair · memory-recall · profile-recall
+vector-lane · search-hint · memory-promote · global-review · maintenance · memory-sample
+session-notice · project-drift · wrapup · context-pressure · tool-call · engine · error
+```
+
+读取侧是 `scripts/mc-report.mjs`，只读打开这张表，按天汇总并给出健康提示；`npm run doctor` 与 `scripts/mc-acceptance.mjs` 也走同一条路径。
 
 ## 与上游的对齐
 

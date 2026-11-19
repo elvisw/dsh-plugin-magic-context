@@ -1,0 +1,151 @@
+{
+  "tarball": "elvisw-dsh-magic-context-0.18.0.tgz (registry copy)",
+  "tarballSource": "https://registry.npmjs.org/@elvisw/dsh-magic-context/-/dsh-magic-context-0.18.0.tgz",
+  "tarballSha256": "0ab7f5168bda13cf38db83c9af68067a14f5f78c764757ad80d73d0ce852aa30",
+  "tarballBytes": 4087402,
+  "publishedSha256": "0ab7f5168bda13cf38db83c9af68067a14f5f78c764757ad80d73d0ce852aa30",
+  "matchesPublished": true,
+  "files": 71,
+  "level": "high",
+  "flags": [
+    "native-code",
+    "shell",
+    "network",
+    "filesystem"
+  ],
+  "levels": {
+    "native-code": "high",
+    "shell": "medium",
+    "network": "low",
+    "filesystem": "medium"
+  },
+  "levelsSource": "ccch1mneyyy/dsh-go-market scripts/core.mjs:31-36 (LEVELS constant)",
+  "evidence": {
+    "network": [
+      "lib/client.js",
+      "lib/core/embedding-local.js",
+      "lib/core/embedding-remote.js",
+      "lib/dsh/embedding-lane.js",
+      "lib/dsh/telemetry.js",
+      "vendor/onnx/ort-wasm-simd-threaded.mjs",
+      "vendor/onnx/ort.node.min.mjs"
+    ],
+    "shell": [
+      "lib/core/corpus-store.js",
+      "lib/core/directive-detect.js",
+      "lib/core/embedding-remote.js",
+      "lib/core/memory-bridge.js",
+      "lib/core/memory-search.js",
+      "lib/core/memory-write.js",
+      "lib/core/profile-write.js",
+      "lib/core/stores.js",
+      "lib/dsh/global-review.js",
+      "lib/dsh/project-drift.js",
+      "lib/dsh/recomp.js",
+      "lib/dsh/seams.js"
+    ],
+    "filesystem": [
+      "lib/core/corpus-store.js",
+      "lib/core/embedding-local.js",
+      "lib/core/journal.js",
+      "lib/core/stores.js",
+      "lib/dsh/embedding-lane.js",
+      "tools/migrate-profile-package-name.mjs"
+    ],
+    "native-code": [
+      "vendor/onnx/ort-wasm-simd-threaded.wasm"
+    ]
+  },
+  "shellBreakdown": {
+    "flaggedFiles": 12,
+    "filesImportingChildProcess": 2,
+    "filesWithoutChildProcess": 10,
+    "sqliteExecCalls": 52,
+    "detail": [
+      {
+        "file": "lib/core/corpus-store.js",
+        "realChildProcess": false,
+        "dbExec": 4,
+        "otherExec": 0
+      },
+      {
+        "file": "lib/core/directive-detect.js",
+        "realChildProcess": false,
+        "dbExec": 0,
+        "otherExec": 1
+      },
+      {
+        "file": "lib/core/embedding-remote.js",
+        "realChildProcess": false,
+        "dbExec": 0,
+        "otherExec": 2
+      },
+      {
+        "file": "lib/core/memory-bridge.js",
+        "realChildProcess": true,
+        "dbExec": 2,
+        "otherExec": 0
+      },
+      {
+        "file": "lib/core/memory-search.js",
+        "realChildProcess": false,
+        "dbExec": 2,
+        "otherExec": 0
+      },
+      {
+        "file": "lib/core/memory-write.js",
+        "realChildProcess": false,
+        "dbExec": 9,
+        "otherExec": 0
+      },
+      {
+        "file": "lib/core/profile-write.js",
+        "realChildProcess": false,
+        "dbExec": 5,
+        "otherExec": 0
+      },
+      {
+        "file": "lib/core/stores.js",
+        "realChildProcess": false,
+        "dbExec": 30,
+        "otherExec": 0
+      },
+      {
+        "file": "lib/dsh/global-review.js",
+        "realChildProcess": false,
+        "dbExec": 0,
+        "otherExec": 1
+      },
+      {
+        "file": "lib/dsh/project-drift.js",
+        "realChildProcess": true,
+        "dbExec": 0,
+        "otherExec": 0
+      },
+      {
+        "file": "lib/dsh/recomp.js",
+        "realChildProcess": false,
+        "dbExec": 0,
+        "otherExec": 2
+      },
+      {
+        "file": "lib/dsh/seams.js",
+        "realChildProcess": false,
+        "dbExec": 0,
+        "otherExec": 1
+      }
+    ]
+  },
+  "numbersForReadme": {
+    "flagCount": 4,
+    "shellFlaggedFiles": 12,
+    "realChildProcessFiles": 2,
+    "falsePositiveFiles": 10,
+    "sqliteExecCalls": 52,
+    "networkFlaggedFiles": 7,
+    "filesystemFlaggedFiles": 6,
+    "nativeCodeFlaggedFiles": 1
+  },
+  "scannerSource": "ccch1mneyyy/dsh-go-market scripts/core.mjs:157-204 (rules copied verbatim)",
+  "note": "This is the published 0.18.0 artifact, i.e. the bytes the market scanner analysed. A local npm pack today differs because README changed after the release; numbers here are the authoritative ones for the risk-flag section."
+}

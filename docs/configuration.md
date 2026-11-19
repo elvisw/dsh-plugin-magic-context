@@ -32,7 +32,7 @@ bundle 自带配置只有一行 `registerCompactionEngine: false`，其余全部
 
 | 组 | 键（默认值） | 说明 |
 |---|---|---|
-| 总开关 | `enabled` (true) · `registerTools` (true) · `registerStatusCommand` (true) · `sessionNotices` (true) · `reduceGuidance` (true) · `searchHint` (true) | `enabled: false` 保持加载但完全惰性；`sessionNotices` 控制会话流里的管理提示行 |
+| 总开关 | `enabled` (true) · `registerTools` (true) · `registerStatusCommand` (true) · `sessionNotices` (true) · `reduceGuidance` (true) · `searchHint` (true) · `dataDir`（空 = `~/.local/share/cortexkit/magic-context-dsh-poc`） | `enabled: false` 保持加载但完全惰性；`sessionNotices` 控制会话流里的管理提示行；`dataDir` 决定两个库、`activity.log` 与模型缓存的位置 |
 | 压缩接缝 | `registerCompactionEngine`（代码默认可解析即挂；bundle 随发 false）· `compactionBase`（宿主注入基类） | 仅 flat/headless 根 seam；接管时需同时禁用根 `compaction-basic`。pre-step 每步 `reconcileEngine` 动态挂/卸 |
 | 压力策略 | `policy.*`：`executeThreshold` (65) · `forceThreshold` (85) · `ttlMs` (5 min) · `assumedContextWindow` (256k) · `protectedToolResults` (8) · `historianTimeoutMs` (120 s) · `historianMaxTokens` (8192，低于会被抬到 8192) · `historianMaxTokensCeiling` (32768) · `baselineTokens` (2000) · `memoryBudgetTokens` (8000) · `memoryLimit` (40) · `forceWaitReadyMs` (0) | 阈值在下一个决策点生效，包括 `/ctx-status` 与 compaction engine 路径。`compartmentGuardMode` / `compartmentEntrantTokens` 已退役，不再是可配置项 |
 | historian | `historianEnabled` (true) · `historian.{provider, model}`（成对钉住；空 = 跟随会话最后路由）· `historian.reasoningEffort`（可选，留空 = 模型默认） | 带外摘要与 `/compact` 摘要的生成路由。GUI 有 catalog-backed 下拉：`默认`、路由模型实际公布的 id、用于旧值/未知值的 `自定义`。Auto 路由下保留文本输入，因为此时不知道会话模型。provider 级 `OUTPUT_TOKEN_LIMIT` 空补全会走预算翻倍重试。这是 verify 之外唯一的 LLM 消耗点 |
