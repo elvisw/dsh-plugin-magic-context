@@ -1,0 +1,35 @@
+{
+  "count": 6,
+  "files": [
+    {
+      "path": "acceptance-report.md",
+      "bytes": 2561,
+      "sha256": "264098bd2ae363c456b52802d55bb7c7223c1d16f1d4d278e34f1c7937bc6af0"
+    },
+    {
+      "path": "candidate/elvisw-dsh-magic-context-0.18.8.tgz",
+      "bytes": 4071563,
+      "sha256": "c2e0b06d685db8e9e5523246d03c07b1a6af10ecff4793c9fb3878f2d712a6b1"
+    },
+    {
+      "path": "evidence/phone-t32.json",
+      "bytes": 300,
+      "sha256": "cd61508792bbf8a58aa95936b92c28b95fdb956e72285baea4948f2afe6d0e06"
+    },
+    {
+      "path": "phone-t32-diagnose.cjs",
+      "bytes": 1448,
+      "sha256": "31a8fb86d059173324b66db80e46fa7563a45ead1fed833b7848f6a7672a033d"
+    },
+    {
+      "path": "phone-t32-install.cjs",
+      "bytes": 2836,
+      "sha256": "4fb164faa8dfcb4b5a9f66ac69f1eb07703cbc8eb4737543f6f945090204bb79"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1740,
+      "sha256": "e3ed090b9dd77f618524a367cefdaa1e6bdffeab05622c5f2a98efb840a8b45b"
+    }
+  ]
+}

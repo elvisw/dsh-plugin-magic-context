@@ -285,11 +285,11 @@ describe('context panel data and view', () => {
     const chart = charts[0]!
     expect(chart.kind).toBe('donut')
     expect(chart.unit).toBe('tok')
-    expect(chart.categories).toEqual(['系统', '工具定义', '消息'])
+    expect(chart.categories).toEqual(['系统', '工具', '消息'])
     expect(chart.series).toEqual([{ values: { $: 'data.share' } }])
 
     // The three labels moved into the chart instead of staying as duplicate rows.
-    for (const label of ['系统', '工具定义', '消息']) {
+    for (const label of ['系统', '工具', '消息']) {
       expect(labels.filter((text) => text === label), label).toHaveLength(1)
     }
 

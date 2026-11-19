@@ -19,8 +19,8 @@
    看到 `{"status":"ok","mode":"install",...}` 后**重启本机引擎**（不是重置）。
 3. 打开面板看效果。这张卡片背后的数据是真实的 token 统计，没有做任何改写。
 
-候选包是 `candidate/elvisw-dsh-magic-context-0.18.7.tgz`，
-SHA-256 `27636d2c69f7cd04928657ca8669a2b144c743b169f7f154f62ee269bb66e689`，
+候选包是 `candidate/elvisw-dsh-magic-context-0.18.8.tgz`，
+SHA-256 `c2e0b06d685db8e9e5523246d03c07b1a6af10ecff4793c9fb3878f2d712a6b1`，
 脚本会自己校验这个值。
 
 ## 恢复日常版本

@@ -1,0 +1,9 @@
+{
+  "status": "ok",
+  "mode": "install",
+  "candidateSha256": "c2e0b06d685db8e9e5523246d03c07b1a6af10ecff4793c9fb3878f2d712a6b1",
+  "exitCode": 0,
+  "installedGoViewSha256": "f6d77c4686106460f1ffb1721e1e12afa744225f6dba32996781aaec67c1ce26",
+  "rendererMatches": true,
+  "needsEngineRestart": true
+}

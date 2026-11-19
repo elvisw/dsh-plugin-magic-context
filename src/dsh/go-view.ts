@@ -53,6 +53,9 @@ interface Copy {
   readonly system: string
   readonly tools: string
   readonly messages: string
+  readonly shareSystem: string
+  readonly shareTools: string
+  readonly shareMessages: string
   readonly conversation: string
   readonly toolCalls: string
   readonly compartments: string
@@ -176,6 +179,9 @@ const ZH: Copy = {
   system: '系统',
   tools: '工具定义',
   messages: '消息',
+  shareSystem: '系统',
+  shareTools: '工具',
+  shareMessages: '消息',
   conversation: '对话',
   toolCalls: '工具调用',
   compartments: '历史摘要',
@@ -301,6 +307,9 @@ const EN: Copy = {
   system: 'System',
   tools: 'Tool definitions',
   messages: 'Messages',
+  shareSystem: 'Sys',
+  shareTools: 'Tools',
+  shareMessages: 'Msgs',
   conversation: 'Conversation',
   toolCalls: 'Tool calls',
   compartments: 'Compactions',
@@ -712,7 +721,9 @@ function sessionContextView(locale: unknown): Record<string, unknown> {
         type: 'chart',
         kind: 'donut',
         unit: 'tok',
-        categories: [c.system, c.tools, c.messages],
+        // The legend column is narrow: four characters truncate to one plus an
+        // ellipsis on the phone, so the slices carry short labels.
+        categories: [c.shareSystem, c.shareTools, c.shareMessages],
         series: [{ values: { $: 'data.share' } }],
       },
       kv([

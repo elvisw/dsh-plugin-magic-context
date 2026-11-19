@@ -1,7 +1,7 @@
 ---
 title: Donut composition in the dsh-go session panel
 ticket: 32
-status: in-progress
+status: done
 ---
 
 # Plan — session context composition donut
