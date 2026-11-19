@@ -8,6 +8,16 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
+## [0.18.4] - 2026-11-19
+
+### Added
+
+- README 增加免责与合法使用说明（T29）。两份 README 的「来源与许可」小节现在写明：本软件按 MIT
+  以“现状”提供、不附带担保；它会按设计改写对话历史、丢弃工具输出，记忆保存在本地 SQLite 文件中，
+  无法承受丢失的数据请自行备份；合法使用由使用者负责（请遵守当地法律）；模型提供商、向量服务与
+  其他应用各有自己的条款与计费。并注明这段是便于阅读的说明、不构成法律意见，以 `LICENSE` 原文为准。
+  没有新增标题，中英三段一一对应。
+
 ## [0.18.3] - 2026-11-19
 
 ### Changed
@@ -346,6 +356,7 @@ npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布�
 
 0.12.0 之前的 tag 位于上游仓库 `wk544863858/dsh-plugin-magic-context`；从 0.12.0 起，版本与 tag 属于本 fork。
 
+[0.18.4]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.3...v0.18.4
 [0.18.3]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.2...v0.18.3
 [0.18.2]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.1...v0.18.2
 [0.18.1]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.0...v0.18.1

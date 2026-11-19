@@ -185,7 +185,7 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 App 的本机终端装准确版本，然后重启引擎：
 
 ```bash
-dsh plugin --profile web add @elvisw/dsh-magic-context@0.18.3
+dsh plugin --profile web add @elvisw/dsh-magic-context@0.18.4
 ```
 
 只有找到桥接时，宿主侧才注册状态条和面板；没有桥接的桌面端和 Web profile 照常加载。
@@ -319,7 +319,7 @@ node scripts/mc-acceptance.mjs [--hours 72]    # 语料库验收，失败退出 
 本 fork 从 0.12.0 到 0.12.3 以 `@elvisw/dsh-plugin-magic-context` 发布，0.13.0 起改成
 `@elvisw/dsh-magic-context`。版本号和 tag 属于本 fork，上游仓库和 npm 包仍由原维护者维护。
 
-相对上游 0.11.2，累计到 0.18.3 的主要差异：
+相对上游 0.11.2，累计到 0.18.4 的主要差异：
 
 - **恢复语义改了，这是 breaking change。** `ctx_expand` 把原文交回来，surface 上的位置一点没动：
   旧占位符保持不动，旧的 tag 保持已用掉的状态，再回收同一个 tag 会被拒绝并标为 already dropped。
