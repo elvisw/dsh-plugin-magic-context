@@ -1,7 +1,7 @@
 ---
 title: Document automatic reclaim in the READMEs
 ticket: 27
-status: draft
+status: built
 ---
 
 # Plan — document automatic reclaim

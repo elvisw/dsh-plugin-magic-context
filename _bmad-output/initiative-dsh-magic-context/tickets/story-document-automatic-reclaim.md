@@ -1,7 +1,6 @@
 ---
 id: 27
 type: story
-status: draft
 hitl: true
 risk: low
 after: [26]
