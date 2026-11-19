@@ -1,7 +1,7 @@
 ---
 title: README rewrite for readers
 ticket: 26
-status: built
+status: done
 ---
 
 # README rewrite — plan
