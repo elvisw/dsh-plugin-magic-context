@@ -1,0 +1,54 @@
+{
+  "root": "acceptance-readme-automatic-reclaim-2026-11-19",
+  "count": 9,
+  "excluded": [
+    "evidence/sha256-manifest.json"
+  ],
+  "entries": [
+    {
+      "path": "acceptance-report.md",
+      "bytes": 6272,
+      "sha256": "e0fd4436aa6e4ac2aa09d52839199fb1cbfcbd40d055c0f4006a5ff37b6f7dbb"
+    },
+    {
+      "path": "evidence/link-check.json",
+      "bytes": 24505,
+      "sha256": "488321c23ccb29a8fdc80be16a53e088f5d3654e7cac923ea5b91bbf300f6183"
+    },
+    {
+      "path": "evidence/link-check.mjs",
+      "bytes": 7267,
+      "sha256": "dfeacb00d54008e7fa6171a31d1c32ca27fe4fed7d141b4741888ccc17d21844"
+    },
+    {
+      "path": "evidence/lint-after.json",
+      "bytes": 8897,
+      "sha256": "9f77c8bbddf430814fd47cf715a21ead3a5d5bdcc9a2fb4510755cd1be1dc220"
+    },
+    {
+      "path": "evidence/lint-before.json",
+      "bytes": 8978,
+      "sha256": "e84b68b71afc410183750d4662a51a01c54fd1759716070060ac4947646995a1"
+    },
+    {
+      "path": "evidence/lint-mutation-controls.json",
+      "bytes": 265,
+      "sha256": "3a906c496a79dbcfb5be58018a8b7212752c26d0966c5239dda40f0cd9931277"
+    },
+    {
+      "path": "evidence/readme-lint.mjs",
+      "bytes": 12516,
+      "sha256": "58ad7760a8daa583cfaeb4d12ebb1f63bc8717b716472c40fe38286062271967"
+    },
+    {
+      "path": "evidence/t26-originals.json",
+      "bytes": 563,
+      "sha256": "4a823ff01e4bddf9803f5d4bdb832d02ba6266d5804fddcd756cd8f1dfe2b863"
+    },
+    {
+      "path": "REPRODUCE.md",
+      "bytes": 2432,
+      "sha256": "638c9bc4dc28d0180187ae587bd54844425ddc788fb7baac24900d95a80b69e0"
+    }
+  ]
+}

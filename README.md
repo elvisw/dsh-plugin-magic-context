@@ -69,7 +69,9 @@ written in Chinese.
 | tick | The maintenance loop, every 30 minutes by default |
 | parity / gate | The shared-vector-space consistency check; failing it falls back to full-text search |
 | pre-step | The host hook that runs before each model request; most decisions happen here |
-| execute band | The pressure band entered past the execution threshold (65% by default) |
+| execute band | The pressure band entered past the execution threshold (65% by default); historian digests land on the surface here |
+| force band | The pressure line where the plugin drops on its own instead of waiting for `ctx_reduce` |
+| protected window | What the force band leaves alone: the newest results, up to 5% of the window (clamped to 8k–64k tokens), and at least the newest eight by default |
 | four summary layers | The p1–p4 detail tiers of one digest, degraded by importance as the digest ages |
 | flat/headless | A host shape with no web or desktop UI |
 | HMR | The host's module hot-reload; with it on, no restart is needed after installing |
@@ -87,6 +89,32 @@ What changes once it is installed:
   without a `settings.section` slot has no configuration entry.
 - Three tools are registered: `ctx_reduce`, `ctx_expand`, `ctx_memory`. Project memory is on by
   default, and facts distilled by the historian settle on their own.
+
+It also reclaims without being asked. Routine reclaim is agent-driven — nothing is dropped
+because a result got old, and `/ctx-flush` only marks already-queued reclaims to land on the
+next message. The exception is the force band. When a management pass has a current pressure
+reading at or above `policy.forceThreshold` (85% by default), it drops tagged tool results
+itself, outside the protected window: the newest results that fit in 5% of the context
+window, clamped to 8k–64k tokens, plus at least the newest `protectedToolResults` (eight by
+default). Without a known context window, only that count floor applies. The order is by
+class, not by age: everything else goes first, then `edit` / `write` / `apply_patch` /
+`grep` / `glob`, and `read` / `todowrite` / `task` last, oldest first within a class. A pass
+triggered by `/ctx-wrapup`, a pass with no pressure reading, or one whose reading predates a
+`/ctx-flush` landing, a published digest or a baseline refresh does not fire the band. Neither
+does it fire when dropping every reclaimable result still could not make the request fit a
+known window.
+
+If the provider rejects a request as too long, a second path first publishes any digest that
+is ready, then drops the same way — same window, same class order — and retries once, but
+only after the surface actually changed: with nothing published and nothing dropped, the
+retry would fail identically. Neither path has its own switch.
+
+The system prompt also teaches the model the `§N§` habit, and once the tagged tail reaches
+60k tokens with at least 25k of it not yet dropped, reminders start. How hard they push
+depends on how much of the tail is still undropped: gentle, firm, urgent, and at the top a
+"make it your next step" reminder at 50k or more undropped and three quarters of the tail
+undropped. A band that stays the same re-fires no sooner than five user turns later.
+Reminders ask; they never drop anything.
 
 ## Common tasks
 

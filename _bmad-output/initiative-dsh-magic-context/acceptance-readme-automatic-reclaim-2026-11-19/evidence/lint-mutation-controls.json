@@ -1,0 +1,17 @@
+{
+  "restoredByteIdentical": true,
+  "results": {
+    "drop-term": {
+      "ok": false,
+      "detail": "en",
+      "exit": 1,
+      "failed": 2
+    },
+    "wrong-threshold": {
+      "ok": false,
+      "detail": "en",
+      "exit": 1,
+      "failed": 1
+    }
+  }
+}

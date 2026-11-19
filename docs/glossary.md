@@ -40,6 +40,15 @@ README 里用到的内部词，按出现的位置分组。每条给一句话解�
 **execute band**
 压力过了执行阈值（默认 65%）之后进入的区间。historian 的产出在这个带内发布到 surface。
 
+**强制带（force band）**
+压力达到或超过 `policy.forceThreshold`（默认 85%）时，管理 pass 不再等模型调用 `ctx_reduce`，
+直接把受保护窗口之外的带标签工具结果换成占位符。读数早于 surface 变化、没有压力读数、或由
+`/ctx-wrapup` 触发的 pass 不触发；丢光所有可丢结果仍装不下已知窗口时也不丢。
+
+**受保护窗口**
+强制带不碰的区域：从最新往前累计、总量不超过上下文窗口 5%（夹在 8k 到 64k token 之间）
+的带标签工具结果，外加至少最新的 `protectedToolResults`（默认 8）条。不知道窗口时只有条数下限。
+
 **execute / defer**
 每个决策点的两种结果。`execute` 表示这一步就落地回收，`defer` 表示再等等。
 `/ctx-report` 里的比例就是这两种的计数。
