@@ -24,8 +24,9 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 
 ## Install
 
-You need Node ≥ 22.19 and a DSH host with a web client (desktop app or `web` profile). The supported
-host versions are declared in `engines.dsh` as `0.2.1-rc.1` or `0.2.2-rc.1`.
+You need Node ≥ 22.19 and a DSH host with a web client (desktop app or `web` profile). DSH is
+[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). The supported host versions
+are declared in `engines.dsh` as `0.2.1-rc.1` or `0.2.2-rc.1`.
 
 The command above targets the `web` profile. The desktop app keeps its own profile, so use
 `--profile desktop` there, or whatever your profile is named.
@@ -211,8 +212,11 @@ losing window focus or hitting close dismisses it and returns focus to the pill.
 
 ## Android
 
-The same package provides native panels for **Android dsh-go 1.1.0**. Choose the **on-device engine**.
-No Flutter build, and not a second package.
+The same package provides native panels for **Android dsh-go 1.1.0**
+([source](https://github.com/ccch1mneyyy/dsh-Go),
+[releases](https://github.com/ccch1mneyyy/dsh-Go/releases)). Choose the **on-device engine**. No
+Flutter build, and not a second package. Later dsh-go releases exist; the panels here were verified
+on 1.1.0.
 
 Once the market entry is available, open **Plugin market → DSH Go adapter** and search for
 `@elvisw/dsh-magic-context`. If it is not there, install the exact version from the app's local

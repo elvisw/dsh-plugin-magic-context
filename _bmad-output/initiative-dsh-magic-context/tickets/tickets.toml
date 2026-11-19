@@ -348,3 +348,15 @@ after = [28]
 hitl = true
 risk = "low"
 refine = true
+
+[[entry]]
+id = 30
+type = "story"
+title = "Link the host and dsh-go from the READMEs"
+description = "The READMEs assume the reader already has DeepSeek Harness and, on the Android path, dsh-go, but link neither. Requirements: name and link the DSH repository in the install section (the marketing site answers 429 to scripted requests, so the repository is the checkable link); link the dsh-go repository and its releases page in the Android section; keep the verified version at 1.1.0 and add one sentence that later dsh-go releases exist, without claiming they work; mirror both edits in Chinese; no new heading. Scope is the two READMEs only."
+verify = "Both READMEs link the DSH repository from the install section and both dsh-go URLs from the Android section, the Android paragraph still names 1.1.0 as the verified version, readme-lint reports 82 checks and 0 failures, and link-check resolves the new URLs with 0 failures. No test suite, build, pack or host gate runs."
+covers = ["README.md", "README.zh-CN.md", "_bmad-output/initiative-dsh-magic-context/acceptance-readme-automatic-reclaim-2026-11-19/"]
+after = [29]
+hitl = true
+risk = "low"
+refine = true
