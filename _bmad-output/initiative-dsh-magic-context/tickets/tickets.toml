@@ -394,3 +394,14 @@ verify = "After upstream ships, verify one Android path that selects and saves t
 after = []
 hitl = true
 risk = "medium"
+
+[[entry]]
+id = 34
+type = "spike"
+title = "Verify Magic Context compatibility with DSH 0.2.2-rc.5 on Windows"
+description = "Distinguish the released plugin's host-version rejection from an actual runtime incompatibility. Test the exact rc.5 host in isolation, without a version exemption, before recommending a compatibility declaration change."
+verify = "Show the released package being skipped, then run one Windows Web profile workflow with a temporary candidate: normal load, reclaim and recover the original tool result, restart and find the saved test memory. Compare session events and plugin journal/DB records. If runtime behavior fails, report the first failing step and leave the supported versions unchanged."
+after = []
+hitl = true
+risk = "high"
+refine = true
