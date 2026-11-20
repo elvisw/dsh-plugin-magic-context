@@ -64,9 +64,16 @@ API Key 在同一个分区录入。字段只写不读，值存进 `apiKeyEnv` �
 
 ## Android 上的配置
 
-配置入口沿用 App 自带的插件设置页，与桌面表单共用同一份 volatile schema。
+**建议在网页版配置。** 如果魔法上下文装在手机本机引擎里，打开 dsh-go 的
+**设置 → 界面 → 打开网页版**，进入 DSH 网页版的**设置 → Magic Context**。保存后可以回到原生界面。
+摘要模型和验证模型可以从本机引擎的模型列表选择；原生插件设置页目前要手填服务和模型 ID，
+见 [dsh-go #1648](https://github.com/ccch1mneyyy/dsh-Go/issues/1648)。
 
-那份 schema 的说明文字是短标签：已发布的 dsh-go 表单（`app/lib/ui/engine_settings/schema_fields.dart` 的 `labelFor` → `_fitsTitle`）只在说明不超过 18 个码点且单行时才把它当标签，过长会退回 humanizeKey。
+「打开网页版」在原生界面下打开的是**手机本机引擎**。如果插件装在另一台主机，请在那台主机的
+DSH 网页版配置，不要改手机本机引擎的设置。参见
+[dsh-go 网页模式指南](https://github.com/ccch1mneyyy/dsh-Go/blob/v1.2.0/docs/guide/zh/05-web.md#只打开一次网页版)。
+
+原生插件设置页由 App 按插件的配置声明生成。说明文字是短标签：已发布的 dsh-go 表单（`app/lib/ui/engine_settings/schema_fields.dart` 的 `labelFor` → `_fitsTitle`）只在说明不超过 18 个码点且单行时才把它当标签，过长会退回 humanizeKey。
 
 `memory` 刻意不写进这份 schema，原生配置不提供记忆开关。记忆与桌面一致，默认开启；要退出就在 profile 补丁里写 `memory.enabled: false`。
 

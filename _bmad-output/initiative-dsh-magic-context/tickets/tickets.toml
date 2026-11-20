@@ -384,3 +384,13 @@ after = [31]
 hitl = true
 risk = "low"
 refine = true
+
+[[entry]]
+id = 33
+type = "story"
+title = "Select summary and verification models in dsh-go native plugin settings"
+description = "Adopt the dsh-go model picker for summary and maintenance verification once the host ships plugin-form support. Until then, direct phone users to the same engine's DSH Web settings and track the host request in dsh-go #1648."
+verify = "After upstream ships, verify one Android path that selects and saves the provider/model pair for each role, reopens the form, and clears both to their existing defaults. Until then, check the published issue and the documented same-engine Web path."
+after = []
+hitl = true
+risk = "medium"
