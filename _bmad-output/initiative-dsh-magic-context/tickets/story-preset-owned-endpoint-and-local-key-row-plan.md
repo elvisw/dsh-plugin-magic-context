@@ -2,7 +2,7 @@
 title: "Make the service preset own the endpoint, and stop showing a key input for local embeddings"
 ticket: 37
 created: '2026-11-21'
-status: built
+status: done
 baseline_revision: 'fc94fad'
 route: full
 route_source: pinned
