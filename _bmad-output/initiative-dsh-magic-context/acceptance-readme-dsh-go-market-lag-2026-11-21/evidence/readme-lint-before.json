@@ -1,0 +1,12 @@
+{
+  "total": 82,
+  "failed": 0,
+  "provenance": {
+    "ranAt": "2026-11-21T03:26:22.955310+00:00",
+    "tree": "git HEAD (before the T36 edits)",
+    "readmeSha256": "7b68d6c11365242d2b17079a5a0c1e8692da05388705f70f78cc8c3d86c3c49f",
+    "readmeZhSha256": "4e4be35a140b3638d3508fcf2e6bdee52f9d9d1373ccb484f1ef89867fe8605a",
+    "label": "HEAD, before the edits"
+  },
+  "failures": []
+}

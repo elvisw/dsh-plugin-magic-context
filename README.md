@@ -220,12 +220,18 @@ Flutter build, and not a second package. Later dsh-go releases exist; the panels
 on 1.1.0.
 
 Once the market entry is available, open **Plugin market → DSH Go adapter** and search for
-`@elvisw/dsh-magic-context`. If it is not there, install the exact version from the app's local
-terminal and restart the engine:
+`@elvisw/dsh-magic-context`. The market catalog is built by a separate repository whose watcher opens
+an update pull request when npm has a newer version, so the entry can trail npm and may not list the
+version you want yet; merge time is not something this package controls. If that version is missing,
+install it from the app's local terminal and restart the engine:
 
 ```bash
-dsh plugin --profile web add @elvisw/dsh-magic-context@0.18.6
+dsh plugin --profile web add @elvisw/dsh-magic-context
 ```
+
+That installs the current `latest` from npm. To pin a specific version, append it as
+`@<version>`, for example after reading the current one from
+`npm view @elvisw/dsh-magic-context dist-tags.latest`.
 
 The host side registers the status strip and panels only when the bridge is present; desktop and Web
 profiles load as usual without it.

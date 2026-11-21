@@ -1,0 +1,12 @@
+{
+  "total": 82,
+  "failed": 0,
+  "provenance": {
+    "ranAt": "2026-11-21T03:26:30.566743+00:00",
+    "tree": "working tree after the T36 edits",
+    "readmeSha256": "14ae957470606339fc82f1e163ec47a709510a289866e74804532b45fe120131",
+    "readmeZhSha256": "a081813c34032c1cd9cbe328a70bf36665a811389711cd95094223e3805dc9f9",
+    "label": "working tree, after the edits"
+  },
+  "failures": []
+}

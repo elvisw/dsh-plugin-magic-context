@@ -184,12 +184,17 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 [发布版](https://github.com/ccch1mneyyy/dsh-Go/releases)）提供原生面板，选**手机本机引擎**。
 不需要 Flutter 构建，也没有第二个包。dsh-go 之后又发过新版本；这里的原生面板是在 1.1.0 上验证的。
 
-市场条目可用后，在「插件市场 → 适配 DSH Go」里搜 `@elvisw/dsh-magic-context`。搜不到就在
-App 的本机终端装准确版本，然后重启引擎：
+市场条目可用后，在「插件市场 → 适配 DSH Go」里搜 `@elvisw/dsh-magic-context`。市场目录由另一个
+仓库生成，它的 watcher 只在 npm 上有更新版本时提一个更新 PR，合并之后条目才会变，所以目录可能
+落后于 npm，也可能还没有列出你要的版本（什么时候合并不由本包决定）。如果列表里没有，就在
+App 的本机终端安装，然后重启引擎：
 
 ```bash
-dsh plugin --profile web add @elvisw/dsh-magic-context@0.18.6
+dsh plugin --profile web add @elvisw/dsh-magic-context
 ```
+
+这条装的是 npm 上的 `latest`。要固定版本就在包名后加 `@<version>`，当前版本号可以用
+`npm view @elvisw/dsh-magic-context dist-tags.latest` 查。
 
 只有找到桥接时，宿主侧才注册状态条和面板；没有桥接的桌面端和 Web profile 照常加载。
 

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "acceptance-report.md",
+      "bytes": 2313,
+      "sha256": "a24b6c1f4346286d14ed598075eda0a2a97a1f6fd90e8670605990abf9d1eefd"
+    },
+    {
+      "path": "evidence/readme-lint-after.json",
+      "bytes": 406,
+      "sha256": "c66c19117f37a5f7a5c757634a95478d39514c5650de1d22cffc4e7ed98ba15b"
+    },
+    {
+      "path": "evidence/readme-lint-before.json",
+      "bytes": 398,
+      "sha256": "748149779dfa7fefb7f1d2de41d6c8bd548ec5797c5e749d3bf2a30a63a3b0db"
+    }
+  ]
+}

@@ -64,6 +64,10 @@ API Key 在同一个分区录入。字段只写不读，值存进 `apiKeyEnv` �
 
 ## Android 上的配置
 
+如果 dsh-go 的插件市场里还没有你要的版本，不必等目录更新：在 App 的本机终端执行
+`dsh plugin --profile web add @elvisw/dsh-magic-context`（要固定版本就加 `@<version>`），
+然后重启引擎。市场条目由另一个仓库的 watcher 提 PR、合并后才更新，因此可能落后于 npm。
+
 **建议在网页版配置。** 如果魔法上下文装在手机本机引擎里，打开 dsh-go 的
 **设置 → 界面 → 打开网页版**，进入 DSH 网页版的**设置 → Magic Context**。保存后可以回到原生界面。
 摘要模型和验证模型可以从本机引擎的模型列表选择；原生插件设置页目前要手填服务和模型 ID，

@@ -417,3 +417,15 @@ after = [34]
 hitl = true
 risk = "medium"
 refine = true
+
+[[entry]]
+id = 36
+type = "story"
+title = "Tell users what to do when the dsh-go market entry lags behind npm"
+description = "The dsh-go market catalog is updated through the market repository's watcher workflow, which opens an update PR after an npm release; the entry changes only when that PR is merged, so it can trail npm or be missing for a while (observed 2026-11-21: npm latest 0.18.9, sidecar entry 0.18.0, update PR #96 still open at 0.18.8). The READMEs currently say 'once the market entry is available' and then pin install to 0.18.6, which is stale and silent about why the entry might lag. Document the gap and the local-terminal install path in both READMEs and docs/configuration.md."
+verify = "Both READMEs and docs/configuration.md say the dsh-go market catalog can lag behind npm and can be missing a release, and give the phone's local terminal command `dsh plugin --profile web add <package>` plus how to pin an exact version without a hard-coded one; no claim about how long the lag lasts and no blame on maintainers; only the Android install example changes, older version mentions in provenance and history stay; the README structural snapshot script `_bmad-output/initiative-dsh-magic-context/acceptance-readme-automatic-reclaim-2026-11-19/evidence/readme-lint.mjs` still reports no failures. Product bytes are unchanged, so no product gate, host rebuild, or pack is rerun."
+covers = ["README.md", "README.zh-CN.md", "docs/configuration.md"]
+after = [35]
+hitl = true
+risk = "low"
+refine = true
