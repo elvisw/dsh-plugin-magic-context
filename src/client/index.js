@@ -611,15 +611,55 @@ window.__ModuleLoader__.load({
       'embedding.batchSize',
     ]
 
-    function embeddingFieldVisible(key, provider, keyStored) {
+    const SILICONFLOW_ENDPOINT = 'https://api.siliconflow.cn/v1'
+
+    /**
+     * T37: the same normalisation `resolveEmbeddingConfig` applies — an empty or
+     * absent preset means SiliconFlow, anything unrecognised means Custom.
+     */
+    function normalizeEmbeddingPreset(value) {
+      const normalized = typeof value === 'string' ? value.trim().toLowerCase() : ''
+      return normalized === '' || normalized === 'siliconflow' ? 'siliconflow' : 'custom'
+    }
+
+    /** Trim and drop a trailing slash or `/embeddings`, as the resolver does. */
+    function normalizeEndpointText(value) {
+      const text = typeof value === 'string' ? value.trim() : ''
+      return text.replace(/\/+$/, '').replace(/\/embeddings$/i, '')
+    }
+
+    /**
+     * True when the SiliconFlow preset fully determines the transport, so the
+     * form can hide the endpoint and auth header. A saved non-default value
+     * keeps both visible: the resolver still uses it, and hiding it would look
+     * like the preset overrides it.
+     */
+    function embeddingPresetOwnsTransport(preset, endpoint, authHeader) {
+      if (normalizeEmbeddingPreset(preset) !== 'siliconflow') return false
+      const rawEndpoint = typeof endpoint === 'string' ? endpoint.trim() : ''
+      const savedEndpoint = normalizeEndpointText(rawEndpoint)
+      if (savedEndpoint !== '' && savedEndpoint !== SILICONFLOW_ENDPOINT) return false
+      // `/` or `/embeddings` trims to the empty string but is not empty to the
+      // resolver, which keeps `endpoint: ''` for it. Showing the preset address
+      // there would claim a target the runtime does not use.
+      if (rawEndpoint !== '' && savedEndpoint === '') return false
+      const header = typeof authHeader === 'string' ? authHeader.trim().toLowerCase() : ''
+      return header === '' || header === 'authorization'
+    }
+
+    function embeddingFieldVisible(key, provider, keySource, presetOwnsTransport) {
       // `resolveEmbeddingConfig` lowercases the provider, so the predicate does
       // too: a hand-edited `OpenAI-Compatible` is remote, not local.
       const normalized = typeof provider === 'string' ? provider.trim().toLowerCase() : ''
-      if (normalized === 'openai-compatible') return true
-      // A saved secret stays on screen: the key row is the only place that can
-      // delete a literal or credential-store value, and hiding it with the rest
-      // would force a switch to remote just to clear it.
-      if (key === 'embedding.apiKey') return keyStored === true
+      if (normalized === 'openai-compatible') {
+        // T37: the SiliconFlow preset owns the transport; a saved non-default
+        // value keeps the inputs visible because the resolver still uses it.
+        if (key === 'embedding.endpoint' || key === 'embedding.authHeader') return presetOwnsTransport !== true
+        return true
+      }
+      // T37: local/off shows no key input. A stored credential keeps a compact
+      // clear row; a literal key gets a state line with no action.
+      if (key === 'embedding.apiKey') return keySource === 'credential' || keySource === 'literal'
       return !REMOTE_ONLY_EMBEDDING.includes(key)
     }
 
@@ -772,6 +812,11 @@ window.__ModuleLoader__.load({
       'settings.embedding.keyBusy',
       'settings.embedding.keyPlaceholder',
       'settings.embedding.keyEnvOnly',
+      'settings.embedding.presetEndpoint',
+      'settings.embedding.presetOverride',
+      'settings.embedding.keyClearStored',
+      'settings.embedding.keyLiteralHint',
+      'settings.embedding.keyLocalLabel',
       'settings.embedding.readOnly',
       'settings.embedding.noAuth',
       'settings.embedding.loadModels',
@@ -1229,22 +1274,38 @@ window.__ModuleLoader__.load({
         const providerText = providerSpec === undefined
           ? 'local'
           : (view(providerSpec).text.trim() === '' ? 'local' : view(providerSpec).text.trim().toLowerCase())
-        const storedKeyPresent = embeddingStatus !== null && typeof embeddingStatus === 'object'
-          && (embeddingStatus.keySource === 'credential' || embeddingStatus.keySource === 'literal')
-        const specVisible = (spec) => embeddingFieldVisible(fieldKey(spec.path), providerText, storedKeyPresent)
+        // T37: the preset owns the transport only when the SAVED endpoint and
+        // auth header are empty or the SiliconFlow defaults. A non-default saved
+        // value keeps both inputs visible, because `resolveEmbeddingConfig`
+        // still uses it — hiding it would look like the preset overrides it.
+        const presetSpec = FIELDS.find((spec) => fieldKey(spec.path) === 'embedding.preset')
+        const endpointSpec = FIELDS.find((spec) => fieldKey(spec.path) === 'embedding.endpoint')
+        const authSpec = FIELDS.find((spec) => fieldKey(spec.path) === 'embedding.authHeader')
+        const presetText = presetSpec === undefined ? '' : view(presetSpec).text
+        const savedEndpoint = endpointSpec === undefined
+          ? '' : formatText(readPath(snapshot.value, endpointSpec.path))
+        const savedAuthHeader = authSpec === undefined
+          ? '' : formatText(readPath(snapshot.value, authSpec.path))
+        const presetOwnsTransport = embeddingPresetOwnsTransport(presetText, savedEndpoint, savedAuthHeader)
+        const keySource = embeddingStatus !== null && typeof embeddingStatus === 'object'
+          && typeof embeddingStatus.keySource === 'string' ? embeddingStatus.keySource : 'none'
+        const specVisible = (spec) => embeddingFieldVisible(fieldKey(spec.path), providerText, keySource, presetOwnsTransport)
 
         // A snapshot refresh can change the saved provider while a remote draft
         // is still staged. Prune those drafts here, not only on the select event,
         // or Save would stay dirty with nothing visible to write.
-        const providerSeen = useRef(providerText)
+        // A snapshot refresh can change the saved provider or preset while a
+        // draft for a now-invisible field is still staged. Prune on every change
+        // of what the switchers resolve to, not only on the select event, or Save
+        // would stay dirty with nothing visible to write.
         useEffect(() => {
-          if (providerSeen.current === providerText) return
-          providerSeen.current = providerText
-          if (providerText === 'openai-compatible') return
+          const hidden = []
+          if (providerText !== 'openai-compatible') hidden.push(...REMOTE_ONLY_EMBEDDING)
+          else if (presetOwnsTransport) hidden.push('embedding.endpoint', 'embedding.authHeader')
           let removed = false
-          for (const key of REMOTE_ONLY_EMBEDDING) if (staged.delete(key)) removed = true
+          for (const key of hidden) if (staged.delete(key)) removed = true
           if (removed) setRevision((value) => value + 1)
-        }, [providerText])
+        }, [providerText, presetOwnsTransport])
 
         /**
          * The route pins, resolved once per render. Each pin is a PAIR (both
@@ -1663,12 +1724,10 @@ window.__ModuleLoader__.load({
         const sections = fieldSections()
         const summary = settingsSummary(snapshot, embeddingStatus)
         const modelSpec = FIELDS.find((spec) => fieldKey(spec.path) === 'embedding.model')
-        const endpointSpec = FIELDS.find((spec) => fieldKey(spec.path) === 'embedding.endpoint')
-        const presetSpec = FIELDS.find((spec) => fieldKey(spec.path) === 'embedding.preset')
         const currentModel = view(modelSpec).text
         const currentEndpoint = view(endpointSpec).text
-        const currentPreset = view(presetSpec).text
-        const endpointResolvable = currentEndpoint !== '' || currentPreset === 'siliconflow'
+        const endpointResolvable = currentEndpoint !== ''
+          || normalizeEmbeddingPreset(presetText) === 'siliconflow'
         const embeddingState = embeddingStatus !== null && typeof embeddingStatus === 'object'
           ? formatText(embeddingStatus.state) : ''
         const embeddingCoverage = embeddingStatus !== null && typeof embeddingStatus === 'object'
@@ -1893,6 +1952,25 @@ window.__ModuleLoader__.load({
             el('span', { key: 'status', style: { fontSize: 11.5, opacity: 0.8 } },
               t('settings.embedding.status') + ': ' + t(embeddingStateKey(status.state))
                 + ' · ' + modelLabel + ' · ' + dimensions + ' · ' + coverage),
+            // T37: the SiliconFlow preset owns the endpoint, so the form shows it
+            // read-only instead of asking for a value the preset already decides.
+            providerText === 'openai-compatible' && presetOwnsTransport
+              ? el('span', {
+                key: 'preset-endpoint',
+                'data-mc-preset-endpoint': 'true',
+                style: { fontSize: 11.5, opacity: 0.8 },
+              }, t('settings.embedding.presetEndpoint', { endpoint: SILICONFLOW_ENDPOINT }))
+              : null,
+            // A saved non-default value keeps the inputs visible above; say so,
+            // because the preset name alone suggests otherwise.
+            providerText === 'openai-compatible'
+              && normalizeEmbeddingPreset(presetText) === 'siliconflow' && !presetOwnsTransport
+              ? el('span', {
+                key: 'preset-override',
+                'data-mc-preset-override': 'true',
+                style: { fontSize: 11.5, opacity: 0.75 },
+              }, t('settings.embedding.presetOverride'))
+              : null,
             providerText === 'openai-compatible'
               ? el('span', { key: 'key', style: { fontSize: 11.5, opacity: 0.7 } },
                 keyLabel + (status.keyEnv ? ' (' + status.keyEnv + ')' : ''))
@@ -1992,6 +2070,35 @@ window.__ModuleLoader__.load({
             }).catch(() => {
               setEmbeddingKeyMessage(t('settings.embedding.keyError'))
             }).finally(() => setEmbeddingKeyBusy(false))
+          }
+          // T37: local/off has no key input. A stored credential keeps a single
+          // clear row; a literal key lives in the profile config, where the UI
+          // has no write path, so it gets a state line and a hint instead of a
+          // button that would do nothing.
+          if (providerText !== 'openai-compatible') {
+            const compact = [
+              el('span', { key: 'label', style: { fontSize: 12 } }, t('settings.embedding.keyLocalLabel')),
+              el('span', { key: 'state', style: { fontSize: 11.5, opacity: 0.75 } }, keyLabel),
+            ]
+            if (source === 'credential') {
+              compact.push(el('button', {
+                key: 'clear',
+                type: 'button',
+                disabled: !canWrite || embeddingKeyBusy,
+                onClick: clearSecret,
+              }, t('settings.embedding.keyClearStored')))
+            } else if (source === 'literal') {
+              compact.push(el('span', { key: 'literal', style: { fontSize: 11.5, opacity: 0.7 } },
+                t('settings.embedding.keyLiteralHint')))
+            }
+            compact.push(blocked === '' ? null : el('span', { key: 'blocked', style: { fontSize: 11.5, opacity: 0.7 } }, blocked))
+            compact.push(embeddingKeyMessage === ''
+              ? null
+              : el('span', { key: 'message', style: { fontSize: 11.5 } }, embeddingKeyMessage))
+            return el('div', {
+              key: id,
+              style: { display: 'grid', gap: 6, margin: '8px 0' },
+            }, compact)
           }
           return el('div', {
             key: id,
@@ -2925,6 +3032,11 @@ window.__ModuleLoader__.load({
         'settings.embedding.keyBusy': '正在保存…',
         'settings.embedding.keyPlaceholder': '输入 API Key',
         'settings.embedding.keyEnvOnly': '当前来源是环境变量；保存凭据后会优先使用凭据库。',
+        'settings.embedding.presetEndpoint': '接口地址：{endpoint}（硅基流动预设固定）',
+        'settings.embedding.presetOverride': '已保存的接口地址或认证头优先于预设；清空后才会使用预设地址。',
+        'settings.embedding.keyClearStored': '清除已保存的密钥',
+        'settings.embedding.keyLiteralHint': '该值写在 profile 配置里，请在该 profile 的补丁中移除。',
+        'settings.embedding.keyLocalLabel': '密钥',
         'settings.embedding.readOnly': '设置页只读。',
         'settings.embedding.noAuth': 'API Key：无需认证',
         'settings.embedding.loadModels': '加载模型',
@@ -3245,6 +3357,11 @@ window.__ModuleLoader__.load({
         'settings.embedding.keyBusy': 'Saving…',
         'settings.embedding.keyPlaceholder': 'Enter API key',
         'settings.embedding.keyEnvOnly': 'Currently from the environment; a stored credential takes precedence.',
+        'settings.embedding.presetEndpoint': 'Endpoint: {endpoint} (fixed by the SiliconFlow preset)',
+        'settings.embedding.presetOverride': 'A saved endpoint or auth header takes precedence; clear it to use the preset address.',
+        'settings.embedding.keyClearStored': 'Clear saved key',
+        'settings.embedding.keyLiteralHint': 'Set in the profile config; remove it in that profile patch.',
+        'settings.embedding.keyLocalLabel': 'API key',
         'settings.embedding.readOnly': 'Settings are read-only.',
         'settings.embedding.noAuth': 'API key: not required',
         'settings.embedding.loadModels': 'Load models',
@@ -4482,6 +4599,7 @@ window.__ModuleLoader__.load({
         EFFORT_CUSTOM_SENTINEL, fieldSpecs: FIELDS,
         fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags,
         embeddingFieldVisible, embeddingKeyRowState, embeddingStateKeys: EMBEDDING_STATE_KEYS,
+        normalizeEmbeddingPreset, normalizeEndpointText, embeddingPresetOwnsTransport, SILICONFLOW_ENDPOINT,
         // The number/text formatters are the panel's display contract; the
         // node-side spec pins them so a formatting regression (the scope bug
         // that briefly unmounted the pill) cannot come back silently.

@@ -1,0 +1,167 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t37-20261121-193631",
+  "steps": [
+    {
+      "name": "run-a-chinese-locale",
+      "at": "2026-11-21T11:37:00.270Z",
+      "ok": true
+    },
+    {
+      "name": "local-provider-seeded",
+      "at": "2026-11-21T11:37:00.289Z",
+      "ok": true,
+      "value": "local"
+    },
+    {
+      "name": "local-no-key-row",
+      "at": "2026-11-21T11:37:00.296Z",
+      "ok": true
+    },
+    {
+      "name": "preset-default-siliconflow",
+      "at": "2026-11-21T11:37:01.395Z",
+      "ok": true,
+      "value": "siliconflow"
+    },
+    {
+      "name": "preset-hides-endpoint",
+      "at": "2026-11-21T11:37:01.400Z",
+      "ok": true
+    },
+    {
+      "name": "preset-hides-auth-header",
+      "at": "2026-11-21T11:37:01.404Z",
+      "ok": true
+    },
+    {
+      "name": "preset-fixed-endpoint-line",
+      "at": "2026-11-21T11:37:01.414Z",
+      "ok": true
+    },
+    {
+      "name": "preset-override-absent",
+      "at": "2026-11-21T11:37:01.419Z",
+      "ok": true
+    },
+    {
+      "name": "preset-key-input-shown",
+      "at": "2026-11-21T11:37:01.423Z",
+      "ok": true
+    },
+    {
+      "name": "custom-shows-endpoint",
+      "at": "2026-11-21T11:37:02.175Z",
+      "ok": true
+    },
+    {
+      "name": "custom-shows-auth-header",
+      "at": "2026-11-21T11:37:02.181Z",
+      "ok": true
+    },
+    {
+      "name": "custom-fixed-line-gone",
+      "at": "2026-11-21T11:37:02.185Z",
+      "ok": true
+    },
+    {
+      "name": "preset-hides-endpoint-after-draft",
+      "at": "2026-11-21T11:37:03.244Z",
+      "ok": true
+    },
+    {
+      "name": "save-state",
+      "at": "2026-11-21T11:37:03.662Z",
+      "label": "prune-hidden-draft",
+      "disabled": false
+    },
+    {
+      "name": "hidden-draft-not-saved",
+      "at": "2026-11-21T11:37:04.606Z",
+      "ok": true
+    },
+    {
+      "name": "save-state",
+      "at": "2026-11-21T11:37:05.682Z",
+      "label": "remote-custom-config",
+      "disabled": false
+    },
+    {
+      "name": "saved-custom-endpoint",
+      "at": "2026-11-21T11:37:06.627Z",
+      "ok": true,
+      "endpoint": "http://127.0.0.1:9/v1"
+    },
+    {
+      "name": "key-saved-to-credential-store",
+      "at": "2026-11-21T11:37:09.202Z",
+      "ok": true
+    },
+    {
+      "name": "key-not-in-patch",
+      "at": "2026-11-21T11:37:09.202Z",
+      "ok": true
+    },
+    {
+      "name": "local-hides-key-input",
+      "at": "2026-11-21T11:37:10.418Z",
+      "ok": true
+    },
+    {
+      "name": "local-hides-endpoint-again",
+      "at": "2026-11-21T11:37:10.421Z",
+      "ok": true
+    },
+    {
+      "name": "local-clear-row-visible",
+      "at": "2026-11-21T11:37:10.425Z",
+      "ok": true
+    },
+    {
+      "name": "clear-removes-row",
+      "at": "2026-11-21T11:37:13.558Z",
+      "ok": true
+    },
+    {
+      "name": "clear-confirmed",
+      "at": "2026-11-21T11:37:13.558Z",
+      "ok": true
+    },
+    {
+      "name": "run-b-chinese-locale",
+      "at": "2026-11-21T11:37:19.501Z",
+      "ok": true
+    },
+    {
+      "name": "run-b-provider-remote",
+      "at": "2026-11-21T11:37:19.506Z",
+      "ok": true
+    },
+    {
+      "name": "run-b-preset-siliconflow",
+      "at": "2026-11-21T11:37:19.509Z",
+      "ok": true
+    },
+    {
+      "name": "run-b-endpoint-visible",
+      "at": "2026-11-21T11:37:19.965Z",
+      "ok": true
+    },
+    {
+      "name": "run-b-auth-header-visible",
+      "at": "2026-11-21T11:37:19.969Z",
+      "ok": true
+    },
+    {
+      "name": "run-b-precedence-notice",
+      "at": "2026-11-21T11:37:19.978Z",
+      "ok": true
+    },
+    {
+      "name": "run-b-fixed-line-absent",
+      "at": "2026-11-21T11:37:19.982Z",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "errors": []
+}

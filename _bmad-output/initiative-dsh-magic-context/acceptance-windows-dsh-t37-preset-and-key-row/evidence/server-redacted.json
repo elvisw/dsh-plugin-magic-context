@@ -1,0 +1,19 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t37-20261121-193631",
+  "hosts": [
+    {
+      "profile": "t37",
+      "pid": 20316,
+      "port": 5530,
+      "attempt": 0,
+      "url": "http://127.0.0.1:5530/?token=<redacted>"
+    },
+    {
+      "profile": "t37b",
+      "pid": 14984,
+      "port": 5535,
+      "attempt": 0,
+      "url": "http://127.0.0.1:5535/?token=<redacted>"
+    }
+  ]
+}

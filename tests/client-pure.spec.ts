@@ -91,7 +91,11 @@ const api = factory((name) => {
       memoryEnabled: boolean
       dimensionsUnsupported: boolean
     }
-    embeddingFieldVisible: (key: string, provider: string, keyStored?: boolean) => boolean
+    embeddingFieldVisible: (key: string, provider: string, keySource?: string, presetOwnsTransport?: boolean) => boolean
+    normalizeEmbeddingPreset: (value: unknown) => string
+    normalizeEndpointText: (value: unknown) => string
+    embeddingPresetOwnsTransport: (preset: unknown, endpoint: unknown, authHeader: unknown) => boolean
+    SILICONFLOW_ENDPOINT: string
     embeddingKeyRowState: (input: {
       savedRef?: string
       refDirty?: boolean
@@ -586,7 +590,7 @@ describe('routePairOps — the pin-pair write semantics', () => {
 })
 
 describe('settings information architecture (T21)', () => {
-  const { fieldSpecs, fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingFieldVisible, embeddingKeyRowState, embeddingStateKeys } = api.__diagnostics
+  const { fieldSpecs, fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingFieldVisible, embeddingKeyRowState, embeddingStateKeys, normalizeEmbeddingPreset, normalizeEndpointText, embeddingPresetOwnsTransport, SILICONFLOW_ENDPOINT } = api.__diagnostics
 
   it('gives every field exactly one section and one placement', () => {
     const sections = fieldSections()
@@ -751,11 +755,47 @@ describe('settings information architecture (T21)', () => {
     // card into hiding everything the remote path needs.
     expect(embeddingFieldVisible('embedding.endpoint', 'OpenAI-Compatible')).toBe(true)
     expect(embeddingFieldVisible('embedding.endpoint', ' LOCAL ')).toBe(false)
-    // A stored secret keeps its own row so it can be deleted without switching.
-    expect(embeddingFieldVisible('embedding.apiKey', 'local', true)).toBe(true)
-    expect(embeddingFieldVisible('embedding.apiKey', 'off', true)).toBe(true)
-    expect(embeddingFieldVisible('embedding.apiKey', 'local', false)).toBe(false)
-    expect(embeddingFieldVisible('embedding.endpoint', 'local', true)).toBe(false)
+    // T37: local/off keeps no key input. A stored credential keeps one clear
+    // row; a literal key gets a state line with no action.
+    expect(embeddingFieldVisible('embedding.apiKey', 'local', 'credential')).toBe(true)
+    expect(embeddingFieldVisible('embedding.apiKey', 'off', 'credential')).toBe(true)
+    expect(embeddingFieldVisible('embedding.apiKey', 'local', 'literal')).toBe(true)
+    expect(embeddingFieldVisible('embedding.apiKey', 'local', 'environment')).toBe(false)
+    expect(embeddingFieldVisible('embedding.apiKey', 'local', 'none')).toBe(false)
+    expect(embeddingFieldVisible('embedding.endpoint', 'local', 'credential')).toBe(false)
+
+    // T37: the SiliconFlow preset owns the endpoint and auth header only when
+    // nothing non-default is saved; otherwise both stay visible because the
+    // resolver still uses the saved value.
+    for (const key of ['embedding.endpoint', 'embedding.authHeader']) {
+      expect(embeddingFieldVisible(key, 'openai-compatible', 'none', true), `${key} owned`).toBe(false)
+      expect(embeddingFieldVisible(key, 'openai-compatible', 'none', false), `${key} override`).toBe(true)
+    }
+    expect(embeddingFieldVisible('embedding.model', 'openai-compatible', 'none', true)).toBe(true)
+    expect(embeddingFieldVisible('embedding.apiKey', 'openai-compatible', 'none', true)).toBe(true)
+
+    // Preset normalisation must agree with resolveEmbeddingConfig: an empty or
+    // unknown value is not "custom" by accident.
+    expect(normalizeEmbeddingPreset('')).toBe('siliconflow')
+    expect(normalizeEmbeddingPreset(undefined)).toBe('siliconflow')
+    expect(normalizeEmbeddingPreset(' SiliconFlow ')).toBe('siliconflow')
+    expect(normalizeEmbeddingPreset('custom')).toBe('custom')
+    expect(normalizeEmbeddingPreset('openai')).toBe('custom')
+    // Endpoint comparison drops a trailing slash or /embeddings, as the resolver does.
+    expect(normalizeEndpointText(' https://api.siliconflow.cn/v1/ ')).toBe(SILICONFLOW_ENDPOINT)
+    expect(normalizeEndpointText('https://api.siliconflow.cn/v1/embeddings')).toBe(SILICONFLOW_ENDPOINT)
+    expect(normalizeEndpointText(null)).toBe('')
+    expect(SILICONFLOW_ENDPOINT).toBe('https://api.siliconflow.cn/v1')
+    expect(embeddingPresetOwnsTransport('siliconflow', '', '')).toBe(true)
+    expect(embeddingPresetOwnsTransport('', 'https://api.siliconflow.cn/v1/embeddings', 'Authorization')).toBe(true)
+    expect(embeddingPresetOwnsTransport('siliconflow', 'https://mirror.example/v1', 'authorization')).toBe(false)
+    expect(embeddingPresetOwnsTransport('siliconflow', '', 'api-key')).toBe(false)
+    expect(embeddingPresetOwnsTransport('custom', '', '')).toBe(false)
+    // The resolver keeps `endpoint: ''` for a value that only trims to slashes,
+    // so the form must not claim the preset address there.
+    expect(embeddingPresetOwnsTransport('siliconflow', '/', '')).toBe(false)
+    expect(embeddingPresetOwnsTransport('siliconflow', '//', '')).toBe(false)
+    expect(embeddingPresetOwnsTransport('siliconflow', '/embeddings', '')).toBe(false)
     // Non-embedding keys are untouched by the rule.
     expect(embeddingFieldVisible('policy.executeThreshold', 'local')).toBe(true)
     // Every remote-only key in the schema is covered by the list above.

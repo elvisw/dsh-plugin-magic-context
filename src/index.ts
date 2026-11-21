@@ -1328,16 +1328,16 @@ export const Config = z.object({
       z.const('siliconflow').extra('description', { zh: '硅基流动', en: 'SiliconFlow' }),
       z.const('custom').extra('description', { zh: '自定义', en: 'Custom' }),
     ]).default('siliconflow')
-      .extra('description', { zh: '服务预设（本地不适用）', en: 'Preset (not used by local MiniLM)' })
+      .extra('description', { zh: '服务预设', en: 'Service preset' })
       .volatile(),
     endpoint: z.string().default('')
-      .extra('description', { zh: '接口地址（仅远程）', en: 'Remote provider only' })
+      .extra('description', { zh: '接口地址（自定义预设）', en: 'Endpoint (Custom preset only)' })
       .volatile(),
     authHeader: z.union([
       z.const('authorization').extra('description', { zh: 'Authorization', en: 'Authorization' }),
       z.const('api-key').extra('description', { zh: 'api-key', en: 'api-key' }),
     ]).default('authorization')
-      .extra('description', { zh: '认证头（仅远程）', en: 'Remote provider only' })
+      .extra('description', { zh: '认证头（自定义预设）', en: 'Auth header (Custom preset only)' })
       .volatile(),
     model: z.string().default('')
       .extra('description', { zh: '模型 ID（仅远程）', en: 'Remote provider only' })

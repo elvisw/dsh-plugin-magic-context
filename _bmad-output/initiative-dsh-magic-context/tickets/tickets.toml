@@ -429,3 +429,15 @@ after = [35]
 hitl = true
 risk = "low"
 refine = true
+
+[[entry]]
+id = 37
+type = "story"
+title = "Make the service preset own the endpoint, and stop showing a key input for local embeddings"
+description = "Choosing the SiliconFlow preset still shows editable endpoint and auth-header inputs even though the preset is supposed to describe the whole service, and choosing Local MiniLM keeps a key input row visible when a key is stored. Hide the two inputs when the preset is SiliconFlow and the stored values are empty or default, show a fixed-endpoint line, keep non-default saved values visible with a notice instead of rerouting them, and replace the local key input with a single clear-stored-key row (no dead button for a literal key)."
+verify = "Web form: preset=siliconflow with empty/default stored endpoint and auth header hides both inputs and shows https://api.siliconflow.cn/v1 as read-only text; a non-default stored value keeps both inputs visible plus a notice; custom keeps both editable; normalisation matches resolveEmbeddingConfig. Local/off: no key input, a stored credential yields one clear row, a literal key yields a state line without a button. Covered by unit tests in tests/client-pure.spec.ts (visibility, key-row and normalisation helpers, three-argument signature updated) and one real Web gate under the evidence directory in covers. The resolver is unchanged, so no existing config changes target on upgrade; no version bump."
+covers = ["src/client/index.js", "src/index.ts", "tests/client-pure.spec.ts", "docs/configuration.md", "CHANGELOG.md", "_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-t37-preset-and-key-row/"]
+after = [36]
+hitl = true
+risk = "medium"
+refine = true

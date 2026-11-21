@@ -1,0 +1,34 @@
+STEP run-a-chinese-locale {"ok":true}
+STEP local-provider-seeded {"ok":true,"value":"local"}
+STEP local-no-key-row {"ok":true}
+STEP preset-default-siliconflow {"ok":true,"value":"siliconflow"}
+STEP preset-hides-endpoint {"ok":true}
+STEP preset-hides-auth-header {"ok":true}
+STEP preset-fixed-endpoint-line {"ok":true}
+STEP preset-override-absent {"ok":true}
+STEP preset-key-input-shown {"ok":true}
+STEP custom-shows-endpoint {"ok":true}
+STEP custom-shows-auth-header {"ok":true}
+STEP custom-fixed-line-gone {"ok":true}
+STEP preset-hides-endpoint-after-draft {"ok":true}
+STEP save-state {"label":"prune-hidden-draft","disabled":false}
+STEP hidden-draft-not-saved {"ok":true}
+STEP save-state {"label":"remote-custom-config","disabled":false}
+STEP saved-custom-endpoint {"ok":true,"endpoint":"http://127.0.0.1:9/v1"}
+STEP key-saved-to-credential-store {"ok":true}
+STEP key-not-in-patch {"ok":true}
+STEP local-hides-key-input {"ok":true}
+STEP local-hides-endpoint-again {"ok":true}
+STEP local-clear-row-visible {"ok":true}
+STEP clear-removes-row {"ok":true}
+STEP clear-confirmed {"ok":true}
+STEP run-b-chinese-locale {"ok":true}
+STEP run-b-provider-remote {"ok":true}
+STEP run-b-preset-siliconflow {"ok":true}
+STEP run-b-endpoint-visible {"ok":true}
+STEP run-b-auth-header-visible {"ok":true}
+STEP run-b-precedence-notice {"ok":true}
+STEP run-b-fixed-line-absent {"ok":true}
+FAILURES 0 ERRORS 0
+
+--- stderr ---

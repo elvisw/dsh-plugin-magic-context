@@ -219,11 +219,12 @@ describe('runtime Config schema', () => {
     // Longer descriptions become the row's hint and the label falls back to the
     // host's common key label (T31 uses that on purpose for the remote-only
     // embedding fields, because "Auth header (remote)" is 20 runes).
-    // T31: the twelve remote-only embedding fields cannot all carry a marker
+    // T31/T37: the remote-only embedding fields cannot all carry a marker
     // inside an 18-rune title, so their English description is a hint sentence.
     const HINT_DESCRIPTIONS = new Set([
       'Remote provider only',
-      'Preset (not used by local MiniLM)',
+      'Endpoint (Custom preset only)',
+      'Auth header (Custom preset only)',
     ])
     const allDescriptions: Array<{ path: string; text: string }> = []
     for (const [id, schema] of Object.entries(json.refs)) {
@@ -248,12 +249,12 @@ describe('runtime Config schema', () => {
 
     expect(node(['embedding']).meta?.collapse).toBe(true)
     expect(node(['embedding']).meta?.description).toEqual({ zh: '向量检索', en: 'Embedding' })
-    // T31: every remote-only field says so. The zh label carries the marker; the
-    // English one is a hint, because the marker does not fit in 18 runes.
+    // T31/T37: the zh labels carry the remote marker where it still applies;
+    // the English ones are hints, because the marker does not fit in 18 runes.
     const REMOTE_ZH: Record<string, string> = {
-      preset: '服务预设（本地不适用）',
-      endpoint: '接口地址（仅远程）',
-      authHeader: '认证头（仅远程）',
+      preset: '服务预设',
+      endpoint: '接口地址（自定义预设）',
+      authHeader: '认证头（自定义预设）',
       model: '模型 ID（仅远程）',
       apiKeyEnv: '密钥变量（仅远程）',
       apiKey: '密钥（仅远程）',
@@ -264,11 +265,16 @@ describe('runtime Config schema', () => {
       queryTimeoutMs: '查询超时（仅远程）',
       batchSize: '批大小（仅远程）',
     }
+    const REMOTE_EN: Record<string, string> = {
+      preset: 'Service preset',
+      endpoint: 'Endpoint (Custom preset only)',
+      authHeader: 'Auth header (Custom preset only)',
+    }
     for (const [key, zh] of Object.entries(REMOTE_ZH)) {
       const description = node(['embedding', key]).meta?.description as { zh: string; en: string }
       expect(description.zh, `embedding.${key} zh description`).toBe(zh)
       expect(description.en, `embedding.${key} en description`).toBe(
-        key === 'preset' ? 'Preset (not used by local MiniLM)' : 'Remote provider only',
+        REMOTE_EN[key] ?? 'Remote provider only',
       )
       expect(Array.from(description.zh).length, `embedding.${key} zh label length`).toBeLessThanOrEqual(18)
     }
