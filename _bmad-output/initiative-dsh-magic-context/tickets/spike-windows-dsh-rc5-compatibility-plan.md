@@ -3,7 +3,7 @@ title: '验证 Windows DSH 0.2.2-rc.5 兼容性'
 type: chore
 ticket: 34
 created: '2026-11-21'
-status: built
+status: done
 baseline_revision: 'c962b5c5880cc83f64dd25343e5549331a0fd3d5'
 route: full
 route_source: pinned

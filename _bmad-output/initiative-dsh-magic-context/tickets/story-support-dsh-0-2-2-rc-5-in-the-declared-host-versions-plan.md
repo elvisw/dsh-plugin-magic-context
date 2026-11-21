@@ -1,9 +1,8 @@
 ---
 title: 'Support DSH 0.2.2-rc.5 in the declared host versions'
-type: story
 ticket: 35
 created: '2026-11-21'
-status: built
+status: done
 baseline_revision: '93a4f07a968c13ca29424f75e09448399df9011e'
 route: full
 route_source: pinned
