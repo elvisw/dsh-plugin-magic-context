@@ -2,7 +2,7 @@
 title: "Tell users what to do when the dsh-go market entry lags behind npm"
 ticket: 36
 created: '2026-11-21'
-status: built
+status: done
 baseline_revision: 'dfb9f1d'
 route: quick
 route_source: pinned
