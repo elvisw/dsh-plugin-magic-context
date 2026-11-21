@@ -8,6 +8,14 @@
 的上下文管理与记忆能力移植到 DSH 的插件 / surface 体系上。代码出处、被 vendored 的第三方文件与
 钉住的上游 revision 见 [NOTICE](NOTICE)；上游自身的变更历史请见上游仓库。
 
+## [0.18.11] - 2026-11-22
+
+### Fixed
+
+- 向量检索：把提供方切到「OpenAI 兼容 API」但还没保存时，卡片现在直接显示「保存并加载模型」
+  与「测试连接」，点击会先保存提供方再拉取模型列表；此前这两个按钮只在提供方已保存为远程后
+  才出现，用户先存好 API Key 后会找不到模型列表。「开始重建向量」等仍按已保存状态出现。
+
 ## [0.18.10] - 2026-11-21
 
 ### Changed
@@ -404,6 +412,7 @@ npm Trusted Publishing（OIDC）：仓库不再保存任何 npm 凭据，发布�
 
 0.12.0 之前的 tag 位于上游仓库 `wk544863858/dsh-plugin-magic-context`；从 0.12.0 起，版本与 tag 属于本 fork。
 
+[0.18.11]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.10...v0.18.11
 [0.18.10]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.9...v0.18.10
 [0.18.9]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.8...v0.18.9
 [0.18.8]: https://github.com/elvisw/dsh-plugin-magic-context/compare/v0.18.6...v0.18.8

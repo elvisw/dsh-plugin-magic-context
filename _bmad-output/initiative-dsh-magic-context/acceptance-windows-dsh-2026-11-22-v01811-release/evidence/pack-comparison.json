@@ -1,0 +1,20 @@
+{
+  "previous": {
+    "version": "0.18.10",
+    "bytes": 4074536,
+    "sha256": "d3f1d9ae49bfe91093993f579d8bf04866ec291bce871edb8ae51059f9fc79d7",
+    "members": 71
+  },
+  "candidate": {
+    "version": "0.18.11",
+    "bytes": 4074674,
+    "sha256": "933fdd088eb31752c03df8c51997b7694157f536a67d91c4641aebe06d717f85",
+    "members": 71
+  },
+  "changed": [
+    "package/lib/client.js",
+    "package/package.json"
+  ],
+  "added": [],
+  "removed": []
+}
