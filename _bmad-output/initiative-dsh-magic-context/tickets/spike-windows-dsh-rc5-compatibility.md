@@ -44,3 +44,7 @@ risk: high
 - Decision: 2026-11-21 — 仅 Windows `0.2.2-rc.5`；不使用 `allow-version`，也不改日常配置、安装或数据。
 - Decision: 2026-11-21 — 独立复核的一项 Critical 和两项 Fix 已写入本票；用户已单独授权隔离安装与少量真实模型调用。
 - 不包含其他 RC、Android、完整 UI 回归或生产数据迁移。票据批准不等于允许发布、推送或更新日常安装。
+
+## Outcome
+
+Windows `0.2.2-rc.5` 的 Web 验收通过，独立复核为 PASS WITH CAVEATS。发布版启动时拒载；只改兼容声明和候选版本号的包无需豁免即可加载，通过了回收、取回原文和重启后检索。未验证 `dsh plugin add` 安装路径。首次安装越界及续跑的隔离范围见[验收报告](../acceptance-windows-dsh-t34-rc5/acceptance-report.md#6-隔离与主目录)。建议后续另行更新精确兼容声明，本票未修改或发布插件。

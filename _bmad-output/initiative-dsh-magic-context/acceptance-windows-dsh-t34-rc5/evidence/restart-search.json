@@ -1,0 +1,23 @@
+{
+  "pid": 29040,
+  "sessionId": "session-b98592e9-053e-46d1-8792-afdea0d9e398",
+  "searchCall": {
+    "seq": 17,
+    "callId": "call_00_NOlFMc7SUhw2W8HpTRhW2427",
+    "type": "tool/call",
+    "name": "ctx_memory"
+  },
+  "searchResult": {
+    "seq": 18,
+    "callId": "call_00_NOlFMc7SUhw2W8HpTRhW2427",
+    "type": "tool/result",
+    "textSha256": "834a22d5d91ad0b736c56dde470579c3dd7602541bc1f4420517b5c60aa45cc1"
+  },
+  "searchJournal": 97,
+  "memoryAfterRestart": {
+    "id": 1,
+    "project_path": "dir:520f1287b17ae739ca36a881c7d6cb57c12afda6",
+    "source_session_id": "session-7e08f35b-976e-46df-9ff4-2ea6e6f60cfc",
+    "retrieval_count": 1
+  }
+}

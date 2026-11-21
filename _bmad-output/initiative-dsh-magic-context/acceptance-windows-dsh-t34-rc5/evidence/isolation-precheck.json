@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "reason": "the npm/pnpm cache, configuration and store paths used by this trial resolve under the trial root",
+  "targets": {
+    "npmCache": "<trial-root>\\host\\npm-cache",
+    "npmUserconfig": "<trial-root>\\host\\user.npmrc",
+    "npmGlobalconfig": "<trial-root>\\host\\global.npmrc",
+    "pnpmStore": "<trial-root>\\host\\pnpm-home\\store\\v11",
+    "pnpmGlobalconfig": "<trial-root>\\host\\xdg-config\\pnpm\\config.yaml"
+  },
+  "pnpmVersion": "12.18.0",
+  "homeUnchangedByChecks": true
+}

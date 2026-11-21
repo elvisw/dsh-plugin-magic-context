@@ -1,0 +1,9 @@
+{
+  "spec": "@elvisw/dsh-magic-context@0.18.8-t34.rc5.1",
+  "packagePath": "candidate/dsh-home/profiles/t34/node_modules/@elvisw/dsh-magic-context",
+  "matchedTarMembers": 71,
+  "tarSha256": "d22d2f6b7270654e559473eb0bd9817b492ad9a8587982a6eacafd9284435418",
+  "dshEngine": "0.2.1-rc.1 || 0.2.2-rc.1 || 0.2.2-rc.5",
+  "isolationRoot": "candidate",
+  "profileBundle": true
+}

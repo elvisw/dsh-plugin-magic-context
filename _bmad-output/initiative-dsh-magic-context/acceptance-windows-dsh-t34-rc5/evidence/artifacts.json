@@ -1,0 +1,33 @@
+{
+  "members": 71,
+  "onlyChangedPayload": [
+    "package/package.json"
+  ],
+  "fields": {
+    "version": [
+      "0.18.8",
+      "0.18.8-t34.rc5.1"
+    ],
+    "engines.dsh": [
+      "0.2.1-rc.1 || 0.2.2-rc.1",
+      "0.2.1-rc.1 || 0.2.2-rc.1 || 0.2.2-rc.5"
+    ]
+  },
+  "releaseSha256": "c2e0b06d685db8e9e5523246d03c07b1a6af10ecff4793c9fb3878f2d712a6b1",
+  "candidateSha256": "d22d2f6b7270654e559473eb0bd9817b492ad9a8587982a6eacafd9284435418",
+  "node": "v24.21.0",
+  "hostSpec": "@deepseek-ai/dsh@0.2.2-rc.5",
+  "hostIntegrity": "sha512-cNbp12tLYLUTXaVli7zwwMjzmmEVCD1PRldg4oKtXM4+lFYckcaliMS2PU/FoThB4iAN/fKOSID0nrtRZU4Gjw==",
+  "releaseSpec": "@elvisw/dsh-magic-context@0.18.8",
+  "releaseIntegrity": "sha512-ACy9Xh10ISul6boU7I6Qeq3daB+7zEGdmDdZIrX10BTq4GHsjMJ7QZ9SWUQMda/KhgZ4CHsEGoRBj8lTTY8Kqg==",
+  "releaseGitHead": "a72f808e3dd7d7983ae139f2c4c9afd603824216",
+  "profileRoots": [
+    "release",
+    "candidate"
+  ],
+  "hostInstallResume": {
+    "prior": "EALLOWREMOTE",
+    "playwrightMirrorIntegrityMatched": "sha512-hheHdokM8cdqCb0lcE3s+zT4t4W+vvjpGxsZlDnikarzx8tSzMebh3UiFtgqwFwnTnjYQcsyMF8ei2mCO/tpeA=="
+  },
+  "hostCliVersion": "0.2.2-rc.5"
+}

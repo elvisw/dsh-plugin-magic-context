@@ -1,0 +1,28 @@
+{
+  "manifests": {
+    "package.json": {
+      "bytes": 169,
+      "sha256": "07d9146301bb74cb114318181be57f8ec3bbae1b33db1d6de9b133619a7b1ead"
+    },
+    "package-lock.json": {
+      "bytes": 448903,
+      "sha256": "c684f64eba0ebd9ebbc955e9adedfba762cbee3e1a8e6b24d2252e416ce98602"
+    },
+    "node_modules/.package-lock.json": {
+      "bytes": 407877,
+      "sha256": "f3fb622f02cbe4abdbe5005cce43e7f4b29eb8731a7712e32362b48556fc9e38"
+    }
+  },
+  "unchangedAfterInstall": true,
+  "unchangedAfterPreflight": true,
+  "unchangedAfterGate": true,
+  "requiredChangedAfterGate": [],
+  "otherChangedAfterGate": [
+    ".npmrc"
+  ],
+  "unrelatedExternalProcess": {
+    "command": "npm install -g @deepseek-ai/dsh",
+    "observed": true,
+    "note": "Started after the baseline; it changed .npmrc and the npm cache. The required manifests stayed byte-identical."
+  }
+}

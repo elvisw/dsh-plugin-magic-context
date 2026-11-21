@@ -1,0 +1,70 @@
+{
+  "pid": 30832,
+  "sessionId": "session-7e08f35b-976e-46df-9ff4-2ea6e6f60cfc",
+  "tag": 1,
+  "nativeEventLog": "dsh-home/sessions/<workspace>/session-7e08f35b-976e-46df-9ff4-2ea6e6f60cfc/session.v4.jsonl.zstd",
+  "readCount": 1,
+  "fixtureCall": {
+    "seq": 17,
+    "callId": "call_00_wuwIM7TQ85xuMBahQfAc8864",
+    "type": "tool/call",
+    "name": "read"
+  },
+  "original": {
+    "seq": 18,
+    "callId": "call_00_wuwIM7TQ85xuMBahQfAc8864",
+    "type": "tool/result",
+    "textSha256": "984637faf203da0d0920232421069bff93437fd8dd58d1f1ea9ee2d628e457b8"
+  },
+  "queue": {
+    "seq": 33,
+    "callId": "call_00_IiH6HpppI3ogJw46e63s4137",
+    "type": "tool/result",
+    "textSha256": "40f7a7d752fa3594ea0149bc376122069f51870c2b6e2248985f5e50c9503082"
+  },
+  "placeholder": {
+    "seq": 45,
+    "callId": "call_00_wuwIM7TQ85xuMBahQfAc8864",
+    "type": "tool/result",
+    "textSha256": "684c5e869a9bbcbc91401d899a08fe5899b301abb8295d8db1e3cd84380e809a",
+    "text": "[dropped §1§]"
+  },
+  "expandCall": {
+    "seq": 60,
+    "callId": "call_00_BKFK7hP5xZ6Guqf5SbQ19414",
+    "type": "tool/call",
+    "name": "ctx_expand"
+  },
+  "expandResult": {
+    "seq": 61,
+    "callId": "call_00_BKFK7hP5xZ6Guqf5SbQ19414",
+    "type": "tool/result",
+    "textSha256": "e7a62b9d97199de42b88e5ff9c32c34db26bf3c5f59808bd95aeba699f57493f"
+  },
+  "samePayloadWithoutTagPrefix": true,
+  "placeholderStillOnSurface": true,
+  "writeCall": {
+    "seq": 66,
+    "callId": "call_00_vwYvsxH2jepnspsMxr2s9201",
+    "type": "tool/call",
+    "name": "ctx_memory"
+  },
+  "writeResult": {
+    "seq": 67,
+    "callId": "call_00_vwYvsxH2jepnspsMxr2s9201",
+    "type": "tool/result",
+    "textSha256": "67bee6281d75d500f1b0b25f76bd57060896edc39ce4b287b92185c427e8aea5"
+  },
+  "memoryWriteJournal": 85,
+  "queueJournal": 80,
+  "landedJournal": 81,
+  "restoreJournal": 84,
+  "memoryBeforeRestart": {
+    "id": 1,
+    "project_path": "dir:520f1287b17ae739ca36a881c7d6cb57c12afda6",
+    "category": "PROJECT_RULES",
+    "status": "active",
+    "source_session_id": "session-7e08f35b-976e-46df-9ff4-2ea6e6f60cfc",
+    "retrieval_count": 0
+  }
+}
