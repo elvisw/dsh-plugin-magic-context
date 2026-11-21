@@ -1,0 +1,45 @@
+{
+  "count": 8,
+  "files": [
+    {
+      "path": "acceptance-report.md",
+      "sha256": "6fdf52bd0b231e9187dde60206daf7344ba0c3243f82b746a20deab43f56e156",
+      "bytes": 2045
+    },
+    {
+      "path": "evidence/build.txt",
+      "sha256": "1847e81d303ddb749b5a0aca45c4c68be1d8bb21424fa445f80ecc900bdcc821",
+      "bytes": 293
+    },
+    {
+      "path": "evidence/i18n.txt",
+      "sha256": "07ff8460d313e930e30268ad96948dd2436cbf3d03a1d4ebc933ac7fad39b31a",
+      "bytes": 2160
+    },
+    {
+      "path": "evidence/pack-comparison.json",
+      "sha256": "5d630b348a554d938daaca6592b741df6fafba7deff3316a5a7a083814b92e79",
+      "bytes": 450
+    },
+    {
+      "path": "evidence/profile-dump.txt",
+      "sha256": "1084c2374a0bcb2035fcb3d098533a2b00ef6def5d2c8c891b0921bcb076c9b1",
+      "bytes": 141
+    },
+    {
+      "path": "evidence/registry-verification.json",
+      "sha256": "7cb8d212545403f9dc645cf22183fa7cc7e0a7102bbe215fdf1b751196efc9e1",
+      "bytes": 537
+    },
+    {
+      "path": "evidence/typecheck.txt",
+      "sha256": "9a55400975981aeb0754bf322ecfee0f668a35a11aeee034e6ebf60f4ac92331",
+      "bytes": 79
+    },
+    {
+      "path": "evidence/unit-test.txt",
+      "sha256": "f82e382ef344d18fd4e36ea366baee89e3999b1780cab66bdf5e71a23b43f310",
+      "bytes": 950
+    }
+  ]
+}
