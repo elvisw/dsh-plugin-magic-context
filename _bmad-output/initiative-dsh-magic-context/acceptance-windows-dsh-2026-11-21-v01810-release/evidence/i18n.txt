@@ -16,7 +16,7 @@ Baseline refreshed (m[0] frozen point advanced)
 === 客户端字典与接线 ===
   ✓ zh/en 键集合一致: 321 keys
   ✓ settingsCopyKeys 全部已定义: 200 keys
-  ✓ settingsCopyKeys 无重复: 
+  ✓ settingsCopyKeys 无重复:
   ✓ 源码引用的键全部已定义: 117 keys
   ✓ 动态键族 detail.verb.* 全部已定义: detail.verb.
   ✓ 字典之外没有硬编码中文: 0 处

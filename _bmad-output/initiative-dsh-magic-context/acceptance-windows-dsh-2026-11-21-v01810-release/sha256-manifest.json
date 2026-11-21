@@ -1,0 +1,50 @@
+{
+  "count": 9,
+  "files": [
+    {
+      "path": "acceptance-report.md",
+      "sha256": "025c9fc250273773d1935aac3602b620e825b9bbaa72327573afde8d1e39ec1d",
+      "bytes": 2285
+    },
+    {
+      "path": "evidence/build.txt",
+      "sha256": "9ff096f07900d5a94e7f30dd4c763d5ba64e0e520eeb3f002dc78c17af63dad6",
+      "bytes": 293
+    },
+    {
+      "path": "evidence/i18n.txt",
+      "sha256": "31c82c7b6201f553cd3f25cb53ec4dde2460a6c4b5c9dc026d3e1f19f5511ede",
+      "bytes": 2160
+    },
+    {
+      "path": "evidence/pack/pack-comparison.json",
+      "sha256": "f9a89ea6d11de30a4de6c33803e65f3e235326215c17822c40e4fd50a3e8534b",
+      "bytes": 596
+    },
+    {
+      "path": "evidence/profile-dump.txt",
+      "sha256": "9053598d70ee2232b0b8f89034de880cc9071b5fbabfdbe824dafd60c24300fe",
+      "bytes": 149
+    },
+    {
+      "path": "evidence/registry-tarball.txt",
+      "sha256": "a87a2931731ec0ea4a29dcb8a8c77aadb9a2a4bef1e85d2e2da6fffd6b1a38dd",
+      "bytes": 120
+    },
+    {
+      "path": "evidence/registry-verification.json",
+      "sha256": "8640d9e695e6345b88bafa7c76ddac6f487bc5c25fd65ecf3aa33b0bd27a1e97",
+      "bytes": 576
+    },
+    {
+      "path": "evidence/typecheck.txt",
+      "sha256": "0465c5661de4ddab2fd8140e15d0e90cd24a51dfe64f351c54da226ed751e54c",
+      "bytes": 79
+    },
+    {
+      "path": "evidence/unit-test.txt",
+      "sha256": "e1af946afe5acb75bcb54a7a23bbc4ebb8c756ec4501da5b418169cc3dc09f09",
+      "bytes": 950
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "version": "0.18.10",
+  "gitHead": "4f1d07f3a83022ab06ca17f4314bd683b1709170",
+  "integrity": "sha512-vtBbAhLOdKuXW6OU5FxxwjAUJQo+P8AgTWt+1/n+isfBADC919Qam7G0ayO8GloqaJVE/yg9pjxOsTW3Oqq0tQ==",
+  "shasum": "fe646521613e06ab9a135b604a2b687a73ffba3c",
+  "bytes": 4074536,
+  "sha256": "d3f1d9ae49bfe91093993f579d8bf04866ec291bce871edb8ae51059f9fc79d7",
+  "integrityMatchesLocalBytes": true,
+  "attestations": {
+    "https://github.com/npm/attestation/tree/main/specs/publish/v0.1": true,
+    "https://slsa.dev/provenance/v1": true
+  },
+  "published": "2026-11-21T11:47:44Z"
+}
