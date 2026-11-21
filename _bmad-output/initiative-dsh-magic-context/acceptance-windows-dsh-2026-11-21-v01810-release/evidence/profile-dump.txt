@@ -1,6 +1,4 @@
-
 - id: magic-context-dsh
       verifyProvider: commandcode
       verifyModel: deepseek/deepseek-v4.1-flash
     registerCompactionEngine: true
-

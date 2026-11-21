@@ -23,8 +23,8 @@
     },
     {
       "path": "evidence/profile-dump.txt",
-      "sha256": "9053598d70ee2232b0b8f89034de880cc9071b5fbabfdbe824dafd60c24300fe",
-      "bytes": 149
+      "sha256": "1084c2374a0bcb2035fcb3d098533a2b00ef6def5d2c8c891b0921bcb076c9b1",
+      "bytes": 141
     },
     {
       "path": "evidence/registry-tarball.txt",
