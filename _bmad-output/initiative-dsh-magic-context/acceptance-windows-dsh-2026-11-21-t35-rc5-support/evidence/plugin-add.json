@@ -1,0 +1,8 @@
+{
+  "exitCode": 0,
+  "spec": "elvisw-dsh-magic-context-0.18.9.tgz",
+  "diagnostics": [
+    "+ @elvisw/dsh-magic-context 0.18.9"
+  ],
+  "allowVersionUsed": false
+}

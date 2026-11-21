@@ -22,8 +22,9 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 ## 安装
 
 需要 Node ≥ 22.19，以及带 Web 客户端的 DSH 宿主（桌面应用或 `web` profile）。DSH 即
-[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)。支持的宿主版本写在
-`engines.dsh` 里：`0.2.1-rc.1` 或 `0.2.2-rc.1`。
+[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)。可用的宿主版本写在
+`engines.dsh` 里：`0.2.1-rc.1`、`0.2.2-rc.1` 和 `0.2.2-rc.5`。其中 `0.2.2-rc.5` 只在 Windows
+的 `web` profile 上验证过，其他宿主和版本没有测试。
 
 上面那条命令装的是 `web` profile。桌面应用有自己的 profile，那边用 `--profile desktop`，
 或者换成你自己的 profile 名。

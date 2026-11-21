@@ -25,8 +25,9 @@ dsh plugin --profile web add @elvisw/dsh-magic-context
 ## Install
 
 You need Node ≥ 22.19 and a DSH host with a web client (desktop app or `web` profile). DSH is
-[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). The supported host versions
-are declared in `engines.dsh` as `0.2.1-rc.1` or `0.2.2-rc.1`.
+[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). The accepted host versions are
+declared in `engines.dsh`: `0.2.1-rc.1`, `0.2.2-rc.1` and `0.2.2-rc.5`. The `0.2.2-rc.5` declaration
+was verified on the Windows `web` profile only; other hosts and versions were not tested.
 
 The command above targets the `web` profile. The desktop app keeps its own profile, so use
 `--profile desktop` there, or whatever your profile is named.

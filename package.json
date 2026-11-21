@@ -1,6 +1,6 @@
 {
   "name": "@elvisw/dsh-magic-context",
-  "version": "0.18.8",
+  "version": "0.18.9",
   "description": "Magic Context for DeepSeek Harness — elvisw fork: reversible context reclaim, an out-of-band historian, an m[0]/m[1] baseline, project memories in the plugin's own corpus, and the compaction seam.",
   "keywords": [
     "deepseek-harness",
@@ -31,7 +31,7 @@
   ],
   "engines": {
     "node": ">=22.19",
-    "dsh": "0.2.1-rc.1 || 0.2.2-rc.1"
+    "dsh": "0.2.1-rc.1 || 0.2.2-rc.1 || 0.2.2-rc.5"
   },
   "main": "lib/index.js",
   "exports": {

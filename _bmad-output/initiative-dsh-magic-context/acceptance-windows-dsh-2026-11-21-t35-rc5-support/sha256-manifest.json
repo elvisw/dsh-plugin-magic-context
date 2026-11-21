@@ -1,0 +1,59 @@
+{
+  "files": [
+    {
+      "path": "acceptance-report.md",
+      "bytes": 4133,
+      "sha256": "ec53c881321a0915c92d2a9913b3ff3929d23948edecfeb98d7e4fe8b369b959"
+    },
+    {
+      "path": "evidence/home-isolation.json",
+      "bytes": 1066,
+      "sha256": "4447e74265af416f4f652983c990cb914a6c09cbde8378580e930cb6a13a505e"
+    },
+    {
+      "path": "evidence/host-install.json",
+      "bytes": 2556,
+      "sha256": "19f2f19f201071b41b506f4a9e90f24ad638bd615f238fa5259f8c77f3caa3e9"
+    },
+    {
+      "path": "evidence/installed.json",
+      "bytes": 225,
+      "sha256": "a35c1fa11dfe8c9db1730dd16a4e7e4702020d6dbd10ffe875ee921a177ae01e"
+    },
+    {
+      "path": "evidence/pack-compare.json",
+      "bytes": 889,
+      "sha256": "5a228575fd607919443c91082f267c2a15c31df926616ceebc17ca0b491009d5"
+    },
+    {
+      "path": "evidence/plugin-add.json",
+      "bytes": 171,
+      "sha256": "4481d56b6055900b740106d9114c55f7f9c46ab285a6bdfd311f2fb3e5099ec9"
+    },
+    {
+      "path": "evidence/settings.json",
+      "bytes": 47,
+      "sha256": "f74f0bb0d4bf1bf41561defde1ad3808b7886aef045c451d9a9504cd0be1ae8b"
+    },
+    {
+      "path": "evidence/startup.json",
+      "bytes": 71,
+      "sha256": "6bdbcbf0c62af846c2b004dcf7de680b90389df0c3045a23fb516edb83414b5b"
+    },
+    {
+      "path": "evidence/web-settings.json",
+      "bytes": 278,
+      "sha256": "bda7848060a647781cd290d0d507867345d8342026c38ae7beb8207a3f8b810f"
+    },
+    {
+      "path": "verify.py",
+      "bytes": 12612,
+      "sha256": "8a95a0966878f92cc879ab34dd15d8efd3c73a91bcc2d36922f823e642f554d4"
+    },
+    {
+      "path": "web.cjs",
+      "bytes": 5343,
+      "sha256": "8c2298b22cce4dbb3fac119cf1f4fed59656475e8a485f6ff0f5a76a56a27160"
+    }
+  ]
+}

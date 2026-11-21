@@ -1,0 +1,32 @@
+{
+  "baseline": "state after the T34 installation incident; the three manifests below were already changed before this run",
+  "before": {
+    "package.json": {
+      "exists": true,
+      "sha256": "07d9146301bb74cb114318181be57f8ec3bbae1b33db1d6de9b133619a7b1ead"
+    },
+    "package-lock.json": {
+      "exists": true,
+      "sha256": "c684f64eba0ebd9ebbc955e9adedfba762cbee3e1a8e6b24d2252e416ce98602"
+    },
+    "node_modules/.package-lock.json": {
+      "exists": true,
+      "sha256": "f3fb622f02cbe4abdbe5005cce43e7f4b29eb8731a7712e32362b48556fc9e38"
+    }
+  },
+  "after": {
+    "package.json": {
+      "exists": true,
+      "sha256": "07d9146301bb74cb114318181be57f8ec3bbae1b33db1d6de9b133619a7b1ead"
+    },
+    "package-lock.json": {
+      "exists": true,
+      "sha256": "c684f64eba0ebd9ebbc955e9adedfba762cbee3e1a8e6b24d2252e416ce98602"
+    },
+    "node_modules/.package-lock.json": {
+      "exists": true,
+      "sha256": "f3fb622f02cbe4abdbe5005cce43e7f4b29eb8731a7712e32362b48556fc9e38"
+    }
+  },
+  "unchanged": true
+}

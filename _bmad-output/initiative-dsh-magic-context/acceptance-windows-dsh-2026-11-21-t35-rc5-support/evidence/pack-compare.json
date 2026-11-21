@@ -1,0 +1,38 @@
+{
+  "old": {
+    "file": "elvisw-dsh-magic-context-0.18.8.tgz",
+    "members": 71,
+    "sha256": "c2e0b06d685db8e9e5523246d03c07b1a6af10ecff4793c9fb3878f2d712a6b1"
+  },
+  "new": {
+    "file": "elvisw-dsh-magic-context-0.18.9.tgz",
+    "members": 71,
+    "sha256": "1e6a0b9c5167f5488e8fdecb4cc29b91a79f3b21354c12d68139e1fa9a3deb2f"
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    "package/README.md",
+    "package/README.zh-CN.md",
+    "package/package.json"
+  ],
+  "packageJsonFieldDiff": {
+    "engines": [
+      {
+        "node": ">=22.19",
+        "dsh": "0.2.1-rc.1 || 0.2.2-rc.1"
+      },
+      {
+        "node": ">=22.19",
+        "dsh": "0.2.1-rc.1 || 0.2.2-rc.1 || 0.2.2-rc.5"
+      }
+    ],
+    "version": [
+      "0.18.8",
+      "0.18.9"
+    ]
+  },
+  "libMemberCount": 60,
+  "vendorMemberCount": 4,
+  "libAndVendorIdentical": true
+}

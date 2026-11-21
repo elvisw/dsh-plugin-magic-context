@@ -1,0 +1,15 @@
+{
+  "stage": "settings",
+  "steps": [
+    {
+      "name": "web-navigation"
+    },
+    {
+      "name": "plugin-settings-rendered",
+      "entry": "Magic Context",
+      "visibleSection": "embedding"
+    }
+  ],
+  "consoleErrorCount": 0,
+  "lastAction": "wait-embedding-section"
+}

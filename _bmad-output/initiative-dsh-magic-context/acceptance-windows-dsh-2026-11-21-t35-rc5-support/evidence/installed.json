@@ -1,0 +1,7 @@
+{
+  "version": "0.18.9",
+  "enginesDsh": "0.2.1-rc.1 || 0.2.2-rc.1 || 0.2.2-rc.5",
+  "dependency": true,
+  "profileBundle": true,
+  "tarballSha256": "1e6a0b9c5167f5488e8fdecb4cc29b91a79f3b21354c12d68139e1fa9a3deb2f"
+}
