@@ -2,7 +2,7 @@
 title: "Offer Load models and Test as soon as the provider draft is remote"
 ticket: 38
 created: '2026-11-22'
-status: built
+status: done
 baseline_revision: '963fe0a'
 route: full
 route_source: pinned
