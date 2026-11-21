@@ -1,0 +1,23 @@
+{
+  "publishedPrevious": {
+    "file": "@elvisw/dsh-magic-context@0.18.9",
+    "bytes": 4071977,
+    "sha256": "1e6a0b9c5167f5488e8fdecb4cc29b91a79f3b21354c12d68139e1fa9a3deb2f",
+    "members": 71
+  },
+  "localCandidate": {
+    "file": "elvisw-dsh-magic-context-0.18.10.tgz",
+    "bytes": 4074536,
+    "sha256": "d3f1d9ae49bfe91093993f579d8bf04866ec291bce871edb8ae51059f9fc79d7",
+    "members": 71
+  },
+  "changed": [
+    "package/lib/client.js",
+    "package/lib/index.js",
+    "package/package.json",
+    "package/README.md",
+    "package/README.zh-CN.md"
+  ],
+  "added": [],
+  "removed": []
+}
