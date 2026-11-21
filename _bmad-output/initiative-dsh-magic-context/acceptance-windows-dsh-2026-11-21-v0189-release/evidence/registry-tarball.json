@@ -1,0 +1,8 @@
+{
+  "note": "The 4 MB registry tarball is not kept in the repository; these hashes identify the published bytes.",
+  "url": "https://registry.npmjs.org/@elvisw/dsh-magic-context/-/dsh-magic-context-0.18.9.tgz",
+  "bytes": 4071977,
+  "sha1": "b02a48fe094b374d6f12a9f159d1d80ebf1f8afb",
+  "sha256": "1e6a0b9c5167f5488e8fdecb4cc29b91a79f3b21354c12d68139e1fa9a3deb2f",
+  "sha512hex": "aad605dd7f71cc045473326d69f29a66be724e487f2057f4df81a2537abadca0f02f58a2eff06ab5ef96ce45f4eb003e5093148e5772403fe57f3f1a2d4ea12d"
+}

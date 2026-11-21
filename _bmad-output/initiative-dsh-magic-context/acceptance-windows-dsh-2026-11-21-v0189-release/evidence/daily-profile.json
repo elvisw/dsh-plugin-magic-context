@@ -1,0 +1,14 @@
+{
+  "profile": "web",
+  "lines": [
+    "reasoningEffort: max",
+    "# == @elvisw/dsh-magic-context, patched by <DSH_HOME>\\profiles\\web\\cordis.patch.yml",
+    "- id: magic-context-dsh",
+    "name: '@elvisw/dsh-magic-context'",
+    "verifyProvider: commandcode",
+    "verifyModel: deepseek/deepseek-v4.1-flash",
+    "historian:",
+    "reasoningEffort: low",
+    "registerCompactionEngine: true"
+  ]
+}

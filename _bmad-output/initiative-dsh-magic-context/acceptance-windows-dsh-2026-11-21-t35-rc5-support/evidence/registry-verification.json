@@ -1,0 +1,27 @@
+{
+  "package": "@elvisw/dsh-magic-context",
+  "version": "0.18.9",
+  "latest": "0.18.9",
+  "gitHead": "4519148beb3b6a0967d2a4e8ea84a0272d99aaf9",
+  "metaAttempts": 10,
+  "downloadAttempts": 1,
+  "tarball": {
+    "bytes": 4071977,
+    "sha1": "b02a48fe094b374d6f12a9f159d1d80ebf1f8afb",
+    "sha256": "1e6a0b9c5167f5488e8fdecb4cc29b91a79f3b21354c12d68139e1fa9a3deb2f",
+    "integrity": "sha512-qtYF3X9xzARUczJtafKaZr5yTkh/IFf034GiU3q63KDwL1ii7/Bqte+WzkX06wA+UJMUjldyQD/lfz8aLU6hLQ==",
+    "url": "https://registry.npmjs.org/@elvisw/dsh-magic-context/-/dsh-magic-context-0.18.9.tgz"
+  },
+  "members": 71,
+  "changedVsLocalCandidate": [],
+  "libAndVendorIdentical": true,
+  "enginesDsh": "0.2.1-rc.1 || 0.2.2-rc.1 || 0.2.2-rc.5",
+  "attestation": {
+    "url": "https://registry.npmjs.org/-/npm/v1/attestations/@elvisw%2fdsh-magic-context@0.18.9",
+    "provenance": {
+      "predicateType": "https://slsa.dev/provenance/v1"
+    }
+  },
+  "publishedAt": "2026-11-21T02:44:15.086Z",
+  "note": "The registry tarball is not kept in the repository; re-download from the URL and compare the hashes."
+}

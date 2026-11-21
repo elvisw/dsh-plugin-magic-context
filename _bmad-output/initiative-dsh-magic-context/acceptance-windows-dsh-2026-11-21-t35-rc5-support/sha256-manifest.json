@@ -2,8 +2,8 @@
   "files": [
     {
       "path": "acceptance-report.md",
-      "bytes": 4133,
-      "sha256": "ec53c881321a0915c92d2a9913b3ff3929d23948edecfeb98d7e4fe8b369b959"
+      "bytes": 4270,
+      "sha256": "65ad3e86f6de70db404c4284f413171adb1e30b46f8e70a4eec435c56b56d956"
     },
     {
       "path": "evidence/home-isolation.json",
@@ -29,6 +29,11 @@
       "path": "evidence/plugin-add.json",
       "bytes": 171,
       "sha256": "4481d56b6055900b740106d9114c55f7f9c46ab285a6bdfd311f2fb3e5099ec9"
+    },
+    {
+      "path": "evidence/registry-verification.json",
+      "bytes": 1118,
+      "sha256": "04a254954106842136706988bcb21494010b7e3a967f2dcf23209f05ddf4abfb"
     },
     {
       "path": "evidence/settings.json",

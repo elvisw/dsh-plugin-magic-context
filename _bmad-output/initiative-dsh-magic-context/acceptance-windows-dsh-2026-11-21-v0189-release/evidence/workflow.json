@@ -1,0 +1,10 @@
+{
+  "conclusion": "success",
+  "createdAt": "2026-11-21T02:41:18Z",
+  "databaseId": 44857243965,
+  "headBranch": "v0.18.9",
+  "headSha": "4519148beb3b6a0967d2a4e8ea84a0272d99aaf9",
+  "status": "completed",
+  "updatedAt": "2026-11-21T02:42:11Z",
+  "url": "https://github.com/elvisw/dsh-plugin-magic-context/actions/runs/44857243965"
+}

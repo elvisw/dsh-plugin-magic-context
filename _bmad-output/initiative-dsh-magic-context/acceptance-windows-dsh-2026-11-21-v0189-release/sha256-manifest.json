@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "path": "acceptance-report.md",
+      "bytes": 1917,
+      "sha256": "fe682a6a07f4f1e7b4f7f52d8e994f577c06a5f9f3742a689e46ba320296e5c0"
+    },
+    {
+      "path": "evidence/daily-profile.json",
+      "bytes": 416,
+      "sha256": "c79b3eb841af9407f9a2410db4e3a501be9457da294df7085033ae3bedef677e"
+    },
+    {
+      "path": "evidence/registry-tarball.json",
+      "bytes": 521,
+      "sha256": "00a4af308d32aed8d88bb174f389f58af69a8b3c3300da11ff719a817d74771c"
+    },
+    {
+      "path": "evidence/tag.json",
+      "bytes": 177,
+      "sha256": "ac2d6cbbf4690294ce233a9cba7e190a3096dc602e9b6fe92d6a666ad0c9045e"
+    },
+    {
+      "path": "evidence/workflow.json",
+      "bytes": 344,
+      "sha256": "823df4909a281f331d8fb395eb2d393ac0e9d726dde1d21a45c67ef4447d77d6"
+    }
+  ]
+}
