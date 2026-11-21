@@ -540,6 +540,10 @@ window.__ModuleLoader__.load({
       const source = input !== null && typeof input === 'object' ? input : {}
       const state = typeof source.state === 'string' ? source.state : ''
       const remote = state !== '' && state !== 'local' && state !== 'remote-off' && state !== 'rollback-local'
+      // T38: a draft switch to remote must expose Load models and Test right
+      // away; both labels say "save and …" and save first. Start/pause/resume/
+      // rollback stay bound to the saved status.
+      const showRemote = remote || source.remoteDraft === true
       const dirty = source.dirty === true
       const writable = source.writable === true
       const busy = source.busy === true
@@ -558,8 +562,8 @@ window.__ModuleLoader__.load({
       return {
         remote,
         refresh: { hidden: false, disabled: busy || refreshing },
-        load: { hidden: !remote, disabled: busy || progressing || paused || !writable || !endpoint || !keyOk || !memoryOk },
-        test: { hidden: !remote, disabled: busy || progressing || paused || !writable || !model || !endpoint || !keyOk || !memoryOk },
+        load: { hidden: !showRemote, disabled: busy || progressing || paused || !writable || !endpoint || !keyOk || !memoryOk },
+        test: { hidden: !showRemote, disabled: busy || progressing || paused || !writable || !model || !endpoint || !keyOk || !memoryOk },
         start: {
           hidden: !remote || progressing || paused || ready || targetMissing,
           disabled: busy || !writable || dirty || !model || !probeOk || total === null || total <= 0
@@ -1746,6 +1750,7 @@ window.__ModuleLoader__.load({
         const embeddingFlags = embeddingStatusFlags(embeddingStatus)
         const actions = embeddingActionState({
           state: embeddingState,
+          remoteDraft: providerText === 'openai-compatible',
           dirty: shell.dirty,
           writable: shell.writable,
           busy: embeddingBusy,
@@ -2001,6 +2006,7 @@ window.__ModuleLoader__.load({
             providerText === 'openai-compatible' && embeddingModels.length > 0
               ? el('select', {
                 key: 'model-select',
+                'data-mc-model-select': 'true',
                 'aria-label': t('settings.embedding.modelPlaceholder'),
                 value: currentModel,
                 onChange: (event) => {

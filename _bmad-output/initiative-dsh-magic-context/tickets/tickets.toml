@@ -441,3 +441,15 @@ after = [36]
 hitl = true
 risk = "medium"
 refine = true
+
+[[entry]]
+id = 38
+type = "story"
+title = "Offer Load models and Test as soon as the provider draft is remote"
+description = "After switching the embedding provider to OpenAI-compatible but before saving, the card hides Load models and Test because the action row follows the saved status, which still says local. The only way to load the model list is to notice that the provider change must be saved first. Show the two remote-only actions when the draft provider is remote; their labels already say Save and load / Save and test and they save first. Keep Start, pause, resume and rollback bound to the saved/armed state."
+verify = "embeddingActionState with state=local and remoteDraft=true keeps load visible and enabled, test visible but disabled while the model is empty, and start hidden; with remoteDraft absent it behaves as before. One real Web gate: a fresh local profile with the default key reference switches the provider to remote, saves the API key through the card, sees Save and load without saving the provider first, clicks it, the provider is written, the fake endpoint receives an authorized model-list request, the list renders as a select, and a chosen model is saved. No change to the resolved embedding config or the model-list request format."
+covers = ["src/client/index.js", "tests/client-pure.spec.ts", "_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-t38-pending-remote-actions/"]
+after = [37]
+hitl = true
+risk = "low"
+refine = true

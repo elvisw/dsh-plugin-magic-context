@@ -847,6 +847,18 @@ describe('settings information architecture (T21)', () => {
     expect(local.load.hidden).toBe(true)
     expect(local.test.hidden).toBe(true)
     expect(local.start.hidden).toBe(true)
+
+    // T38: a draft switch to remote exposes Load right away (Save and load),
+    // while Test waits for a model and Start waits for the saved state.
+    const draftRemote = embeddingActionState({ ...base, state: 'local', remoteDraft: true, model: '' })
+    expect(draftRemote.remote).toBe(false)
+    expect(draftRemote.load.hidden).toBe(false)
+    expect(draftRemote.load.disabled).toBe(false)
+    expect(draftRemote.test.hidden).toBe(false)
+    expect(draftRemote.test.disabled).toBe(true)
+    expect(draftRemote.start.hidden).toBe(true)
+    const draftRemoteModel = embeddingActionState({ ...base, state: 'local', remoteDraft: true })
+    expect(draftRemoteModel.test.disabled).toBe(false)
   })
 
   it('registers only the top-level Settings seat and no legacy Plugins seats', () => {

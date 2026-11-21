@@ -1,0 +1,84 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t38-20261122-003705",
+  "steps": [
+    {
+      "name": "seeded-local",
+      "at": "2026-11-21T16:37:24.949Z",
+      "ok": true
+    },
+    {
+      "name": "load-hidden-while-local",
+      "at": "2026-11-21T16:37:24.953Z",
+      "ok": true
+    },
+    {
+      "name": "load-visible-before-save",
+      "at": "2026-11-21T16:37:25.682Z",
+      "ok": true
+    },
+    {
+      "name": "load-label-says-save",
+      "at": "2026-11-21T16:37:25.692Z",
+      "ok": true,
+      "label": "保存并加载模型"
+    },
+    {
+      "name": "start-still-hidden-before-save",
+      "at": "2026-11-21T16:37:25.697Z",
+      "ok": true
+    },
+    {
+      "name": "key-row-visible-with-draft",
+      "at": "2026-11-21T16:37:25.791Z",
+      "ok": true
+    },
+    {
+      "name": "key-saved",
+      "at": "2026-11-21T16:37:28.374Z",
+      "ok": true
+    },
+    {
+      "name": "provider-still-draft",
+      "at": "2026-11-21T16:37:28.375Z",
+      "ok": true
+    },
+    {
+      "name": "load-enabled-before-save",
+      "at": "2026-11-21T16:37:28.378Z",
+      "ok": true
+    },
+    {
+      "name": "provider-saved-by-action",
+      "at": "2026-11-21T16:37:31.416Z",
+      "ok": true
+    },
+    {
+      "name": "model-select-rendered",
+      "at": "2026-11-21T16:37:31.421Z",
+      "ok": true
+    },
+    {
+      "name": "models-loaded",
+      "at": "2026-11-21T16:37:31.439Z",
+      "ok": true,
+      "options": [
+        "选择或填写模型",
+        "fixture-embed-a",
+        "fixture-embed-b"
+      ]
+    },
+    {
+      "name": "model-request-authorized",
+      "at": "2026-11-21T16:37:31.452Z",
+      "ok": true,
+      "calls": 1
+    },
+    {
+      "name": "model-saved",
+      "at": "2026-11-21T16:37:33.482Z",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "errors": []
+}

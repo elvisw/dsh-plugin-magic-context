@@ -1,0 +1,17 @@
+STEP seeded-local {"ok":true}
+STEP load-hidden-while-local {"ok":true}
+STEP load-visible-before-save {"ok":true}
+STEP load-label-says-save {"ok":true,"label":"保存并加载模型"}
+STEP start-still-hidden-before-save {"ok":true}
+STEP key-row-visible-with-draft {"ok":true}
+STEP key-saved {"ok":true}
+STEP provider-still-draft {"ok":true}
+STEP load-enabled-before-save {"ok":true}
+STEP provider-saved-by-action {"ok":true}
+STEP model-select-rendered {"ok":true}
+STEP models-loaded {"ok":true,"options":["选择或填写模型","fixture-embed-a","fixture-embed-b"]}
+STEP model-request-authorized {"ok":true,"calls":1}
+STEP model-saved {"ok":true}
+FAILURES 0 ERRORS 0
+
+--- stderr ---
