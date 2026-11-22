@@ -1,0 +1,55 @@
+{
+  "count": 10,
+  "files": [
+    {
+      "path": "acceptance-report.md",
+      "sha256": "ba54fcd48a887dceebfed5054d40c0ab55bfa2a91d281ff205915a0ae94420f3",
+      "bytes": 3296
+    },
+    {
+      "path": "evidence/build.txt",
+      "sha256": "86be14d2f10854d50e9b290ae2ebf5b46623040c1a38394fe7f7d5fd1629dcf4",
+      "bytes": 296
+    },
+    {
+      "path": "evidence/i18n.txt",
+      "sha256": "f5b10220eec5c165c3c737594ab8cf13f796af3f0c6495d408c1520169957930",
+      "bytes": 2196
+    },
+    {
+      "path": "evidence/pack-compare.json",
+      "sha256": "f8d032ef9a29952e9d55a33f0ed1d30bbc5b498ae3df8ada2b625eba9562ee09",
+      "bytes": 621
+    },
+    {
+      "path": "evidence/pack.txt",
+      "sha256": "7056ad70813baabc339c5ec22f8fd5fbac2949f96d1b4a76567e3befedf6bf0f",
+      "bytes": 3544
+    },
+    {
+      "path": "evidence/profile-dump.txt",
+      "sha256": "0f505c9775f65e0fcb3ac032c19a34af4ee91960c8e5b04f5aca8a91db1dafa4",
+      "bytes": 329
+    },
+    {
+      "path": "evidence/profile-install.json",
+      "sha256": "e72dcf1678ff18fbea3f5902b0a9b2a404ce4c21eb5a385410f795b32926f44d",
+      "bytes": 703
+    },
+    {
+      "path": "evidence/registry-verification.json",
+      "sha256": "01b854bf353ee73452d5ce9fc3dc299819e1bb7f1e02ecfae2c85dec4adeafde",
+      "bytes": 666
+    },
+    {
+      "path": "evidence/typecheck.txt",
+      "sha256": "b1efe2fde5ef144201e60de2e3ea3434fb4ae5c9522131544a81ceec45bbb472",
+      "bytes": 85
+    },
+    {
+      "path": "evidence/unit-test.txt",
+      "sha256": "ea10c28fc5004e564663c35d67b9910edefff5c1e69eeeaa4fe9a4a68936aedf",
+      "bytes": 966
+    }
+  ]
+}

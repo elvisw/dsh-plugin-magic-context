@@ -17,12 +17,13 @@
 | 项 | 值 |
 |---|---|
 | npm `latest` | `0.18.12` |
-| tag / gitHead | `v0.18.12` → `<待填>` |
-| release workflow | `<待填>` |
+| tag / gitHead | `v0.18.12`（tag 对象 `70ec0c0`）→ commit `66504d1c4f71c80b503f739fd5e5214d1fe28603`，与 registry `gitHead` 一致 |
+| release workflow | `44973523428`，成功（tag/branch 校验、typecheck、test、build、i18n、inspect、publish） |
 | tarball | 4,081,166 B / 71 members / SHA-256 `7c66a968bdf5b83323a73949ca4bfe1ea100580f6e091f69a551552469b39c40` |
-| `dist.integrity` / `shasum` | 与下载字节重算一致 |
-| 与 0.18.11 差异 | 71 个成员中 4 个变化：`package.json`（版本）、`lib/client.js`（修复）、`README.md`、`README.zh-CN.md`（累计版本号）；无新增/删除成员；`vendor/**` 未变 |
-| 日常 `web` profile | 0.18.11 → 0.18.12，`magic-context-dsh`、verify 路由、`registerCompactionEngine: true` 保留 |
+| `dist.integrity` / `shasum` | `sha512-JeI8tBz1dStuf…tu2OQSYFGcChg==` / `b1436ad84eb17d5e46117d7f15b54397da682048`，与下载字节重算一致 |
+| provenance | publish v0.1 与 SLSA v1（`npm notice` 记录 Signed provenance + transparency log `logIndex=4034551089`） |
+| 与 0.18.11 差异 | 71 个成员中 4 个变化：`package.json`（版本）、`lib/client.js`（修复）、`README.md`、`README.zh-CN.md`（累计版本号）；无新增/删除成员；`vendor/**` 未变（`evidence/pack-compare.json`） |
+| 日常 `web` profile | 0.18.11 → 0.18.12，`magic-context-dsh`、verify 路由、`registerCompactionEngine: true` 保留（`evidence/profile-dump.txt`、`evidence/profile-install.json`）；安装后的 `lib/client.js` 与 tarball、仓库构建产物逐字节相同 |
 
 ## 门禁
 

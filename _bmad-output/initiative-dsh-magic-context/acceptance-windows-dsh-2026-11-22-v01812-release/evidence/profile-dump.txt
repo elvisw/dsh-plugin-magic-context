@@ -1,0 +1,9 @@
+    reasoningEffort: max
+# == @elvisw/dsh-magic-context, patched by <HOME>\.dsh\profiles\web\cordis.patch.yml
+- id: magic-context-dsh
+  name: '@elvisw/dsh-magic-context'
+      verifyProvider: commandcode
+      verifyModel: deepseek/deepseek-v4.1-flash
+    historian:
+      reasoningEffort: low
+    registerCompactionEngine: true

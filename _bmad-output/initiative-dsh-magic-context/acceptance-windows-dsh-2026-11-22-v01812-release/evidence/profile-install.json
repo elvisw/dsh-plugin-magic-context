@@ -1,0 +1,19 @@
+{
+  "installedProfile": "web",
+  "installedVersion": "0.18.12",
+  "libClientJs": {
+    "path": "~/.dsh/profiles/web/node_modules/@elvisw/dsh-magic-context/lib/client.js",
+    "bytes": 260989,
+    "sha256": "49950a723fe085fce2f5d1bae1c0ebc4a4368f4f246c8dc467c8662ed286f536",
+    "matchesRepoBuild": true,
+    "matchesTarball": true
+  },
+  "preservedConfig": {
+    "rowId": "magic-context-dsh",
+    "verifyProvider": "commandcode",
+    "verifyModel": "deepseek/deepseek-v4.1-flash",
+    "historianReasoningEffort": "low",
+    "registerCompactionEngine": true
+  },
+  "note": "Profile dump redacted: absolute home paths replaced with <HOME>; only the settings lines that prove the row survived are kept."
+}
