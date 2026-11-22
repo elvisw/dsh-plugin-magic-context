@@ -1,6 +1,6 @@
 # 独立包名与发布
 
-> Status: current — updated for the 0.18.13 release.
+> Status: current — updated for the 0.18.14 release.
 > Scope: package rename, user migration, and release procedure.
 
 本仓库 `0.12.0`–`0.12.3` 使用 npm 包名 **`@elvisw/dsh-plugin-magic-context`**；从 **`0.13.0`** 起改为
