@@ -1,6 +1,8 @@
 {
-  "note": "T40 gate re-run against the T41 candidate bytes (same tarball as this ticket)",
+  "note": "Digest of t40-regression-raw.json (the raw file is in this directory).",
+  "tarballSha256": "e69be80a96f19a972f14eb6205ebb8b75df81c7fbd98642adf8e3081678354f5",
   "steps": 51,
-  "failures": [],
-  "errors": []
+  "failures": 0,
+  "errors": 0,
+  "rawFile": "t40-regression-raw.json"
 }

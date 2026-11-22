@@ -1,10 +1,15 @@
 {
-  "count": 15,
+  "count": 17,
   "files": [
     {
       "path": "acceptance-report.md",
-      "sha256": "40b6ce614f1d335e17fb1e1892710e87c9731c3e6b7b98c8f2bf888cb2d25be7",
-      "bytes": 4476
+      "sha256": "4cf087286f2adcc42e6e990f89ff79d4d65246fde8b493870dff244a559bdca5",
+      "bytes": 4931
+    },
+    {
+      "path": "checks.md",
+      "sha256": "2e696330c9ff2e0aae7a828c954eed22ad57b04f7b93ad301aac5fd4fa85788c",
+      "bytes": 849
     },
     {
       "path": "collect_t41.py",
@@ -27,6 +32,11 @@
       "bytes": 438
     },
     {
+      "path": "evidence/probe.json",
+      "sha256": "c96c63121008ddc8be84c3c641a78d17a60ee778c5af97c3a09d96f8c1a8d260",
+      "bytes": 4544
+    },
+    {
       "path": "evidence/provenance.json",
       "sha256": "ca9e2231682eff4835a7db9ee937c4963f33104ded0ce0a32486eeb7e6fea1a0",
       "bytes": 550
@@ -37,9 +47,14 @@
       "bytes": 219
     },
     {
+      "path": "evidence/t40-regression-raw.json",
+      "sha256": "8f8311d539bc5031f035630b5833a84e9ceb82b0d1c266c4c4f2e95a8d2bb447",
+      "bytes": 6678
+    },
+    {
       "path": "evidence/t40-regression.json",
-      "sha256": "87985fb12b340fcc8fb12c3b52d280d5f11c8991b01135cc20ba636c8bdfb318",
-      "bytes": 143
+      "sha256": "719fb2921581bdd4d637bdd156ff7eeb1729007198eb41b5a53132b1398f8f3b",
+      "bytes": 261
     },
     {
       "path": "evidence/ui-gate.json",
@@ -55,11 +70,6 @@
       "path": "prepare_t41.py",
       "sha256": "1ebff56e07f81e1a4492310b7f2dc88e951b103d6b49e832357be87d2c312e21",
       "bytes": 5437
-    },
-    {
-      "path": "probe-output.txt",
-      "sha256": "0bfe45dceaad3da5971d61dfb43a5b4a532bb117a49a4eb2e5eecf77238dc14b",
-      "bytes": 1947
     },
     {
       "path": "run_t41_host.py",

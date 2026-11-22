@@ -4,7 +4,7 @@
 
 ## 复现结果（修之前）
 
-用 `t41_probe.cjs` 在隔离宿主里按用户路径操作，只记录不修改：
+用 `t41_probe.cjs` 在隔离宿主里按用户路径操作，只记录不修改；原始输出在 `evidence/probe.json`（跑的是发布版 0.18.13 的 tarball，SHA-256 `39160e…`，与本票候选不同）：
 
 | 阶段 | 加载模型 | 屏幕上的解释 |
 |---|---|---|
@@ -38,7 +38,7 @@
 | 切到 OpenAI 兼容后按钮出现且禁用 | 通过 |
 | 原因行在 `[data-mc-model-field]` 内、`data-mc-model-block=saved` | 通过 |
 | 原因行给出「保存」按钮 | 通过 |
-| 按钮的 `title` 与原因行同文 | 通过 |
+| 按钮的 `title` 与原因行文案相符（原因行额外带一个「保存」按钮，故不是逐字全文） | 通过 |
 | 按钮的 `aria-describedby` 指向原因行 | 通过 |
 | **点的是原因行里的保存按钮**（不是宿主 footer 同名按钮），写入 `provider: openai-compatible` | 通过 |
 | 该次点击后原因从 `saved` 变为 `key` | 通过 |
@@ -51,16 +51,16 @@
 
 ## 回归
 
-T40 gate 用**同一批字节**重跑：51 步 0 失败、0 console error（`evidence/t40-regression.json`，摘要；原始输出在本次运行的 T40 实验根，未覆盖 T40 的历史证据文件）。T40 的关键断言没有因为新的原因行而失效。
+T40 gate 用**同一批字节**重跑：51 步 0 失败、0 console error。原始 `ui-gate.json` 在 `evidence/t40-regression-raw.json`，其中记录的重跑 tarball SHA-256 与本票候选一致；摘要见 `evidence/t40-regression.json`。T40 的关键断言没有因为新的原因行而失效。
 
 ## 门禁
 
-- `npm test -- --maxWorkers=4`：85 文件 / 1059 用例通过
-- `npm run typecheck`、`npm run check:i18n`、`npm run build`：全部 exit 0
+- `npm test -- --maxWorkers=4`：85 文件 / 1059 用例通过（终端结果，原始日志未归档，见 `checks.md`）
+- `npm run typecheck`、`npm run check:i18n`、`npm run build`：全部 exit 0（同上）
 - 宿主：DSH `0.2.2-rc.5`、Node `v24.21.0`，DSH_HOME/HOME/USERPROFILE/XDG_*/TEMP/APPDATA/LOCALAPPDATA 与 npm/pnpm 缓存全部指向本次新根
 - 嵌入端点只有本地假服务（16 维、三个模型）；切入远程后 gate 显式把预设改成 `custom` 并把地址指向假服务，避免请求真实硅基流动
 - 密钥为 `t41-gate-not-a-real-key`（非真实凭据）
-- 证据与字节绑定见 `evidence/provenance.json`（tarball SHA-256 与 `src/client/index.js` 一致）
+- 证据与字节绑定见 `evidence/provenance.json`：tarball、`src/client/index.js`、`tests/client-pure.spec.ts` 三个 SHA-256 分别记录并互绑；`lib/client.js` 与 `src/client/index.js` 逐字节相同（构建就是复制它）。
 
 ## 未覆盖
 

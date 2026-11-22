@@ -1,0 +1,283 @@
+{
+  "note": "Raw ui-gate.json from the T40 gate re-run against the T41 candidate tarball.",
+  "tarballSha256": "e69be80a96f19a972f14eb6205ebb8b75df81c7fbd98642adf8e3081678354f5",
+  "tarballBytes": 4083343,
+  "steps": [
+    {
+      "name": "seeded-remote",
+      "at": "2026-11-22T08:23:57.358Z",
+      "ok": true
+    },
+    {
+      "name": "key-saved",
+      "at": "2026-11-22T08:23:59.933Z",
+      "ok": true
+    },
+    {
+      "name": "load-rendered-once",
+      "at": "2026-11-22T08:23:59.938Z",
+      "ok": true,
+      "count": 1
+    },
+    {
+      "name": "load-inside-model-field",
+      "at": "2026-11-22T08:23:59.942Z",
+      "ok": true
+    },
+    {
+      "name": "model-control-is-the-field",
+      "at": "2026-11-22T08:23:59.966Z",
+      "ok": true,
+      "tag": "INPUT"
+    },
+    {
+      "name": "load-is-not-inside-the-control",
+      "at": "2026-11-22T08:23:59.971Z",
+      "ok": true,
+      "modelControlCount": 1
+    },
+    {
+      "name": "no-second-model-select",
+      "at": "2026-11-22T08:23:59.974Z",
+      "ok": true
+    },
+    {
+      "name": "models-loaded-message",
+      "at": "2026-11-22T08:24:03.199Z",
+      "ok": true,
+      "text": "\u5df2\u52a0\u8f7d 3 \u4e2a\u6a21\u578b"
+    },
+    {
+      "name": "load-does-not-write-profile",
+      "at": "2026-11-22T08:24:03.199Z",
+      "ok": true,
+      "changed": ""
+    },
+    {
+      "name": "load-label-is-exact",
+      "at": "2026-11-22T08:24:03.206Z",
+      "ok": true,
+      "text": "\u52a0\u8f7d\u6a21\u578b"
+    },
+    {
+      "name": "test-label-is-exact",
+      "at": "2026-11-22T08:24:03.206Z",
+      "ok": true,
+      "text": "\u6d4b\u8bd5\u8fde\u63a5"
+    },
+    {
+      "name": "dirty-disables-load",
+      "at": "2026-11-22T08:24:03.940Z",
+      "ok": true
+    },
+    {
+      "name": "dirty-keeps-load-visible",
+      "at": "2026-11-22T08:24:03.942Z",
+      "ok": true
+    },
+    {
+      "name": "dirty-disables-test",
+      "at": "2026-11-22T08:24:03.946Z",
+      "ok": true
+    },
+    {
+      "name": "dirty-keeps-test-visible",
+      "at": "2026-11-22T08:24:03.949Z",
+      "ok": true
+    },
+    {
+      "name": "dirty-explains-why",
+      "at": "2026-11-22T08:24:03.953Z",
+      "ok": true
+    },
+    {
+      "name": "dirty-shows-discard",
+      "at": "2026-11-22T08:24:03.955Z",
+      "ok": true
+    },
+    {
+      "name": "no-save-coupled-label",
+      "at": "2026-11-22T08:24:03.958Z",
+      "ok": true
+    },
+    {
+      "name": "discard-restores-saved-value",
+      "at": "2026-11-22T08:24:04.999Z",
+      "ok": true,
+      "value": "http://127.0.0.1:11114/v1"
+    },
+    {
+      "name": "discard-hides-itself",
+      "at": "2026-11-22T08:24:05.003Z",
+      "ok": true
+    },
+    {
+      "name": "discard-enables-load",
+      "at": "2026-11-22T08:24:05.007Z",
+      "ok": true
+    },
+    {
+      "name": "discard-does-not-write-profile",
+      "at": "2026-11-22T08:24:05.008Z",
+      "ok": true
+    },
+    {
+      "name": "discard-disabled-host-save",
+      "at": "2026-11-22T08:24:05.013Z",
+      "ok": true
+    },
+    {
+      "name": "key-draft-shows-discard",
+      "at": "2026-11-22T08:24:05.739Z",
+      "ok": true
+    },
+    {
+      "name": "key-draft-does-not-dirty-form",
+      "at": "2026-11-22T08:24:05.742Z",
+      "ok": true
+    },
+    {
+      "name": "discard-clears-key-input",
+      "at": "2026-11-22T08:24:06.391Z",
+      "ok": true,
+      "value": ""
+    },
+    {
+      "name": "discard-key-hides-itself",
+      "at": "2026-11-22T08:24:06.393Z",
+      "ok": true
+    },
+    {
+      "name": "model-field-is-select-after-load",
+      "at": "2026-11-22T08:24:09.641Z",
+      "ok": true,
+      "tag": "SELECT"
+    },
+    {
+      "name": "empty-value-selects-nothing",
+      "at": "2026-11-22T08:24:09.646Z",
+      "ok": true,
+      "value": ""
+    },
+    {
+      "name": "picker-has-empty-option",
+      "at": "2026-11-22T08:24:09.651Z",
+      "ok": true,
+      "value": "",
+      "text": "\u8bf7\u9009\u62e9\u6a21\u578b\u2026"
+    },
+    {
+      "name": "model-pick-disables-load",
+      "at": "2026-11-22T08:24:10.249Z",
+      "ok": true
+    },
+    {
+      "name": "save-enabled-model-pick",
+      "at": "2026-11-22T08:24:10.668Z",
+      "ok": true
+    },
+    {
+      "name": "model-saved-from-picker",
+      "at": "2026-11-22T08:24:12.102Z",
+      "ok": true
+    },
+    {
+      "name": "probe-result-is-success",
+      "at": "2026-11-22T08:24:15.633Z",
+      "ok": true
+    },
+    {
+      "name": "probe-result-names-model-and-dims",
+      "at": "2026-11-22T08:24:15.635Z",
+      "ok": true,
+      "text": "\u8fde\u63a5\u6210\u529f \u00b7 fixture-embed-b \u00b7 16 \u7ef4 \u00b7 5 ms"
+    },
+    {
+      "name": "model-edit-clears-verdict",
+      "at": "2026-11-22T08:24:16.340Z",
+      "ok": true
+    },
+    {
+      "name": "save-enabled-bad-model",
+      "at": "2026-11-22T08:24:16.757Z",
+      "ok": true
+    },
+    {
+      "name": "probe-result-is-error",
+      "at": "2026-11-22T08:24:21.736Z",
+      "ok": true
+    },
+    {
+      "name": "probe-failure-localised",
+      "at": "2026-11-22T08:24:21.738Z",
+      "ok": true,
+      "text": "\u8ba4\u8bc1\u5931\u8d25\uff1a\u68c0\u67e5\u5bc6\u94a5\u662f\u5426\u6709\u6548"
+    },
+    {
+      "name": "manual-entry-turns-field-into-text",
+      "at": "2026-11-22T08:24:22.440Z",
+      "ok": true
+    },
+    {
+      "name": "manual-entry-keeps-value",
+      "at": "2026-11-22T08:24:22.445Z",
+      "ok": true,
+      "value": "fixture-bad-auth"
+    },
+    {
+      "name": "save-enabled-manual-model",
+      "at": "2026-11-22T08:24:22.878Z",
+      "ok": true
+    },
+    {
+      "name": "manual-id-saved",
+      "at": "2026-11-22T08:24:24.299Z",
+      "ok": true
+    },
+    {
+      "name": "manual-sentinel-never-saved",
+      "at": "2026-11-22T08:24:24.299Z",
+      "ok": true
+    },
+    {
+      "name": "outside-value-keeps-text",
+      "at": "2026-11-22T08:24:27.545Z",
+      "ok": true
+    },
+    {
+      "name": "outside-value-not-replaced",
+      "at": "2026-11-22T08:24:27.550Z",
+      "ok": true,
+      "value": "my-own-embed-model"
+    },
+    {
+      "name": "from-list-affordance",
+      "at": "2026-11-22T08:24:27.552Z",
+      "ok": true
+    },
+    {
+      "name": "from-list-reopens-picker",
+      "at": "2026-11-22T08:24:28.194Z",
+      "ok": true
+    },
+    {
+      "name": "forced-picker-draft-is-dirty",
+      "at": "2026-11-22T08:24:28.891Z",
+      "ok": true
+    },
+    {
+      "name": "discard-drops-forced-picker",
+      "at": "2026-11-22T08:24:29.848Z",
+      "ok": true,
+      "tag": "INPUT"
+    },
+    {
+      "name": "discard-shows-saved-outside-value",
+      "at": "2026-11-22T08:24:29.854Z",
+      "ok": true,
+      "value": "my-own-embed-model"
+    }
+  ],
+  "failures": [],
+  "errors": []
+}

@@ -2,7 +2,7 @@
 title: "Say why a remote action is blocked, and tell readers to load models before picking"
 ticket: 41
 created: '2026-11-22'
-status: in-progress
+status: built
 baseline_revision: '7e74e94'
 route: full
 route_source: pinned
@@ -30,7 +30,7 @@ context: []
 - [x] 动作行原因改用同一解析（`data-mc-actions-block`），不再只覆盖 `dirty`。
 - [x] 中英提示语与 7 个 block 文案加入字典与 `EMBEDDING_COPY_KEYS`。
 - [x] 单测覆盖全部代码、优先级与字典键存在性。
-- [x] 隔离宿主 gate `t41_ui_gate.cjs` 20 步 0 失败。
+- [x] 隔离宿主 gate `t41_ui_gate.cjs` 23 步 0 失败。
 - [x] 文档与 CHANGELOG。
 
 **Acceptance Criteria**
@@ -42,13 +42,14 @@ context: []
 
 ## Implementation Notes
 
-- 先做了只读复现（`t41_probe.cjs`），确认两个阶段的症状不同：draft 阶段有解释但位置错；无密钥阶段完全没有解释。修的是后者与位置，不是「加大超时」这类猜测。
+- 先做了只读复现（`t41_probe.cjs`，输出在 `evidence/probe.json`），确认两个阶段的症状不同：draft 阶段有解释但位置错；无密钥阶段完全没有解释。修的是后者与位置，不是「加大超时」这类猜测。
 - 原因顺序把「未保存修改」放在「缺密钥」之前：保存是一次点击，输入密钥要打字。
 - 保存按钮是显式动作，不是 T40 否掉的隐式保存。
 
 ## Plan Change Log
 
 - 独立 diff 复核（`deepseek-flash`）：NEEDS CHANGES。Critical：gate 用可见文本「保存」定位，命中的是宿主 footer 的同名按钮，内联保存的 onClick 完全坏掉也能通过——改为点 `[data-mc-model-block-save="true"]`，并断言该次点击后原因从 `saved` 变为 `key`。Fix 采纳：`paused` 从 `busy` 拆出单独文案（暂停应点继续，加载/探测在途不是迁移）；文档的「disabled remote action always」收窄到 Load/Test（Start 另有 probe/coverage/dimensions 门槛）；Suggest 采纳：补「矩阵禁用 ⇒ 原因非空」的等价性单测（3 种状态 × 64 种开关组合）、表单无效时禁用内联保存、原因行接入 `aria-describedby`。
+- 报告独立审计（`deepseek-flash`）：NEEDS CHANGES。Critical：`probe-output.txt` 其实是 gate 的 stdout，复现表在本目录没有支撑——已删除该文件，把真实 `probe.json` 收入证据；Fix 采纳：`checks.md` 标注本地检查未归档原始日志、T40 回归附原始 `ui-gate.json` 与 tarball 摘要、provenance 措辞改为「分别记录并互绑」、`title` 与原因行改为「相符（原因行另带保存按钮）」、计划里的「20 步」改为 23 步。
 
 ## Verification
 
