@@ -1,0 +1,20 @@
+{
+  "count": 3,
+  "files": [
+    {
+      "path": "acceptance-report.md",
+      "sha256": "3b39ef9293464992f53140801a611f65867078165a8ce6f80a154a0512edc6db",
+      "bytes": 1557
+    },
+    {
+      "path": "evidence/pack-compare.json",
+      "sha256": "4c83d925253a54689a4d1078c8d2e70c968258e5bca3422c74043e10d9293e25",
+      "bytes": 728
+    },
+    {
+      "path": "scripts/compare_01813.py",
+      "sha256": "8fba0f720ea2365f544fb7cfb806bc3fa6825135a3ff119128722e4a48941618",
+      "bytes": 2593
+    }
+  ]
+}

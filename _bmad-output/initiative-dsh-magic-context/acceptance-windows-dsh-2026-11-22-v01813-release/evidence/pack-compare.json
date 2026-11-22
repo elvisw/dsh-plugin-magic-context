@@ -1,0 +1,30 @@
+{
+  "candidate": {
+    "path": "elvisw-dsh-magic-context-0.18.13.tgz",
+    "sha256": "39160ef9ea678e9bc9ec963e709dac11821537cef4285f3f006301437bae65cc",
+    "bytes": 4082248,
+    "members": 71
+  },
+  "registry": {
+    "version": "0.18.12",
+    "sha256": "7c66a968bdf5b83323a73949ca4bfe1ea100580f6e091f69a551552469b39c40",
+    "bytes": 4081166,
+    "members": 71
+  },
+  "changed": [
+    "package/README.md",
+    "package/README.zh-CN.md",
+    "package/lib/client.js",
+    "package/package.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changedPayload": [
+    "package/README.md",
+    "package/README.zh-CN.md",
+    "package/lib/client.js"
+  ],
+  "unexpectedPayloadChanges": [],
+  "libUnchanged": true,
+  "vendorUnchanged": true
+}
