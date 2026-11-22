@@ -1,25 +1,25 @@
 {
-  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t39-20261122-092401",
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t39-20261122-093112",
   "steps": [
     {
       "name": "seeded-remote",
-      "at": "2026-11-22T01:24:22.550Z",
+      "at": "2026-11-22T01:31:31.535Z",
       "ok": true
     },
     {
       "name": "empty-model-is-text-before-load",
-      "at": "2026-11-22T01:24:22.579Z",
+      "at": "2026-11-22T01:31:31.571Z",
       "ok": true,
       "tag": "INPUT"
     },
     {
       "name": "no-model-select-before-load",
-      "at": "2026-11-22T01:24:22.583Z",
+      "at": "2026-11-22T01:31:31.576Z",
       "ok": true
     },
     {
       "name": "preset-select-has-no-empty-option",
-      "at": "2026-11-22T01:24:22.588Z",
+      "at": "2026-11-22T01:31:31.582Z",
       "ok": true,
       "presetOptions": [
         "siliconflow",
@@ -28,52 +28,52 @@
     },
     {
       "name": "key-saved",
-      "at": "2026-11-22T01:24:25.177Z",
+      "at": "2026-11-22T01:31:34.147Z",
       "ok": true
     },
     {
       "name": "load-visible",
-      "at": "2026-11-22T01:24:25.181Z",
+      "at": "2026-11-22T01:31:34.151Z",
       "ok": true
     },
     {
       "name": "provider-saved",
-      "at": "2026-11-22T01:24:28.217Z",
+      "at": "2026-11-22T01:31:37.184Z",
       "ok": true
     },
     {
       "name": "models-loaded-message",
-      "at": "2026-11-22T01:24:28.223Z",
+      "at": "2026-11-22T01:31:37.192Z",
       "ok": true,
       "text": "已加载 3 个模型"
     },
     {
       "name": "model-field-is-select-after-load",
-      "at": "2026-11-22T01:24:28.235Z",
+      "at": "2026-11-22T01:31:37.205Z",
       "ok": true,
       "tag": "SELECT"
     },
     {
       "name": "empty-value-selects-nothing",
-      "at": "2026-11-22T01:24:28.241Z",
+      "at": "2026-11-22T01:31:37.211Z",
       "ok": true,
       "value": ""
     },
     {
       "name": "exactly-one-model-control",
-      "at": "2026-11-22T01:24:28.246Z",
+      "at": "2026-11-22T01:31:37.218Z",
       "ok": true,
       "count": 1
     },
     {
       "name": "model-control-is-the-field",
-      "at": "2026-11-22T01:24:28.252Z",
+      "at": "2026-11-22T01:31:37.225Z",
       "ok": true,
       "id": "mc-field-embedding.model"
     },
     {
       "name": "picker-lists-models",
-      "at": "2026-11-22T01:24:28.255Z",
+      "at": "2026-11-22T01:31:37.230Z",
       "ok": true,
       "options": [
         "请选择模型…",
@@ -85,19 +85,14 @@
     },
     {
       "name": "picker-has-empty-option",
-      "at": "2026-11-22T01:24:28.256Z",
+      "at": "2026-11-22T01:31:37.239Z",
       "ok": true,
-      "options": [
-        "请选择模型…",
-        "fixture-embed-a",
-        "fixture-embed-b",
-        "fixture-bad-auth",
-        "手动输入模型 ID…"
-      ]
+      "value": "",
+      "text": "请选择模型…"
     },
     {
       "name": "picker-has-manual-entry",
-      "at": "2026-11-22T01:24:28.256Z",
+      "at": "2026-11-22T01:31:37.239Z",
       "ok": true,
       "options": [
         "请选择模型…",
@@ -109,97 +104,97 @@
     },
     {
       "name": "save-enabled-model-pick",
-      "at": "2026-11-22T01:24:28.807Z",
+      "at": "2026-11-22T01:31:37.772Z",
       "ok": true
     },
     {
       "name": "model-saved-from-picker",
-      "at": "2026-11-22T01:24:30.050Z",
+      "at": "2026-11-22T01:31:39.005Z",
       "ok": true
     },
     {
       "name": "probe-result-is-success",
-      "at": "2026-11-22T01:24:33.598Z",
+      "at": "2026-11-22T01:31:42.555Z",
       "ok": true
     },
     {
       "name": "probe-result-names-model-and-dims",
-      "at": "2026-11-22T01:24:33.601Z",
+      "at": "2026-11-22T01:31:42.559Z",
       "ok": true,
-      "text": "连接成功 · fixture-embed-b · 16 维 · 6 ms"
+      "text": "连接成功 · fixture-embed-b · 16 维 · 8 ms"
     },
     {
       "name": "model-edit-clears-verdict",
-      "at": "2026-11-22T01:24:34.304Z",
+      "at": "2026-11-22T01:31:43.266Z",
       "ok": true,
       "text": ""
     },
     {
       "name": "save-enabled-bad-model",
-      "at": "2026-11-22T01:24:34.720Z",
+      "at": "2026-11-22T01:31:43.683Z",
       "ok": true
     },
     {
       "name": "probe-result-is-error",
-      "at": "2026-11-22T01:24:39.497Z",
+      "at": "2026-11-22T01:31:48.475Z",
       "ok": true
     },
     {
       "name": "probe-failure-localised",
-      "at": "2026-11-22T01:24:39.499Z",
+      "at": "2026-11-22T01:31:48.477Z",
       "ok": true,
       "text": "认证失败：检查密钥是否有效"
     },
     {
       "name": "manual-entry-turns-field-into-text",
-      "at": "2026-11-22T01:24:40.212Z",
+      "at": "2026-11-22T01:31:49.178Z",
       "ok": true
     },
     {
       "name": "manual-entry-keeps-value",
-      "at": "2026-11-22T01:24:40.216Z",
+      "at": "2026-11-22T01:31:49.183Z",
       "ok": true,
       "value": "fixture-bad-auth"
     },
     {
       "name": "manual-sentinel-not-saved",
-      "at": "2026-11-22T01:24:40.216Z",
+      "at": "2026-11-22T01:31:49.183Z",
       "ok": true
     },
     {
       "name": "save-enabled-manual-model",
-      "at": "2026-11-22T01:24:40.651Z",
+      "at": "2026-11-22T01:31:49.603Z",
       "ok": true
     },
     {
       "name": "manual-id-saved",
-      "at": "2026-11-22T01:24:41.898Z",
+      "at": "2026-11-22T01:31:50.837Z",
       "ok": true
     },
     {
       "name": "manual-sentinel-never-saved",
-      "at": "2026-11-22T01:24:41.898Z",
+      "at": "2026-11-22T01:31:50.837Z",
       "ok": true
     },
     {
       "name": "outside-value-keeps-text",
-      "at": "2026-11-22T01:24:44.944Z",
+      "at": "2026-11-22T01:31:53.877Z",
       "ok": true
     },
     {
       "name": "outside-value-not-replaced",
-      "at": "2026-11-22T01:24:44.948Z",
+      "at": "2026-11-22T01:31:53.882Z",
       "ok": true,
       "value": "my-own-embed-model"
     },
     {
       "name": "from-list-affordance",
-      "at": "2026-11-22T01:24:44.951Z",
+      "at": "2026-11-22T01:31:53.885Z",
       "ok": true
     },
     {
       "name": "from-list-reopens-picker",
-      "at": "2026-11-22T01:24:45.593Z",
+      "at": "2026-11-22T01:31:54.529Z",
       "ok": true
     }
   ],

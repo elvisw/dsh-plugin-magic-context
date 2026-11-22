@@ -113,7 +113,8 @@ async function save(page, label) {
   check('picker-lists-models',
     options.includes('fixture-embed-a') && options.includes('fixture-embed-b') && options.includes('fixture-bad-auth'),
     { options })
-  check('picker-has-empty-option', options[0] === '请选择模型…', { options })
+  const emptyOption = await modelField.locator('option').first().evaluate((node) => ({ value: node.value, text: node.textContent }))
+  check('picker-has-empty-option', emptyOption.text === '请选择模型…' && emptyOption.value === '', emptyOption)
   check('picker-has-manual-entry', options.includes('手动输入模型 ID…'), { options })
   await shot(page, 't39-model-picker.png')
 

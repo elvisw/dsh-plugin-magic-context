@@ -108,9 +108,12 @@ def main() -> None:
     (root / "evidence" / "host-env.json").write_text(
         json.dumps({
             "dshVersion": json.loads((DSH_BIN.parent.parent / "package.json").read_text(encoding="utf-8"))["version"],
-            "node": NODE_EXE.name,
+            "nodeVersion": subprocess.run([str(NODE_EXE), "--version"], capture_output=True, text=True,
+                                          encoding="utf-8").stdout.strip(),
+            "nodePath": str(NODE_EXE),
             "providerKeysStripped": ["SILICONFLOW_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY"],
-            "deepseekKey": "sentinel (not a credential; only bypasses the first-run dialog)",
+            "deepseekSentinel": SENTINEL_KEY,
+            "deepseekSentinelNote": "not a credential; only bypasses the first-run dialog, the model listing answers 401",
         }, indent=2) + "\n", encoding="utf-8", newline="\n")
     try:
         gate = subprocess.run(["node", str(REPORT_DIR / "t39_ui_gate.cjs")], capture_output=True, text=True, timeout=600)

@@ -1,7 +1,7 @@
 {
-  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t39-20261122-092401",
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t39-20261122-093112",
   "profile": "t39",
-  "endpoint": "http://127.0.0.1:13567/v1",
+  "endpoint": "http://127.0.0.1:1924/v1",
   "tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t39-pack\\elvisw-dsh-magic-context-0.18.11.tgz",
   "tarball_sha256": "10c464a26a51350294f1fdf84a864b8c7d037ac6e26cd8a24c399edb70b66063",
   "tarball_bytes": 4081171,

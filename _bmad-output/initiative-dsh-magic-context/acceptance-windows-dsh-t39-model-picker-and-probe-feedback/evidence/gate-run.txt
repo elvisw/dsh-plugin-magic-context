@@ -11,12 +11,12 @@ STEP empty-value-selects-nothing {"ok":true,"value":""}
 STEP exactly-one-model-control {"ok":true,"count":1}
 STEP model-control-is-the-field {"ok":true,"id":"mc-field-embedding.model"}
 STEP picker-lists-models {"ok":true,"options":["请选择模型…","fixture-embed-a","fixture-embed-b","fixture-bad-auth","手动输入模型 ID…"]}
-STEP picker-has-empty-option {"ok":true,"options":["请选择模型…","fixture-embed-a","fixture-embed-b","fixture-bad-auth","手动输入模型 ID…"]}
+STEP picker-has-empty-option {"ok":true,"value":"","text":"请选择模型…"}
 STEP picker-has-manual-entry {"ok":true,"options":["请选择模型…","fixture-embed-a","fixture-embed-b","fixture-bad-auth","手动输入模型 ID…"]}
 STEP save-enabled-model-pick {"ok":true}
 STEP model-saved-from-picker {"ok":true}
 STEP probe-result-is-success {"ok":true}
-STEP probe-result-names-model-and-dims {"ok":true,"text":"连接成功 · fixture-embed-b · 16 维 · 6 ms"}
+STEP probe-result-names-model-and-dims {"ok":true,"text":"连接成功 · fixture-embed-b · 16 维 · 8 ms"}
 STEP model-edit-clears-verdict {"ok":true,"text":""}
 STEP save-enabled-bad-model {"ok":true}
 STEP probe-result-is-error {"ok":true}

@@ -1,10 +1,12 @@
 {
   "dshVersion": "0.2.2-rc.5",
-  "node": "node.exe",
+  "nodeVersion": "v24.21.0",
+  "nodePath": "C:\\Users\\elvis\\AppData\\Local\\Author Software\\nvm\\installs\\v24.21.0\\node.exe",
   "providerKeysStripped": [
     "SILICONFLOW_API_KEY",
     "OPENAI_API_KEY",
     "ANTHROPIC_API_KEY"
   ],
-  "deepseekKey": "sentinel (not a credential; only bypasses the first-run dialog)"
+  "deepseekSentinel": "t39-gate-sentinel-not-a-real-key",
+  "deepseekSentinelNote": "not a credential; only bypasses the first-run dialog, the model listing answers 401"
 }

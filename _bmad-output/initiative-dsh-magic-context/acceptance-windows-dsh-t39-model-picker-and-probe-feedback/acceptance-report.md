@@ -9,7 +9,7 @@
 | 候选包 | `elvisw-dsh-magic-context-0.18.11.tgz`（本地候选，未发布） |
 | SHA-256 | `10c464a26a51350294f1fdf84a864b8c7d037ac6e26cd8a24c399edb70b66063` |
 | 字节 / 成员 | 4,081,171 / 71 |
-| 宿主 | DSH `0.2.2-rc.5`（Node v24.21.0） |
+| 宿主 | DSH `0.2.2-rc.5`（Node `v24.21.0`，记录在 `evidence/host-env.json`） |
 | 环境 | 全新隔离根内 `t39` profile；`DSH_HOME`、`HOME`、`USERPROFILE`、`XDG_*`、`TEMP` 全部指向本次新根 |
 | 嵌入端点 | 本地假 OpenAI 兼容服务（16 维，`fixture-embed-a/b`、`fixture-bad-auth`） |
 
@@ -18,10 +18,8 @@
 - 宿主是 DSH `0.2.2-rc.5`（Node v24.21.0），跑在 `%TEMP%\opencode\dsh-mc-t39-<时间戳>` 下的全新根里，
   `DSH_HOME` / `HOME` / `USERPROFILE` / `XDG_*` / `TEMP` / `APPDATA` / `LOCALAPPDATA` 与 pnpm、npm 缓存全部指向该根。
 - 宿主不继承操作者真实的 `SILICONFLOW_API_KEY` / `OPENAI_API_KEY` / `ANTHROPIC_API_KEY`（脚本显式剔除）。
-- `DEEPSEEK_API_KEY` 被设成一个**哨兵值**（`t39-gate-sentinel-not-a-real-key`），不是凭据：不设它时首启的
-  「开始使用」对话框会盖住整个界面、设置页进不去。宿主因此会向 `https://api.deepseek.com/models` 发一次
-  模型目录请求，该请求返回 401 后回退到内置目录（`evidence/server-log.txt` 记录了这一行），
-  本票没有依赖它的任何结果。记录在 `evidence/host-env.json`。
+- `DEEPSEEK_API_KEY` 被设成一个**哨兵值**（`t39-gate-sentinel-not-a-real-key`，同时记录在 `evidence/host-env.json`），不是凭据：不设它时首启的「开始使用」对话框会盖住整个界面、设置页进不去。宿主因此会向 `https://api.deepseek.com/models` 发一次模型目录请求，该请求返回 401 后回退到内置目录（`evidence/server-log.txt` 记录了这一行），本票没有依赖它的任何结果。
+- 宿主与 Node 版本取自 `evidence/host-env.json`（`dshVersion` / `nodeVersion`），不是从截图或人工判断得来。
 - 嵌入端点只有一个本地假 OpenAI 兼容服务（16 维，三个模型），全部请求都指向它。
 
 ## 断言结果
@@ -34,7 +32,7 @@
 | 预设下拉只有 `siliconflow` / `custom`，没有空选项（因此未选预设只能来自手改 profile，由纯函数单测覆盖） | 通过 |
 | 加载后提示「已加载 3 个模型」 | 通过 |
 | 加载后 `模型 ID` 字段本身是 `<select>`，全页只有一个列出 fixture 模型的 select，且它的 `id` 就是 `mc-field-embedding.model` | 通过 |
-| 空值状态下该下拉的受控值为空，首项是「请选择模型…」 | 通过 |
+| 空值状态下该下拉的受控值为空，首项文本是「请选择模型…」且其 `value` 为 `''` | 通过 |
 | 下拉列出三个模型 + 「手动输入模型 ID…」 | 通过 |
 | 从下拉选 `fixture-embed-b` 并保存，profile 写入该 ID | 通过 |
 | 测试连接成功：`连接成功 · fixture-embed-b · 16 维 · 6 ms` | 通过 |
@@ -84,6 +82,11 @@ T38 的 gate 曾把「动作行下方出现下拉」写成断言（`acceptance-w
 - gate 原先按已删除的 `data-mc-model-select` 找第二个下拉，该断言恒真；现改为统计「含 fixture 模型 option 的 select 数量」，并断言唯一控件的 `id` 是 `mc-field-embedding.model`。
 - 宿主启动未隔离 `DEEPSEEK_API_KEY`，导致一次真实的模型目录请求；现在只注入哨兵值（401 后回退内置目录），并在「范围与隔离」如实记录。
 - `REPRODUCE.md` 补齐硬编码的宿主、Node、Playwright 路径依赖与 `t39-pack` 清理；`?token=` 不再写未脱敏副本。
+
+第二轮审计给 PASS WITH CAVEATS，两条 Fix 也已处理：
+
+- `evidence/host-env.json` 现在记录哨兵值本身与 `nodeVersion: v24.21.0`，报告不再只有正文声明而无文件支撑。
+- `picker-has-empty-option` 同时断言首项文本与 `value === ''`，不再依赖两步推理。
 
 修正后重跑：gate 33 步 0 失败；`npm test` 85 文件 / 1056 用例；typecheck 与 i18n 均 exit 0。
 
