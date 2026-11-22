@@ -401,7 +401,7 @@ This repository is a fork of
 `@elvisw/dsh-magic-context` at 0.13.0. Versions and tags belong to this fork; the upstream repository
 and npm package remain with their maintainer.
 
-Changes in this fork since upstream 0.11.2, up to 0.18.6:
+Changes in this fork since upstream 0.11.2, up to 0.18.12:
 
 - **Recovery semantics changed, and it is a breaking change.** `ctx_expand` hands the original back
   without moving anything on the surface: the old placeholder stays untouched, its tag stays spent,

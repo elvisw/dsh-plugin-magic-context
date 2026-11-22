@@ -337,7 +337,7 @@ node scripts/mc-acceptance.mjs [--hours 72]    # 语料库验收，失败退出 
 本 fork 从 0.12.0 到 0.12.3 以 `@elvisw/dsh-plugin-magic-context` 发布，0.13.0 起改成
 `@elvisw/dsh-magic-context`。版本号和 tag 属于本 fork，上游仓库和 npm 包仍由原维护者维护。
 
-相对上游 0.11.2，累计到 0.18.6 的主要差异：
+相对上游 0.11.2，累计到 0.18.12 的主要差异：
 
 - **恢复语义改了，这是 breaking change。** `ctx_expand` 把原文交回来，surface 上的位置一点没动：
   旧占位符保持不动，旧的 tag 保持已用掉的状态，再回收同一个 tag 会被拒绝并标为 already dropped。
