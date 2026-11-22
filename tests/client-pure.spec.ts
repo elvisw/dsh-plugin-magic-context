@@ -96,6 +96,23 @@ const api = factory((name) => {
     normalizeEndpointText: (value: unknown) => string
     embeddingPresetOwnsTransport: (preset: unknown, endpoint: unknown, authHeader: unknown) => boolean
     SILICONFLOW_ENDPOINT: string
+    embeddingModelFieldMode: (input: {
+      provider?: string
+      models?: unknown
+      value?: string
+      manual?: boolean
+      picker?: boolean
+    }) => string
+    embeddingModelSelectValue: (value: unknown, models: unknown) => string
+    embeddingProbeResultText: (result: unknown) => {
+      ok: boolean
+      key?: string
+      segments?: Array<{ text?: string; key?: string; params?: Record<string, string> }>
+      code?: string
+    }
+    embeddingVerdictText: (verdict: unknown, translate: (key: string, params?: Record<string, string>) => string) => string
+    EMBEDDING_ERROR_KEYS: Record<string, string>
+    MANUAL_MODEL_VALUE: string
     embeddingKeyRowState: (input: {
       savedRef?: string
       refDirty?: boolean
@@ -590,7 +607,7 @@ describe('routePairOps — the pin-pair write semantics', () => {
 })
 
 describe('settings information architecture (T21)', () => {
-  const { fieldSpecs, fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingFieldVisible, embeddingKeyRowState, embeddingStateKeys, normalizeEmbeddingPreset, normalizeEndpointText, embeddingPresetOwnsTransport, SILICONFLOW_ENDPOINT } = api.__diagnostics
+  const { fieldSpecs, fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingFieldVisible, embeddingKeyRowState, embeddingStateKeys, normalizeEmbeddingPreset, normalizeEndpointText, embeddingPresetOwnsTransport, SILICONFLOW_ENDPOINT, embeddingModelFieldMode, embeddingModelSelectValue, embeddingProbeResultText, EMBEDDING_ERROR_KEYS, MANUAL_MODEL_VALUE } = api.__diagnostics
 
   it('gives every field exactly one section and one placement', () => {
     const sections = fieldSections()
@@ -859,6 +876,87 @@ describe('settings information architecture (T21)', () => {
     expect(draftRemote.start.hidden).toBe(true)
     const draftRemoteModel = embeddingActionState({ ...base, state: 'local', remoteDraft: true })
     expect(draftRemoteModel.test.disabled).toBe(false)
+  })
+
+  it('picks the model in the model field and never invents a selection', () => {
+    const base = { provider: 'openai-compatible', models: ['a/embed', 'b/embed'] as string[], value: '' }
+    // Empty value: the select is allowed only because it carries an explicit
+    // empty option; it never draws an id the store does not hold.
+    expect(embeddingModelFieldMode(base)).toBe('select')
+    expect(embeddingModelSelectValue('', base.models)).toBe('')
+    expect(embeddingModelSelectValue('not/loaded', base.models)).toBe('')
+    expect(embeddingModelSelectValue('b/embed', base.models)).toBe('b/embed')
+
+    // A loaded value stays a picker; an outside value defaults to text and only
+    // becomes a picker when the reader asks for it.
+    expect(embeddingModelFieldMode({ ...base, value: 'a/embed' })).toBe('select')
+    expect(embeddingModelFieldMode({ ...base, value: 'old/model' })).toBe('text')
+    expect(embeddingModelFieldMode({ ...base, value: 'old/model', picker: true })).toBe('select')
+
+    // No list, local provider, or manual mode: text.
+    expect(embeddingModelFieldMode({ ...base, models: [] })).toBe('text')
+    expect(embeddingModelFieldMode({ ...base, provider: 'local' })).toBe('text')
+    expect(embeddingModelFieldMode({ ...base, value: 'a/embed', manual: true })).toBe('text')
+
+    // The sentinel must never be a value the card could save.
+    expect(MANUAL_MODEL_VALUE.startsWith('__mc_')).toBe(true)
+    expect(base.models.includes(MANUAL_MODEL_VALUE)).toBe(false)
+  })
+
+  it('reports the connection test with a localised verdict', () => {
+    const ok = embeddingProbeResultText({ ok: true, model: 'a/embed', dimensions: 1024, latencyMs: 42 })
+    expect(ok.ok).toBe(true)
+    expect(ok.key).toBe('settings.embedding.probeResultOk')
+    expect(ok.segments).toEqual([
+      { text: 'a/embed' },
+      { key: 'settings.embedding.dimensions', params: { value: '1024' } },
+      { key: 'settings.embedding.probeLatency', params: { value: '42' } },
+    ])
+    // A missing dimension or latency is omitted, never rendered as `null`.
+    expect(embeddingProbeResultText({ ok: true, model: 'a/embed' }).segments)
+      .toEqual([{ text: 'a/embed' }])
+    expect(embeddingProbeResultText({ ok: true }).key).toBe('settings.embedding.probeResultBare')
+    expect(embeddingProbeResultText({ ok: true, latencyMs: 7 }).segments)
+      .toEqual([{ key: 'settings.embedding.probeLatency', params: { value: '7' } }])
+
+    const { embeddingVerdictText } = api.__diagnostics
+    const render = (key: string, params?: Record<string, string>) => {
+      const template = api.__diagnostics.dictionaries.zh[key] ?? key
+      return Object.entries(params ?? {}).reduce((text, [name, value]) => text.replace('{' + name + '}', value), template)
+    }
+    const line = embeddingVerdictText(
+      { ok: true, key: 'settings.embedding.probeResultOk', segments: ok.segments as never },
+      render,
+    )
+    expect(line).toBe('连接成功 · a/embed · 1024 维 · 42 ms')
+    expect(embeddingVerdictText({ ok: false }, render)).toBe('')
+
+    const failure = embeddingProbeResultText({ ok: false, error: 'auth-failed' })
+    expect(failure).toEqual({ ok: false, code: 'auth-failed', key: 'settings.embedding.error.authFailed' })
+    // An unknown code keeps the raw string for the caller's fallback.
+    expect(embeddingProbeResultText({ ok: false, error: 'weird-new-code' }))
+      .toEqual({ ok: false, code: 'weird-new-code', key: undefined })
+    // A missing payload still produces a usable verdict rather than throwing.
+    expect(embeddingProbeResultText(null).ok).toBe(false)
+
+    // Every code the lane and provider can emit has copy in both languages.
+    const dict = api.__diagnostics.dictionaries
+    const laneCodes = [
+      'missing-key', 'invalid-key-env', 'auth-failed', 'rate-limited', 'model-not-found', 'bad-request',
+      'server-error', 'timeout', 'network', 'invalid-response', 'invalid-json', 'dimensions-unsupported',
+      'dimensions-changed', 'model-substituted', 'input-too-long', 'response-too-large', 'probe-failed',
+      'models-failed', 'probe-required', 'model-required', 'endpoint-required', 'invalid-endpoint',
+      'blocked-endpoint', 'endpoint-query', 'endpoint-userinfo', 'dns-failed', 'not-remote', 'memory-disabled',
+      'busy', 'target-changed', 'cancelled', 'not-ready', 'cache-write-failed', 'state-write-failed',
+      'already-running', 'paused', 'not-paused', 'already-paused', 'not-running', 'already-complete',
+      'coverage-missing',
+    ]
+    for (const code of laneCodes) {
+      const key = EMBEDDING_ERROR_KEYS[code]
+      expect(key, `${code} mapped`).toBeTruthy()
+      expect(dict.zh[key], `${code} zh`).toBeTruthy()
+      expect(dict.en[key], `${code} en`).toBeTruthy()
+    }
   })
 
   it('registers only the top-level Settings seat and no legacy Plugins seats', () => {

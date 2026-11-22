@@ -668,10 +668,162 @@ window.__ModuleLoader__.load({
     }
 
     /**
-     * Pure state for the write-only API key row. Kept outside the React
-     * component so the disabled/first-ref/credential-source branches can be
-     * asserted without a DOM.
+     * T39: the sentinel option that switches the model field from a picker back
+     * to a text input. It is never written into `embedding.model`.
      */
+    const MANUAL_MODEL_VALUE = '__mc_manual_model__'
+
+    /** Shared look for the card's own selects (provider/preset/model). */
+    const SELECT_STYLE = {
+      width: '100%',
+      maxWidth: 520,
+      boxSizing: 'border-box',
+      height: 32,
+      padding: '0 8px',
+      borderRadius: 'var(--dsw-radius-sm, 6px)',
+      border: '1px solid var(--dsw-alias-border-secondary, rgba(127,127,127,.35))',
+      background: 'var(--dsw-alias-bg-layer-3, transparent)',
+      color: 'var(--dsw-alias-label-primary, inherit)',
+      font: 'inherit',
+      fontSize: 12.5,
+    }
+
+    /** A text-only affordance, so it cannot be mistaken for the host Save. */
+    const MODEL_LINK_STYLE = {
+      justifySelf: 'start',
+      border: 0,
+      padding: '2px 0',
+      background: 'transparent',
+      color: 'inherit',
+      font: 'inherit',
+      fontSize: 11.5,
+      opacity: 0.75,
+      cursor: 'pointer',
+      textDecoration: 'underline',
+    }
+
+    /**
+     * T39: the `embedding.model` field renders as a select only when the loaded
+     * list can represent the value. A controlled select whose value matches no
+     * option would draw its first option while the stored value is something
+     * else, which reads as a model nobody picked — so the select is used only
+     * for an empty value (with an explicit `请选择…` option) or a value the list
+     * contains, and `picker` is the deliberate "choose from the list instead"
+     * escape hatch for a value the list does not contain.
+     */
+    function embeddingModelFieldMode(input) {
+      const source = input !== null && typeof input === 'object' ? input : {}
+      const provider = typeof source.provider === 'string' ? source.provider.trim().toLowerCase() : ''
+      const models = Array.isArray(source.models) ? source.models.filter((id) => typeof id === 'string') : []
+      const value = typeof source.value === 'string' ? source.value.trim() : ''
+      if (provider !== 'openai-compatible') return 'text'
+      if (source.manual === true) return 'text'
+      if (models.length === 0) return 'text'
+      if (value === '' || models.includes(value)) return 'select'
+      return source.picker === true ? 'select' : 'text'
+    }
+
+    /** The controlled value of the model select: never an id the list lacks. */
+    function embeddingModelSelectValue(value, models) {
+      const text = typeof value === 'string' ? value.trim() : ''
+      const list = Array.isArray(models) ? models : []
+      return text === '' || list.includes(text) ? text : ''
+    }
+
+    /**
+     * T39: every machine code the embedding routes can hand back, mapped to one
+     * dictionary key. `src/dsh/embedding-lane.ts` and
+     * `src/core/embedding-remote.ts` are the sources; a code missing here falls
+     * back to the raw string at the call site, so this table is expected to grow
+     * with them rather than guess.
+     */
+    const EMBEDDING_ERROR_KEYS = {
+      'missing-key': 'settings.embedding.error.missingKey',
+      'invalid-key-env': 'settings.embedding.error.invalidKeyEnv',
+      'auth-failed': 'settings.embedding.error.authFailed',
+      'rate-limited': 'settings.embedding.error.rateLimited',
+      'model-not-found': 'settings.embedding.error.modelNotFound',
+      'bad-request': 'settings.embedding.error.badRequest',
+      'server-error': 'settings.embedding.error.serverError',
+      timeout: 'settings.embedding.error.timeout',
+      network: 'settings.embedding.error.network',
+      'invalid-response': 'settings.embedding.error.invalidResponse',
+      'invalid-json': 'settings.embedding.error.invalidResponse',
+      'dimensions-unsupported': 'settings.embedding.error.dimensions',
+      'dimensions-changed': 'settings.embedding.error.dimensions',
+      'model-substituted': 'settings.embedding.error.modelSubstituted',
+      'input-too-long': 'settings.embedding.error.inputTooLong',
+      'response-too-large': 'settings.embedding.error.responseTooLarge',
+      'probe-failed': 'settings.embedding.error.probeFailed',
+      'models-failed': 'settings.embedding.error.modelsFailed',
+      'probe-required': 'settings.embedding.error.probeRequired',
+      'model-required': 'settings.embedding.error.modelRequired',
+      'endpoint-required': 'settings.embedding.error.endpoint',
+      'invalid-endpoint': 'settings.embedding.error.endpoint',
+      'blocked-endpoint': 'settings.embedding.error.endpoint',
+      'endpoint-query': 'settings.embedding.error.endpoint',
+      'endpoint-userinfo': 'settings.embedding.error.endpoint',
+      'dns-failed': 'settings.embedding.error.endpoint',
+      'not-remote': 'settings.embedding.error.notRemote',
+      'memory-disabled': 'settings.embedding.error.memoryDisabled',
+      busy: 'settings.embedding.error.busy',
+      'target-changed': 'settings.embedding.error.targetChanged',
+      cancelled: 'settings.embedding.error.cancelled',
+      'not-ready': 'settings.embedding.error.notReady',
+      'cache-write-failed': 'settings.embedding.error.notReady',
+      'state-write-failed': 'settings.embedding.error.notReady',
+      'already-running': 'settings.embedding.error.alreadyRunning',
+      paused: 'settings.embedding.error.paused',
+      'not-paused': 'settings.embedding.error.notPaused',
+      'already-paused': 'settings.embedding.error.alreadyPaused',
+      'not-running': 'settings.embedding.error.notRunning',
+      'already-complete': 'settings.embedding.error.alreadyComplete',
+      'coverage-missing': 'settings.embedding.error.coverageMissing',
+    }
+
+    /**
+     * T39: one localised verdict for a remote action. `ok` carries the probe
+     * payload; a failure carries the machine code so the caller can fall back to
+     * the raw code when this table does not know it. The success sentence is
+     * assembled from the parts the server actually returned — a missing
+     * dimension or latency is omitted, never rendered as `null`.
+     */
+    function embeddingProbeResultText(result) {
+      const source = result !== null && typeof result === 'object' ? result : {}
+      if (source.ok === true) {
+        const segments = []
+        // The model id is not translated: it is an identifier.
+        if (typeof source.model === 'string' && source.model !== '') {
+          segments.push({ text: source.model })
+        }
+        if (Number.isFinite(source.dimensions)) {
+          segments.push({ key: 'settings.embedding.dimensions', params: { value: String(source.dimensions) } })
+        }
+        if (Number.isFinite(source.latencyMs)) {
+          segments.push({ key: 'settings.embedding.probeLatency', params: { value: String(source.latencyMs) } })
+        }
+        return {
+          ok: true,
+          key: segments.length === 0 ? 'settings.embedding.probeResultBare' : 'settings.embedding.probeResultOk',
+          segments,
+        }
+      }
+      const code = typeof source.error === 'string' && source.error !== '' ? source.error : 'probe-failed'
+      const key = EMBEDDING_ERROR_KEYS[code]
+      return { ok: false, code, key }
+    }
+
+    /** The visible line for a probe verdict, assembled from localised segments. */
+    function embeddingVerdictText(verdict, translate) {
+      const source = verdict !== null && typeof verdict === 'object' ? verdict : {}
+      if (source.ok !== true) return ''
+      const segments = Array.isArray(source.segments) ? source.segments : []
+      const parts = segments.map((segment) => (segment.key === undefined
+        ? String(segment.text ?? '')
+        : translate(segment.key, segment.params)))
+      return [translate(source.key), ...parts].join(' · ')
+    }
+
     function embeddingKeyRowState(input) {
       const savedRef = typeof input.savedRef === 'string' ? input.savedRef.trim() : ''
       const status = input.status !== null && typeof input.status === 'object' ? input.status : null
@@ -833,6 +985,12 @@ window.__ModuleLoader__.load({
       'settings.embedding.working',
       'settings.embedding.noModels',
       'settings.embedding.modelPlaceholder',
+      'settings.embedding.modelManual',
+      'settings.embedding.modelPickFromList',
+      'settings.embedding.modelsLoaded',
+      'settings.embedding.probeResultOk',
+      'settings.embedding.probeResultBare',
+      'settings.embedding.probeLatency',
       'settings.embedding.coverage',
       'settings.embedding.coverageUnknown',
       'settings.embedding.dimensionUnknown',
@@ -851,6 +1009,14 @@ window.__ModuleLoader__.load({
       'settings.embedding.state.error',
     ]
 
+    /**
+     * T39: the localised verdicts for the remote error codes. Several codes share
+     * one sentence, so the list is de-duplicated before it reaches the copy
+     * checks. Kept next to the copy list so `settingsCopyKeys()` covers them and
+     * check:i18n sees both languages.
+     */
+    const EMBEDDING_ERROR_COPY_KEYS = [...new Set(Object.values(EMBEDDING_ERROR_KEYS))]
+
     /** Every card-owned key; the node-side checks assert zh/en coverage. */
     function settingsCopyKeys() {
       const keys = []
@@ -861,6 +1027,7 @@ window.__ModuleLoader__.load({
         }
       }
       keys.push(...SETTINGS_EXTRA_COPY_KEYS)
+      keys.push(...EMBEDDING_ERROR_COPY_KEYS)
       return keys
     }
 
@@ -1124,12 +1291,21 @@ window.__ModuleLoader__.load({
         const [statusRefreshing, setStatusRefreshing] = useState(false)
         const statusInFlight = useRef(null)
         const [embeddingMessage, setEmbeddingMessage] = useState('')
+        // T39: whether `embeddingMessage` is a success verdict or a failure, so
+        // the result line can be coloured and asserted.
+        const [embeddingResultOk, setEmbeddingResultOk] = useState(false)
         // T24: the secret is write-only and never enters `drafts`/`scope.mutate`.
         const [embeddingKeyDraft, setEmbeddingKeyDraft] = useState('')
         const [embeddingKeyBusy, setEmbeddingKeyBusy] = useState(false)
         const [embeddingKeyMessage, setEmbeddingKeyMessage] = useState('')
         const [advancedOpen, setAdvancedOpen] = useState({})
         const [confirmAction, setConfirmAction] = useState(null)
+        // T39: the model field is a picker while the loaded list can represent
+        // the value; manual mode is the escape hatch for an id the list lacks.
+        const [manualModel, setManualModel] = useState(false)
+        // Set only by "从列表选择…": a stored id outside the list would otherwise
+        // never render as a select, so the reader could not replace it.
+        const [modelPickerForced, setModelPickerForced] = useState(false)
         const lastInvalidKey = useRef('')
 
         useEffect(() => scope.subscribe(() => setRevision((value) => value + 1)), [scope])
@@ -1219,6 +1395,14 @@ window.__ModuleLoader__.load({
           setFailed(false)
           setRevision((value) => value + 1)
         }
+
+        /** Focus a field after the next render; used when a mode flips. */
+        const focusField = (id) => {
+          setTimeout(() => {
+            const node = typeof document === 'undefined' ? null : document.getElementById(id)
+            if (node !== null && typeof node.focus === 'function') node.focus()
+          }, 0)
+        }
         /** Drop one draft without leaving a `size > 0` ghost entry. */
         const unstage = (key) => {
           if (!staged.delete(key)) return
@@ -1295,9 +1479,6 @@ window.__ModuleLoader__.load({
           && typeof embeddingStatus.keySource === 'string' ? embeddingStatus.keySource : 'none'
         const specVisible = (spec) => embeddingFieldVisible(fieldKey(spec.path), providerText, keySource, presetOwnsTransport)
 
-        // A snapshot refresh can change the saved provider while a remote draft
-        // is still staged. Prune those drafts here, not only on the select event,
-        // or Save would stay dirty with nothing visible to write.
         // A snapshot refresh can change the saved provider or preset while a
         // draft for a now-invisible field is still staged. Prune on every change
         // of what the switchers resolve to, not only on the select event, or Save
@@ -1310,6 +1491,42 @@ window.__ModuleLoader__.load({
           for (const key of hidden) if (staged.delete(key)) removed = true
           if (removed) setRevision((value) => value + 1)
         }, [providerText, presetOwnsTransport])
+
+        // T39: a loaded model list belongs to exactly one target. Changing the
+        // provider, preset, endpoint or key reference must drop it, or the picker
+        // would offer another service's model ids (and could save one).
+        const apiKeyEnvSpec = FIELDS.find((spec) => fieldKey(spec.path) === 'embedding.apiKeyEnv')
+        const modelTarget = [
+          providerText,
+          presetText,
+          endpointSpec === undefined ? '' : view(endpointSpec).text.trim(),
+          apiKeyEnvSpec === undefined ? '' : view(apiKeyEnvSpec).text.trim(),
+        ].join('\u0000')
+        const modelTargetSeen = useRef(modelTarget)
+        useEffect(() => {
+          if (modelTargetSeen.current === modelTarget) return
+          modelTargetSeen.current = modelTarget
+          setEmbeddingModels([])
+          setManualModel(false)
+          setModelPickerForced(false)
+          // The success line names a model and a dimension for the previous
+          // target; keeping it while the target changes would present an old
+          // verdict as if it were about the new one.
+          setEmbeddingMessage('')
+          setEmbeddingResultOk(false)
+        }, [modelTarget])
+
+        // Editing the model itself also invalidates the verdict. The list stays:
+        // a model edit does not change which service it belongs to.
+        const modelSpecForVerdict = FIELDS.find((spec) => fieldKey(spec.path) === 'embedding.model')
+        const modelVerdictValue = modelSpecForVerdict === undefined ? '' : view(modelSpecForVerdict).text.trim()
+        const modelVerdictSeen = useRef(modelVerdictValue)
+        useEffect(() => {
+          if (modelVerdictSeen.current === modelVerdictValue) return
+          modelVerdictSeen.current = modelVerdictValue
+          setEmbeddingMessage('')
+          setEmbeddingResultOk(false)
+        }, [modelVerdictValue])
 
         /**
          * The route pins, resolved once per render. Each pin is a PAIR (both
@@ -1689,6 +1906,7 @@ window.__ModuleLoader__.load({
           // the card boundary while a probe or migration owns the adapter.
           if (embeddingBusy || (embeddingStatus !== null && typeof embeddingStatus === 'object'
             && embeddingStatus.state === 'remote-migrating')) {
+            setEmbeddingResultOk(false)
             setEmbeddingMessage(t('settings.status.busy'))
             return Promise.resolve(false)
           }
@@ -1791,6 +2009,20 @@ window.__ModuleLoader__.load({
           if (node !== null && typeof node.focus === 'function') node.focus()
         }, [confirmAction])
 
+        /** One place for a failure the network/JSON layer produced. */
+        const networkFailure = (error) => {
+          const message = String(error && error.message ? error.message : error)
+          return /json|unexpected token|parse/i.test(message) ? 'invalid-response' : 'network'
+        }
+
+        const showEmbeddingError = (code, fallback) => {
+          const key = EMBEDDING_ERROR_KEYS[code]
+          setEmbeddingResultOk(false)
+          setEmbeddingMessage(key === undefined
+            ? t('settings.embedding.state.error') + ': ' + (fallback ?? code)
+            : t(key))
+        }
+
         const callEmbedding = (path, action, options = {}) => {
           if (embeddingBusy || (!options.allowReadOnly && !shell.writable)) return Promise.resolve(false)
           setEmbeddingBusy(true)
@@ -1802,12 +2034,26 @@ window.__ModuleLoader__.load({
             .then((response) => response.json())
             .then((body) => {
               if (body === null || typeof body !== 'object') throw new Error('bad-response')
-              if (body.ok !== true) {
-                setEmbeddingMessage(t('settings.embedding.state.error') + ': ' + String(body.error ?? 'error'))
-                return false
+              return body
+            })
+            .then((body) => {
+              // T39: 测试连接 reports its own verdict; the other actions keep the
+              // old shape (a failure line, no success line).
+              if (options.reportProbe === true) {
+                const verdict = embeddingProbeResultText(body)
+                if (verdict.ok) {
+                  setEmbeddingResultOk(true)
+                  setEmbeddingMessage(embeddingVerdictText(verdict, t))
+                } else {
+                  showEmbeddingError(verdict.code, verdict.code)
+                }
+              } else if (body.ok !== true) {
+                showEmbeddingError(String(body.error ?? 'error'))
+              } else {
+                setEmbeddingResultOk(false)
+                setEmbeddingMessage('')
               }
-              setEmbeddingMessage('')
-              return true
+              return body.ok === true
             })
             .then((ok) => {
               void refreshEmbeddingStatus()
@@ -1818,7 +2064,7 @@ window.__ModuleLoader__.load({
               return ok
             })
             .catch((error) => {
-              setEmbeddingMessage(String(error && error.message ? error.message : error))
+              showEmbeddingError(networkFailure(error))
               return false
             })
             .finally(() => setEmbeddingBusy(false))
@@ -1833,14 +2079,22 @@ window.__ModuleLoader__.load({
             .then((body) => {
               if (body !== null && typeof body === 'object' && body.ok === true && Array.isArray(body.models)) {
                 setEmbeddingModels(body.models)
-                if (body.models.length === 0) setEmbeddingMessage(t('settings.embedding.noModels'))
+                // A fresh list is the only moment the field may leave manual
+                // mode on its own: the old value is either empty or representable.
+                if (body.models.length === 0) {
+                  setEmbeddingMessage(t('settings.embedding.noModels'))
+                } else {
+                  setEmbeddingResultOk(true)
+                  setEmbeddingMessage(t('settings.embedding.modelsLoaded', { count: String(body.models.length) }))
+                  if (currentModel.trim() === '' || body.models.includes(currentModel.trim())) setManualModel(false)
+                }
                 return true
               }
-              setEmbeddingMessage(t('settings.embedding.state.error') + ': ' + String(body && body.error ? body.error : 'error'))
+              showEmbeddingError(String(body && body.error ? body.error : 'models-failed'))
               return false
             })
             .catch((error) => {
-              setEmbeddingMessage(String(error && error.message ? error.message : error))
+              showEmbeddingError(networkFailure(error))
               return false
             })
             .finally(() => setEmbeddingBusy(false))
@@ -1910,7 +2164,6 @@ window.__ModuleLoader__.load({
             ? ''
             : String(status.progress.processed) + '/' + String(status.progress.total)
               + (status.progress.failures > 0 ? ' · ' + String(status.progress.failures) : '')
-          const modelOptions = embeddingModels.map((id) => el('option', { key: id, value: id }, id))
           const button = (key, label, onClick, disabled, danger) => el('button', {
             key,
             type: 'button',
@@ -1931,7 +2184,7 @@ window.__ModuleLoader__.load({
           if (!actions.test.hidden) actionRow.push(button(
             'probe',
             t(shell.dirty ? 'settings.action.saveAndTest' : 'settings.embedding.probe'),
-            () => saveThen(() => callEmbedding('/mc-embedding/probe')),
+            () => saveThen(() => callEmbedding('/mc-embedding/probe', undefined, { reportProbe: true })),
             actions.test.disabled,
           ))
           if (!actions.start.hidden) actionRow.push(button(
@@ -2003,23 +2256,18 @@ window.__ModuleLoader__.load({
             actionRow.length > 0
               ? el('div', { key: 'remote-actions', style: { display: 'flex', gap: 6, flexWrap: 'wrap' } }, actionRow)
               : null,
-            providerText === 'openai-compatible' && embeddingModels.length > 0
-              ? el('select', {
-                key: 'model-select',
-                'data-mc-model-select': 'true',
-                'aria-label': t('settings.embedding.modelPlaceholder'),
-                value: currentModel,
-                onChange: (event) => {
-                  if (event.target.value !== '') stage(fieldKey(['embedding', 'model']), { clear: false, text: event.target.value })
+            embeddingMessage === ''
+              ? null
+              : el('span', {
+                key: 'message',
+                'data-mc-embedding-result': embeddingResultOk ? 'ok' : 'error',
+                style: {
+                  fontSize: 11.5,
+                  color: embeddingResultOk
+                    ? 'var(--dsw-alias-state-success-primary, #2a8)'
+                    : 'var(--dsw-alias-label-warning, #b8860b)',
                 },
-              }, [
-                el('option', { key: 'empty', value: '' }, t('settings.embedding.modelPlaceholder')),
-                ...(currentModel !== '' && !embeddingModels.includes(currentModel)
-                  ? [el('option', { key: 'current', value: currentModel }, currentModel)] : []),
-                ...modelOptions,
-              ])
-              : null,
-            embeddingMessage === '' ? null : el('span', { key: 'message', style: { fontSize: 11.5 } }, embeddingMessage),
+              }, embeddingMessage),
           ])
         }
 
@@ -2156,10 +2404,95 @@ window.__ModuleLoader__.load({
           ])
         }
 
+        const renderModelField = (spec, state) => {
+          const id = 'mc-field-' + fieldKey(spec.path)
+          const mode = embeddingModelFieldMode({
+            provider: providerText,
+            models: embeddingModels,
+            value: state.text,
+            manual: manualModel,
+            // An id the list lacks keeps the text input by default; the reader can
+            // deliberately switch to the picker to replace it.
+            picker: modelPickerForced,
+          })
+          const hint = t(spec.hintKey)
+          if (mode === 'select') {
+            return el('div', { key: id, style: { display: 'grid', gap: 4, margin: '8px 0' } }, [
+              el('label', { key: 'label', htmlFor: id, style: { fontSize: 12 } }, t(spec.labelKey)),
+              el('select', {
+                key: 'select',
+                id,
+                'aria-label': t(spec.labelKey),
+                value: embeddingModelSelectValue(state.text, embeddingModels),
+                disabled: !shell.writable,
+                onChange: (event) => {
+                  if (event.target.value === MANUAL_MODEL_VALUE) {
+                    // Never stage the sentinel: it only switches the field back
+                    // to a text input, keeping whatever value is there.
+                    setManualModel(true)
+                    setModelPickerForced(false)
+                    focusField(id)
+                    return
+                  }
+                  setManualModel(false)
+                  setModelPickerForced(false)
+                  stage(fieldKey(spec.path), { clear: false, text: event.target.value })
+                },
+                style: SELECT_STYLE,
+              }, [
+                // An explicit empty option so a controlled select never draws an
+                // id the user has not chosen.
+                el('option', { key: 'empty', value: '' }, t('settings.embedding.modelPlaceholder')),
+                ...embeddingModels.map((modelId) => el('option', { key: modelId, value: modelId }, modelId)),
+                el('option', { key: 'manual', value: MANUAL_MODEL_VALUE }, t('settings.embedding.modelManual')),
+              ]),
+              el('span', { key: 'hint', style: { fontSize: 11, opacity: 0.6 } }, hint),
+            ])
+          }
+          return el('div', { key: id, style: { display: 'grid', gap: 4, margin: '8px 0' } }, [
+            el(SettingsValueField, {
+              key: 'value',
+              id,
+              label: t(spec.labelKey),
+              hint,
+              text: state.text,
+              overridden: state.overridden,
+              invalid: state.invalid,
+              overriddenLabel: valueLabels.modified,
+              resetLabel: valueLabels.reset,
+              invalidLabel: valueLabels.invalidNumber,
+              disabled: !shell.writable,
+              onEdit: (text) => stage(fieldKey(spec.path), { clear: false, text }),
+              onReset: () => stage(fieldKey(spec.path), { clear: true }),
+            }),
+            // Manual mode is never a dead end: with a list loaded the reader can
+            // go back to picking, and picking is how a value outside the list is
+            // replaced.
+            embeddingModels.length > 0 && providerText === 'openai-compatible'
+              ? el('button', {
+                key: 'from-list',
+                type: 'button',
+                'data-mc-model-from-list': 'true',
+                disabled: !shell.writable,
+                onClick: () => {
+                  // Entering the picker with a value the list lacks needs the
+                  // explicit flag, otherwise the mode predicate keeps this field
+                  // a text input and the button would do nothing.
+                  setManualModel(false)
+                  setModelPickerForced(true)
+                  focusField(id)
+                },
+                style: MODEL_LINK_STYLE,
+              }, t('settings.embedding.modelPickFromList'))
+              : null,
+          ])
+        }
+
         const renderField = (spec) => {
           const state = view(spec)
           const id = 'mc-field-' + fieldKey(spec.path)
           if (spec.kind === 'secret') return renderSecretField(spec)
+          if (fieldKey(spec.path) === 'embedding.model') return renderModelField(spec, state)
           if (spec.kind === 'boolean') {
             return el('div', { key: id, style: { display: 'flex', alignItems: 'center', gap: 8, margin: '8px 0' } }, [
               el('span', { key: 'label', style: { fontSize: 12 } }, t(spec.labelKey)),
@@ -3059,6 +3392,7 @@ window.__ModuleLoader__.load({
         'settings.embedding.coverageUnknown': '覆盖未知',
         'settings.embedding.dimensionUnknown': '维度未知',
         'settings.embedding.dimensions': '{value} 维',
+        'settings.embedding.probeLatency': '{value} ms',
         'settings.embedding.memoryOff': '记忆功能已关闭；向量检索不会运行。',
         'settings.embedding.plainHttp': '该端点使用明文 HTTP，且不是本机/私网；请谨慎使用。',
         'settings.embedding.state.local': '本地模型',
@@ -3071,6 +3405,44 @@ window.__ModuleLoader__.load({
         'settings.embedding.state.migrating': '迁移中',
         'settings.embedding.state.ready': '已就绪',
         'settings.embedding.state.error': '远程错误',
+        'settings.embedding.modelsLoaded': '已加载 {count} 个模型',
+        'settings.embedding.probeResultOk': '连接成功',
+        'settings.embedding.probeResultBare': '连接成功',
+        'settings.embedding.probeLatency': '{value} ms',
+        'settings.embedding.modelManual': '手动输入模型 ID…',
+        'settings.embedding.modelPickFromList': '从列表选择…',
+        'settings.embedding.error.missingKey': '密钥未配置',
+        'settings.embedding.error.invalidKeyEnv': '密钥变量名不合法',
+        'settings.embedding.error.authFailed': '认证失败：检查密钥是否有效',
+        'settings.embedding.error.rateLimited': '请求过于频繁或额度不足，稍后再试',
+        'settings.embedding.error.modelNotFound': '模型不存在或不可用',
+        'settings.embedding.error.badRequest': '请求被拒绝：检查模型、维度与预设',
+        'settings.embedding.error.serverError': '服务端错误',
+        'settings.embedding.error.timeout': '请求超时',
+        'settings.embedding.error.network': '网络不可达',
+        'settings.embedding.error.invalidResponse': '响应格式无效',
+        'settings.embedding.error.dimensions': '向量维度不匹配',
+        'settings.embedding.error.modelSubstituted': '返回的模型与请求不一致',
+        'settings.embedding.error.inputTooLong': '输入过长',
+        'settings.embedding.error.responseTooLarge': '响应过大',
+        'settings.embedding.error.probeFailed': '测试连接失败',
+        'settings.embedding.error.modelsFailed': '模型列表加载失败',
+        'settings.embedding.error.probeRequired': '请先测试连接',
+        'settings.embedding.error.modelRequired': '请先选择模型',
+        'settings.embedding.error.endpoint': '接口地址无效或被拒绝',
+        'settings.embedding.error.notRemote': '当前不是远程向量模式',
+        'settings.embedding.error.memoryDisabled': '记忆功能已关闭',
+        'settings.embedding.error.busy': '另一个向量操作正在进行',
+        'settings.embedding.error.targetChanged': '目标已变更，请重试',
+        'settings.embedding.error.cancelled': '操作已取消',
+        'settings.embedding.error.notReady': '向量服务尚未就绪',
+        'settings.embedding.error.alreadyRunning': '重建已在进行',
+        'settings.embedding.error.paused': '重建已暂停',
+        'settings.embedding.error.notPaused': '当前没有暂停的重建',
+        'settings.embedding.error.alreadyPaused': '重建已经暂停',
+        'settings.embedding.error.notRunning': '当前没有进行中的重建',
+        'settings.embedding.error.alreadyComplete': '重建已完成',
+        'settings.embedding.error.coverageMissing': '覆盖信息缺失',
         'settings.field.policy.executeThreshold.label': '执行阈值（%）',
         'settings.field.policy.executeThreshold.hint': '执行回收带开启时的上下文占用百分比（0-100）。',
         'settings.field.policy.forceThreshold.label': '强制阈值（%）',
@@ -3384,6 +3756,7 @@ window.__ModuleLoader__.load({
         'settings.embedding.coverageUnknown': 'coverage unknown',
         'settings.embedding.dimensionUnknown': 'dimensions unknown',
         'settings.embedding.dimensions': '{value} dims',
+        'settings.embedding.probeLatency': '{value} ms',
         'settings.embedding.memoryOff': 'Memory is disabled; embedding search will not run.',
         'settings.embedding.plainHttp': 'This endpoint uses plain HTTP and is not local/private; use with care.',
         'settings.embedding.state.local': 'local model',
@@ -3396,6 +3769,44 @@ window.__ModuleLoader__.load({
         'settings.embedding.state.migrating': 'migrating',
         'settings.embedding.state.ready': 'ready',
         'settings.embedding.state.error': 'remote error',
+        'settings.embedding.modelsLoaded': 'Loaded {count} models',
+        'settings.embedding.probeResultOk': 'Connected',
+        'settings.embedding.probeResultBare': 'Connected',
+        'settings.embedding.probeLatency': '{value} ms',
+        'settings.embedding.modelManual': 'Type a model ID…',
+        'settings.embedding.modelPickFromList': 'Pick from the list…',
+        'settings.embedding.error.missingKey': 'No key configured',
+        'settings.embedding.error.invalidKeyEnv': 'Invalid key variable name',
+        'settings.embedding.error.authFailed': 'Authentication failed; check the key',
+        'settings.embedding.error.rateLimited': 'Rate limited or out of quota; retry later',
+        'settings.embedding.error.modelNotFound': 'Model not found or unavailable',
+        'settings.embedding.error.badRequest': 'Request rejected; check the model, dimensions and preset',
+        'settings.embedding.error.serverError': 'Server error',
+        'settings.embedding.error.timeout': 'Request timed out',
+        'settings.embedding.error.network': 'Network unreachable',
+        'settings.embedding.error.invalidResponse': 'Invalid response',
+        'settings.embedding.error.dimensions': 'Vector dimensions mismatch',
+        'settings.embedding.error.modelSubstituted': 'Served model does not match the request',
+        'settings.embedding.error.inputTooLong': 'Input too long',
+        'settings.embedding.error.responseTooLarge': 'Response too large',
+        'settings.embedding.error.probeFailed': 'Connection test failed',
+        'settings.embedding.error.modelsFailed': 'Could not load the model list',
+        'settings.embedding.error.probeRequired': 'Test the connection first',
+        'settings.embedding.error.modelRequired': 'Pick a model first',
+        'settings.embedding.error.endpoint': 'Endpoint invalid or refused',
+        'settings.embedding.error.notRemote': 'Not in remote vector mode',
+        'settings.embedding.error.memoryDisabled': 'Memory is disabled',
+        'settings.embedding.error.busy': 'Another vector operation is running',
+        'settings.embedding.error.targetChanged': 'The target changed; try again',
+        'settings.embedding.error.cancelled': 'Cancelled',
+        'settings.embedding.error.notReady': 'Vector service is not ready yet',
+        'settings.embedding.error.alreadyRunning': 'A rebuild is already running',
+        'settings.embedding.error.paused': 'The rebuild is paused',
+        'settings.embedding.error.notPaused': 'No paused rebuild',
+        'settings.embedding.error.alreadyPaused': 'The rebuild is already paused',
+        'settings.embedding.error.notRunning': 'No rebuild is running',
+        'settings.embedding.error.alreadyComplete': 'The rebuild is complete',
+        'settings.embedding.error.coverageMissing': 'Coverage information is missing',
         'settings.field.policy.executeThreshold.label': 'Execute threshold (%)',
         'settings.field.policy.executeThreshold.hint': 'Adoption percentage at which the execute band opens (0-100).',
         'settings.field.policy.forceThreshold.label': 'Force threshold (%)',
@@ -4605,6 +5016,8 @@ window.__ModuleLoader__.load({
         EFFORT_CUSTOM_SENTINEL, fieldSpecs: FIELDS,
         fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags,
         embeddingFieldVisible, embeddingKeyRowState, embeddingStateKeys: EMBEDDING_STATE_KEYS,
+        embeddingModelFieldMode, embeddingModelSelectValue, embeddingProbeResultText, embeddingVerdictText,
+        EMBEDDING_ERROR_KEYS, MANUAL_MODEL_VALUE,
         normalizeEmbeddingPreset, normalizeEndpointText, embeddingPresetOwnsTransport, SILICONFLOW_ENDPOINT,
         // The number/text formatters are the panel's display contract; the
         // node-side spec pins them so a formatting regression (the scope bug

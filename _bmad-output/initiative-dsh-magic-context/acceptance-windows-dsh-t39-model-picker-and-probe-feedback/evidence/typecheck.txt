@@ -1,0 +1,8 @@
+
+> @elvisw/dsh-magic-context@0.18.11 typecheck
+> tsc --noEmit
+
+
+--- stderr ---
+
+exit=0

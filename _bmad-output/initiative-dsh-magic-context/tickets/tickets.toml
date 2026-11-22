@@ -453,3 +453,15 @@ after = [37]
 hitl = true
 risk = "low"
 refine = true
+
+[[entry]]
+id = 39
+type = "story"
+title = "Pick the embedding model in the model field itself, and report the connection test"
+description = "Loading the embedding model list appends a second select under the action row while the 模型 ID text field above stays empty, and 测试连接 prints nothing on success and a raw English error code on failure. Render the model field itself as a select of the loaded ids (with a manual-entry entry that switches that same field back to text, and never replacing a value that is not in the list), remove the extra select, report 已加载 N 个模型, and show a localised result line for the connection test with the model, dimensions and latency on success."
+verify = "Pure helpers pinned in tests/client-pure.spec.ts: the model field is a select only when the provider is remote, the list is non-empty, manual mode is off and the current value is non-empty and inside the list; an empty value and a value outside the list keep the field a text input (a controlled select must never display an option nobody picked); the manual-entry entry switches mode without staging any value; a loaded list is cleared when the provider, preset, endpoint or key reference changes; the error mapping returns a localised key for every code the probe and model list can return and falls back only for an unknown one; fetch and JSON failures classify as network and invalid-response. One real Web gate under the evidence directory in covers: after 保存并加载模型 the 模型 ID field itself is a select listing the fake server's ids, choosing one saves the id to the profile, 手动输入模型 ID… turns the same field into a text input without writing a value, 从列表选择… returns to the picker, 测试连接 shows a success line containing the model, the dimensions and a latency, and a wrong key shows a localised failure instead of a bare code. T38 evidence is left untouched and its bottom-select assertion is noted as superseded. No server, schema, resolver or credential change; no version bump."
+covers = ["src/client/index.js", "tests/client-pure.spec.ts", "docs/configuration.md", "CHANGELOG.md", "_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-t39-model-picker-and-probe-feedback/"]
+after = [38]
+hitl = true
+risk = "medium"
+refine = true

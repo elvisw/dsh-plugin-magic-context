@@ -1,0 +1,10 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t39-20261122-085305",
+  "profile": "t39",
+  "endpoint": "http://127.0.0.1:12086/v1",
+  "tarball": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t39-pack\\elvisw-dsh-magic-context-0.18.11.tgz",
+  "tarball_sha256": "1369f58f396a03b6f0089209a7f3a10651ba75af974529b9c2cb42e09b19a85e",
+  "tarball_bytes": 4080806,
+  "tarball_files": 71,
+  "dsh_version": "0.2.2-rc.5"
+}

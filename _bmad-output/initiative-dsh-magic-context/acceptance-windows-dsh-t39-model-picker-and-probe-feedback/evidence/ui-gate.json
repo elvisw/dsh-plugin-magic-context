@@ -1,0 +1,173 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t39-20261122-085305",
+  "steps": [
+    {
+      "name": "seeded-remote",
+      "at": "2026-11-22T00:53:26.804Z",
+      "ok": true
+    },
+    {
+      "name": "empty-model-is-text",
+      "at": "2026-11-22T00:53:26.833Z",
+      "ok": true,
+      "tag": "INPUT"
+    },
+    {
+      "name": "no-second-select-before-load",
+      "at": "2026-11-22T00:53:26.840Z",
+      "ok": true
+    },
+    {
+      "name": "key-saved",
+      "at": "2026-11-22T00:53:29.408Z",
+      "ok": true
+    },
+    {
+      "name": "load-visible",
+      "at": "2026-11-22T00:53:29.413Z",
+      "ok": true
+    },
+    {
+      "name": "provider-saved",
+      "at": "2026-11-22T00:53:32.442Z",
+      "ok": true
+    },
+    {
+      "name": "models-loaded-message",
+      "at": "2026-11-22T00:53:32.449Z",
+      "ok": true,
+      "text": "已加载 3 个模型"
+    },
+    {
+      "name": "model-field-is-select",
+      "at": "2026-11-22T00:53:32.454Z",
+      "ok": true
+    },
+    {
+      "name": "no-second-select-after-load",
+      "at": "2026-11-22T00:53:32.457Z",
+      "ok": true
+    },
+    {
+      "name": "picker-lists-models",
+      "at": "2026-11-22T00:53:32.463Z",
+      "ok": true,
+      "options": [
+        "选择或填写模型",
+        "fixture-embed-a",
+        "fixture-embed-b",
+        "fixture-bad-auth",
+        "手动输入模型 ID…"
+      ]
+    },
+    {
+      "name": "picker-has-manual-entry",
+      "at": "2026-11-22T00:53:32.463Z",
+      "ok": true,
+      "options": [
+        "选择或填写模型",
+        "fixture-embed-a",
+        "fixture-embed-b",
+        "fixture-bad-auth",
+        "手动输入模型 ID…"
+      ]
+    },
+    {
+      "name": "save-enabled-model-pick",
+      "at": "2026-11-22T00:53:32.989Z",
+      "ok": true
+    },
+    {
+      "name": "model-saved-from-picker",
+      "at": "2026-11-22T00:53:34.234Z",
+      "ok": true
+    },
+    {
+      "name": "probe-result-is-success",
+      "at": "2026-11-22T00:53:37.770Z",
+      "ok": true
+    },
+    {
+      "name": "probe-result-names-model-and-dims",
+      "at": "2026-11-22T00:53:37.773Z",
+      "ok": true,
+      "text": "连接成功 · fixture-embed-b · 16 维 · 6 ms"
+    },
+    {
+      "name": "model-edit-clears-verdict",
+      "at": "2026-11-22T00:53:38.487Z",
+      "ok": true,
+      "text": ""
+    },
+    {
+      "name": "save-enabled-bad-model",
+      "at": "2026-11-22T00:53:38.904Z",
+      "ok": true
+    },
+    {
+      "name": "probe-result-is-error",
+      "at": "2026-11-22T00:53:43.682Z",
+      "ok": true
+    },
+    {
+      "name": "probe-failure-localised",
+      "at": "2026-11-22T00:53:43.684Z",
+      "ok": true,
+      "text": "认证失败：检查密钥是否有效"
+    },
+    {
+      "name": "manual-entry-turns-field-into-text",
+      "at": "2026-11-22T00:53:44.382Z",
+      "ok": true
+    },
+    {
+      "name": "manual-entry-keeps-value",
+      "at": "2026-11-22T00:53:44.387Z",
+      "ok": true,
+      "value": "fixture-bad-auth"
+    },
+    {
+      "name": "manual-sentinel-not-saved",
+      "at": "2026-11-22T00:53:44.387Z",
+      "ok": true
+    },
+    {
+      "name": "save-enabled-manual-model",
+      "at": "2026-11-22T00:53:44.817Z",
+      "ok": true
+    },
+    {
+      "name": "manual-id-saved",
+      "at": "2026-11-22T00:53:46.051Z",
+      "ok": true
+    },
+    {
+      "name": "manual-sentinel-never-saved",
+      "at": "2026-11-22T00:53:46.051Z",
+      "ok": true
+    },
+    {
+      "name": "outside-value-keeps-text",
+      "at": "2026-11-22T00:53:49.093Z",
+      "ok": true
+    },
+    {
+      "name": "outside-value-not-replaced",
+      "at": "2026-11-22T00:53:49.098Z",
+      "ok": true,
+      "value": "my-own-embed-model"
+    },
+    {
+      "name": "from-list-affordance",
+      "at": "2026-11-22T00:53:49.101Z",
+      "ok": true
+    },
+    {
+      "name": "from-list-reopens-picker",
+      "at": "2026-11-22T00:53:49.740Z",
+      "ok": true
+    }
+  ],
+  "failures": [],
+  "errors": []
+}
