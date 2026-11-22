@@ -11,6 +11,6 @@ Progress: resolved 3, reused 3, downloaded 0, added 3, done
 dependencies:
 + @elvisw/dsh-magic-context 0.18.11
 
-Done in 3s using pnpm v12.21.0
+Done in 2.7s using pnpm v12.21.0
 
 --- stderr ---

@@ -7,9 +7,9 @@
 
 
  Test Files  85 passed (85)
-      Tests  1055 passed (1055)
-   Start at  08:54:09
-   Duration  43.35s (transform 3.70s, setup 0ms, import 21.58s, tests 119.57s, environment 6ms)
+      Tests  1056 passed (1056)
+   Start at  09:27:11
+   Duration  44.21s (transform 3.03s, setup 0ms, import 21.59s, tests 131.25s, environment 6ms)
 
 
 --- stderr ---

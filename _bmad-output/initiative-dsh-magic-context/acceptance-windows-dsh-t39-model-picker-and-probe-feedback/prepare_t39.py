@@ -46,6 +46,8 @@ def isolated_env(root: Path) -> dict[str, str]:
         path = root / sub
         path.mkdir(parents=True, exist_ok=True)
         env[name] = str(path)
+    for name in ("DEEPSEEK_API_KEY", "SILICONFLOW_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY"):
+        env.pop(name, None)
     env["npm_config_store_dir"] = str(root / "pnpm-store")
     env["npm_config_cache"] = str(root / "npm-cache")
     env["CI"] = "1"

@@ -1,14 +1,18 @@
 STEP seeded-remote {"ok":true}
-STEP empty-model-is-text {"ok":true,"tag":"INPUT"}
-STEP no-second-select-before-load {"ok":true}
+STEP empty-model-is-text-before-load {"ok":true,"tag":"INPUT"}
+STEP no-model-select-before-load {"ok":true}
+STEP preset-select-has-no-empty-option {"ok":true,"presetOptions":["siliconflow","custom"]}
 STEP key-saved {"ok":true}
 STEP load-visible {"ok":true}
 STEP provider-saved {"ok":true}
 STEP models-loaded-message {"ok":true,"text":"已加载 3 个模型"}
-STEP model-field-is-select {"ok":true}
-STEP no-second-select-after-load {"ok":true}
-STEP picker-lists-models {"ok":true,"options":["选择或填写模型","fixture-embed-a","fixture-embed-b","fixture-bad-auth","手动输入模型 ID…"]}
-STEP picker-has-manual-entry {"ok":true,"options":["选择或填写模型","fixture-embed-a","fixture-embed-b","fixture-bad-auth","手动输入模型 ID…"]}
+STEP model-field-is-select-after-load {"ok":true,"tag":"SELECT"}
+STEP empty-value-selects-nothing {"ok":true,"value":""}
+STEP exactly-one-model-control {"ok":true,"count":1}
+STEP model-control-is-the-field {"ok":true,"id":"mc-field-embedding.model"}
+STEP picker-lists-models {"ok":true,"options":["请选择模型…","fixture-embed-a","fixture-embed-b","fixture-bad-auth","手动输入模型 ID…"]}
+STEP picker-has-empty-option {"ok":true,"options":["请选择模型…","fixture-embed-a","fixture-embed-b","fixture-bad-auth","手动输入模型 ID…"]}
+STEP picker-has-manual-entry {"ok":true,"options":["请选择模型…","fixture-embed-a","fixture-embed-b","fixture-bad-auth","手动输入模型 ID…"]}
 STEP save-enabled-model-pick {"ok":true}
 STEP model-saved-from-picker {"ok":true}
 STEP probe-result-is-success {"ok":true}

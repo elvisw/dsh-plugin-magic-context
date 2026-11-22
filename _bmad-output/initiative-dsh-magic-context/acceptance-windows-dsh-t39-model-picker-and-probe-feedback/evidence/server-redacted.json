@@ -1,6 +1,6 @@
 {
-  "url": "http://127.0.0.1:12098/?token=<redacted>",
-  "port": 12098,
-  "pid": 1336,
-  "fake_port": 12086
+  "url": "http://127.0.0.1:13577/?token=<redacted>",
+  "port": 13577,
+  "pid": 4396,
+  "fake_port": 13567
 }

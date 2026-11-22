@@ -63,13 +63,20 @@ async function save(page, label) {
   await dialog(page).getByRole('button', { name: 'Magic Context', exact: true }).first().click()
   await page.waitForTimeout(900)
 
-  // The profile starts remote with no model: the field must stay a text input,
-  // because a controlled select would draw an id nobody chose.
+  // The profile starts remote with no model and no list loaded: with nothing to
+  // pick from the field is a plain text input.
   check('seeded-remote', (await field(page, 'embedding.provider').inputValue()) === 'openai-compatible', {})
-  check('empty-model-is-text', (await field(page, 'embedding.model').evaluate((node) => node.tagName)) === 'INPUT', {
+  check('empty-model-is-text-before-load', (await field(page, 'embedding.model').evaluate((node) => node.tagName)) === 'INPUT', {
     tag: await field(page, 'embedding.model').evaluate((node) => node.tagName),
   })
-  check('no-second-select-before-load', (await dialog(page).locator('[data-mc-model-select="true"]').count()) === 0, {})
+  check('no-model-select-before-load',
+    (await dialog(page).locator('select').filter({ has: page.locator('option', { hasText: 'fixture-embed-a' }) }).count()) === 0, {})
+  // The preset select offers only real presets, so an unset preset cannot come
+  // from this UI; a hand-edited profile with `preset: ''` keeps the model field a
+  // text input (asserted by the pure spec).
+  const presetOptions = await field(page, 'embedding.preset').locator('option').evaluateAll(
+    (nodes) => nodes.map((node) => node.value))
+  check('preset-select-has-no-empty-option', !presetOptions.includes(''), { presetOptions })
 
   // Save the key, then load the list.
   await field(page, 'embedding.apiKey').fill('t39-gate-not-a-real-key')
@@ -86,18 +93,31 @@ async function save(page, label) {
     text: await resultLine(page).innerText(),
   })
 
-  // The picker is the 模型 ID field itself now, and there is still no second one.
-  const picker = field(page, 'embedding.model')
-  check('model-field-is-select', (await picker.evaluate((node) => node.tagName)) === 'SELECT', {})
-  check('no-second-select-after-load', (await dialog(page).locator('[data-mc-model-select="true"]').count()) === 0, {})
-  const options = await picker.locator('option').allInnerTexts()
+  // With a chosen preset and a loaded list the 模型 ID field itself is the picker,
+  // and an empty value is carried by an explicit 请选择模型… option — the browser
+  // never draws an id nobody picked.
+  const modelField = field(page, 'embedding.model')
+  check('model-field-is-select-after-load', (await modelField.evaluate((node) => node.tagName)) === 'SELECT', {
+    tag: await modelField.evaluate((node) => node.tagName),
+  })
+  check('empty-value-selects-nothing', (await modelField.inputValue()) === '', {
+    value: await modelField.inputValue(),
+  })
+  const modelSelects = dialog(page).locator('select').filter({ has: page.locator('option', { hasText: 'fixture-embed-a' }) })
+  check('exactly-one-model-control', (await modelSelects.count()) === 1, { count: await modelSelects.count() })
+  check('model-control-is-the-field',
+    (await modelSelects.first().getAttribute('id')) === 'mc-field-embedding.model', {
+      id: await modelSelects.first().getAttribute('id'),
+    })
+  const options = await modelField.locator('option').allInnerTexts()
   check('picker-lists-models',
     options.includes('fixture-embed-a') && options.includes('fixture-embed-b') && options.includes('fixture-bad-auth'),
     { options })
+  check('picker-has-empty-option', options[0] === '请选择模型…', { options })
   check('picker-has-manual-entry', options.includes('手动输入模型 ID…'), { options })
   await shot(page, 't39-model-picker.png')
 
-  await picker.selectOption('fixture-embed-b')
+  await modelField.selectOption('fixture-embed-b')
   await save(page, 'model-pick')
   check('model-saved-from-picker', fs.readFileSync(patchPath, 'utf8').includes('model: fixture-embed-b'), {})
 
@@ -113,7 +133,7 @@ async function save(page, label) {
 
   // A model edit invalidates the verdict: the success line named the previous
   // model, so it must not stay on screen as if it described this one.
-  await picker.selectOption('fixture-bad-auth')
+  await modelField.selectOption('fixture-bad-auth')
   await page.waitForTimeout(600)
   check('model-edit-clears-verdict', (await resultLine(page).count()) === 0, {
     text: (await resultLine(page).count()) === 1 ? await resultLine(page).innerText() : '',
@@ -130,7 +150,7 @@ async function save(page, label) {
   await shot(page, 't39-probe-error.png')
 
   // Manual entry: the sentinel only flips the mode and must never be saved.
-  await picker.selectOption('__mc_manual_model__')
+  await modelField.selectOption('__mc_manual_model__')
   await page.waitForTimeout(600)
   const manual = field(page, 'embedding.model')
   check('manual-entry-turns-field-into-text', (await manual.evaluate((node) => node.tagName)) === 'INPUT', {})

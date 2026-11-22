@@ -1,0 +1,10 @@
+{
+  "dshVersion": "0.2.2-rc.5",
+  "node": "node.exe",
+  "providerKeysStripped": [
+    "SILICONFLOW_API_KEY",
+    "OPENAI_API_KEY",
+    "ANTHROPIC_API_KEY"
+  ],
+  "deepseekKey": "sentinel (not a credential; only bypasses the first-run dialog)"
+}

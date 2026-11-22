@@ -111,6 +111,8 @@ const api = factory((name) => {
       code?: string
     }
     embeddingVerdictText: (verdict: unknown, translate: (key: string, params?: Record<string, string>) => string) => string
+    embeddingNetworkFailure: (error: unknown) => string
+    embeddingModelTargetKey: (input: { provider?: string; preset?: string; endpoint?: string; apiKeyEnv?: string }) => string
     EMBEDDING_ERROR_KEYS: Record<string, string>
     MANUAL_MODEL_VALUE: string
     embeddingKeyRowState: (input: {
@@ -879,9 +881,11 @@ describe('settings information architecture (T21)', () => {
   })
 
   it('picks the model in the model field and never invents a selection', () => {
-    const base = { provider: 'openai-compatible', models: ['a/embed', 'b/embed'] as string[], value: '' }
-    // Empty value: the select is allowed only because it carries an explicit
-    // empty option; it never draws an id the store does not hold.
+    const base = {
+      provider: 'openai-compatible', preset: 'custom', models: ['a/embed', 'b/embed'] as string[], value: '',
+    }
+    // An empty value with a chosen preset is a select that carries an explicit
+    // empty option, so it never draws an id the store does not hold.
     expect(embeddingModelFieldMode(base)).toBe('select')
     expect(embeddingModelSelectValue('', base.models)).toBe('')
     expect(embeddingModelSelectValue('not/loaded', base.models)).toBe('')
@@ -893,10 +897,19 @@ describe('settings information architecture (T21)', () => {
     expect(embeddingModelFieldMode({ ...base, value: 'old/model' })).toBe('text')
     expect(embeddingModelFieldMode({ ...base, value: 'old/model', picker: true })).toBe('select')
 
+    // No preset: no service is chosen, so the field is always a text input and
+    // the picker never appears — not even on an explicit request.
+    expect(embeddingModelFieldMode({ ...base, preset: '' })).toBe('text')
+    expect(embeddingModelFieldMode({ ...base, preset: '   ' })).toBe('text')
+    expect(embeddingModelFieldMode({ ...base, preset: '', picker: true })).toBe('text')
+    expect(embeddingModelFieldMode({ ...base, preset: undefined })).toBe('text')
+
     // No list, local provider, or manual mode: text.
     expect(embeddingModelFieldMode({ ...base, models: [] })).toBe('text')
     expect(embeddingModelFieldMode({ ...base, provider: 'local' })).toBe('text')
     expect(embeddingModelFieldMode({ ...base, value: 'a/embed', manual: true })).toBe('text')
+    // Manual mode wins over an explicit picker request.
+    expect(embeddingModelFieldMode({ ...base, manual: true, picker: true })).toBe('text')
 
     // The sentinel must never be a value the card could save.
     expect(MANUAL_MODEL_VALUE.startsWith('__mc_')).toBe(true)
@@ -957,6 +970,33 @@ describe('settings information architecture (T21)', () => {
       expect(dict.zh[key], `${code} zh`).toBeTruthy()
       expect(dict.en[key], `${code} en`).toBeTruthy()
     }
+  })
+
+  it('drops a loaded list when its target changes and classifies fetch failures', () => {
+    const { embeddingNetworkFailure, embeddingModelTargetKey } = api.__diagnostics
+    const base = { provider: 'openai-compatible', preset: 'custom', endpoint: 'http://127.0.0.1:1/v1', apiKeyEnv: 'K' }
+    const key = embeddingModelTargetKey(base)
+    expect(key).toBe(embeddingModelTargetKey({ ...base }))
+    // Whitespace alone does not change the target.
+    expect(embeddingModelTargetKey({ ...base, endpoint: '  http://127.0.0.1:1/v1 ' })).toBe(key)
+    // Each of the four inputs is part of the identity.
+    expect(embeddingModelTargetKey({ ...base, provider: 'local' })).not.toBe(key)
+    expect(embeddingModelTargetKey({ ...base, preset: 'siliconflow' })).not.toBe(key)
+    expect(embeddingModelTargetKey({ ...base, endpoint: 'http://127.0.0.1:2/v1' })).not.toBe(key)
+    expect(embeddingModelTargetKey({ ...base, apiKeyEnv: 'OTHER' })).not.toBe(key)
+    // A missing input is the empty string, never `undefined`.
+    expect(embeddingModelTargetKey({})).toBe('\u0000\u0000\u0000')
+    expect(embeddingModelTargetKey(null)).toBe('\u0000\u0000\u0000')
+
+    // A browser network error reads as 网络不可达; a body that is not JSON reads
+    // as 响应格式无效; neither echoes the browser message.
+    expect(embeddingNetworkFailure(new TypeError('Failed to fetch'))).toBe('network')
+    expect(embeddingNetworkFailure(new Error('Unexpected token < in JSON at position 0'))).toBe('invalid-response')
+    expect(embeddingNetworkFailure(new SyntaxError('Unexpected end of JSON input'))).toBe('invalid-response')
+    expect(embeddingNetworkFailure('plain string')).toBe('network')
+    const dict = api.__diagnostics.dictionaries
+    expect(dict.zh[EMBEDDING_ERROR_KEYS.network]).toBe('网络不可达')
+    expect(dict.zh[EMBEDDING_ERROR_KEYS['invalid-response']]).toBe('响应格式无效')
   })
 
   it('registers only the top-level Settings seat and no legacy Plugins seats', () => {

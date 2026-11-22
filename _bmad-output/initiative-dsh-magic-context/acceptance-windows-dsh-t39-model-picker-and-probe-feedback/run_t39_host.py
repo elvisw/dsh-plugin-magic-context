@@ -17,6 +17,7 @@ DSH_BIN = Path(
     r"C:\Users\elvis\AppData\Local\Temp\opencode\t35-rc5-root2"
     r"\host\node_modules\@deepseek-ai\dsh\lib\bin.js"
 )
+SENTINEL_KEY = "t39-gate-sentinel-not-a-real-key"
 
 
 def free_port() -> int:
@@ -39,6 +40,14 @@ def host_env(root: Path) -> dict[str, str]:
         "TEMP": "tmp", "TMP": "tmp",
     }.items():
         env[name] = str(root / sub)
+    # The operator's real provider keys must never reach the isolated host.
+    for name in ("SILICONFLOW_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY"):
+        env.pop(name, None)
+    # Without *some* DeepSeek credential the first-run "开始使用" dialog covers the
+    # app and the settings page is unreachable. The value below is a sentinel, not
+    # a credential: requests it authorises fail authentication. It is recorded in
+    # evidence/host-env.json so the disclosure is machine-checkable.
+    env["DEEPSEEK_API_KEY"] = SENTINEL_KEY
     env["CI"] = "1"
     env["DSH_TELEMETRY_MODE"] = "DISABLED"
     return env
@@ -91,9 +100,18 @@ def main() -> None:
     (root / "evidence" / "server-redacted.json").write_text(
         json.dumps({"url": redact(url), "port": port, "pid": process.pid, "fake_port": fake_port}, indent=2) + "\n",
         encoding="utf-8", newline="\n")
+    # Only the redacted URL is kept: the live `?token=` would grant a reader access
+    # to this run's host, and nothing in the gate needs it.
     (root / "evidence" / "server.json").write_text(
         json.dumps({"url": url, "port": port, "pid": process.pid, "fake_port": fake_port}, indent=2) + "\n",
         encoding="utf-8", newline="\n")
+    (root / "evidence" / "host-env.json").write_text(
+        json.dumps({
+            "dshVersion": json.loads((DSH_BIN.parent.parent / "package.json").read_text(encoding="utf-8"))["version"],
+            "node": NODE_EXE.name,
+            "providerKeysStripped": ["SILICONFLOW_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY"],
+            "deepseekKey": "sentinel (not a credential; only bypasses the first-run dialog)",
+        }, indent=2) + "\n", encoding="utf-8", newline="\n")
     try:
         gate = subprocess.run(["node", str(REPORT_DIR / "t39_ui_gate.cjs")], capture_output=True, text=True, timeout=600)
         (root / "evidence" / "gate-run.txt").write_text(

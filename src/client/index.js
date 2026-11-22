@@ -703,20 +703,23 @@ window.__ModuleLoader__.load({
     }
 
     /**
-     * T39: the `embedding.model` field renders as a select only when the loaded
-     * list can represent the value. A controlled select whose value matches no
-     * option would draw its first option while the stored value is something
-     * else, which reads as a model nobody picked — so the select is used only
-     * for an empty value (with an explicit `请选择…` option) or a value the list
-     * contains, and `picker` is the deliberate "choose from the list instead"
-     * escape hatch for a value the list does not contain.
+     * T39: the `embedding.model` field renders as a select whenever a service is
+     * chosen and the loaded list can show the value — including the empty value,
+     * which the select carries as an explicit `请选择…` option so the browser
+     * never displays an id nobody picked. Without a preset there is no service
+     * whose catalogue the list could belong to, so the field stays a text input
+     * and no picker is offered.
      */
     function embeddingModelFieldMode(input) {
       const source = input !== null && typeof input === 'object' ? input : {}
       const provider = typeof source.provider === 'string' ? source.provider.trim().toLowerCase() : ''
+      const preset = typeof source.preset === 'string' ? source.preset.trim() : ''
       const models = Array.isArray(source.models) ? source.models.filter((id) => typeof id === 'string') : []
       const value = typeof source.value === 'string' ? source.value.trim() : ''
       if (provider !== 'openai-compatible') return 'text'
+      // No preset chosen: the list would describe a service the reader has not
+      // picked, so neither the select nor the "pick from list" path applies.
+      if (preset === '') return 'text'
       if (source.manual === true) return 'text'
       if (models.length === 0) return 'text'
       if (value === '' || models.includes(value)) return 'select'
@@ -728,6 +731,17 @@ window.__ModuleLoader__.load({
       const text = typeof value === 'string' ? value.trim() : ''
       const list = Array.isArray(models) ? models : []
       return text === '' || list.includes(text) ? text : ''
+    }
+
+    /**
+     * T39: the identity a loaded model list belongs to. Any change here drops the
+     * list, so the picker can never offer another service's ids.
+     */
+    function embeddingModelTargetKey(input) {
+      const source = input !== null && typeof input === 'object' ? input : {}
+      const text = (value) => (typeof value === 'string' ? value.trim() : '')
+      return [text(source.provider), text(source.preset), text(source.endpoint), text(source.apiKeyEnv)]
+        .join('\u0000')
     }
 
     /**
@@ -811,6 +825,17 @@ window.__ModuleLoader__.load({
       const code = typeof source.error === 'string' && source.error !== '' ? source.error : 'probe-failed'
       const key = EMBEDDING_ERROR_KEYS[code]
       return { ok: false, code, key }
+    }
+
+    /**
+     * T39: a `fetch` or `response.json()` failure mapped to one machine code, so
+     * the reader sees 网络不可达 / 响应格式无效 instead of a browser message.
+     */
+    function embeddingNetworkFailure(error) {
+      const message = String(error !== null && typeof error === 'object' && error.message !== undefined
+        ? error.message
+        : error)
+      return /json|unexpected token|parse/i.test(message) ? 'invalid-response' : 'network'
     }
 
     /** The visible line for a probe verdict, assembled from localised segments. */
@@ -1496,12 +1521,12 @@ window.__ModuleLoader__.load({
         // provider, preset, endpoint or key reference must drop it, or the picker
         // would offer another service's model ids (and could save one).
         const apiKeyEnvSpec = FIELDS.find((spec) => fieldKey(spec.path) === 'embedding.apiKeyEnv')
-        const modelTarget = [
-          providerText,
-          presetText,
-          endpointSpec === undefined ? '' : view(endpointSpec).text.trim(),
-          apiKeyEnvSpec === undefined ? '' : view(apiKeyEnvSpec).text.trim(),
-        ].join('\u0000')
+        const modelTarget = embeddingModelTargetKey({
+          provider: providerText,
+          preset: presetText,
+          endpoint: endpointSpec === undefined ? '' : view(endpointSpec).text,
+          apiKeyEnv: apiKeyEnvSpec === undefined ? '' : view(apiKeyEnvSpec).text,
+        })
         const modelTargetSeen = useRef(modelTarget)
         useEffect(() => {
           if (modelTargetSeen.current === modelTarget) return
@@ -2010,10 +2035,7 @@ window.__ModuleLoader__.load({
         }, [confirmAction])
 
         /** One place for a failure the network/JSON layer produced. */
-        const networkFailure = (error) => {
-          const message = String(error && error.message ? error.message : error)
-          return /json|unexpected token|parse/i.test(message) ? 'invalid-response' : 'network'
-        }
+        const networkFailure = (error) => embeddingNetworkFailure(error)
 
         const showEmbeddingError = (code, fallback) => {
           const key = EMBEDDING_ERROR_KEYS[code]
@@ -2408,6 +2430,7 @@ window.__ModuleLoader__.load({
           const id = 'mc-field-' + fieldKey(spec.path)
           const mode = embeddingModelFieldMode({
             provider: providerText,
+            preset: presetText,
             models: embeddingModels,
             value: state.text,
             manual: manualModel,
@@ -2467,8 +2490,9 @@ window.__ModuleLoader__.load({
             }),
             // Manual mode is never a dead end: with a list loaded the reader can
             // go back to picking, and picking is how a value outside the list is
-            // replaced.
-            embeddingModels.length > 0 && providerText === 'openai-compatible'
+            // replaced. Without a preset the list belongs to no chosen service,
+            // so the picker is not offered at all.
+            embeddingModels.length > 0 && providerText === 'openai-compatible' && presetText.trim() !== ''
               ? el('button', {
                 key: 'from-list',
                 type: 'button',
@@ -3387,7 +3411,7 @@ window.__ModuleLoader__.load({
         'settings.embedding.rollback': '回滚到本地',
         'settings.embedding.working': '处理中…',
         'settings.embedding.noModels': '无模型；可手动填写模型 ID',
-        'settings.embedding.modelPlaceholder': '选择或填写模型',
+        'settings.embedding.modelPlaceholder': '请选择模型…',
         'settings.embedding.coverage': '{covered}/{total} 条可检索记忆',
         'settings.embedding.coverageUnknown': '覆盖未知',
         'settings.embedding.dimensionUnknown': '维度未知',
@@ -3751,7 +3775,7 @@ window.__ModuleLoader__.load({
         'settings.embedding.rollback': 'Roll back to local',
         'settings.embedding.working': 'Working…',
         'settings.embedding.noModels': 'No models; type a model ID manually',
-        'settings.embedding.modelPlaceholder': 'Pick or type a model',
+        'settings.embedding.modelPlaceholder': 'Select a model…',
         'settings.embedding.coverage': '{covered}/{total} searchable memories',
         'settings.embedding.coverageUnknown': 'coverage unknown',
         'settings.embedding.dimensionUnknown': 'dimensions unknown',
@@ -5017,6 +5041,7 @@ window.__ModuleLoader__.load({
         fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags,
         embeddingFieldVisible, embeddingKeyRowState, embeddingStateKeys: EMBEDDING_STATE_KEYS,
         embeddingModelFieldMode, embeddingModelSelectValue, embeddingProbeResultText, embeddingVerdictText,
+        embeddingNetworkFailure, embeddingModelTargetKey,
         EMBEDDING_ERROR_KEYS, MANUAL_MODEL_VALUE,
         normalizeEmbeddingPreset, normalizeEndpointText, embeddingPresetOwnsTransport, SILICONFLOW_ENDPOINT,
         // The number/text formatters are the panel's display contract; the

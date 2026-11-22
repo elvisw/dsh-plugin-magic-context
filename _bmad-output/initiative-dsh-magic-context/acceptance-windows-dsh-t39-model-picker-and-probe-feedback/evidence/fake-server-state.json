@@ -1,25 +1,25 @@
 {
-  "pid": 15688,
-  "port": 12086,
-  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t39-fake\\20261122-085303",
+  "pid": 12792,
+  "port": 13567,
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\t39-fake\\20261122-092359",
   "stats": {
     "requests": [
       {
-        "at": 1795308809.4360507,
+        "at": 1795310665.219231,
         "path": "models",
         "inputCount": 0,
         "model": "",
         "authPresent": true
       },
       {
-        "at": 1795308814.2602043,
+        "at": 1795310670.088528,
         "path": "embeddings",
         "inputCount": 1,
         "model": "fixture-embed-b",
         "authPresent": true
       },
       {
-        "at": 1795308820.1675663,
+        "at": 1795310675.9908376,
         "path": "embeddings",
         "inputCount": 1,
         "model": "fixture-bad-auth",
