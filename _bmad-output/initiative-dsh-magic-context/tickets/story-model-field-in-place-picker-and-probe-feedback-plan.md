@@ -2,7 +2,7 @@
 title: "Pick the embedding model in the model field itself, and report the connection test"
 ticket: 39
 created: '2026-11-22'
-status: in-progress
+status: built
 baseline_revision: 'bb7f53e'
 route: full
 route_source: pinned
