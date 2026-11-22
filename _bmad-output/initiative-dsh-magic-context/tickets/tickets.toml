@@ -465,3 +465,15 @@ after = [38]
 hitl = true
 risk = "medium"
 refine = true
+
+[[entry]]
+id = 40
+type = "story"
+title = "Put Load models beside the model field, stop coupling it to Save, and add 撤销未保存更改"
+description = "加载模型 sits in the card-wide action row far from the model field and becomes 保存并加载模型 / 保存并测试 whenever a draft is pending, so an unrelated action performs a hidden save. Move the load control into the 模型 ID field row, delete both save-coupled labels, keep Load and Test strictly read-only against the saved configuration, disable the remote actions while drafts are pending with the existing reason line, and add a 撤销未保存更改 button next to the status strip that clears every draft without touching the saved profile."
+verify = "Pure specs in tests/client-pure.spec.ts: embeddingActionState keeps load/test visible but disabled while dirty and enabled when clean; the save-coupled label keys are no longer referenced anywhere in src/client/index.js; a discard control is exposed only while drafts exist and is not exposed on a clean form; the model field still renders the picker rules unchanged. One Web gate under the evidence directory in covers on DSH 0.2.2-rc.5: the 加载模型 button is a descendant of the #mc-field-embedding.model container; editing a field disables 加载模型 and renders 撤销未保存更改; clicking 撤销未保存更改 clears the drafts so the host Save is disabled and 加载模型 is enabled again; clicking 加载模型 alone leaves the profile patch byte-identical (no implicit save) while still listing the fake server's models. No server route, resolver, schema or credential change; no version bump."
+covers = ["src/client/index.js", "tests/client-pure.spec.ts", "docs/dsh-plugin-settings-ui-contract.md", "docs/configuration.md", "CHANGELOG.md", "_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-t40-decoupled-embedding-actions/"]
+after = [39]
+hitl = true
+risk = "medium"
+refine = true
