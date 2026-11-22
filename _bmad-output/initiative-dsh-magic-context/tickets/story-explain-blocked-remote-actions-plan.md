@@ -2,7 +2,7 @@
 title: "Say why a remote action is blocked, and tell readers to load models before picking"
 ticket: 41
 created: '2026-11-22'
-status: built
+status: done
 baseline_revision: '7e74e94'
 route: full
 route_source: pinned
