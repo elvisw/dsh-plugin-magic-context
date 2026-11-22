@@ -2,7 +2,7 @@
 title: "Put Load models beside the model field, stop coupling it to Save, and add 撤销未保存更改"
 ticket: 40
 created: '2026-11-22'
-status: built
+status: done
 baseline_revision: '508654e'
 route: full
 route_source: pinned
