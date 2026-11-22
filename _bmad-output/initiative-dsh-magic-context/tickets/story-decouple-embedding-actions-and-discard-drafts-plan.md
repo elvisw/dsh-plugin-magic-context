@@ -2,7 +2,7 @@
 title: "Put Load models beside the model field, stop coupling it to Save, and add 撤销未保存更改"
 ticket: 40
 created: '2026-11-22'
-status: in-progress
+status: built
 baseline_revision: '508654e'
 route: full
 route_source: pinned
@@ -97,8 +97,11 @@ context: []
 ## Review Triage Log
 
 - 独立票面校验（`deepseek-flash`）：NEEDS CHANGES。三条 Critical 成立：① `#mc-field-embedding.model` 是控件本身不是容器，按钮无法「在它内部」（改为 `data-mc-model-field` 包装 + 兄弟节点）；② gate 步骤顺序自相矛盾（改 endpoint 清列表后不能直接选模型，中途要重新加载）；③ `discard()` 不清 `embeddingKeyDraft` 且它有 `staged.size === 0` 提前返回，撤销对「只输密钥」不可达（改为 `unsaved()` 谓词 + 清 key 草稿）。Fix 采纳：删 key 必须同时删 `SETTINGS_EXTRA_COPY_KEYS`（否则 `settingsCopyKeys` 与 i18n 检查都红）；「宿主 footer 是唯一写入口」改为「字段草稿的唯一写入口」；`formLabels` 本来就没有 `reset`；Suggest 采纳：撤销按钮不能放进 `role="status"` 的 live region，脏表单且无状态快照时也要有原因行。
+- 独立 diff 复核（`deepseek-flash`）：NEEDS CHANGES。两条 Critical：① `discard()` 不复位 `modelPickerForced`，强制下拉后撤销会显示空下拉（已复位 `manualModel` 与 `modelPickerForced`，并新增 `discard-drops-forced-picker` 断言）；② 「点加载后补丁不变」在干净表单上是空转证据（保留字节断言，但把「没有隐式保存」的保证归因到脏态禁用那几步，报告措辞已改）。Fix 全部采纳：两个按钮断言精确可见文本（防字典键删除后回退成原始 key）、`load-is-not-inside-the-control` 同时要求控件存在、撤销把密钥保存中的忙碌态也算禁用、成功/失败行断言收紧到 `16 维`/`\d+ ms`/`检查密钥是否有效`、console error 计入失败、新增 `evidence/provenance.json` 绑定 tarball 与源码字节。
+- 复核修复后的只读复校（`deepseek-flash`）：CLOSED，七项全部关闭，无新 Critical。唯一观察是「只有密钥草稿时撤销也会复位模型字段的视图标志」，属视图复位不丢数据，不改。
 
 ## Verification
 
 - 一次 `npm test`（含新的纯函数用例）、`typecheck`、`check:i18n`、`build`。
-- 一次隔离 Web gate（假嵌入端点、DSH `0.2.2-rc.5`）：加载按钮位置、无隐式保存、脏态禁用与原因行、撤销清空草稿、密钥草稿单独触发撤销、选模型后保存、测试连接成功行。
+- 一次隔离 Web gate（假嵌入端点、DSH `0.2.2-rc.5`）：51 步 0 失败、0 console error，覆盖加载按钮位置、无隐式保存、脏态禁用与原因行、撤销清空草稿（含密钥草稿与强制下拉）、选模型后保存、测试连接成功与失败。
+
