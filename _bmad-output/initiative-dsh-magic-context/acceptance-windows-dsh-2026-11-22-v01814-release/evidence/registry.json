@@ -1,0 +1,126 @@
+{
+  "checkedAt": "2026-11-22T08:45:39Z",
+  "distTags": {
+    "bootstrap": "0.0.0-bootstrap.0",
+    "latest": "0.18.14"
+  },
+  "version": "0.18.14",
+  "gitHead": "2ae34d37325220b498de90a371a2f1968072f379",
+  "integrity": "sha512-jWVRbeWwnB+P+NWQUqKDAvRY354Kobng8W0tR2fJZPHSXHVJ8dESE0eDopXifqjl0DH3MV4jWvGrjyL3Uknudg==",
+  "recomputedIntegrity": "sha512-jWVRbeWwnB+P+NWQUqKDAvRY354Kobng8W0tR2fJZPHSXHVJ8dESE0eDopXifqjl0DH3MV4jWvGrjyL3Uknudg==",
+  "shasum": "64b5580fd49444f92ff1816b6eb40ad9f08ce981",
+  "recomputedShasum": "64b5580fd49444f92ff1816b6eb40ad9f08ce981",
+  "registry": {
+    "path": "registry-0.18.14.tgz",
+    "sha256": "15d837b87af4aef98266b3b9445fdbcae38eca05fafc213211d39a35b102a60d",
+    "bytes": 4083343
+  },
+  "localCandidate": {
+    "path": "elvisw-dsh-magic-context-0.18.14.tgz",
+    "sha256": "15d837b87af4aef98266b3b9445fdbcae38eca05fafc213211d39a35b102a60d",
+    "bytes": 4083343
+  },
+  "byteIdentical": true,
+  "poll": [
+    {
+      "at": "08:38:21Z",
+      "latest": "0.18.13"
+    },
+    {
+      "at": "08:38:45Z",
+      "latest": "0.18.13"
+    },
+    {
+      "at": "08:39:06Z",
+      "latest": "0.18.13"
+    },
+    {
+      "at": "08:39:29Z",
+      "latest": "0.18.13"
+    },
+    {
+      "at": "08:39:50Z",
+      "latest": "0.18.13"
+    },
+    {
+      "at": "08:40:12Z",
+      "latest": "0.18.13"
+    },
+    {
+      "at": "08:40:35Z",
+      "latest": "0.18.13"
+    },
+    {
+      "at": "08:40:57Z",
+      "latest": "0.18.14"
+    },
+    {
+      "at": "08:40:59Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:41:15Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:41:31Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:41:47Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:42:03Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:42:19Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:42:35Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:42:50Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:43:06Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:43:25Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:43:41Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:44:00Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:44:16Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:44:32Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:44:48Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:45:04Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    },
+    {
+      "at": "08:45:22Z",
+      "tarballError": "HTTP Error 404: Not Found"
+    }
+  ]
+}

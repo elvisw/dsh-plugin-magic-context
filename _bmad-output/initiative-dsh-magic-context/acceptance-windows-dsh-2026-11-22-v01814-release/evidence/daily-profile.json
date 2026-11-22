@@ -1,0 +1,14 @@
+{
+  "installExit": 0,
+  "dumpExit": 0,
+  "packageName": true,
+  "rowId": true,
+  "historianEffort": true,
+  "registerCompactionEngine": true,
+  "profileDependency": "0.18.14",
+  "installedManifestVersion": "0.18.14",
+  "installedClientSha256": "62fe3f5c9453121938ff8eb56e8a1d6814d7a7e8656462796ce14c980a58dfee",
+  "repoBuildClientSha256": "62fe3f5c9453121938ff8eb56e8a1d6814d7a7e8656462796ce14c980a58dfee",
+  "clientMatchesRepoBuild": true,
+  "bundleListed": true
+}

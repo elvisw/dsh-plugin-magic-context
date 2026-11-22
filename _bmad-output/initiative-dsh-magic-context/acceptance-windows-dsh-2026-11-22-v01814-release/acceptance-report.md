@@ -34,6 +34,24 @@ SHA-256 `15d837b87af4aef98266b3b9445fdbcae38eca05fafc213211d39a35b102a60d`。
 - 产品字节变更只有 `lib/client.js`，对应 T41 与 T40 的隔离宿主 gate（见
   `acceptance-windows-dsh-t41-switch-and-load-probe/`）
 
+## 发布结果
+
+| 项 | 值 |
+|---|---|
+| npm `latest` | `0.18.14`（`dist-tags.bootstrap` 仍是 `0.0.0-bootstrap.0`） |
+| 发布 tag | `v0.18.14` → `2ae34d37325220b498de90a371a2f1968072f379`，与 registry `gitHead` 一致 |
+| Release workflow | `45003657838`：typecheck / test / build / i18n / inspect / publish 全绿 |
+| registry tarball | 4,083,343 B，SHA-256 `15d837b87af4aef98266b3b9445fdbcae38eca05fafc213211d39a35b102a60d` |
+| 与本地候选 | 逐字节相同（`evidence/registry.json` 的 `byteIdentical: true`） |
+| 下载字节重算 | SHA-512/base64 与 `dist.integrity` 一致，SHA-1 与 `dist.shasum` 一致（`recomputedIntegrity` / `recomputedShasum`） |
+| Provenance | 两条 attestation：npm publish v0.1 与 SLSA v1（`evidence/provenance.json`） |
+
+## 日常 profile
+
+`dsh plugin --profile web add @elvisw/dsh-magic-context@0.18.14` 成功，`~/.dsh/profiles/web` 的依赖为 `0.18.14`，安装后 `lib/client.js` 的 SHA-256 与仓库构建产物一致（`62fe3f5c…`）。`--dump-config` 确认 `magic-context-dsh` 行、historian `reasoningEffort: low`、`registerCompactionEngine: true` 均在；dump 含主目录路径，已脱敏为 `<home>`。
+
+需要重启宿主会话才会加载新版本。
+
 ## 未验证
 
 - 未用真实硅基流动密钥验证「加载模型」；假服务只验证协议与鉴权头。
