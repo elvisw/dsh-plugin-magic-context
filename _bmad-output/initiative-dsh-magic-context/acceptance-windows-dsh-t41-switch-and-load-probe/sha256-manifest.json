@@ -1,0 +1,80 @@
+{
+  "count": 15,
+  "files": [
+    {
+      "path": "acceptance-report.md",
+      "sha256": "40b6ce614f1d335e17fb1e1892710e87c9731c3e6b7b98c8f2bf888cb2d25be7",
+      "bytes": 4476
+    },
+    {
+      "path": "collect_t41.py",
+      "sha256": "fb119d3a67cbaa6f93c68bb199c8ff95600bc63e0d1ffc958ef0df559e3398fa",
+      "bytes": 2502
+    },
+    {
+      "path": "evidence/gate-run.txt",
+      "sha256": "0e65e9e85ebd22b5f50c44df32ac26834f281e6503f330a6dee2a4fe8d560846",
+      "bytes": 1945
+    },
+    {
+      "path": "evidence/host-env.json",
+      "sha256": "3e0a6efb29e186b63a72c62e21247c51ea5b2059d0ac0d9d5018fa9152d7aa2a",
+      "bytes": 92
+    },
+    {
+      "path": "evidence/prepare.json",
+      "sha256": "b9d87e76f3df8152c7bf01ac45ef2c27391b64131e57d302f82c576a7e8a1219",
+      "bytes": 438
+    },
+    {
+      "path": "evidence/provenance.json",
+      "sha256": "ca9e2231682eff4835a7db9ee937c4963f33104ded0ce0a32486eeb7e6fea1a0",
+      "bytes": 550
+    },
+    {
+      "path": "evidence/server-log.txt",
+      "sha256": "7d73dfa5e9324d12f3ba8d8b5c7675a18ec9d4ea40510f4711e38e1835dab211",
+      "bytes": 219
+    },
+    {
+      "path": "evidence/t40-regression.json",
+      "sha256": "87985fb12b340fcc8fb12c3b52d280d5f11c8991b01135cc20ba636c8bdfb318",
+      "bytes": 143
+    },
+    {
+      "path": "evidence/ui-gate.json",
+      "sha256": "610a80d162afa4e93abbdadc76725e39d79231535153b3d1b1632693d8312a1c",
+      "bytes": 3767
+    },
+    {
+      "path": "fake_embedding_server.py",
+      "sha256": "79a202815c5d5954a9941c27750e4cbce5a2e86db95523ca934835098b48b94a",
+      "bytes": 4474
+    },
+    {
+      "path": "prepare_t41.py",
+      "sha256": "1ebff56e07f81e1a4492310b7f2dc88e951b103d6b49e832357be87d2c312e21",
+      "bytes": 5437
+    },
+    {
+      "path": "probe-output.txt",
+      "sha256": "0bfe45dceaad3da5971d61dfb43a5b4a532bb117a49a4eb2e5eecf77238dc14b",
+      "bytes": 1947
+    },
+    {
+      "path": "run_t41_host.py",
+      "sha256": "d15c75c1480a602b4de1fe1a61d78bd7e49c01fec2bc4849f76e550ffc344bca",
+      "bytes": 4975
+    },
+    {
+      "path": "t41_probe.cjs",
+      "sha256": "817589af398e0900273a70d469638d9c63576681d892db36b34e776bb9516212",
+      "bytes": 5959
+    },
+    {
+      "path": "t41_ui_gate.cjs",
+      "sha256": "c715ceed920c3556adf452ed2bd9f1119649256c1e71091e61b706fd295fbd25",
+      "bytes": 8778
+    }
+  ]
+}

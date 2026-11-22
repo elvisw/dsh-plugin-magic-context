@@ -1,0 +1,135 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t41-20261122-162252",
+  "steps": [
+    {
+      "name": "local-hides-load",
+      "at": "2026-11-22T08:23:14.276Z",
+      "ok": true
+    },
+    {
+      "name": "switch-shows-load",
+      "at": "2026-11-22T08:23:15.201Z",
+      "ok": true
+    },
+    {
+      "name": "switch-disables-load",
+      "at": "2026-11-22T08:23:15.204Z",
+      "ok": true
+    },
+    {
+      "name": "block-line-next-to-load",
+      "at": "2026-11-22T08:23:15.207Z",
+      "ok": true
+    },
+    {
+      "name": "block-line-is-in-model-field",
+      "at": "2026-11-22T08:23:15.209Z",
+      "ok": true
+    },
+    {
+      "name": "block-line-names-draft",
+      "at": "2026-11-22T08:23:15.220Z",
+      "ok": true,
+      "code": "saved",
+      "text": "先保存当前修改，再执行远程操作。保存"
+    },
+    {
+      "name": "block-line-offers-save",
+      "at": "2026-11-22T08:23:15.222Z",
+      "ok": true
+    },
+    {
+      "name": "load-button-carries-reason",
+      "at": "2026-11-22T08:23:15.227Z",
+      "ok": true,
+      "title": "先保存当前修改，再执行远程操作。"
+    },
+    {
+      "name": "load-button-described-by-block",
+      "at": "2026-11-22T08:23:15.235Z",
+      "ok": true,
+      "describedBy": "mc-field-embedding.model-block"
+    },
+    {
+      "name": "inline-save-writes-provider",
+      "at": "2026-11-22T08:23:17.823Z",
+      "ok": true
+    },
+    {
+      "name": "inline-save-changed-profile",
+      "at": "2026-11-22T08:23:17.823Z",
+      "ok": true
+    },
+    {
+      "name": "inline-save-clears-draft-reason",
+      "at": "2026-11-22T08:23:17.832Z",
+      "ok": true,
+      "code": "key"
+    },
+    {
+      "name": "block-line-names-missing-key",
+      "at": "2026-11-22T08:23:17.845Z",
+      "ok": true,
+      "code": "key",
+      "text": "尚未配置 API Key：先在下方「密钥」行填写并保存。"
+    },
+    {
+      "name": "block-line-mentions-key",
+      "at": "2026-11-22T08:23:17.854Z",
+      "ok": true,
+      "text": "尚未配置 API Key：先在下方「密钥」行填写并保存。"
+    },
+    {
+      "name": "no-save-link-for-key-blocker",
+      "at": "2026-11-22T08:23:17.864Z",
+      "ok": true,
+      "blockCount": 1
+    },
+    {
+      "name": "load-still-disabled-without-key",
+      "at": "2026-11-22T08:23:17.867Z",
+      "ok": true
+    },
+    {
+      "name": "block-line-gone",
+      "at": "2026-11-22T08:23:20.515Z",
+      "ok": true
+    },
+    {
+      "name": "load-enabled-with-key",
+      "at": "2026-11-22T08:23:20.518Z",
+      "ok": true
+    },
+    {
+      "name": "load-succeeds",
+      "at": "2026-11-22T08:23:23.757Z",
+      "ok": true,
+      "text": "已加载 3 个模型"
+    },
+    {
+      "name": "load-does-not-write-profile",
+      "at": "2026-11-22T08:23:23.758Z",
+      "ok": true
+    },
+    {
+      "name": "model-field-is-select",
+      "at": "2026-11-22T08:23:23.780Z",
+      "ok": true,
+      "tag": "SELECT"
+    },
+    {
+      "name": "hint-tells-load-first",
+      "at": "2026-11-22T08:23:23.782Z",
+      "ok": true,
+      "text": "模型 ID\n请选择模型…\nfixture-embed-a\nfixture-embed-b\nfixture-bad-auth\n手动输入模型 ID…\n先点「加载模型」拉取服务商公布的模型 ID，再从这里选择；列表里没有的模型也可以直接填写。\n加载模型"
+    },
+    {
+      "name": "hint-mentions-manual-entry",
+      "at": "2026-11-22T08:23:23.783Z",
+      "ok": true,
+      "text": "模型 ID\n请选择模型…\nfixture-embed-a\nfixture-embed-b\nfixture-bad-auth\n手动输入模型 ID…\n先点「加载模型」拉取服务商公布的模型 ID，再从这里选择；列表里没有的模型也可以直接填写。\n加载模型"
+    }
+  ],
+  "failures": [],
+  "errors": []
+}

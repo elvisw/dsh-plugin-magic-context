@@ -574,6 +574,44 @@ window.__ModuleLoader__.load({
     }
 
     /**
+     * T41: why a remote action is unavailable, in the order the reader can act on
+     * it. A disabled button with no visible reason ("加载模型不起作用") is the bug
+     * this exists to prevent: `embeddingActionState` only answers hidden/disabled,
+     * and the gates that depend on the saved status are invisible in the form.
+     *
+     * Returns a stable code, or `''` when the action may run.
+     */
+    function embeddingBlockReason(action, input) {
+      const source = input !== null && typeof input === 'object' ? input : {}
+      const actionName = typeof action === 'string' ? action : ''
+      if (source.writable === false) return 'readonly'
+      if (source.busy === true) return 'busy'
+      if (source.progressing === true) return 'busy'
+      // A paused migration is not "in flight": the reader resumes it, so it needs
+      // its own sentence instead of "wait for it".
+      if (source.paused === true) return 'paused'
+      if (source.memoryEnabled === false) return 'memory'
+      if (source.endpointResolvable === false) return 'endpoint'
+      // A draft is the reader's own edit: saving or discarding it is one click away,
+      // so it comes before a missing credential (which needs typing).
+      if (source.dirty === true) return 'saved'
+      if (source.keyPresent === false) return 'key'
+      if (actionName === 'test' && source.model !== true) return 'model'
+      return ''
+    }
+
+    const EMBEDDING_BLOCK_KEYS = {
+      readonly: 'settings.embedding.block.readonly',
+      busy: 'settings.embedding.block.busy',
+      paused: 'settings.embedding.block.paused',
+      memory: 'settings.embedding.block.memory',
+      endpoint: 'settings.embedding.block.endpoint',
+      saved: 'settings.embedding.block.saved',
+      key: 'settings.embedding.block.key',
+      model: 'settings.embedding.block.model',
+    }
+
+    /**
      * T40: whether the "discard unsaved changes" escape belongs on screen. Field
      * drafts live in `staged` (and feed `dirty`), but text typed into the key input
      * is a draft the host Save never sees, so it has to be passed separately —
@@ -989,6 +1027,14 @@ window.__ModuleLoader__.load({
       'settings.embedding.offNote',
       'settings.embedding.status',
       'settings.embedding.savedFirst',
+      'settings.embedding.block.readonly',
+      'settings.embedding.block.busy',
+      'settings.embedding.block.paused',
+      'settings.embedding.block.memory',
+      'settings.embedding.block.endpoint',
+      'settings.embedding.block.saved',
+      'settings.embedding.block.key',
+      'settings.embedding.block.model',
       'settings.embedding.keyPresent',
       'settings.embedding.keyAbsent',
       'settings.embedding.keyCredential',
@@ -2041,6 +2087,23 @@ window.__ModuleLoader__.load({
           dimensionsUnsupported: embeddingFlags.dimensionsUnsupported,
         })
 
+        /**
+         * T41: the same inputs the action matrix uses, reshaped for the reason
+         * resolver. `model` is a boolean here because the resolver answers "is the
+         * model the blocker", not "what is its text".
+         */
+        const actionInputs = {
+          writable: shell.writable,
+          busy: embeddingBusy,
+          progressing: embeddingState === 'remote-migrating',
+          paused: embeddingState === 'remote-paused',
+          memoryEnabled: embeddingFlags.memoryEnabled,
+          endpointResolvable,
+          dirty: shell.dirty,
+          keyPresent: embeddingFlags.keyPresent,
+          model: currentModel.trim() !== '',
+        }
+
         // The host Save is disabled while a value is invalid, so "try Save to
         // reveal the bad field" can never run. Open the advanced disclosure and
         // focus the first invalid field as soon as it becomes invalid.
@@ -2298,8 +2361,15 @@ window.__ModuleLoader__.load({
               ? el('span', { key: 'last-error', style: { fontSize: 11.5, color: 'var(--dsw-alias-label-warning, #b8860b)' } },
                 status.lastError)
               : null,
-            shell.dirty
-              ? el('span', { key: 'saved', style: { fontSize: 11.5, opacity: 0.7 } }, t('settings.embedding.savedFirst'))
+            // T41: the reason the remote actions are disabled, resolved from the
+            // same inputs the matrix uses — a bare grey button was the bug. When
+            // the blocker is an unsaved draft this is the same sentence as before.
+            providerText === 'openai-compatible' && embeddingBlockReason('test', actionInputs) !== ''
+              ? el('span', {
+                key: 'saved',
+                'data-mc-actions-block': embeddingBlockReason('test', actionInputs),
+                style: { fontSize: 11.5, opacity: 0.7 },
+              }, t(EMBEDDING_BLOCK_KEYS[embeddingBlockReason('test', actionInputs)]))
               : null,
             actionRow.length > 0
               ? el('div', { key: 'remote-actions', style: { display: 'flex', gap: 6, flexWrap: 'wrap' } }, actionRow)
@@ -2465,6 +2535,7 @@ window.__ModuleLoader__.load({
             picker: modelPickerForced,
           })
           const hint = t(spec.hintKey)
+          const loadBlock = embeddingBlockReason('load', actionInputs)
           // T40: Load models belongs to this field, not to the card-wide action
           // row. Kept out of the load gate's `hidden` until the provider is
           // remote; disabled (never hidden) while a draft is pending, with the
@@ -2476,9 +2547,38 @@ window.__ModuleLoader__.load({
               type: 'button',
               'data-mc-model-load': 'true',
               disabled: actions.load.disabled,
+              title: loadBlock === '' ? undefined : t(EMBEDDING_BLOCK_KEYS[loadBlock]),
+              // A disabled button is not focusable, so the reason is also wired as
+              // the description of the field it belongs to.
+              'aria-describedby': loadBlock === '' ? undefined : id + '-block',
               onClick: () => { void loadEmbeddingModels() },
               style: MODEL_LINK_STYLE,
             }, t('settings.embedding.loadModels'))
+          // T41: the reason has to sit next to the button. The card-wide line lives
+          // under the fields, so a disabled 加载模型 beside the model input used to
+          // look like a dead control.
+          const loadBlockLine = actions.load.hidden || loadBlock === ''
+            ? null
+            : el('span', {
+              key: 'load-block',
+              id: id + '-block',
+              'data-mc-model-block': loadBlock,
+              style: { fontSize: 11, opacity: 0.75 },
+            }, [
+              t(EMBEDDING_BLOCK_KEYS[loadBlock]),
+              loadBlock === 'saved'
+                ? el('button', {
+                  key: 'save',
+                  type: 'button',
+                  'data-mc-model-block-save': 'true',
+                  // `save()` silently refuses an invalid plan; say so by disabling
+                  // rather than letting the click do nothing.
+                  disabled: !shell.writable || !shell.available || shell.invalid,
+                  onClick: () => { void save() },
+                  style: Object.assign({}, MODEL_LINK_STYLE, { marginInlineStart: 6 }),
+                }, t('settings.form.save'))
+                : null,
+            ])
           const wrapper = (children) => el('div', {
             key: id,
             'data-mc-model-field': 'true',
@@ -2516,6 +2616,7 @@ window.__ModuleLoader__.load({
               ]),
               el('span', { key: 'hint', style: { fontSize: 11, opacity: 0.6 } }, hint),
               loadButton,
+              loadBlockLine,
             ])
           }
           return wrapper([
@@ -2535,6 +2636,7 @@ window.__ModuleLoader__.load({
               onReset: () => stage(fieldKey(spec.path), { clear: true }),
             }),
             loadButton,
+            loadBlockLine,
             // Manual mode is never a dead end: with a list loaded the reader can
             // go back to picking, and picking is how a value outside the list is
             // replaced. Without a preset the list belongs to no chosen service,
@@ -3424,7 +3526,7 @@ window.__ModuleLoader__.load({
         'settings.field.embedding.authHeader.label': '认证头',
         'settings.field.embedding.authHeader.hint': '多数服务使用 Authorization；Azure 可用 api-key。',
         'settings.field.embedding.model.label': '模型 ID',
-        'settings.field.embedding.model.hint': '从模型列表选择，或手动填写服务商公布的模型 ID。',
+        'settings.field.embedding.model.hint': '先点「加载模型」拉取服务商公布的模型 ID，再从这里选择；列表里没有的模型也可以直接填写。',
         'settings.field.embedding.apiKeyEnv.label': 'API Key 环境变量',
         'settings.field.embedding.apiKeyEnv.hint': '只写变量名，不写密钥值；留空表示未绑定凭据，SiliconFlow 预设仍会沿用 SILICONFLOW_API_KEY 环境变量。',
         'settings.field.embedding.apiKey.label': 'API Key',
@@ -3454,6 +3556,14 @@ window.__ModuleLoader__.load({
         'settings.embedding.offNote': '语义检索已关闭，远程设置已隐藏。',
         'settings.embedding.status': '状态',
         'settings.embedding.savedFirst': '先保存当前修改，再执行远程操作。',
+        'settings.embedding.block.readonly': '设置页只读，无法执行远程操作。',
+        'settings.embedding.block.busy': '有远程操作正在进行，请稍候。',
+        'settings.embedding.block.paused': '向量迁移已暂停，先点「继续」。',
+        'settings.embedding.block.memory': '记忆功能已关闭，远程向量不可用。',
+        'settings.embedding.block.endpoint': '请先填写接口地址。',
+        'settings.embedding.block.saved': '先保存当前修改，再执行远程操作。',
+        'settings.embedding.block.key': '尚未配置 API Key：先在下方「密钥」行填写并保存。',
+        'settings.embedding.block.model': '先选择或填写模型 ID。',
         'settings.embedding.keyPresent': 'API Key：已配置',
         'settings.embedding.keyAbsent': 'API Key：未配置',
         'settings.embedding.keyCredential': 'API Key：已配置（凭据库）',
@@ -3787,7 +3897,7 @@ window.__ModuleLoader__.load({
         'settings.field.embedding.authHeader.label': 'Auth header',
         'settings.field.embedding.authHeader.hint': 'Most services use Authorization; Azure can use api-key.',
         'settings.field.embedding.model.label': 'Model ID',
-        'settings.field.embedding.model.hint': 'Pick from the model list or type a vendor-published model ID.',
+        'settings.field.embedding.model.hint': 'Click Load models to fetch the provider\'s model IDs, then pick one here; a model the list does not include can be typed in directly.',
         'settings.field.embedding.apiKeyEnv.label': 'API key environment variable',
         'settings.field.embedding.apiKeyEnv.hint': 'Name only, never the value; leave empty to leave it unbound (the SiliconFlow preset still uses SILICONFLOW_API_KEY).',
         'settings.field.embedding.apiKey.label': 'API key',
@@ -3817,6 +3927,14 @@ window.__ModuleLoader__.load({
         'settings.embedding.offNote': 'Semantic search is off; the remote settings are hidden.',
         'settings.embedding.status': 'Status',
         'settings.embedding.savedFirst': 'Save the current edits before using remote actions.',
+        'settings.embedding.block.readonly': 'Settings are read-only here, so remote actions are unavailable.',
+        'settings.embedding.block.busy': 'A remote operation is already running; try again when it finishes.',
+        'settings.embedding.block.paused': 'The vector migration is paused; resume it first.',
+        'settings.embedding.block.memory': 'Memory is off, so remote vectors are unavailable.',
+        'settings.embedding.block.endpoint': 'Fill in the endpoint first.',
+        'settings.embedding.block.saved': 'Save the current edits before using remote actions.',
+        'settings.embedding.block.key': 'No API key yet: fill in the key row below and save it.',
+        'settings.embedding.block.model': 'Pick or type a model ID first.',
         'settings.embedding.keyPresent': 'API key: configured',
         'settings.embedding.keyAbsent': 'API key: not configured',
         'settings.embedding.keyCredential': 'API key: configured (credential store)',
@@ -5117,7 +5235,8 @@ window.__ModuleLoader__.load({
         fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags,
         embeddingFieldVisible, embeddingKeyRowState, embeddingStateKeys: EMBEDDING_STATE_KEYS,
         embeddingModelFieldMode, embeddingModelSelectValue, embeddingProbeResultText, embeddingVerdictText,
-        embeddingNetworkFailure, embeddingModelTargetKey, embeddingDraftControls,
+        embeddingNetworkFailure, embeddingModelTargetKey, embeddingDraftControls, embeddingBlockReason,
+        EMBEDDING_BLOCK_KEYS,
         EMBEDDING_ERROR_KEYS, MANUAL_MODEL_VALUE,
         normalizeEmbeddingPreset, normalizeEndpointText, embeddingPresetOwnsTransport, SILICONFLOW_ENDPOINT,
         // The number/text formatters are the panel's display contract; the

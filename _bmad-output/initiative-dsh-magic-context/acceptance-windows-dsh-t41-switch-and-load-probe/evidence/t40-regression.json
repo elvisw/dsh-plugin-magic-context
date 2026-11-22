@@ -1,0 +1,6 @@
+{
+  "note": "T40 gate re-run against the T41 candidate bytes (same tarball as this ticket)",
+  "steps": 51,
+  "failures": [],
+  "errors": []
+}

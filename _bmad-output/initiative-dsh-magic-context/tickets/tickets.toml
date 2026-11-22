@@ -477,3 +477,15 @@ after = [39]
 hitl = true
 risk = "medium"
 refine = true
+
+[[entry]]
+id = 41
+type = "story"
+title = "Say why a remote action is blocked, and tell readers to load models before picking"
+description = "After switching from local MiniLM to an OpenAI-compatible provider the 加载模型 button does nothing: while the switch is an unsaved draft the only explanation sits at the bottom of the card, and once the switch is saved but no API key is configured the button stays disabled with no explanation at all. Resolve the first blocker from the same inputs the action matrix uses, render it next to the button (with a title), offer an explicit 保存 shortcut when the blocker is an unsaved edit, use the same reason for the action row, and rewrite the model-field hint so it states the order: load the list first, then pick, and type an id the list lacks."
+verify = "Pure spec: embeddingBlockReason returns readonly / busy / memory / endpoint / saved / key / model in that order, test-only model blocking, and every code maps to a defined dictionary key. Isolated host gate t41_ui_gate.cjs: with a local seed no load control exists; switching the provider to openai-compatible shows it disabled with data-mc-model-block=saved inside [data-mc-model-field] plus a save shortcut; clicking that shortcut writes the provider and leaves the reason as key; saving a key removes the reason, enables the button, and loading lists 3 models without changing the profile bytes; the hint text contains 先点「加载模型」 and 直接填写. No server route, resolver or schema change; no version bump."
+covers = ["src/client/index.js", "tests/client-pure.spec.ts", "docs/dsh-plugin-settings-ui-contract.md", "docs/configuration.md", "CHANGELOG.md", "_bmad-output/initiative-dsh-magic-context/acceptance-windows-dsh-t41-switch-and-load-probe/"]
+after = [40]
+hitl = true
+risk = "low"
+refine = true

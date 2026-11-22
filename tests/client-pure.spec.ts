@@ -609,7 +609,7 @@ describe('routePairOps — the pin-pair write semantics', () => {
 })
 
 describe('settings information architecture (T21)', () => {
-  const { fieldSpecs, fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingFieldVisible, embeddingKeyRowState, embeddingStateKeys, normalizeEmbeddingPreset, normalizeEndpointText, embeddingPresetOwnsTransport, SILICONFLOW_ENDPOINT, embeddingModelFieldMode, embeddingModelSelectValue, embeddingProbeResultText, EMBEDDING_ERROR_KEYS, MANUAL_MODEL_VALUE, embeddingDraftControls } = api.__diagnostics
+  const { fieldSpecs, fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingFieldVisible, embeddingKeyRowState, embeddingStateKeys, normalizeEmbeddingPreset, normalizeEndpointText, embeddingPresetOwnsTransport, SILICONFLOW_ENDPOINT, embeddingModelFieldMode, embeddingModelSelectValue, embeddingProbeResultText, EMBEDDING_ERROR_KEYS, MANUAL_MODEL_VALUE, embeddingDraftControls, embeddingBlockReason, EMBEDDING_BLOCK_KEYS } = api.__diagnostics
 
   it('gives every field exactly one section and one placement', () => {
     const sections = fieldSections()
@@ -934,6 +934,68 @@ describe('settings information architecture (T21)', () => {
     expect(embeddingDraftControls({ dirty: true, writable: false }).discard).toEqual({ hidden: false, disabled: true })
     // Nothing unsaved means nothing to undo, whatever else is going on.
     expect(embeddingDraftControls({ saving: true }).discard.hidden).toBe(true)
+  })
+
+  it('names the reason a remote action is blocked, in the order the reader can act', () => {
+    const base = {
+      writable: true, busy: false, progressing: false, paused: false,
+      memoryEnabled: true, endpointResolvable: true, dirty: false, keyPresent: true, model: true,
+    }
+    expect(embeddingBlockReason('load', base)).toBe('')
+    expect(embeddingBlockReason('test', base)).toBe('')
+    // T41: the local -> remote switch is a draft, so the first thing the reader
+    // must do is save; without this code the button was simply dead.
+    expect(embeddingBlockReason('load', { ...base, dirty: true })).toBe('saved')
+    // A missing key is the next invisible gate: the form is clean, the saved
+    // status says remote, and Load stayed disabled with no explanation.
+    expect(embeddingBlockReason('load', { ...base, keyPresent: false })).toBe('key')
+    expect(embeddingBlockReason('load', { ...base, endpointResolvable: false })).toBe('endpoint')
+    expect(embeddingBlockReason('load', { ...base, memoryEnabled: false })).toBe('memory')
+    expect(embeddingBlockReason('load', { ...base, busy: true })).toBe('busy')
+    expect(embeddingBlockReason('load', { ...base, progressing: true })).toBe('busy')
+    expect(embeddingBlockReason('load', { ...base, paused: true })).toBe('paused')
+    expect(embeddingBlockReason('load', { ...base, writable: false })).toBe('readonly')
+    // Only Test needs a model.
+    expect(embeddingBlockReason('test', { ...base, model: false })).toBe('model')
+    expect(embeddingBlockReason('load', { ...base, model: false })).toBe('')
+    // Priority: a draft outranks a missing key because saving it is one click.
+    expect(embeddingBlockReason('load', { ...base, dirty: true, keyPresent: false })).toBe('saved')
+    expect(embeddingBlockReason('load', null)).toBe('')
+    // Every code resolves to a defined dictionary key.
+    const keys = api.__diagnostics.settingsCopyKeys()
+    for (const code of Object.keys(EMBEDDING_BLOCK_KEYS)) {
+      expect(keys).toContain(EMBEDDING_BLOCK_KEYS[code])
+    }
+  })
+
+  it('never leaves a disabled remote action without a named reason', () => {
+    // The defect T41 fixed was exactly this gap: the matrix said "disabled" and the
+    // screen said nothing. Enumerate every combination and require equivalence.
+    const states = ['remote-configured-not-started', 'remote-migrating', 'remote-paused']
+    const flags = [false, true]
+    for (const state of states) {
+      for (const busy of flags) for (const dirty of flags) for (const writable of flags)
+        for (const endpointResolvable of flags) for (const keyPresent of flags) for (const memoryEnabled of flags) {
+          const matrix = embeddingActionState({
+            state, busy, dirty, writable, endpointResolvable, keyPresent, memoryEnabled,
+            model: 'a/embed', total: 4, probeOk: true,
+          })
+          const reason = embeddingBlockReason('load', {
+            busy, dirty, writable, endpointResolvable, keyPresent, memoryEnabled,
+            progressing: state === 'remote-migrating',
+            paused: state === 'remote-paused',
+            model: true,
+          })
+          expect(reason !== '').toBe(matrix.load.disabled)
+          const testReason = embeddingBlockReason('test', {
+            busy, dirty, writable, endpointResolvable, keyPresent, memoryEnabled,
+            progressing: state === 'remote-migrating',
+            paused: state === 'remote-paused',
+            model: true,
+          })
+          expect(testReason !== '').toBe(matrix.test.disabled)
+        }
+    }
   })
 
   it('reports the connection test with a localised verdict', () => {

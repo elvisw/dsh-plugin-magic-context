@@ -1,0 +1,28 @@
+STEP local-hides-load {"ok":true}
+STEP switch-shows-load {"ok":true}
+STEP switch-disables-load {"ok":true}
+STEP block-line-next-to-load {"ok":true}
+STEP block-line-is-in-model-field {"ok":true}
+STEP block-line-names-draft {"ok":true,"code":"saved","text":"先保存当前修改，再执行远程操作。保存"}
+STEP block-line-offers-save {"ok":true}
+STEP load-button-carries-reason {"ok":true,"title":"先保存当前修改，再执行远程操作。"}
+STEP load-button-described-by-block {"ok":true,"describedBy":"mc-field-embedding.model-block"}
+STEP inline-save-writes-provider {"ok":true}
+STEP inline-save-changed-profile {"ok":true}
+STEP inline-save-clears-draft-reason {"ok":true,"code":"key"}
+STEP block-line-names-missing-key {"ok":true,"code":"key","text":"尚未配置 API Key：先在下方「密钥」行填写并保存。"}
+STEP block-line-mentions-key {"ok":true,"text":"尚未配置 API Key：先在下方「密钥」行填写并保存。"}
+STEP no-save-link-for-key-blocker {"ok":true,"blockCount":1}
+STEP load-still-disabled-without-key {"ok":true}
+STEP block-line-gone {"ok":true}
+STEP load-enabled-with-key {"ok":true}
+STEP load-succeeds {"ok":true,"text":"已加载 3 个模型"}
+STEP load-does-not-write-profile {"ok":true}
+STEP model-field-is-select {"ok":true,"tag":"SELECT"}
+STEP hint-tells-load-first {"ok":true,"text":"模型 ID\n请选择模型…\nfixture-embed-a\nfixture-embed-b\nfixture-bad-auth\n手动输入模型 ID…\n先点「加载模型」拉取服务商公布的模型 ID，再从这里选择；列表里没有的模型也可以直接填写。\n加载模型"}
+STEP hint-mentions-manual-entry {"ok":true,"text":"模型 ID\n请选择模型…\nfixture-embed-a\nfixture-embed-b\nfixture-bad-auth\n手动输入模型 ID…\n先点「加载模型」拉取服务商公布的模型 ID，再从这里选择；列表里没有的模型也可以直接填写。\n加载模型"}
+FAILURES 0 ERRORS 0
+
+
+
+--- stderr ---

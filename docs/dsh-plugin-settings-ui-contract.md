@@ -261,9 +261,15 @@ Embedding actions:
 - Neither Load models nor Test writes configuration: they read the saved profile
   and never call the settings `mutate`. The host footer Save is the only writer of
   field drafts.
-- While the form is dirty, Load models, Test, Start and Rollback are disabled but
-  stay visible, and the card shows `先保存当前修改，再执行远程操作。` The line is
-  rendered even before the first status snapshot arrives.
+- A disabled Load models or Test states its blocker in place, resolved by
+  `embeddingBlockReason` in the order the reader can act: read-only, another remote
+  operation running, migration paused, memory off, unresolvable endpoint, unsaved
+  edits, missing API key, and for Test only, a missing model. The same sentence
+  appears next to the control (also as its `title` and `aria-describedby`) and in
+  the action row. Start keeps its own gates (probe, coverage, dimensions) and does
+  not use this reason line.
+- When the blocker is an unsaved edit, the reason line carries an explicit `保存`
+  button; it is the reader's click, not an implicit save.
 - A `撤销未保存更改` control follows the status strip (outside its `aria-live`
   region) whenever anything is unsaved — a staged field draft, a rejected save, or
   text typed into the key input. It clears those drafts, emits no write, and hides

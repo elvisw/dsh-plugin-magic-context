@@ -1,0 +1,16 @@
+{
+  "source": {
+    "src/client/index.js": "62fe3f5c9453121938ff8eb56e8a1d6814d7a7e8656462796ce14c980a58dfee",
+    "lib/client.js": "62fe3f5c9453121938ff8eb56e8a1d6814d7a7e8656462796ce14c980a58dfee",
+    "tests/client-pure.spec.ts": "39b90fe3b23627403d85ba80d29ac973e6ef764f95f2a459a5a1f54c56551d90"
+  },
+  "candidate": {
+    "path": "elvisw-dsh-magic-context-0.18.13.tgz",
+    "sha256": "e69be80a96f19a972f14eb6205ebb8b75df81c7fbd98642adf8e3081678354f5",
+    "bytes": 4083343,
+    "members": 71
+  },
+  "host": {
+    "dshVersion": "0.2.2-rc.5"
+  }
+}
