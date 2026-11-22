@@ -1,0 +1,13 @@
+{
+  "attestationCount": 2,
+  "predicateTypes": [
+    {
+      "predicateType": "https://github.com/npm/attestation/tree/main/specs/publish/v0.1",
+      "payloadLength": 608
+    },
+    {
+      "predicateType": "https://slsa.dev/provenance/v1",
+      "payloadLength": 1448
+    }
+  ]
+}

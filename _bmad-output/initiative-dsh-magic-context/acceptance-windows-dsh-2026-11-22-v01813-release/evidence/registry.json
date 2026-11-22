@@ -1,0 +1,40 @@
+{
+  "checkedAt": "2026-11-22T03:25:25Z",
+  "distTags": {
+    "bootstrap": "0.0.0-bootstrap.0",
+    "latest": "0.18.13"
+  },
+  "version": "0.18.13",
+  "gitHead": "ff7c3e369a6d53a35ba749572c4a4d05802e5f2b",
+  "integrity": "sha512-onC5WAmiQrRySogAsJ6ID5VvLeAP/W+rWLBG8GBorO7bXzrvlNG2vO+Nf0B6dcq/FAH+mDBqhWPvAs97aoJUcw==",
+  "shasum": "955706f93a9ea86def96a653e130c7dff32c268f",
+  "registry": {
+    "path": "registry-0.18.13.tgz",
+    "sha256": "39160ef9ea678e9bc9ec963e709dac11821537cef4285f3f006301437bae65cc",
+    "bytes": 4082248
+  },
+  "localCandidate": {
+    "path": "elvisw-dsh-magic-context-0.18.13.tgz",
+    "sha256": "39160ef9ea678e9bc9ec963e709dac11821537cef4285f3f006301437bae65cc",
+    "bytes": 4082248
+  },
+  "byteIdentical": true,
+  "poll": [
+    {
+      "at": "03:24:18Z",
+      "latest": "0.18.12"
+    },
+    {
+      "at": "03:24:39Z",
+      "latest": "0.18.12"
+    },
+    {
+      "at": "03:25:01Z",
+      "latest": "0.18.12"
+    },
+    {
+      "at": "03:25:22Z",
+      "latest": "0.18.13"
+    }
+  ]
+}

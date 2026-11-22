@@ -1,10 +1,20 @@
 {
-  "count": 3,
+  "count": 11,
   "files": [
     {
       "path": "acceptance-report.md",
-      "sha256": "3b39ef9293464992f53140801a611f65867078165a8ce6f80a154a0512edc6db",
-      "bytes": 1557
+      "sha256": "d47c6b29943397d74f7863bd43953fd05936d491518067733f525c79ad160f5c",
+      "bytes": 2950
+    },
+    {
+      "path": "evidence/daily-profile-dump.txt",
+      "sha256": "b7f054c397f82cc895962a42c3e52cbe3ae822161a507b27e40d594288891550",
+      "bytes": 47714
+    },
+    {
+      "path": "evidence/daily-profile.json",
+      "sha256": "4debb947aff1c7c2f3566914b62b36661995db41e1583a0e2e67f3aeffc02daa",
+      "bytes": 466
     },
     {
       "path": "evidence/pack-compare.json",
@@ -12,9 +22,39 @@
       "bytes": 728
     },
     {
+      "path": "evidence/provenance.json",
+      "sha256": "629facae3b0faf2089c8cef4a58c4d24b12084f6739b0f61792ac1e3007eb9dc",
+      "bytes": 282
+    },
+    {
+      "path": "evidence/registry.json",
+      "sha256": "ed558ea016e8e25d0d97adc35d5c70cda75b7b68012e56181ec7aaf4cf06f164",
+      "bytes": 1015
+    },
+    {
+      "path": "scripts/attest_01813.py",
+      "sha256": "86e19467a80b4fa31d9cff73f029023086344e4033e121e152d37ed6fb188325",
+      "bytes": 933
+    },
+    {
       "path": "scripts/compare_01813.py",
       "sha256": "8fba0f720ea2365f544fb7cfb806bc3fa6825135a3ff119128722e4a48941618",
       "bytes": 2593
+    },
+    {
+      "path": "scripts/daily_profile_verify_01813.py",
+      "sha256": "273374d5eac6673b57c96eb84a0083169c65d042f79a5e2557b7d6837d0ee45f",
+      "bytes": 1581
+    },
+    {
+      "path": "scripts/poll_registry_01813.py",
+      "sha256": "132d68423e42eeba3f7325b25f3306dfb7ae1ebaa1dfbf6ccb9f6cc787b486e8",
+      "bytes": 2882
+    },
+    {
+      "path": "scripts/upgrade_daily_01813.py",
+      "sha256": "6951c2fe2a8b482590b20b61f1980921e5a76823ba8199797a6ecb40a34d27a0",
+      "bytes": 1618
     }
   ]
 }
