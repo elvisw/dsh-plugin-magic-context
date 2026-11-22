@@ -253,10 +253,22 @@ One `settings.section` card, rendered as a single page:
 
 Embedding actions:
 
+- Load models sits in the `模型 ID` field row (`[data-mc-model-field]`), not in the
+  card-wide action row. Test stays in the action row: it exercises the whole
+  target, not one field.
 - Load models requires a resolvable endpoint (saved or preset default); Test
   requires a saved model and a resolvable endpoint.
-- Dirty Load/Test are labelled `保存并加载模型` / `保存并测试`, run one existing
-  revision-fenced Save, and perform the action only if that Save is accepted.
+- Neither Load models nor Test writes configuration: they read the saved profile
+  and never call the settings `mutate`. The host footer Save is the only writer of
+  field drafts.
+- While the form is dirty, Load models, Test, Start and Rollback are disabled but
+  stay visible, and the card shows `先保存当前修改，再执行远程操作。` The line is
+  rendered even before the first status snapshot arrives.
+- A `撤销未保存更改` control follows the status strip (outside its `aria-live`
+  region) whenever anything is unsaved — a staged field draft, a rejected save, or
+  text typed into the key input. It clears those drafts, emits no write, and hides
+  itself once they are gone. It is disabled while saving and on a read-only
+  deployment.
 - Start requires a clean form, a saved model, a probed dimension, at least one
   searchable memory (`coverage.total > 0`), an available API key when one is
   configured, enabled memory and no `dimensions-unsupported` failure. It

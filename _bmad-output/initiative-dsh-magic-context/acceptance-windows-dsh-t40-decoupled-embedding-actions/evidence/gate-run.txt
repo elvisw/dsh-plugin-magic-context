@@ -1,0 +1,54 @@
+STEP seeded-remote {"ok":true}
+STEP key-saved {"ok":true}
+STEP load-rendered-once {"ok":true,"count":1}
+STEP load-inside-model-field {"ok":true}
+STEP model-control-is-the-field {"ok":true,"tag":"INPUT"}
+STEP load-is-not-inside-the-control {"ok":true,"modelControlCount":1}
+STEP no-second-model-select {"ok":true}
+STEP models-loaded-message {"ok":true,"text":"已加载 3 个模型"}
+STEP load-does-not-write-profile {"ok":true,"changed":""}
+STEP load-label-is-exact {"ok":true,"text":"加载模型"}
+STEP test-label-is-exact {"ok":true,"text":"测试连接"}
+STEP dirty-disables-load {"ok":true}
+STEP dirty-keeps-load-visible {"ok":true}
+STEP dirty-disables-test {"ok":true}
+STEP dirty-keeps-test-visible {"ok":true}
+STEP dirty-explains-why {"ok":true}
+STEP dirty-shows-discard {"ok":true}
+STEP no-save-coupled-label {"ok":true}
+STEP discard-restores-saved-value {"ok":true,"value":"http://127.0.0.1:12714/v1"}
+STEP discard-hides-itself {"ok":true}
+STEP discard-enables-load {"ok":true}
+STEP discard-does-not-write-profile {"ok":true}
+STEP discard-disabled-host-save {"ok":true}
+STEP key-draft-shows-discard {"ok":true}
+STEP key-draft-does-not-dirty-form {"ok":true}
+STEP discard-clears-key-input {"ok":true,"value":""}
+STEP discard-key-hides-itself {"ok":true}
+STEP model-field-is-select-after-load {"ok":true,"tag":"SELECT"}
+STEP empty-value-selects-nothing {"ok":true,"value":""}
+STEP picker-has-empty-option {"ok":true,"value":"","text":"请选择模型…"}
+STEP model-pick-disables-load {"ok":true}
+STEP save-enabled-model-pick {"ok":true}
+STEP model-saved-from-picker {"ok":true}
+STEP probe-result-is-success {"ok":true}
+STEP probe-result-names-model-and-dims {"ok":true,"text":"连接成功 · fixture-embed-b · 16 维 · 5 ms"}
+STEP model-edit-clears-verdict {"ok":true}
+STEP save-enabled-bad-model {"ok":true}
+STEP probe-result-is-error {"ok":true}
+STEP probe-failure-localised {"ok":true,"text":"认证失败：检查密钥是否有效"}
+STEP manual-entry-turns-field-into-text {"ok":true}
+STEP manual-entry-keeps-value {"ok":true,"value":"fixture-bad-auth"}
+STEP save-enabled-manual-model {"ok":true}
+STEP manual-id-saved {"ok":true}
+STEP manual-sentinel-never-saved {"ok":true}
+STEP outside-value-keeps-text {"ok":true}
+STEP outside-value-not-replaced {"ok":true,"value":"my-own-embed-model"}
+STEP from-list-affordance {"ok":true}
+STEP from-list-reopens-picker {"ok":true}
+STEP forced-picker-draft-is-dirty {"ok":true}
+STEP discard-drops-forced-picker {"ok":true,"tag":"INPUT"}
+STEP discard-shows-saved-outside-value {"ok":true,"value":"my-own-embed-model"}
+FAILURES 0 ERRORS 0
+
+--- stderr ---

@@ -1,0 +1,65 @@
+{
+  "count": 12,
+  "files": [
+    {
+      "path": "acceptance-report.md",
+      "sha256": "4b0a5eba4ac5d65982c9e5f642172f9ef65964b6d59c7349e1ac6cb940425085",
+      "bytes": 5061
+    },
+    {
+      "path": "evidence/gate-run.txt",
+      "sha256": "8d49c84852cbb8a2b8fa5e4aeaa151e28490eb620bf41cfa11493ee0416a738d",
+      "bytes": 2608
+    },
+    {
+      "path": "evidence/host-env.json",
+      "sha256": "a809a8f1f4eba6fa5d38ee91ccc430ed9e79f2a6714f09944afba5570a7dda68",
+      "bytes": 441
+    },
+    {
+      "path": "evidence/prepare.json",
+      "sha256": "999c7574f69959e335a9f095a7dd03f78729c4b296e088e1c306dec3e101e8ea",
+      "bytes": 439
+    },
+    {
+      "path": "evidence/provenance.json",
+      "sha256": "b8d7c5d247f57262ee24aff894334d6550af1dff146384740bf41d9227e2a66e",
+      "bytes": 769
+    },
+    {
+      "path": "evidence/server-log.txt",
+      "sha256": "701541eb0c3355205c714f14b1888376cf5363d295a02f266c5296936f819027",
+      "bytes": 220
+    },
+    {
+      "path": "evidence/ui-gate.json",
+      "sha256": "94a2d55305a29217d8cffad55b81cabdaa166c49ac42e428388868388817019f",
+      "bytes": 6438
+    },
+    {
+      "path": "fake_embedding_server.py",
+      "sha256": "79a202815c5d5954a9941c27750e4cbce5a2e86db95523ca934835098b48b94a",
+      "bytes": 4474
+    },
+    {
+      "path": "gate-output.txt",
+      "sha256": "b9044e026f2bc08295e49eaac18c0107543c72510d966126797b275af76b5143",
+      "bytes": 2610
+    },
+    {
+      "path": "prepare_t40.py",
+      "sha256": "5fa25b180653f19f294b6df77d461f46e5af29828571c805d8ac5cb1ce57a66d",
+      "bytes": 5680
+    },
+    {
+      "path": "run_t40_host.py",
+      "sha256": "9550d47a4945eb80feb9ace5e9f383b76af22991935537a7dc1ca822b7d231bf",
+      "bytes": 6942
+    },
+    {
+      "path": "t40_ui_gate.cjs",
+      "sha256": "d373be8fc1aa5712e60938302096d5cda45549a320a5e6ecad9daffea9e07014",
+      "bytes": 14767
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "source": {
+    "src/client/index.js": "8cb09cdf7c5a7681262b6166e8f60dfb624f3785e81d70717c6433af516aa84f",
+    "lib/client.js": "8cb09cdf7c5a7681262b6166e8f60dfb624f3785e81d70717c6433af516aa84f",
+    "tests/client-pure.spec.ts": "b48cc5196c3777a5831059ec64b15d65e582b13685d06f93135d0c9fc3526062"
+  },
+  "candidate": {
+    "path": "elvisw-dsh-magic-context-0.18.12.tgz",
+    "sha256": "5abc54c845670db48e07ff1088059487c0e068f50c644afbdd204cd77eea4da1",
+    "bytes": 4082248,
+    "members": 71,
+    "matchesTarball": true
+  },
+  "host": {
+    "dshVersion": "0.2.2-rc.5"
+  },
+  "gitStatusPorcelainSha256": "7e9be07029cba4b1f8f91f671affb63a28e0a312b525152a8c2a2ad189b1c51d",
+  "note": "The gate installed this tarball; the tarball was built from these source bytes."
+}

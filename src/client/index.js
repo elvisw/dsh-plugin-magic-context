@@ -533,16 +533,14 @@ window.__ModuleLoader__.load({
     /**
      * The remote action matrix (T21). Pure so the node-side spec can pin every
      * precondition without a browser. `hidden` controls rendering; `disabled`
-     * controls interaction. A dirty Load/Test still shows, with a save-first
-     * label, because the action itself runs the existing revision-fenced Save.
+     * controls interaction. T40: a dirty form disables Load models and Test — they
+     * read the saved configuration only and never write it, so an unsaved edit has
+     * to be saved or discarded before either can run.
      */
     function embeddingActionState(input) {
       const source = input !== null && typeof input === 'object' ? input : {}
       const state = typeof source.state === 'string' ? source.state : ''
       const remote = state !== '' && state !== 'local' && state !== 'remote-off' && state !== 'rollback-local'
-      // T38: a draft switch to remote must expose Load models and Test right
-      // away; both labels say "save and …" and save first. Start/pause/resume/
-      // rollback stay bound to the saved status.
       const showRemote = remote || source.remoteDraft === true
       const dirty = source.dirty === true
       const writable = source.writable === true
@@ -562,8 +560,8 @@ window.__ModuleLoader__.load({
       return {
         remote,
         refresh: { hidden: false, disabled: busy || refreshing },
-        load: { hidden: !showRemote, disabled: busy || progressing || paused || !writable || !endpoint || !keyOk || !memoryOk },
-        test: { hidden: !showRemote, disabled: busy || progressing || paused || !writable || !model || !endpoint || !keyOk || !memoryOk },
+        load: { hidden: !showRemote, disabled: busy || progressing || paused || dirty || !writable || !endpoint || !keyOk || !memoryOk },
+        test: { hidden: !showRemote, disabled: busy || progressing || paused || dirty || !writable || !model || !endpoint || !keyOk || !memoryOk },
         start: {
           hidden: !remote || progressing || paused || ready || targetMissing,
           disabled: busy || !writable || dirty || !model || !probeOk || total === null || total <= 0
@@ -572,6 +570,23 @@ window.__ModuleLoader__.load({
         pause: { hidden: !progressing, disabled: busy },
         resume: { hidden: !paused, disabled: busy },
         rollback: { hidden: !armed, disabled: busy || !writable || dirty || progressing },
+      }
+    }
+
+    /**
+     * T40: whether the "discard unsaved changes" escape belongs on screen. Field
+     * drafts live in `staged` (and feed `dirty`), but text typed into the key input
+     * is a draft the host Save never sees, so it has to be passed separately —
+     * without it the control would be missing exactly when only a key was typed.
+     */
+    function embeddingDraftControls(input) {
+      const source = input !== null && typeof input === 'object' ? input : {}
+      const unsaved = source.dirty === true || source.keyDraft === true
+      return {
+        discard: {
+          hidden: !unsaved,
+          disabled: source.saving === true || source.writable === false,
+        },
       }
     }
 
@@ -939,8 +954,6 @@ window.__ModuleLoader__.load({
       'settings.status.busy',
       'settings.status.working',
       'settings.status.failed',
-      'settings.action.saveAndLoad',
-      'settings.action.saveAndTest',
       'settings.action.confirmStartTitle',
       'settings.action.confirmStartBody',
       'settings.action.confirmRollbackTitle',
@@ -1001,6 +1014,7 @@ window.__ModuleLoader__.load({
       'settings.embedding.readOnly',
       'settings.embedding.noAuth',
       'settings.embedding.loadModels',
+      'settings.embedding.discardDrafts',
       'settings.embedding.refresh',
       'settings.embedding.probe',
       'settings.embedding.start',
@@ -1434,11 +1448,30 @@ window.__ModuleLoader__.load({
           setFailed(false)
           setRevision((value) => value + 1)
         }
-        /** Drop every draft. */
+        /**
+         * T40: anything the reader has typed that is not in the profile yet — field
+         * drafts, a rejected save, or text in the key input. The key input never
+         * enters `staged`, so it needs its own clause; otherwise dropping a typed
+         * key would be impossible while the control that offers it stays hidden.
+         */
+        const hasUnsaved = () => staged.size > 0 || failed || embeddingKeyDraft.trim() !== ''
+
+        /**
+         * Drop every draft.
+         *
+         * T40: the two model-field view flags have to reset with the drafts. The
+         * picker can be forced on for a value the list lacks; if the reader then
+         * discards back to that saved value, a still-forced picker would render an
+         * empty select (`embeddingModelSelectValue` refuses ids the list lacks)
+         * where the saved configuration is a valid model id.
+         */
         const discard = () => {
-          if (staged.size === 0 && !failed) return
+          if (!hasUnsaved()) return
           staged.clear()
           setFailed(false)
+          setEmbeddingKeyDraft('')
+          setManualModel(false)
+          setModelPickerForced(false)
           setRevision((value) => value + 1)
         }
 
@@ -2093,7 +2126,10 @@ window.__ModuleLoader__.load({
         }
 
         const loadEmbeddingModels = () => {
-          if (embeddingBusy || !shell.writable) return Promise.resolve(false)
+          // T40: the route reads the saved profile only. The button is already
+          // disabled while the form is dirty; this guard keeps the contract even if
+          // a caller forgets the gate.
+          if (embeddingBusy || shell.dirty || !shell.writable) return Promise.resolve(false)
           setEmbeddingBusy(true)
           setEmbeddingMessage('')
           return fetch('/mc-embedding/models', { headers: { accept: 'application/json' } })
@@ -2120,17 +2156,6 @@ window.__ModuleLoader__.load({
               return false
             })
             .finally(() => setEmbeddingBusy(false))
-        }
-
-        /** Run one action through the existing revision-fenced Save first. */
-        const saveThen = (action) => {
-          if (!shell.dirty) {
-            void action()
-            return
-          }
-          void save().then((accepted) => {
-            if (accepted) void action()
-          })
         }
 
         const requestStart = () => {
@@ -2162,8 +2187,12 @@ window.__ModuleLoader__.load({
         const renderEmbeddingTools = () => {
           if (!shell.available) return null
           if (embeddingStatus === null) {
+            // T40: a pending draft disables the remote actions, so the reason has
+            // to be readable before the first status snapshot arrives — otherwise
+            // the disabled state would look like a broken page.
             return el('div', { key: 'embedding-tools-loading', style: { fontSize: 11.5, opacity: 0.7 } },
-              t('settings.embedding.working'))
+              t('settings.embedding.working')
+                + (shell.dirty ? ' · ' + t('settings.embedding.savedFirst') : ''))
           }
           const status = embeddingStatus
           const coverage = status.coverage === null
@@ -2197,16 +2226,13 @@ window.__ModuleLoader__.load({
           if (!actions.refresh.hidden) actionRow.push(button(
             'refresh', t('settings.embedding.refresh'), () => { void refreshEmbeddingStatus() }, actions.refresh.disabled,
           ))
-          if (!actions.load.hidden) actionRow.push(button(
-            'models',
-            t(shell.dirty ? 'settings.action.saveAndLoad' : 'settings.embedding.loadModels'),
-            () => saveThen(loadEmbeddingModels),
-            actions.load.disabled,
-          ))
+          // T40: Load models moved next to the model field; Test stays here because
+          // it exercises the whole target. Neither writes configuration — a dirty
+          // form disables both, and the card says why.
           if (!actions.test.hidden) actionRow.push(button(
             'probe',
-            t(shell.dirty ? 'settings.action.saveAndTest' : 'settings.embedding.probe'),
-            () => saveThen(() => callEmbedding('/mc-embedding/probe', undefined, { reportProbe: true })),
+            t('settings.embedding.probe'),
+            () => { void callEmbedding('/mc-embedding/probe', undefined, { reportProbe: true }) },
             actions.test.disabled,
           ))
           if (!actions.start.hidden) actionRow.push(button(
@@ -2439,8 +2465,27 @@ window.__ModuleLoader__.load({
             picker: modelPickerForced,
           })
           const hint = t(spec.hintKey)
+          // T40: Load models belongs to this field, not to the card-wide action
+          // row. Kept out of the load gate's `hidden` until the provider is
+          // remote; disabled (never hidden) while a draft is pending, with the
+          // card's save-first line explaining why.
+          const loadButton = actions.load.hidden
+            ? null
+            : el('button', {
+              key: 'load',
+              type: 'button',
+              'data-mc-model-load': 'true',
+              disabled: actions.load.disabled,
+              onClick: () => { void loadEmbeddingModels() },
+              style: MODEL_LINK_STYLE,
+            }, t('settings.embedding.loadModels'))
+          const wrapper = (children) => el('div', {
+            key: id,
+            'data-mc-model-field': 'true',
+            style: { display: 'grid', gap: 4, margin: '8px 0' },
+          }, children)
           if (mode === 'select') {
-            return el('div', { key: id, style: { display: 'grid', gap: 4, margin: '8px 0' } }, [
+            return wrapper([
               el('label', { key: 'label', htmlFor: id, style: { fontSize: 12 } }, t(spec.labelKey)),
               el('select', {
                 key: 'select',
@@ -2470,9 +2515,10 @@ window.__ModuleLoader__.load({
                 el('option', { key: 'manual', value: MANUAL_MODEL_VALUE }, t('settings.embedding.modelManual')),
               ]),
               el('span', { key: 'hint', style: { fontSize: 11, opacity: 0.6 } }, hint),
+              loadButton,
             ])
           }
-          return el('div', { key: id, style: { display: 'grid', gap: 4, margin: '8px 0' } }, [
+          return wrapper([
             el(SettingsValueField, {
               key: 'value',
               id,
@@ -2488,6 +2534,7 @@ window.__ModuleLoader__.load({
               onEdit: (text) => stage(fieldKey(spec.path), { clear: false, text }),
               onReset: () => stage(fieldKey(spec.path), { clear: true }),
             }),
+            loadButton,
             // Manual mode is never a dead end: with a list loaded the reader can
             // go back to picking, and picking is how a value outside the list is
             // replaced. Without a preset the list belongs to no chosen service,
@@ -2691,6 +2738,36 @@ window.__ModuleLoader__.load({
           }, text)
         }
 
+        /**
+         * T40: the escape hatch for a draft the reader does not want to keep. It
+         * sits after the status strip, never inside it — the strip is an
+         * `aria-live` region and a focusable control there would be re-announced
+         * on every poll.
+         */
+        const renderDiscardDrafts = () => {
+          const draft = embeddingDraftControls({
+            dirty: shell.dirty,
+            keyDraft: embeddingKeyDraft.trim() !== '',
+            // A key save in flight is a write the reader has already started:
+            // discarding the input now would blank it while the credential still
+            // lands, so treat it like a save in progress.
+            saving: saving || embeddingKeyBusy,
+            writable: shell.writable,
+          })
+          if (draft.discard.hidden) return null
+          return el('div', {
+            key: 'mc-discard-drafts',
+            style: { paddingBottom: 4 },
+          }, el('button', {
+            key: 'discard',
+            type: 'button',
+            'data-mc-discard-drafts': 'true',
+            disabled: draft.discard.disabled,
+            onClick: discard,
+            style: MODEL_LINK_STYLE,
+          }, t('settings.embedding.discardDrafts')))
+        }
+
         const renderSection = (section) => {
           const commonSpecs = section.common.filter(specVisible)
           const advancedSpecs = section.advanced.filter(specVisible)
@@ -2794,6 +2871,7 @@ window.__ModuleLoader__.load({
           renderJumpRow(),
           ...sections.map(renderSection),
           renderStatusStrip(),
+          renderDiscardDrafts(),
           renderConfirm(),
         ])
       }
@@ -3308,8 +3386,6 @@ window.__ModuleLoader__.load({
         'settings.status.busy': '迁移中，暂停后可保存',
         'settings.status.working': '处理中…',
         'settings.status.failed': '保存失败',
-        'settings.action.saveAndLoad': '保存并加载模型',
-        'settings.action.saveAndTest': '保存并测试',
         'settings.action.confirmStartTitle': '开始重建向量？',
         'settings.action.confirmStartBody': '这会重新计算 {count} 条记忆，可能产生 API 费用。',
         'settings.action.confirmRollbackTitle': '回滚到本地？',
@@ -3403,6 +3479,7 @@ window.__ModuleLoader__.load({
         'settings.embedding.readOnly': '设置页只读。',
         'settings.embedding.noAuth': 'API Key：无需认证',
         'settings.embedding.loadModels': '加载模型',
+        'settings.embedding.discardDrafts': '撤销未保存更改',
         'settings.embedding.refresh': '刷新',
         'settings.embedding.probe': '测试连接',
         'settings.embedding.start': '开始重建向量',
@@ -3672,8 +3749,6 @@ window.__ModuleLoader__.load({
         'settings.status.busy': 'Migrating; pause before saving',
         'settings.status.working': 'Working…',
         'settings.status.failed': 'Save failed',
-        'settings.action.saveAndLoad': 'Save and load models',
-        'settings.action.saveAndTest': 'Save and test',
         'settings.action.confirmStartTitle': 'Start embedding rebuild?',
         'settings.action.confirmStartBody': 'This sends {count} memories to the endpoint and may cost quota.',
         'settings.action.confirmRollbackTitle': 'Roll back to local?',
@@ -3767,6 +3842,7 @@ window.__ModuleLoader__.load({
         'settings.embedding.readOnly': 'Settings are read-only.',
         'settings.embedding.noAuth': 'API key: not required',
         'settings.embedding.loadModels': 'Load models',
+        'settings.embedding.discardDrafts': 'Discard unsaved changes',
         'settings.embedding.refresh': 'Refresh',
         'settings.embedding.probe': 'Test connection',
         'settings.embedding.start': 'Start rebuild',
@@ -5041,7 +5117,7 @@ window.__ModuleLoader__.load({
         fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags,
         embeddingFieldVisible, embeddingKeyRowState, embeddingStateKeys: EMBEDDING_STATE_KEYS,
         embeddingModelFieldMode, embeddingModelSelectValue, embeddingProbeResultText, embeddingVerdictText,
-        embeddingNetworkFailure, embeddingModelTargetKey,
+        embeddingNetworkFailure, embeddingModelTargetKey, embeddingDraftControls,
         EMBEDDING_ERROR_KEYS, MANUAL_MODEL_VALUE,
         normalizeEmbeddingPreset, normalizeEndpointText, embeddingPresetOwnsTransport, SILICONFLOW_ENDPOINT,
         // The number/text formatters are the panel's display contract; the

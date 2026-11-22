@@ -1,0 +1,2 @@
+dsh web: http://127.0.0.1:12723/?token=<redacted>
+[llm-deepseek-api-key] model listing from https://api.deepseek.com/models failed (LlmError: https://api.deepseek.com/models answered HTTP 401); using the bundled catalog

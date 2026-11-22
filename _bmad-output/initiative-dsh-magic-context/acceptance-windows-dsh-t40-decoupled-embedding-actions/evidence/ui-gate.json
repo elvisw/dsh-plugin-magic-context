@@ -1,0 +1,281 @@
+{
+  "root": "C:\\Users\\elvis\\AppData\\Local\\Temp\\opencode\\dsh-mc-t40-20261122-110622",
+  "steps": [
+    {
+      "name": "seeded-remote",
+      "at": "2026-11-22T03:06:45.401Z",
+      "ok": true
+    },
+    {
+      "name": "key-saved",
+      "at": "2026-11-22T03:06:47.973Z",
+      "ok": true
+    },
+    {
+      "name": "load-rendered-once",
+      "at": "2026-11-22T03:06:47.978Z",
+      "ok": true,
+      "count": 1
+    },
+    {
+      "name": "load-inside-model-field",
+      "at": "2026-11-22T03:06:47.981Z",
+      "ok": true
+    },
+    {
+      "name": "model-control-is-the-field",
+      "at": "2026-11-22T03:06:48.006Z",
+      "ok": true,
+      "tag": "INPUT"
+    },
+    {
+      "name": "load-is-not-inside-the-control",
+      "at": "2026-11-22T03:06:48.012Z",
+      "ok": true,
+      "modelControlCount": 1
+    },
+    {
+      "name": "no-second-model-select",
+      "at": "2026-11-22T03:06:48.016Z",
+      "ok": true
+    },
+    {
+      "name": "models-loaded-message",
+      "at": "2026-11-22T03:06:51.264Z",
+      "ok": true,
+      "text": "已加载 3 个模型"
+    },
+    {
+      "name": "load-does-not-write-profile",
+      "at": "2026-11-22T03:06:51.264Z",
+      "ok": true,
+      "changed": ""
+    },
+    {
+      "name": "load-label-is-exact",
+      "at": "2026-11-22T03:06:51.271Z",
+      "ok": true,
+      "text": "加载模型"
+    },
+    {
+      "name": "test-label-is-exact",
+      "at": "2026-11-22T03:06:51.271Z",
+      "ok": true,
+      "text": "测试连接"
+    },
+    {
+      "name": "dirty-disables-load",
+      "at": "2026-11-22T03:06:51.996Z",
+      "ok": true
+    },
+    {
+      "name": "dirty-keeps-load-visible",
+      "at": "2026-11-22T03:06:51.999Z",
+      "ok": true
+    },
+    {
+      "name": "dirty-disables-test",
+      "at": "2026-11-22T03:06:52.003Z",
+      "ok": true
+    },
+    {
+      "name": "dirty-keeps-test-visible",
+      "at": "2026-11-22T03:06:52.005Z",
+      "ok": true
+    },
+    {
+      "name": "dirty-explains-why",
+      "at": "2026-11-22T03:06:52.008Z",
+      "ok": true
+    },
+    {
+      "name": "dirty-shows-discard",
+      "at": "2026-11-22T03:06:52.011Z",
+      "ok": true
+    },
+    {
+      "name": "no-save-coupled-label",
+      "at": "2026-11-22T03:06:52.014Z",
+      "ok": true
+    },
+    {
+      "name": "discard-restores-saved-value",
+      "at": "2026-11-22T03:06:53.051Z",
+      "ok": true,
+      "value": "http://127.0.0.1:12714/v1"
+    },
+    {
+      "name": "discard-hides-itself",
+      "at": "2026-11-22T03:06:53.055Z",
+      "ok": true
+    },
+    {
+      "name": "discard-enables-load",
+      "at": "2026-11-22T03:06:53.060Z",
+      "ok": true
+    },
+    {
+      "name": "discard-does-not-write-profile",
+      "at": "2026-11-22T03:06:53.061Z",
+      "ok": true
+    },
+    {
+      "name": "discard-disabled-host-save",
+      "at": "2026-11-22T03:06:53.067Z",
+      "ok": true
+    },
+    {
+      "name": "key-draft-shows-discard",
+      "at": "2026-11-22T03:06:53.797Z",
+      "ok": true
+    },
+    {
+      "name": "key-draft-does-not-dirty-form",
+      "at": "2026-11-22T03:06:53.801Z",
+      "ok": true
+    },
+    {
+      "name": "discard-clears-key-input",
+      "at": "2026-11-22T03:06:54.445Z",
+      "ok": true,
+      "value": ""
+    },
+    {
+      "name": "discard-key-hides-itself",
+      "at": "2026-11-22T03:06:54.447Z",
+      "ok": true
+    },
+    {
+      "name": "model-field-is-select-after-load",
+      "at": "2026-11-22T03:06:57.696Z",
+      "ok": true,
+      "tag": "SELECT"
+    },
+    {
+      "name": "empty-value-selects-nothing",
+      "at": "2026-11-22T03:06:57.701Z",
+      "ok": true,
+      "value": ""
+    },
+    {
+      "name": "picker-has-empty-option",
+      "at": "2026-11-22T03:06:57.708Z",
+      "ok": true,
+      "value": "",
+      "text": "请选择模型…"
+    },
+    {
+      "name": "model-pick-disables-load",
+      "at": "2026-11-22T03:06:58.306Z",
+      "ok": true
+    },
+    {
+      "name": "save-enabled-model-pick",
+      "at": "2026-11-22T03:06:58.724Z",
+      "ok": true
+    },
+    {
+      "name": "model-saved-from-picker",
+      "at": "2026-11-22T03:07:00.155Z",
+      "ok": true
+    },
+    {
+      "name": "probe-result-is-success",
+      "at": "2026-11-22T03:07:03.698Z",
+      "ok": true
+    },
+    {
+      "name": "probe-result-names-model-and-dims",
+      "at": "2026-11-22T03:07:03.700Z",
+      "ok": true,
+      "text": "连接成功 · fixture-embed-b · 16 维 · 5 ms"
+    },
+    {
+      "name": "model-edit-clears-verdict",
+      "at": "2026-11-22T03:07:04.394Z",
+      "ok": true
+    },
+    {
+      "name": "save-enabled-bad-model",
+      "at": "2026-11-22T03:07:04.816Z",
+      "ok": true
+    },
+    {
+      "name": "probe-result-is-error",
+      "at": "2026-11-22T03:07:09.790Z",
+      "ok": true
+    },
+    {
+      "name": "probe-failure-localised",
+      "at": "2026-11-22T03:07:09.792Z",
+      "ok": true,
+      "text": "认证失败：检查密钥是否有效"
+    },
+    {
+      "name": "manual-entry-turns-field-into-text",
+      "at": "2026-11-22T03:07:10.505Z",
+      "ok": true
+    },
+    {
+      "name": "manual-entry-keeps-value",
+      "at": "2026-11-22T03:07:10.510Z",
+      "ok": true,
+      "value": "fixture-bad-auth"
+    },
+    {
+      "name": "save-enabled-manual-model",
+      "at": "2026-11-22T03:07:10.943Z",
+      "ok": true
+    },
+    {
+      "name": "manual-id-saved",
+      "at": "2026-11-22T03:07:12.370Z",
+      "ok": true
+    },
+    {
+      "name": "manual-sentinel-never-saved",
+      "at": "2026-11-22T03:07:12.370Z",
+      "ok": true
+    },
+    {
+      "name": "outside-value-keeps-text",
+      "at": "2026-11-22T03:07:15.618Z",
+      "ok": true
+    },
+    {
+      "name": "outside-value-not-replaced",
+      "at": "2026-11-22T03:07:15.622Z",
+      "ok": true,
+      "value": "my-own-embed-model"
+    },
+    {
+      "name": "from-list-affordance",
+      "at": "2026-11-22T03:07:15.624Z",
+      "ok": true
+    },
+    {
+      "name": "from-list-reopens-picker",
+      "at": "2026-11-22T03:07:16.268Z",
+      "ok": true
+    },
+    {
+      "name": "forced-picker-draft-is-dirty",
+      "at": "2026-11-22T03:07:16.967Z",
+      "ok": true
+    },
+    {
+      "name": "discard-drops-forced-picker",
+      "at": "2026-11-22T03:07:17.908Z",
+      "ok": true,
+      "tag": "INPUT"
+    },
+    {
+      "name": "discard-shows-saved-outside-value",
+      "at": "2026-11-22T03:07:17.913Z",
+      "ok": true,
+      "value": "my-own-embed-model"
+    }
+  ],
+  "failures": [],
+  "errors": []
+}

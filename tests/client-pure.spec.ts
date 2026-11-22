@@ -609,7 +609,7 @@ describe('routePairOps — the pin-pair write semantics', () => {
 })
 
 describe('settings information architecture (T21)', () => {
-  const { fieldSpecs, fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingFieldVisible, embeddingKeyRowState, embeddingStateKeys, normalizeEmbeddingPreset, normalizeEndpointText, embeddingPresetOwnsTransport, SILICONFLOW_ENDPOINT, embeddingModelFieldMode, embeddingModelSelectValue, embeddingProbeResultText, EMBEDDING_ERROR_KEYS, MANUAL_MODEL_VALUE } = api.__diagnostics
+  const { fieldSpecs, fieldSections, layoutOf, settingsSummary, embeddingActionState, embeddingStatusFlags, embeddingFieldVisible, embeddingKeyRowState, embeddingStateKeys, normalizeEmbeddingPreset, normalizeEndpointText, embeddingPresetOwnsTransport, SILICONFLOW_ENDPOINT, embeddingModelFieldMode, embeddingModelSelectValue, embeddingProbeResultText, EMBEDDING_ERROR_KEYS, MANUAL_MODEL_VALUE, embeddingDraftControls } = api.__diagnostics
 
   it('gives every field exactly one section and one placement', () => {
     const sections = fieldSections()
@@ -715,8 +715,12 @@ describe('settings information architecture (T21)', () => {
     expect(ready.start.disabled).toBe(false)
 
     const dirty = embeddingActionState({ ...base, dirty: true })
-    expect(dirty.load.disabled).toBe(false)
-    expect(dirty.test.disabled).toBe(false)
+    // T40: Load models and Test read the saved configuration only, so a pending
+    // draft disables them instead of quietly saving first. They stay visible.
+    expect(dirty.load.disabled).toBe(true)
+    expect(dirty.load.hidden).toBe(false)
+    expect(dirty.test.disabled).toBe(true)
+    expect(dirty.test.hidden).toBe(false)
     expect(dirty.start.disabled).toBe(true)
     expect(dirty.rollback.disabled).toBe(true)
     expect(ready.rollback.hidden).toBe(true)
@@ -867,17 +871,22 @@ describe('settings information architecture (T21)', () => {
     expect(local.test.hidden).toBe(true)
     expect(local.start.hidden).toBe(true)
 
-    // T38: a draft switch to remote exposes Load right away (Save and load),
-    // while Test waits for a model and Start waits for the saved state.
-    const draftRemote = embeddingActionState({ ...base, state: 'local', remoteDraft: true, model: '' })
+    // T38/T40: a draft switch to remote keeps Load models and Test on screen
+    // instead of hiding them. A draft provider switch is by definition a dirty
+    // form, so both are visible but disabled until it is saved or discarded —
+    // never hidden, which was the T38 bug.
+    const draftRemote = embeddingActionState({ ...base, state: 'local', remoteDraft: true, model: '', dirty: true })
     expect(draftRemote.remote).toBe(false)
     expect(draftRemote.load.hidden).toBe(false)
-    expect(draftRemote.load.disabled).toBe(false)
+    expect(draftRemote.load.disabled).toBe(true)
     expect(draftRemote.test.hidden).toBe(false)
     expect(draftRemote.test.disabled).toBe(true)
     expect(draftRemote.start.hidden).toBe(true)
-    const draftRemoteModel = embeddingActionState({ ...base, state: 'local', remoteDraft: true })
-    expect(draftRemoteModel.test.disabled).toBe(false)
+    // Clean and remote-drafted: the actions are usable, which is the state a
+    // successful save lands in on the very next render.
+    const draftRemoteClean = embeddingActionState({ ...base, state: 'local', remoteDraft: true, dirty: false })
+    expect(draftRemoteClean.test.disabled).toBe(false)
+    expect(draftRemoteClean.load.disabled).toBe(false)
   })
 
   it('picks the model in the model field and never invents a selection', () => {
@@ -914,6 +923,17 @@ describe('settings information architecture (T21)', () => {
     // The sentinel must never be a value the card could save.
     expect(MANUAL_MODEL_VALUE.startsWith('__mc_')).toBe(true)
     expect(base.models.includes(MANUAL_MODEL_VALUE)).toBe(false)
+  })
+
+  it('offers the discard escape exactly while something is unsaved', () => {
+    // Field drafts feed `dirty`; key text never does, so the predicate takes both.
+    expect(embeddingDraftControls({}).discard).toEqual({ hidden: true, disabled: false })
+    expect(embeddingDraftControls({ dirty: true }).discard).toEqual({ hidden: false, disabled: false })
+    expect(embeddingDraftControls({ keyDraft: true }).discard).toEqual({ hidden: false, disabled: false })
+    expect(embeddingDraftControls({ dirty: true, saving: true }).discard).toEqual({ hidden: false, disabled: true })
+    expect(embeddingDraftControls({ dirty: true, writable: false }).discard).toEqual({ hidden: false, disabled: true })
+    // Nothing unsaved means nothing to undo, whatever else is going on.
+    expect(embeddingDraftControls({ saving: true }).discard.hidden).toBe(true)
   })
 
   it('reports the connection test with a localised verdict', () => {
@@ -1030,6 +1050,9 @@ describe('settings copy — every field key is dictionary-backed', () => {
     expect(keys).toContain('settings.embedding.start')
     expect(keys).toContain('settings.embedding.state.ready')
     expect(keys).toContain('settings.embedding.provider.remote')
+    // T40: the save-coupled labels are gone; nothing may reintroduce them.
+    expect(keys).not.toContain('settings.action.saveAndLoad')
+    expect(keys).not.toContain('settings.action.saveAndTest')
   })
 
   it('exposes provider/preset/auth selects with dictionary-backed options', () => {
